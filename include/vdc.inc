@@ -1,7 +1,7 @@
 ; HuC6260 - Video Display Controller (VDC)
 
 ; VDC port
-videoport    .equ $0000
+videoport = $0000
 
 ; VDC register latch
 ; Writing the lower five bits of video_reg ($0000à select which register will
@@ -9,14 +9,14 @@ videoport    .equ $0000
 ; Only registers $00 to $02 and  $05 to $13 are valid; selecting registers 
 ; $03, $04 or $14 to $1F and trying to access them has no effect.
 ; Reading video_reg ($0000à returns a set of status flags. 
-video_reg    .equ  videoport
-video_reg_l  .equ  video_reg
-video_reg_h  .equ  video_reg+1
+video_reg   = videoport
+video_reg_l = video_reg
+video_reg_h = video_reg+1
 
 ; VDC data
-video_data   .equ  videoport+2
-video_data_l .equ  video_data
-video_data_h .equ  video_data+1
+video_data   = videoport+2
+video_data_l = video_data
+video_data_h = video_data+1
 
 ; Status flags.
 ; Set when the sprite #0 collision detection interrupt occurs. The collision
@@ -42,62 +42,62 @@ VDC_STATUS_BUSY          = 1<<6
 ; VDC registers
 ; Memory Address Write Register
 ; Set the word offset in VRAM where data will be written.
-VDC_MAWR .equ $00
+VDC_MAWR = $00
 ; Memory Address Read Register
 ; Set the word offset in VRAM from where data will be read.
-VDC_MARR .equ $01
+VDC_MARR =  $01
 ; VRAM Data register
 ; Writing to LSB (video_data_l), the CPU date is stored in the write latch.
 ; When the MSB is written (video_data_h), the whole 16 bits from the write latch
 ; and the MSB are transfered to the memory location set with MAWR. MAWR is then
 ; automatically incremented according to the value set in the control register
 ; (CR).
-VDC_DATA .equ $02
+VDC_DATA = $02
 ; Control Register
 ; Enables or disables VDC interrupts, background or sprite display, and set the
 ; read and write auto-increment. 
-VDC_CR  .equ $05
+VDC_CR = $05
 ; Raster Compare Register
 ; Set the scanline on which the horizontal scanline interrupt should be raised.
 ; The first scanline of the display area is the number 64. Valid RCR register
 ; values range from 64 to 326.
-VDC_RCR .equ $06
+VDC_RCR = $06
 ; Background X Scroll Register
 ; Horizontal screen position in the virtual background map.
-VDC_BXR .equ $07
+VDC_BXR = $07
 ; Background Y Scroll Register
 ; Vertical screen position in the virtual background map.
-VDC_BYR .equ $07
+VDC_BYR = $07
 ; Memory Width Register (MWR)
 ; Set virtual background map size.
-VDC_MWR .equ $09
+VDC_MWR = $09
 ; Horizontal Synchro Register
 ; Set horizontal synchro width and start position.
-VDC_HSR .equ $0A
+VDC_HSR = $0A
 ; Horizontal Display Register
 ; Set horizontal display width and end position.
-VDC_HDR .equ $0B
+VDC_HDR = $0B
 ; Vertical Synchro Register
 ; Set vertical synchro width and start position.
-VDC_VSR .equ $0C
+VDC_VSR = $0C
 ; Vertical Display Register
 ; Set vertical display width.
-VDC_VDR .equ $0D
+VDC_VDR = $0D
 ; Vertical Display End Position Register
-VDC_VCR .equ $0E
+VDC_VCR = $0E
 ; DMA Control Register
 ; Enables or disables VRAM to VRAM or VRAM to SATB end of transfer interrupts.
 ; Set source and destination direction (increment or decrement), and enable or
 ; disable SATB DMA automatic transfer.
-VDC_DMA_CR  .equ $0F
+VDC_DMA_CR = $0F
 ; DMA Source Address Register
-VDC_DMA_SRC .equ $10
+VDC_DMA_SRC = $10
 ; DMA Destination Address Register
-VDC_DMA_DST .equ $11
+VDC_DMA_DST = $11
 ; DMA Transfer Length Register
-VDC_DMA_LEN .equ $12
+VDC_DMA_LEN = $12
 ; VRAM-SATB Source Address Register
-VDC_SATB_SRC .equ $13
+VDC_SATB_SRC = $13
 
 ; Control Register flags
 ; Enables sprite collision interrupt.

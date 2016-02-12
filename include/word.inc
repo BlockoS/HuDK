@@ -3,21 +3,21 @@
 ; Set stated memory location to zero.
 ; \syntax stwz p0
 ; \param  [out] op Output memory location (zp or absolute)
-stwz .macro
+  .macro stwz
     stz    LOW_BYTE \1
     stz    HIGH_BYTE \1
-    .endm
+  .endm
 
 ; Store word-sized value at stated memory location.
 ; \syntax stw p0, p1
 ; \param [in]  p0  Input data (zp, absolute or immediate)
 ; \param [out] p1 Output memory location (zp or absolute)
-stw .macro
-	lda    LOW_BYTE \1
+  .macro stw
+    lda    LOW_BYTE \1
     sta    LOW_BYTE \2
     lda    HIGH_BYTE \1
     sta    HIGH_BYTE \2
-    .endm
+  .endm
 
 ; Add word-sized value plus carry to value at stated memory location.
 ; Depending on the number of arguments, the addition is performed in place or
@@ -41,33 +41,33 @@ stw .macro
 ; \param [in][out] p1  Second operand (zp or absolute, or immediate if the 3rd 
 ;                                      argument is set)
 ; \param [out]     out (Optional) Output memory location (zp or absolute)
-adcw .macro
+  .macro adcw
     lda    LOW_BYTE \2
     adc    LOW_BYTE \1
-.if (\# = 3)
+  .if (\# = 3)
     sta    LOW_BYTE \3
-.else
+  .else
     sta    LOW_BYTE \2
-.endif
+  .endif
     lda    HIGH_BYTE \2
     adc    HIGH_BYTE \1
-.if (\# = 3)
+  .if (\# = 3)
     sta    HIGH_BYTE \3
-.else
+  .else
     sta    HIGH_BYTE \2
-.endif
-    .endm
+  .endif
+  .endm
 
 ; Add word-sized value to value at stated memory location.
 ; This is equivalent to call the clc instruction followed by the adcw macro.
-addw .macro
+  .macro addw
     clc
-.if (\# = 3)
+  .if (\# = 3)
     adcw   \1, \2, \3
-.else
+  .else
     adcw   \1, \2
-.endif
-    .endm
+  .endif
+  .endm
 
 ; Substract word-sized value plus carry from value at stated memory location.
 ; Depending on the number of arguments, the substraction is performed in place
@@ -93,48 +93,48 @@ addw .macro
 ; \param [in][out] p1  Second operand (zp or absolute, or immediate if the 3rd 
 ;                                      argument is set)
 ; \param [out]     out (Optional) Output memory location (zp or absolute)
-sbcw .macro
+  .macro sbcw
     lda    LOW_BYTE \2
     sbc    LOW_BYTE \1
-.if (\# = 3)
+  .if (\# = 3)
     sta    LOW_BYTE \3
-.else
+  .else
     sta    LOW_BYTE \2
-.endif
+  .endif
     lda    HIGH_BYTE \2
     sbc    HIGH_BYTE \1
-.if (\# = 3)
+  .if (\# = 3)
     sta    HIGH_BYTE \3
-.else
+  .else
     sta HIGH_BYTE \2
-.endif
-    .endm
+  .endif
+  .endm
 
 ; Substract word-sized value plus carry from value at stated memory location.
 ; This is equivalent to call the clc instruction followed by the adcw macro.
-subw .macro
+  .macro subw
     sec
-.if (\# = 3)
+  .if (\# = 3)
     sbcw   \1, \2, \3
-.else
+  .else
     sbcw   \1, \2
-.endif
-    .endm
+  .endif
+  .endm
 
 ; Increment a word-sized value at stated memory location.
 ; \syntax incw p0
 ; \param [in][out] p0 Memory location (zero page or absolute)
-incw .macro
+  .macro incw
     inc    \1
     bne    .x_\0
     inc    \1+1
 .x_\@:
-    .endm
+  .endm
 
 ; Decrement a word-sized value at stated memory location.
 ; \syntax decw p0
 ; \param [in][out] p0 Memory location (zero page or absolute)
-decw .macro
+  .macro decw
     sec
     lda    \1
     sbc    #1
@@ -142,44 +142,44 @@ decw .macro
     lda    \1+1
     sbc    #0
     sta    \1+1
-    .endm
+  .endm
 
 ; Left rotate word-sized value.
 ; \syntax rolw p0
 ; \param [in][out] p0 Memory location (zero page or absolute)
-rolw .macro
+  .macro rolw
     rol    \1
     rol    \1+1
-    .endm
+  .endm
 
 ; Left shift word-sized value.
 ; \syntax aslw p0
 ; \param [in][out] p0 Memory location (zero page or absolute)
-aslw .macro
+  .macro aslw
     asl    \1
     rol    \1+1
-    .endm
+  .endm
 
 ; Right rotate word-sized value.
 ; \syntax rorw p0
 ; \param [in][out] p0 Memory location (zero page or absolute)
-rorw .macro
+  .macro rorw
     ror    \1+1
     ror    \1
-    .endm
+  .endm
 
 ; Right shift word-sized value.
 ; \syntax lsrw p0
 ; \param [in][out] p0 Memory location (zero page or absolute)
-lsrw .macro
+  .macro lsrw
     lsr    \1+1
     ror    \1
-    .endm
+  .endm
 
 ; Negate word-sized value.
 ; \syntax negw p0
 ; \param [in][out] p0 Memory location (zero page or absolute)
-negw .macro
+  .macro negw
     cla
     sec
     sbc    \1
@@ -187,25 +187,25 @@ negw .macro
     cla
     sbc    \1+1
     sta    \1+1
-    .endm
+  .endm
 
 ; Push word-sized value onto the stack.
 ; \syntax phw p0
 ; \param [in] p0 Value (zero page, absolute or immediate)
-phw .macro
+  .macro phw
     lda    HIGH_BYTE \1
     pha
     lda    LOW_BYTE \1
     pha
-    .endm
+  .endm
 
 ; Pull word-sized value from the stack.
 ; \syntax plw p0
 ; \param [in] p0 Value (zero page or absolute)
-plw .macro
+  .macro plw
     pla
     sta    LOW_BYTE \1
     pla
     sta    HIGH_BYTE \1
-    .endm
+  .endm
 
