@@ -126,7 +126,7 @@
 ; \param [in][out] p0 Memory location (zero page or absolute)
   .macro incw
     inc    \1
-    bne    .x_\0
+    bne    .x_\@
     inc    \1+1
 .x_\@:
   .endm
