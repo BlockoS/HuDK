@@ -1,3 +1,4 @@
+; PCEas macro argument type
 ARG_NONE        .equ 0
 ARG_REG         .equ 1
 ARG_IMMEDIATE   .equ 2

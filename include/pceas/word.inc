@@ -6,7 +6,7 @@
   .macro stwz
     stz    LOW_BYTE \1
     stz    HIGH_BYTE \1
-  .endm
+  .endmacro
 
 ; Store word-sized value at stated memory location.
 ; \syntax stw p0, p1
@@ -17,7 +17,7 @@
     sta    LOW_BYTE \2
     lda    HIGH_BYTE \1
     sta    HIGH_BYTE \2
-  .endm
+  .endmacro
 
 ; Add word-sized value plus carry to value at stated memory location.
 ; Depending on the number of arguments, the addition is performed in place or
@@ -56,7 +56,7 @@
   .else
     sta    HIGH_BYTE \2
   .endif
-  .endm
+  .endmacro
 
 ; Add word-sized value to value at stated memory location.
 ; This is equivalent to call the clc instruction followed by the adcw macro.
@@ -67,7 +67,7 @@
   .else
     adcw   \1, \2
   .endif
-  .endm
+  .endmacro
 
 ; Substract word-sized value plus carry from value at stated memory location.
 ; Depending on the number of arguments, the substraction is performed in place
@@ -108,7 +108,7 @@
   .else
     sta HIGH_BYTE \2
   .endif
-  .endm
+  .endmacro
 
 ; Substract word-sized value plus carry from value at stated memory location.
 ; This is equivalent to call the clc instruction followed by the adcw macro.
@@ -119,7 +119,7 @@
   .else
     sbcw   \1, \2
   .endif
-  .endm
+  .endmacro
 
 ; Increment a word-sized value at stated memory location.
 ; \syntax incw p0
@@ -129,7 +129,7 @@
     bne    .x_\@
     inc    \1+1
 .x_\@:
-  .endm
+  .endmacro
 
 ; Decrement a word-sized value at stated memory location.
 ; \syntax decw p0
@@ -142,7 +142,7 @@
     lda    \1+1
     sbc    #0
     sta    \1+1
-  .endm
+  .endmacro
 
 ; Left rotate word-sized value.
 ; \syntax rolw p0
@@ -150,7 +150,7 @@
   .macro rolw
     rol    \1
     rol    \1+1
-  .endm
+  .endmacro
 
 ; Left shift word-sized value.
 ; \syntax aslw p0
@@ -158,7 +158,7 @@
   .macro aslw
     asl    \1
     rol    \1+1
-  .endm
+  .endmacro
 
 ; Right rotate word-sized value.
 ; \syntax rorw p0
@@ -166,7 +166,7 @@
   .macro rorw
     ror    \1+1
     ror    \1
-  .endm
+  .endmacro
 
 ; Right shift word-sized value.
 ; \syntax lsrw p0
@@ -174,7 +174,7 @@
   .macro lsrw
     lsr    \1+1
     ror    \1
-  .endm
+  .endmacro
 
 ; Negate word-sized value.
 ; \syntax negw p0
@@ -187,7 +187,7 @@
     cla
     sbc    \1+1
     sta    \1+1
-  .endm
+  .endmacro
 
 ; Push word-sized value onto the stack.
 ; \syntax phw p0
@@ -197,7 +197,7 @@
     pha
     lda    LOW_BYTE \1
     pha
-  .endm
+  .endmacro
 
 ; Pull word-sized value from the stack.
 ; \syntax plw p0
@@ -207,5 +207,5 @@
     sta    LOW_BYTE \1
     pla
     sta    HIGH_BYTE \1
-  .endm
+  .endmacro
 

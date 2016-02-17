@@ -1,7 +1,6 @@
-;
-;
-;
-irq_reset:
+; Reset interrupt (HuCard only).
+; This routine is called when the console is powered up.
+reset:
     sei                        ; disable interrupts
     csh                        ; switch cpu to high speed mode
     cld                        ; clear decimal flag
@@ -13,10 +12,7 @@ irq_reset:
     tam    #$01
     stz    <$00                ; clear RAM
     tii    $2000, $2001, $1fff
-    stz    timer_ctrl          ; disable timer
-    lda    #$07                ; disable interrupts
-    sta    irq_disable
-
-	timer_ack
-
-	
+    timer_disable              ; disable timer
+    irq_enable #INT_NONE       ; disable interrupts
+    timer_ack                  ; reset timer
+    ; next : user code

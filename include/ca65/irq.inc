@@ -1,8 +1,3 @@
-; Acknowledge timer interrupt
-  .macro timer_ack
-    stz    irq_status
-  .endmacro
-
 ; Enable interrupt.
 ; \syntax irq_enable flag
 ; \param [in] flag IRQs flag 

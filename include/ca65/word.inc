@@ -4,7 +4,7 @@
   .macro __low opcode, arg
     .if (.match (.left (1, {arg}), #))
       opcode #<(.right (.tcount ({arg})-1, {arg}))
-	.else
+    .else
       opcode arg
     .endif 
   .endmacro 
