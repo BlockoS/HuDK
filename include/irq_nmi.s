@@ -1,0 +1,3 @@
+; [todo]
+_nmi:
+    rti

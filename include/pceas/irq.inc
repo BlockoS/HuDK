@@ -3,9 +3,9 @@
 ; \param [in] flag IRQs flag 
   .macro irq_enable
     .if (\?1 = ARG_IMMEDIATE)
-      lda    flag^7
+      lda    #(\1 ^ 7)
     .else
-      lda    flag
+      lda    \1
       eor    #$07
     .endif
       sta    irq_disable

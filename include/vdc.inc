@@ -125,11 +125,9 @@ VDC_CR_RW_INC_128        = $1800
 VDC_BG_32x32  = %0_000_0000
 VDC_BG_64x32  = %0_001_0000
 VDC_BG_128x32 = %0_010_0000
-VDC_BG_128x32 = %0_011_0000
 VDC_BG_32x64  = %0_100_0000
 VDC_BG_64x64  = %0_101_0000
 VDC_BG_128x64 = %0_110_0000
-VDC_BG_128x64 = %0_111_0000
 
 ; DMA Control register flags.
 ; Enables VRAM to SATB end of transfer interrupt.

@@ -1,6 +1,6 @@
 ; Reset interrupt (HuCard only).
 ; This routine is called when the console is powered up.
-reset:
+_reset:
     sei                        ; disable interrupts
     csh                        ; switch cpu to high speed mode
     cld                        ; clear decimal flag
@@ -15,4 +15,5 @@ reset:
     timer_disable              ; disable timer
     irq_enable #INT_NONE       ; disable interrupts
     timer_ack                  ; reset timer
-    ; next : user code
+    
+    jmp _init

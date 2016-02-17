@@ -7,10 +7,10 @@ irq_status  = irqport+3
 
 ; IRQ interrupt bitfield
 INT_NONE  = 0
-INT_IRQ2  = 1
-INT_IRQ1  = 1<<1
+INT_IRQ_2 = 1
+INT_IRQ_1 = 1<<1
 INT_TIMER = 1<<2
-INT_ALL   = (INT_IRQ2 | INT_IRQ1 | INT_TIMER)
+INT_ALL   = (INT_IRQ_2 | INT_IRQ_1 | INT_TIMER)
 
 ; Timer port
 timerport = $0c00
