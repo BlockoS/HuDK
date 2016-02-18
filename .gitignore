@@ -3,3 +3,6 @@
 # pceas output
 *.sym
 *.lst
+
+# build directory
+build
