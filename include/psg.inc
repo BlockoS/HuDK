@@ -6,7 +6,7 @@ PSG_CHAN_COUNT = 6
 ; PSG registers.
 psgport = $0800
 ; Channel select register.
-psg_ch = psgport
+psg_chn = psgport
 ; Global sound volume.
 psg_mainvol = psgport+1
 ; Fine frequency adjust.

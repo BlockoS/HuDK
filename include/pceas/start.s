@@ -2,6 +2,7 @@
   .include "pceas/word.inc"
   .include "irq.inc"
   .include "io.inc"
+  .include "psg.inc"
   .include "vdc.inc"
   .include "vce.inc"
   .include "pceas/irq.inc"
@@ -17,21 +18,14 @@
     .dw   _reset
 
     .org  $e000
-    .ifndef OVERRIDE_IRQ_RESET
-      .include "irq_reset.s"
-    .endif
-    .ifndef OVERRIDE_IRQ_NMI
-      .include "irq_nmi.s"
-	.endif
-    .ifndef OVERRIDE_IRQ_TIMER
-      .include "irq_timer.s"
-    .endif
-    .ifndef OVERRIDE_IRQ_1
-      .include "irq_1.s"
-    .endif
-    .ifndef OVERRIDE_IRQ_2
-      .include "irq_2.s"
-    .endif
+    .include "irq_reset.s"
+    .include "irq_nmi.s"
+    .include "irq_timer.s"
+    .include "irq_1.s"
+    .include "irq_2.s"
+
+	.include "psg.s"
+	.include "vdc.s"
   .else
     ; [todo]
   .endif ; !(CDROM)

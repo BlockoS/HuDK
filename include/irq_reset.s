@@ -15,5 +15,9 @@ _reset:
     timer_disable              ; disable timer
     irq_enable #INT_NONE       ; disable interrupts
     timer_ack                  ; reset timer
-    
-    jmp _init
+_init:
+	jsr    psg_init            ; initialize sound (mute everything)
+    jsr    vdc_init            ; initialize display with default values
+                               ; bg, sprites and display interrupts are disable
+    ; [todo] set default/dummy interrupts hooks if needed
+    jmp   main    

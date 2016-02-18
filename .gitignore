@@ -1,0 +1,5 @@
+*.pce
+
+# pceas output
+*.sym
+*.lst
