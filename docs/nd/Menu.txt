@@ -46,6 +46,7 @@ Format: 1.52
 # --------------------------------------------------------------------------
 
 
+File: vdc.inc  (vdc.inc)
 File: word.inc  (word.inc)
 
 Group: Index  {
@@ -53,5 +54,6 @@ Group: Index  {
    Index: Everything
    File Index: Files
    Macro Index: Macros
+   Variable Index: Variables
    }  # Group: Index
 
