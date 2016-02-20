@@ -1,5 +1,5 @@
 ;;
-;; Group: HuC6260 - Video Display Controller (VDC)
+;; Group: HuC6260 - Video Display Controller (VDC).
 ;;
 
 ;;
@@ -37,41 +37,41 @@ video_data_h = video_data+1
 ;;
 
 ;;
-;; bitfield: VDC_STATUS_SPR_COLLISION 
+;; bits: VDC_STATUS_SPR_COLLISION 
 ;; Set when the sprite #0 collision detection interrupt occurs. The collision
 ;; happens if any of the opaque pixel of sprite #0 is overlapping any other
 ;; sprites.
 ;;
 VDC_STATUS_SPR_COLLISION = %00000001
 ;;
-;; bitfield: VDC_STATUS_SPR_OVERFLOW
+;; bits: VDC_STATUS_SPR_OVERFLOW
 ;; Set when the sprite overflow interrupt occurs. 
 ;; More precisely, when there are more than 16 sprites on a scanline.
 ;;
 VDC_STATUS_SPR_OVERFLOW = %00000010
 ;;
-;; bitfield: VDC_STATUS_HBLANK
+;; bits: VDC_STATUS_HBLANK
 ;; Set when the horizontal blank interrupt occurs. This interrupt is triggered
 ;; when the scanline matches the value stored in VDC register $06.
 ;;
 VDC_STATUS_HBLANK = %00000100
 ;;
-;; bitfield: VDC_STATUS_SATB_DMA_END
+;; bits: VDC_STATUS_SATB_DMA_END
 ;; Set when the VRAM to SATB DMA transfer completion interrupt occurs.
 ;;
 VDC_STATUS_SATB_DMA_END = %00001000
 ;;
-;; bitfield: VDC_STATUS_VRAM_DMA_END
+;; bits: VDC_STATUS_VRAM_DMA_END
 ;; Set when the VRAM to VRAM DMA transfer completion interrupt occurs.
 ;;
 VDC_STATUS_VRAM_DMA_END = %00010000
 ;;
-;; bitfield: VDC_STATUS_VBLANK
+;; bits: VDC_STATUS_VBLANK
 ;; Set when the vertical blank interrupt occurs.
 ;;
 VDC_STATUS_VBLANK = %00100000
 ;;
-;; bitfield: VDC_STATUS_BUSY
+;; bits: VDC_STATUS_BUSY
 ;; Set when the VDC is waiting for a CPU access slot during the active display
 ;; area.
 ;;
@@ -280,32 +280,32 @@ VDC_CR_RW_INC_128        = $1800
 ;;
 
 ;;
-;; bitfield: VDC_BG_32_32
+;; bits: VDC_BG_32_32
 ;; 32x32 virtual background map.
 ;;
 VDC_BG_32x32  = %0_000_0000
 ;;
-;; bitfield: VDC_BG_64_32
+;; bits: VDC_BG_64_32
 ;; 64x32 virtual background map.
 ;;
 VDC_BG_64x32  = %0_001_0000
 ;;
-;; bitfield: VDC_BG_128_32
+;; bits: VDC_BG_128_32
 ;; 128x32 virtual background map.
 ;;
 VDC_BG_128x32 = %0_010_0000
 ;;
-;; bitfield: VDC_BG_32_64
+;; bits: VDC_BG_32_64
 ;; 32x64 virtual background map.
 ;;
 VDC_BG_32x64  = %0_100_0000
 ;;
-;; bitfield: VDC_BG_64_64
+;; bits: VDC_BG_64_64
 ;; 64x64 virtual background map.
 ;;
 VDC_BG_64x64  = %0_101_0000
 ;;
-;; bitfield: VDC_BG_128_64
+;; bits: VDC_BG_128_64
 ;; 128x64 virtual background map.
 ;;
 VDC_BG_128x64 = %0_110_0000
@@ -315,37 +315,37 @@ VDC_BG_128x64 = %0_110_0000
 ;;
 
 ;;
-;; bitfield: VDC_DMA_SATB_ENABLE
+;; bits: VDC_DMA_SATB_ENABLE
 ;; Enables VRAM to SATB end of transfer interrupt.
 ;;
 VDC_DMA_SATB_ENABLE = %0000_0001 
 ;;
-;; bitfield: VDC_DMA_VRAM_ENABLE
+;; bits: VDC_DMA_VRAM_ENABLE
 ;; Enables VRAM to VRAM end of transfer interrupt.
 ;;
 VDC_DMA_VRAM_ENABLE = %0000_0010
 ;;
-;; bitfield: VDC_DMA_SRC_INC
+;; bits: VDC_DMA_SRC_INC
 ;; Source address direction (increment).
 ;;
 VDC_DMA_SRC_INC     = %0000_0000
 ;;
-;; bitfield: VDC_DMA_SRC_DEC
+;; bits: VDC_DMA_SRC_DEC
 ;; Source address direction (decrement).
 ;;
 VDC_DMA_SRC_DEC     = %0000_0100
 ;;
-;; bitfield: VDC_DMA_DST_INC
+;; bits: VDC_DMA_DST_INC
 ;; Destination address direction (increment).
 ;;
 VDC_DMA_DST_INC     = %0000_0000
 ;;
-;; bitfield: VDC_DMA_DST_DEC 
+;; bits: VDC_DMA_DST_DEC 
 ;; Destination address direction (decrement).
 ;;
 VDC_DMA_DST_DEC     = %0000_1000
 ;;
-;; bitfield: VDC_DMA_SATB_AUTO
+;; bits: VDC_DMA_SATB_AUTO
 ;; Enable SATB DMA auto-transfer.
 ;;
 VDC_DMA_SATB_AUTO   = %0001_0000

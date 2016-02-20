@@ -46,6 +46,7 @@ Format: 1.52
 # --------------------------------------------------------------------------
 
 
+File: vce.inc  (vce.inc)
 File: vdc.inc  (vdc.inc)
 File: word.inc  (word.inc)
 
