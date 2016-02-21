@@ -144,6 +144,19 @@ VDC_DATA = $02
 ;; read and write auto-increment. See <Control Register Flags> for a complete
 ;; description.
 ;;
+;; Value:
+;;   bit 15-13 - Unused
+;;   bit 12-11 - Read/Write auto-increment value <VDC_CR_RW_INC_1>, <VDC_CR_RW_INC_32>, <VDC_CR_RW_INC_64>, <VDC_CR_RW_INC_128> 
+;;   bit 10    - DRAM refresh enable (unused)
+;;   bit 9-8   - DISP terminal output mode (unused)
+;;   bit 7     - Background enable <VDC_CR_BG_ENABLE>
+;;   bit 6     - Sprite enable <VDC_CR_SPR_ENABLE> 
+;;   bit 5-4   - External sync (unused)
+;;   bit 3     - Enable interrupt for vertical blanking <VDC_CR_VBLANK_ENABLE>
+;;   bit 2     - Enable interrupt for raster compare <VDC_CR_HBLANK_ENABLE>
+;;   bit 1     - Enable interrupt for sprite overflow <VDC_CR_SPR_OVERFLOW_ENABLE>
+;;   bit 0     - Enable interrupt for sprite #0 collision <VDC_CR_SPR_COLLISION_ENABLE>
+;;
 VDC_CR = $05
 ;;
 ;; ubyte: VDC_RCR
@@ -154,6 +167,10 @@ VDC_CR = $05
 ;; The first scanline of the display area is the number 64. Valid RCR register
 ;; values range from 64 to 326.
 ;;
+;; Value:
+;;   bit 15-10 - Unused
+;;   bit 9-0   - Scanline number.
+;;
 VDC_RCR = $06
 ;;
 ;; ubyte: VDC_BXR
@@ -161,6 +178,10 @@ VDC_RCR = $06
 ;;
 ;; Detail:
 ;; Horizontal screen position in the virtual background map.
+;;
+;; Value:
+;;   bit 15-10 - Unused
+;;   bit 9-0   - Horizontal scroll position.
 ;;
 VDC_BXR = $07
 ;;
@@ -170,6 +191,10 @@ VDC_BXR = $07
 ;; Detail:
 ;; Vertical screen position in the virtual background map.
 ;;
+;; Value:
+;;   bit 15-9 - Unused
+;;   bit 8-0  - Vertical scroll position.
+;;
 VDC_BYR = $07
 ;;
 ;; ubyte: VDC_MWR
@@ -177,6 +202,13 @@ VDC_BYR = $07
 ;;
 ;; Detail:
 ;; Set virtual background map size.
+;;
+;; Value:
+;;   bit 15-8 - Unused
+;;   bit 7    - CG Mode
+;;   bit 4-6  - <Background Map Virtual Size>
+;;   bit 3-2  - Sprite Dot Period
+;;   bit 0-1  - VRAM Dot Width
 ;;
 VDC_MWR = $09
 ;;
@@ -186,6 +218,12 @@ VDC_MWR = $09
 ;; Detail:
 ;; Set horizontal synchro width and start position.
 ;;
+;; Value:
+;;   bit 15   - Unused
+;;   bit 14-8 - Horizontal Display Start (HDS)
+;;   bit 7-5  - Unused
+;;   bit 4-0  - Horizontal Sync Width (HSW) 
+;;
 VDC_HSR = $0A
 ;;
 ;; ubyte: VDC_HDR
@@ -194,6 +232,12 @@ VDC_HSR = $0A
 ;; Detail:
 ;; Set horizontal display width and end position.
 ;;
+;; Value:
+;;   bit 15   - Unused
+;;   bit 14-8 - Horizontal Display End (HDE)
+;;   bit 7    - Unused
+;;   bit 6-0  - Horizontal Display Width (HDW)
+;; 
 VDC_HDR = $0B
 ;;
 ;; ubyte: VDC_VSR
@@ -201,6 +245,11 @@ VDC_HDR = $0B
 ;;
 ;; Detail:
 ;; Set vertical synchro width and start position.
+;;
+;; Value:
+;;   bit 15-8 - Vertical Display Start (VDS)
+;;   bit 7-5  - Unused
+;;   bit 4-0  - Vertical Synchro Width (VSW)
 ;;
 VDC_VSR = $0C
 ;;
@@ -210,11 +259,18 @@ VDC_VSR = $0C
 ;; Detail:
 ;; Set vertical display width.
 ;;
+;; Value:
+;;   bit 15-9 - Unused
+;;   bit 8-0  - Vertical Display Width (VDR)
+;; 
 VDC_VDR = $0D
 ;;
 ;; ubyte: VDC_VCR
 ;; Vertical Display End Position Register
 ;;
+;; Value:
+;;   bit 15-9 - Unused
+;;   bit 8-0  - Vertical Display End Position (VCR)
 VDC_VCR = $0E
 ;;
 ;; ubyte: VDC_DMA_CR
@@ -223,7 +279,15 @@ VDC_VCR = $0E
 ;; Detail:
 ;; Enables or disables VRAM to VRAM or VRAM to SATB end of transfer interrupts.
 ;; Set source and destination direction (increment or decrement), and enable or
-;; disable SATB DMA automatic transfer.
+;; disable SATB DMA automatic transfer (see <DMA Control Register Flags>).
+;;
+;; Value:
+;;   bit 15-5 - Unused
+;;   bit 4    - SATB DMA auto-transfer enable flag <VDC_DMA_SATB_AUTO>
+;;   bit 3    - Destination address increment direction <VDC_DMA_DST_INC>, <VDC_DMA_DST_DEC>
+;;   bit 3    - Source address increment direction <VDC_DMA_SRC_INC>, <VDC_DMA_SRC_DEC>
+;;   bit 1    - VRAM to VRAM end of transfer interrupt enable flag <VDC_DMA_VRAM_ENABLE>
+;;   bit 0    - VRAM to SATB end of transfer interrupt enable flag <VDC_DMA_SATB_ENABLE>
 ;;
 VDC_DMA_CR = $0F
 ;;
@@ -252,7 +316,7 @@ VDC_SATB_SRC = $13
 ;;
 
 ;;
-;; ushord: VDC_CR_SPR_COLLISION_ENABLE
+;; ushort: VDC_CR_SPR_COLLISION_ENABLE
 ;; Enables sprite collision interrupt.
 ;;
 VDC_CR_SPR_COLLISION_ENABLE = $0001
@@ -303,7 +367,7 @@ VDC_CR_RW_INC_64         = $1000
 VDC_CR_RW_INC_128        = $1800
 
 ;;
-;; Group: Background map virtual size.
+;; Group: Background Map Virtual Size.
 ;;
 
 ;;
@@ -338,7 +402,7 @@ VDC_BG_64x64  = %0_101_0000
 VDC_BG_128x64 = %0_110_0000
 
 ;;
-;; Group: DMA Control register flags.
+;; Group: DMA Control Register Flags.
 ;;
 
 ;;

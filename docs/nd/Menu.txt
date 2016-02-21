@@ -79,12 +79,9 @@ Group: Video  {
 
    }  # Group: Video
 
-File: SearchPanel  (build/doc/javascript/main.js)
-
 Group: Index  {
 
    Index: Everything
-   Class Index: Classes
    File Index: Files
    Function Index: Functions
    Macro Index: Macros
