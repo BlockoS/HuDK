@@ -1,5 +1,24 @@
 ;;
-;; Group: HuC6260 - Video Display Controller (VDC).
+;; Group: HuC6270 - Video Display Controller (VDC).
+;; Referred to as "7UP" by NEC-HE.
+;;
+;; Description:
+;;
+;; (see ../images/220px-HuC6270A_01.jpg)
+;;
+;; The specifications for the VDC are, 
+;;  - 1 background layer made of 8x8 tiles.
+;;  - 64 simultaneous sprites.
+;;  - 64KB VRAM.
+;;  - 20 internal 16-bit registers.
+;;  - 2 16-bit IO ports.
+;;
+;; The VDC can address up to 128K of VRAM. But as it only has 64KB, the latter
+;; half of the 128KB mirrors the first 64KB. Note that reading the mirror area
+;; may returns corrupted data, and writes through the IO ports or the DMAs to 
+;; that area are always ignored.
+;; The VDC can be accessed through 2 16-bit IO ports located in the hardware
+;; page ($ff).
 ;;
 
 ;;
@@ -12,13 +31,12 @@ videoport = $0000
 ;; ushort: video_reg
 ;; VDC register latch
 ;;
-;; Detail:
-;; Writing the lower five bits of video_reg ($0000à select which register will
-;; be accessed at video_data_l ($0002) and video_data_h ($0003).
-;; Only registers $00 to $02 and  $05 to $13 are valid; selecting registers 
-;; $03, $04 or $14 to $1F and trying to access them has no effect.
-;; Reading video_reg $0000 returns a set of status flags. 
-;;
+;;  - Writing the lower five bits of video_reg $0000 selects which register will
+;;    be accessed at video_data_l ($0002) and video_data_h ($0003).
+;;    Only registers $00 to $02 and  $05 to $13 are valid; selecting registers 
+;;    $03, $04 or $14 to $1F and trying to access them has no effect (see <VDC registers>).
+;;  - Reading video_reg $0000 returns a set of status flags (see <VDC status flags>). 
+;; 
 video_reg   = videoport
 video_reg_l = video_reg
 video_reg_h = video_reg+1
@@ -27,13 +45,24 @@ video_reg_h = video_reg+1
 ;; ushort: video_data
 ;; VDC data
 ;;
+;; Data to be read or written to the a VDC register.
+;;
 video_data   = videoport+2
 video_data_l = video_data
 video_data_h = video_data+1
 
-
 ;;
-;;   Group: VDC status bitfield. 
+;; Group: VDC status flags. 
+;; Description of the status flags returned by reading <video_reg>.
+;;
+;; bit 15-07 - unused
+;; bit 6     - busy flag (<VDC_STATUS_BUSY>)
+;; bit 5     - vertical blanking flag (<VDC_STATUS_VBLANK>)
+;; bit 4     - VRAM to VRAM DMA end of transfer flag (<VDC_STATUS_VRAM_DMA_END>)
+;; bit 3     - VRAM to SATB DMA end of transfer flag (<VDC_STATUS_SATB_DMA_END>)
+;; bit 2     - scanline interrupt flag (<VDC_STATUS_HBLANK>)
+;; bit 1     - sprite overflow flag (<VDC_STATUS_SPR_OVERFLOW>)
+;; bit 0     - sprite collision flag (<VDC_STATUS_SPR_COLLISION>)
 ;;
 
 ;;
@@ -86,7 +115,9 @@ VDC_STATUS_BUSY = %01000000
 ;; Memory Address Write Register
 ;;
 ;; Detail:
-;; Set the word offset in VRAM where data will be written.
+;; Set the word offset in VRAM where data written to <VDC_DATA> will be stored.
+;; The value of this register is automatically incremented after a write to the 
+;; MSB of <VDC_DATA>. The increment value is set via bits 11 and 12 of <VDC_CR>.
 ;;
 VDC_MAWR = $00
 ;;
@@ -94,7 +125,10 @@ VDC_MAWR = $00
 ;; Memory Address Read Register
 ;;
 ;; Detail:
-;; Set the word offset in VRAM from where data will be read.
+;; Set the word offset in VRAM from where data will be read. Just like 
+;; <VDC_MAWR>, this register is automatically incremented after a read to the 
+;; high byte of <VDC_DATA> and the increment is set via bits 11 and 12 of 
+;; <VDC_CR>.
 ;;
 VDC_MARR =  $01
 ;;
@@ -102,12 +136,17 @@ VDC_MARR =  $01
 ;; VRAM Data register
 ;;
 ;; Detail:
-;; Writing to LSB (video_data_l), the CPU date is stored in the write latch.
-;; When the MSB is written (video_data_h), the whole 16 bits from the write
-;; latch and the MSB are transfered to the memory location set with MAWR.
-;; MAWR is then automatically incremented according to the value set in the
-;; control register (CR).
-;;
+;; - Writing to LSB (video_data_l), the CPU data is stored in the write latch.
+;;   When the MSB is written (video_data_h), the whole 16 bits from the write
+;;   latch and the MSB are transfered to the memory location set with 
+;;   <VDC_MAWR>.
+;;   <VDC_MAWR> is then automatically incremented according to the value set in
+;;   the control register <VDC_CR>.
+;; - Reading the LSB (video_data_l) will store the LSB of the read buffer, and
+;;   reading the MSG (video_data_h) will store the MSB of the read buffer.
+;;   <VDC_MARR> is then incremented by the factor set in <VDC_CR>, and a word is
+;;   read of VRAM at the location set by <VDC_MARR> is read and stored in the
+;;   read buffer. 
 VDC_DATA = $02
 ;;
 ;; ubyte: VDC_CR
@@ -115,7 +154,8 @@ VDC_DATA = $02
 ;;
 ;; Detail:
 ;; Enables or disables VDC interrupts, background or sprite display, and set the
-;; read and write auto-increment. 
+;; read and write auto-increment. See <Control Register Flags> for a complete
+;; description.
 ;;
 VDC_CR = $05
 ;;
@@ -221,7 +261,7 @@ VDC_DMA_LEN = $12
 VDC_SATB_SRC = $13
 
 ;;
-;; Group: Control Register flags.
+;; Group: Control Register Flags.
 ;;
 
 ;;
@@ -280,32 +320,32 @@ VDC_CR_RW_INC_128        = $1800
 ;;
 
 ;;
-;; bits: VDC_BG_32_32
+;; bits: VDC_BG_32x32
 ;; 32x32 virtual background map.
 ;;
 VDC_BG_32x32  = %0_000_0000
 ;;
-;; bits: VDC_BG_64_32
+;; bits: VDC_BG_64x32
 ;; 64x32 virtual background map.
 ;;
 VDC_BG_64x32  = %0_001_0000
 ;;
-;; bits: VDC_BG_128_32
+;; bits: VDC_BG_128x32
 ;; 128x32 virtual background map.
 ;;
 VDC_BG_128x32 = %0_010_0000
 ;;
-;; bits: VDC_BG_32_64
+;; bits: VDC_BG_32x64
 ;; 32x64 virtual background map.
 ;;
 VDC_BG_32x64  = %0_100_0000
 ;;
-;; bits: VDC_BG_64_64
+;; bits: VDC_BG_64x64
 ;; 64x64 virtual background map.
 ;;
 VDC_BG_64x64  = %0_101_0000
 ;;
-;; bits: VDC_BG_128_64
+;; bits: VDC_BG_128x64
 ;; 128x64 virtual background map.
 ;;
 VDC_BG_128x64 = %0_110_0000

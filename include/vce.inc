@@ -1,5 +1,9 @@
 ;;
-;; Group: HuC6270 - Video Color Encoder (VCE).
+;; Group: HuC6260 - Video Color Encoder (VCE).
+;;
+;; Description:
+;;
+;; (see ../images/220px-HuC6260A_01.jpg)
 ;;
 
 ;;

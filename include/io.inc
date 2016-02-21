@@ -1,25 +1,45 @@
-; IO port.
-; It is named joyport for history reasons.
+;;
+;; Group: IO port.
+;;
+
+;;
+;; ushort: joyport
+;; IO port (named joyport for historical reasons).
+;;
 joyport = $1000
 
-; IO port bit mask.
-; CD-ROM base unit sense bit.
-; This bit is set to 0 if a CD-ROM is attached and 1 otherwise.
+;;
+;; Group: IO port bit mask.
+;;
+
+;;
+;; bits: IO_CD_MASK
+;; CD-ROM base unit sense bit.
+;;
+;; This bit is set to 0 if a CD-ROM is attached and 1 otherwise.
+;;
 IO_CD_MASK      = %1000_0000
-; Country detection.
-; This bit is set to 1 for Japanses models (PC-Engine, CoreGrafx, ...) and
-; is set to 0 for US models (TurboGrafx 16).
+;;
+;; bits: IO_COUNTRY_MASK
+;; Country detection.
+;;
+;; This bit is set to 1 for Japanses models (PC-Engine, CoreGrafx, ...) and
+;; is set to 0 for US models (TurboGrafx 16).
+;;
 IO_COUNTRY_MASK = %0100_0000
-; Joypad port pin.
-; Only the first two bits are writeable. 
+;;
+;; bits: IO_JOYPAD_MASK
+;; Joypad port pin.
+;;
+;; Only the first two bits are writeable. 
+;;
 IO_JOYPAD_MASK  = %0000_1111
-; Joypad port pin details.
-; When select is low (=0) reading joyport gives I,II,SEL,RUN.
+
+; [todo] explain joypad pins write/read
 IO_JOYPAD_I   = %0000_0001
 IO_JOYPAD_II  = %0000_0010
 IO_JOYPAD_SEL = %0000_0100
 IO_JOYPAD_RUN = %0000_1000
-; When select is high (=1) reading joyport gives UP,RIGHT,DOWN,LEFT.
 IO_JOYPAD_UP    = %0000_0001
 IO_JOYPAD_RIGHT = %0000_0010
 IO_JOYPAD_DOWN  = %0000_0100
