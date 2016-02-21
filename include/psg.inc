@@ -1,40 +1,100 @@
-; PSG (Programmable Sound Generator)
+;;
+;; Title: PSG registers.
+;;
 
 ; Channel count.
 PSG_CHAN_COUNT = 6
 
-; PSG registers.
+;;
+;; Group: Registers.
+;;
+
+;;
+;; ubyte: psgport
+;; PSG port.
+;; 
 psgport = $0800
-; Channel select register.
+;;
+;; ubyte psg_chn
+;; Channel select register.
+;;
 psg_chn = psgport
-; Global sound volume.
+;;
+;; ubyte: psg_mainvol
+;; Global sound volume.
+;;
 psg_mainvol = psgport+1
-; Fine frequency adjust.
+;;
+;; ubyte: psg_freq.lo
+;; Fine frequency adjust.
+;;
 psg_freq.lo = psgport+2
-; Rough frequency adjust.
+;;
+;; ubyte: psg_freq.hi
+;; Rough frequency adjust.
+;;
 psg_freq.hi = psgport+3
-; Control register.
+;;
+;; ubyte: psg_ctrl
+;; Control register.
+;;
 psg_ctrl = psgport+4
-; Channel balance.
+;;
+;; ubyte: psg_pan
+;; Channel balance.
+;;
 psg_pan = psgport+5
-; Channel sound data.
+;;
+;; ubyte: psg_wavebuf
+;; Channel sound data.
+;;
 psg_wavebuf = psgport+6
-; Noise control.
+;;
+;; ubyte: psg_noise
+;; Noise control.
+;;
 psg_noise = psgport+7
-; LFO frequency.
+;;
+;; ubyte: psg_lfofreq
+;; LFO frequency.
+;;
 psg_lfofreq = psgport+8
-; LFO trigger and control.
+;;
+;; ubyte: psg_lfoctrl
+;; LFO trigger and control.
+;;
 psg_lfoctrl = psgport+9
 
-; PSG control register bit masks
-; Channel on (1), off(0)
+;;
+;; Group: Control Register Flags.
+;;
+
+;;
+;; bits: PSG_CTRL_CHAN_ON
+;; PSG control register bit masks
+;;  1 - Channel on
+;;  0 - Channel off
 PSG_CTRL_CHAN_ON = %1000_0000
-; Reset waveform write index to 0
+;;
+;; bits: PSG_CTRL_WRITE_RESET
+;; Reset waveform write index to 0
+;;
 PSG_CTRL_WRITE_RESET = %0100_0000
-; DDA output on(1), off(0)
+;;
+;; bits: PSG_CTRL_DDA_ON
+;; DDA output.
+;;  1 - on
+;;  0 - off
+;;
 PSG_CTRL_DDA_ON = %1100_0000
-; Channel volume
+;;
+;; bits: PSG_CTRL_VOL_MASK
+;; Channel volume.
+;;
 PSG_CTRL_VOL_MASK = %0001_1111
-; Channel maximum volume (bit 5 is unused)
+;;
+;; bits: PSG_CTRL_FULL_VOLUME
+;; Channel maximum volume (bit 5 is unused)
+;;
 PSG_CTRL_FULL_VOLUME = %0011_1111
 

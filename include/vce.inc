@@ -1,9 +1,7 @@
 ;;
-;; Group: HuC6260 - Video Color Encoder (VCE).
+;; Section: VCE I/O Ports.
 ;;
-;; Description:
-;;
-;; (see ../images/220px-HuC6260A_01.jpg)
+;; Group: Ports.
 ;;
 
 ;;
@@ -32,6 +30,10 @@ color_reg.hi = color_reg+1
 color_data = colorport+4
 color_data.lo = color_data
 color_data.hi = color_data+1
+
+;;
+;; Section: Control Register Flags.
+;;
 
 ;;
 ;; Group: VCE control register bitmask.

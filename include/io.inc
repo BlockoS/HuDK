@@ -1,5 +1,5 @@
 ;;
-;; Group: IO port.
+;; Title: I/O port.
 ;;
 
 ;;

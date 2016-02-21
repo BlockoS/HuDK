@@ -1,5 +1,17 @@
-; Initialize PSG
-; Mute and disable all channels.
+;;
+;; Title: PSG Functions.
+;;
+
+;;
+;; function: psg_init
+;; Initialize PSG.
+;;
+;; Details:
+;; Mute and disable all audio channels.
+;;
+;; Parameters:
+;; *none* 
+;;
 psg_init:
    stz    psg_mainvol        ; set main volume to zero
    stz    psg_lfoctrl        ; disable LFO

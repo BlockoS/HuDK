@@ -1,24 +1,7 @@
 ;;
-;; Group: HuC6270 - Video Display Controller (VDC).
-;; Referred to as "7UP" by NEC-HE.
+;; Section: VDC I/O ports.
 ;;
-;; Description:
-;;
-;; (see ../images/220px-HuC6270A_01.jpg)
-;;
-;; The specifications for the VDC are, 
-;;  - 1 background layer made of 8x8 tiles.
-;;  - 64 simultaneous sprites.
-;;  - 64KB VRAM.
-;;  - 20 internal 16-bit registers.
-;;  - 2 16-bit IO ports.
-;;
-;; The VDC can address up to 128K of VRAM. But as it only has 64KB, the latter
-;; half of the 128KB mirrors the first 64KB. Note that reading the mirror area
-;; may returns corrupted data, and writes through the IO ports or the DMAs to 
-;; that area are always ignored.
-;; The VDC can be accessed through 2 16-bit IO ports located in the hardware
-;; page ($ff).
+;; Group: Ports.
 ;;
 
 ;;
@@ -107,7 +90,11 @@ VDC_STATUS_VBLANK = %00100000
 VDC_STATUS_BUSY = %01000000
 
 ;; 
-;; Group: VDC registers.
+;; Section: VDC registers.
+;;
+
+;;
+;; Group: Registers.
 ;;
 
 ;;

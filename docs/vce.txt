@@ -1,0 +1,11 @@
+
+Title: HuC6260 - Video Color Encoder (VCE).
+
+Group: Description
+
+(see ../images/220px-HuC6260A_01.jpg)
+
+Group: Index
+
+ - <VCE I/O Ports>
+

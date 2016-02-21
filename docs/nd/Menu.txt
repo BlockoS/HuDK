@@ -1,19 +1,11 @@
 Format: 1.52
 
 
-# You can add a title and sub-title to your menu like this:
-# Title: [project name]
-# SubTitle: [subtitle]
+Title: . .
+SubTitle: 
 
-# You can add a footer to your documentation like this:
-# Footer: [text]
-# If you want to add a copyright notice, this would be the place to do it.
-
-# You can add a timestamp to your documentation like one of these:
-# Timestamp: Generated on month day, year
-# Timestamp: Updated mm/dd/yyyy
-# Timestamp: Last updated mon day
-#
+Footer: (C)opyright 2016 distributer under the MIT license.
+Timestamp: Last updated yyyy/mm/dd
 #   m     - One or two digit month.  January is "1"
 #   mm    - Always two digit month.  January is "01"
 #   mon   - Short month word.  January is "Jan"
@@ -46,15 +38,47 @@ Format: 1.52
 # --------------------------------------------------------------------------
 
 
-File: io.inc  (io.inc)
-File: vce.inc  (vce.inc)
-File: vdc.inc  (vdc.inc)
-File: word.inc  (word.inc)
+Link: HuDK on Github  (https://github.com/blockos/hudk)
+Link: License  (https://raw.githubusercontent.com/BlockoS/HuDK/master/LICENSE)
+Text: ______________________________________________________________________
+File: I/O Port  (no auto-title, include/io.inc)
+File: include/word.inc  (no auto-title, include/word.inc)
+
+Group: Audio  {
+
+   Group: PSG - Programmable Sound Generator  {
+
+      File: Registers  (no auto-title, include/psg.inc)
+      File: Functions.  (no auto-title, include/psg.s)
+      }  # Group: PSG - Programmable Sound Generator
+
+   }  # Group: Audio
+
+Group: Video  {
+
+   Group: HuC6270 - Video Display Controller (VDC)  {
+
+      File: Description  (no auto-title, docs/vdc.txt)
+      File: I/O ports and registers  (no auto-title, include/vdc.inc)
+      File: Functions  (no auto-title, include/vdc.s)
+      }  # Group: HuC6270 - Video Display Controller (VDC)
+
+   Group: HuC6260 - Video Color Encoder (VDC)  {
+
+      File: Description  (no auto-title, docs/vce.txt)
+      File: I/O ports  (no auto-title, include/vce.inc)
+      }  # Group: HuC6260 - Video Color Encoder (VDC)
+
+   }  # Group: Video
+
+File: SearchPanel  (build/doc/javascript/main.js)
 
 Group: Index  {
 
    Index: Everything
+   Class Index: Classes
    File Index: Files
+   Function Index: Functions
    Macro Index: Macros
    Variable Index: Variables
    }  # Group: Index
