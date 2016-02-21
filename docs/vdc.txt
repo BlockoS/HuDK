@@ -21,6 +21,6 @@ The VDC can be accessed through 2 16-bit IO ports located in the hardware page
 
 Group: Index
 
- - <VDC I/O ports>
+ - <VDC I/O Ports and Registers>
  - <VDC Functions>
 

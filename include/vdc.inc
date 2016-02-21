@@ -1,5 +1,5 @@
 ;;
-;; Section: VDC I/O ports.
+;; Section: VDC I/O Ports and Registers.
 ;;
 ;; Group: Ports.
 ;;
