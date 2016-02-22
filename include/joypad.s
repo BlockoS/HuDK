@@ -105,8 +105,8 @@ joypad_6_read:
     bne    .no_reset
         stz    joypad_6, X
 .no_reset: 
-    iny
-    cpy    #$05
+    inx
+    cpx    #$05
     bne    .l0
 
     rts
