@@ -50,6 +50,7 @@ Group: General  {
 Group: Controls  {
 
    File: I/O Port  (no auto-title, include/io.inc)
+   File: Joypad Functions  (no auto-title, include/joypad.s)
    }  # Group: Controls
 
 Group: Audio  {
@@ -58,6 +59,7 @@ Group: Audio  {
 
       File: Registers  (no auto-title, include/psg.inc)
       File: Functions.  (no auto-title, include/psg.s)
+      File: .  (include/joypad.s)
       }  # Group: PSG - Programmable Sound Generator
 
    }  # Group: Audio
@@ -82,7 +84,6 @@ Group: Video  {
 Group: Index  {
 
    Index: Everything
-   File Index: Files
    Function Index: Functions
    Macro Index: Macros
    Variable Index: Variables
