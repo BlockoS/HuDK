@@ -4,12 +4,40 @@
 
 ;;
 ;; ushort: joyport
-;; IO port (named joyport for historical reasons).
+;; I/O port.
+;;
+;; The joypad port uses a 8-pin connector. 
+;;
+;;   pin 1 - Vcc
+;;   pin 2 - D0
+;;   pin 3 - D1
+;;   pin 4 - D2
+;;   pin 5 - D3
+;;   pin 6 - SEL
+;;   pin 7 - CLR
+;;   pin 8 - GND
+;;
+;; Reading <joyport> returns the states of states of pins 2,3,4 and 5 as long
+;; as the following informations :
+;;
+;;   bit 7 - CD-ROM base unit presence (<IO_CD_MASK>)
+;;   bit 6 - Country detection (<IO_COUNTRY_MASK>)
+;;   bit 5 - Unused (always 1)
+;;   bit 4 - Unused (always 1)
+;;   bit 3 - Joypad port 5 (D3)
+;;   bit 2 - Joypad port 4 (D2)
+;;   bit 1 - Joypad port 3 (D1)
+;;   bit 0 - Joypad port 2 (D0)
+;;
+;; Writing bit 0 and 1 of the <joyport> will update pin 6 and 7 states.
+;;
+;;   bit 1 - Joypad port 7 (CLR)
+;;   bit 0 - Joypad port 6 (SEL)
 ;;
 joyport = $1000
 
 ;;
-;; Group: IO port bit mask.
+;; Group: I/O port bit mask.
 ;;
 
 ;;
@@ -31,37 +59,92 @@ IO_COUNTRY_MASK = %0100_0000
 ;; bits: IO_JOYPAD_MASK
 ;; Joypad port pin.
 ;;
-;; Only the first two bits are writeable. 
+;; The first 4 bits of the <joyport> returns the states of the joypad port pins
+;; 2,3,4 and 5. 
+;; Nevertheless the standard 2-button controller has a 4-way directional pad and
+;; and 4 buttons (Select, Run, I and II). The SEL line of the I/O port selects
+;; whether the directions of the buttons state are returned when D3-D0 are read.
+;; When SEL is high, the directions are returned, and buttons are returned when
+;; it is low. Note that the state of D3-DO is inverted. 0 means that a button is
+;; pressed and 1 otherwise.
+;;
+;; >      SEL = 0      SEL = 1
+;; > D3 | Run        | Left      |
+;; > D2 | Select     | Right     |
+;; > D1 | I          | Down      |
+;; > D0 | II         | Up        |
+;;
+;; [todo] multi tap / 6 button joypad
 ;;
 IO_JOYPAD_MASK  = %0000_1111
 
-; [todo] explain joypad pins write/read
-IO_JOYPAD_I   = %0000_0001
-IO_JOYPAD_II  = %0000_0010
-IO_JOYPAD_SEL = %0000_0100
-IO_JOYPAD_RUN = %0000_1000
-IO_JOYPAD_UP    = %0000_0001
-IO_JOYPAD_RIGHT = %0000_0010
-IO_JOYPAD_DOWN  = %0000_0100
-IO_JOYPAD_LEFT  = %0000_1000
-; 6 button joypad bit values.
-IO_JOYPAD_III = %0000_0001
-IO_JOYPAD_IV  = %0000_0001
-IO_JOYPAD_V   = %0000_0001
-IO_JOYPAD_VI  = %0000_0001
+;;
+;; Group: 2-buttons Joypad Bitfield. 
+;;
 
-; Bit values for joypad bytes.
-JOY_I     = $01
-JOY_II    = $02
-JOY_SEL   = $04
-JOY_RUN   = $08
-JOY_UP    = $10
-JOY_RIGHT = $20
-JOY_DOWN  = $40
-JOY_LEFT  = $80
-; Bit values for 6 buttons joypad.
-JOY_TYPE6 = $50
-JOY_III   = $01
-JOY_IV    = $02
-JOY_V     = $04
-JOY_VI    = $04
+;;
+;; bits: IO_JOYPAD_I
+;; Bit in the <joyport> for button I (SEL=0). 
+;;
+IO_JOYPAD_I   = %0000_0001
+;;
+;; bits: IO_JOYPAD_II
+;; Bit in the <joyport> for button II (SEL=0).  
+;;
+IO_JOYPAD_II  = %0000_0010
+;;
+;; bits: IO_JOYPAD_SEL
+;; Bit in the <joyport> for the Select button (SEL=0). 
+;;
+IO_JOYPAD_SEL = %0000_0100
+;;
+;; bits: IO_JOYPAD_RUN
+;; Bit in the <joyport> for the RUN button (SEL=0). 
+;;
+IO_JOYPAD_RUN = %0000_1000
+;;
+;; bits: IO_JOYPAD_UP
+;; Bit in the <joyport> for the up direction on the D-PAD (SEL=1). 
+;;
+IO_JOYPAD_UP    = %0000_0001
+;;
+;; bits: IO_JOYPAD_RIGHT
+;; Bit in the <joyport> for the right direction on the D-PAD (SEL=1). 
+;;
+IO_JOYPAD_RIGHT = %0000_0010
+;;
+;; bits: IO_JOYPAD_DOWN
+;; Bit in the <joyport> for the down direction on the D-PAD (SEL=1). 
+;;
+IO_JOYPAD_DOWN  = %0000_0100
+;;
+;; bits: IO_JOYPAD_LEFT
+;; Bit in the <joyport> for the left direction on the D-PAD (SEL=1). 
+;;
+IO_JOYPAD_LEFT  = %0000_1000
+
+;;
+;; Group: 6-buttons Joypad Bitfield. 
+;;
+
+;;
+;; bits: IO_JOYPAD_III
+;; Bit in the <joyport> for button III on a 6-button joypad. 
+;;
+IO_JOYPAD_III = %0000_0001
+;;
+;; bits: IO_JOYPAD_IV
+;; Bit in the <joyport> for button IV on a 6-button joypad. 
+;;
+IO_JOYPAD_IV  = %0000_0010
+;;
+;; bits: IO_JOYPAD_V
+;; Bit in the <joyport> for button V on a 6-button joypad. 
+;;
+IO_JOYPAD_V   = %0000_0100
+;;
+;; bits: IO_JOYPAD_VI
+;; Bit in the <joyport> for button VI on a 6-button joypad. 
+;;
+IO_JOYPAD_VI  = %0000_1000
+
