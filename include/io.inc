@@ -74,7 +74,16 @@ IO_COUNTRY_MASK = %0100_0000
 ;; > D1 | I          | Down      |
 ;; > D0 | II         | Up        |
 ;;
-;; [todo] multi tap / 6 button joypad
+;; Unconnected controllers always return $0f in D3-DO.  
+;;
+;; 
+;; Multitap/Turbo tap:
+;; This device lets you connect 5 controllers to the joypad port. Each joypad is
+;; read sequentially. A transition from zero-to-one on the SEL while holding CLR
+;; to zero will switch to the next controller. The sequence is reset by holding
+;; SEL to 1 while doing a zero-to one transition on CLR.
+;; Note that once all 5 controllers have been read, the multitap will return 
+;; $00 for D3-D0 until the sequence is reset again.
 ;;
 IO_JOYPAD_MASK  = %0000_1111
 
@@ -147,4 +156,19 @@ IO_JOYPAD_V   = %0000_0100
 ;; Bit in the <joyport> for button VI on a 6-button joypad. 
 ;;
 IO_JOYPAD_VI  = %0000_1000
+
+;;
+;; macro: joypad_delay
+;; 9 cycles delay before reading data after SEL line update.
+;;
+;; This delay is performed after changing the SEL line before reading data.
+;; This ensures the multiplexer is ready and returns the right data.
+;; 
+  .macro joypad_delay
+    pha
+    pla
+    nop
+    nop
+  .endmacro
+
 

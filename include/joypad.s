@@ -3,28 +3,23 @@
 ;;
 
 ;;
-;; macro: joypad_delay
-;; 9 cycles delay before reading data after SEL line update.
-;;
-;; This delay is performed after changing the SEL line before reading data.
-;; This ensures the multiplexer is ready and returns the right data.
-;; 
-  .macro joypad_delay
-    pha
-    pla
-    nop
-    nop
-  .endmacro
-
-;;
 ;; function: joypad_read
 ;; Poll joypads state.
 ;;
-;; todo:
-;;   - comments
+;; This routine assumes that a multitap with 5 2-button joypads are plugged to
+;; the joypad port. 
+;;
+;; Parameters:
+;;   *none*
+;;
+;; Return:
+;;   joypad - States of the 5 joypads.
+;;
+;; Consumed:
+;;   A, X
 ;;
 joypad_read:
-    lda    #$01         ; reset multi-tap to joypad #1
+    lda    #$01         ; reset multitap to joypad #1
     sta    joyport
     lda    #$03
     sta    joyport
@@ -62,8 +57,15 @@ joypad_read:
 ;; function: joypad_6_read
 ;; Poll 6-buttons joypads state.
 ;;
-;; todo:
-;;   - comments
+;; This routines assumes that 6-button controllers may be connected to a
+;; multitap.
+;;
+;; Parameters:
+;;   *none*
+;;
+;; Return:
+;;   joypad   - directions and buttons for all 5 controllers.
+;;   joypad_6 - states of buttons III, IV, V and VI or 0 for 2-button joypads.
 ;;
 joypad_6_read:
     jsr    joypad_read      ; first scan
