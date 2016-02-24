@@ -6,7 +6,8 @@
   .include "vdc.inc"
   .include "vce.inc"
   .include "pceas/irq.inc"
-  
+  .include "pceas/vdc.inc"
+ 
   .if !(CDROM)
     ; IRQ vectors (HuCard only)
     .bank 0

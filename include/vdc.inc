@@ -441,3 +441,33 @@ VDC_DMA_DST_DEC     = %0000_1000
 ;;
 VDC_DMA_SATB_AUTO   = %0001_0000
 
+;;
+;; Group: VDC Helper Macros.
+;;
+
+;; 
+;; macro: VDC_HSR_db
+;;
+;; Compute the value of the <VDC_HSR> register for a given horizontal screen
+;; resolution. This macro outputs the result as 2 .db directives. 
+;;
+;; Assembly call:
+;;   > VDC_HSR_db xres
+;;
+;; Parameters:
+;;   xres - Horizontal screen resolution.
+;;
+
+;; 
+;; macro: VDC_HDR_db
+;;
+;; Compute the value of the <VDC_HDR> register for a given horizontal screen
+;; resolution. This macro outputs the result as 2 .db directives. 
+;;
+;; Assembly call:
+;;   > VDC_HDR_db xres
+;;
+;; Parameters:
+;;   xres - Horizontal screen resolution.
+;;
+
