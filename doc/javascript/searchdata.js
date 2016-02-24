@@ -1,5 +1,5 @@
 var indexSectionsWithContent = {
-   "Macros": {
+   "Functions": {
       "Symbols": false,
       "Numbers": false,
       "A": false,
@@ -20,10 +20,10 @@ var indexSectionsWithContent = {
       "P": false,
       "Q": false,
       "R": false,
-      "S": true,
+      "S": false,
       "T": false,
       "U": false,
-      "V": false,
+      "V": true,
       "W": false,
       "X": false,
       "Y": false,
@@ -89,7 +89,7 @@ var indexSectionsWithContent = {
       "Y": false,
       "Z": false
       },
-   "Functions": {
+   "Macros": {
       "Symbols": false,
       "Numbers": false,
       "A": false,
@@ -110,10 +110,10 @@ var indexSectionsWithContent = {
       "P": false,
       "Q": false,
       "R": false,
-      "S": false,
+      "S": true,
       "T": false,
       "U": false,
-      "V": false,
+      "V": true,
       "W": false,
       "X": false,
       "Y": false,
