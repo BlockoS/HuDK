@@ -8,4 +8,4 @@ Group: Description
 Group: Index
 
  - <VCE I/O Ports>
-
+ - <VCE Functions>

@@ -27,6 +27,8 @@
 
 	.include "psg.s"
 	.include "vdc.s"
+    .include "vce.s"
+
   .else
     ; [todo]
   .endif ; !(CDROM)

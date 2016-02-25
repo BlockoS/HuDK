@@ -471,3 +471,29 @@ VDC_DMA_SATB_AUTO   = %0001_0000
 ;;   xres - Horizontal screen resolution.
 ;;
 
+;;
+;; Group: Default VDC values.
+;;
+  .ifndef VDC_DEFAULT_BG_SIZE
+;; ushort: VDC_DEFAULT_BG_SIZE
+;; Default virtual background map size.
+VDC_DEFAULT_BG_SIZE = VDC_BG_64x64
+  .endif
+
+  .ifndef VDC_DEFAULT_XRES
+;;
+;; ushort: VDC_DEFAULT_XRES
+;; Default horizonale resolution.
+;;
+VDC_DEFAULT_XRES = 256
+  .endif
+
+  .ifndef VDC_DEFAULT_SATB_ADDR
+;;
+;; ushort: VDC_DEFAULT_SATB_ADDR
+;; Default SATB VRAM offset.
+;;
+VDC_DEFAULT_SATB_ADDR = $7F00
+  .endif
+
+

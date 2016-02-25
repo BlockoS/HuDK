@@ -59,7 +59,8 @@ Group: Audio  {
 
       File: Registers  (no auto-title, include/psg.inc)
       File: Functions.  (no auto-title, include/psg.s)
-      File: .  (include/joypad.s)
+      File: Joypad Functions.  (include/joypad.s)
+      File: VCE Functions.  (include/vce.s)
       }  # Group: PSG - Programmable Sound Generator
 
    }  # Group: Audio
@@ -73,11 +74,12 @@ Group: Video  {
       File: Functions  (no auto-title, include/vdc.s)
       }  # Group: HuC6270 - Video Display Controller (VDC)
 
-   Group: HuC6260 - Video Color Encoder (VDC)  {
+   Group: HuC6260 - Video Color Encoder (VCE)  {
 
       File: Description  (no auto-title, docs/vce.txt)
       File: I/O ports  (no auto-title, include/vce.inc)
-      }  # Group: HuC6260 - Video Color Encoder (VDC)
+      File: Functions  (no auto-title, include/vce.s)
+      }  # Group: HuC6260 - Video Color Encoder (VCE)
 
    }  # Group: Video
 

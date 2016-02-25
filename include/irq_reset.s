@@ -19,5 +19,7 @@ _init:
 	jsr    psg_init            ; initialize sound (mute everything)
     jsr    vdc_init            ; initialize display with default values
                                ; bg, sprites and display interrupts are disable
+    jsr    vce_init            ; initialize dot clock, background and border
+                               ; color.
     ; [todo] set default/dummy interrupts hooks if needed
     jmp   main    
