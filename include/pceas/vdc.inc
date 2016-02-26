@@ -1,3 +1,10 @@
+
+    .bss
+vdc_bat_width  .ds 2
+vdc_bat_height .ds 1
+vdc_bat_hmask  .ds 1
+vdc_bat_vmask  .ds 1
+
 ; Compute the value of the HSR register for a given horizontal screen
 ; resolution.
   .macro VDC_HSR_db
@@ -33,6 +40,17 @@
         ; very high resolution
         .db (82 - ((42 - (\1 / 16)) + (\1 / 8)))
       .endif
+    .endif
+  .endmacro
+
+; Initialize VDC register.
+  .macro vdc_reg
+    lda   \1
+    ; [todo] zeropage copy of the vdc register
+    .if (\?1 = ARG_IMMEDIATE)
+      st0    \1
+    .else
+      sta    video_reg
     .endif
   .endmacro
 

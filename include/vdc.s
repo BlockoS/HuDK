@@ -3,6 +3,84 @@
 ;;
 
 ;;
+;; function: vdc_set_read
+;; Set VDC VRAM read pointer.
+;;
+;; Parameters:
+;;   _di - VRAM location.
+;;
+vdc_set_read:
+    vdc_reg #VDC_MARR
+    stw    <_di, video_data
+    vdc_reg #VDC_DATA
+    rts
+
+;;
+;; function: vdc_set_write
+;; Set VDC VRAM write pointer.
+;;
+;; Parameters:
+;;   _di - VRAM location.
+;;
+vdc_set_write:
+    vdc_reg #VDC_MAWR
+    stw    <_di, video_data
+    vdc_reg #VDC_DATA
+    rts
+
+;;
+;; function: vdc_set_bat_size
+;; Set background map virtual size.
+;;
+;; Parameters:
+;;   A - BAT size (see <Background Map Virtual Size>) 
+;;
+vdc_set_bat_size:
+    and    #%0_111_0000
+    pha
+    vdc_reg #VDC_MWR
+    pla
+    sta    video_data_l
+    ; compute BAT dimensions
+    lsr    A
+    lsr    A
+    lsr    A
+    lsr    A
+    tax
+    ; -- width
+    lda    .bat_width, X
+    sta    vdc_bat_width
+    stz    vdc_bat_width+1
+    dec    A
+    sta    vdc_bat_hmask
+    ; -- height
+    lda    .bat_height, X
+    sta    vdc_bat_height
+    dec    A
+    sta    vdc_bat_vmask
+    rts
+
+; BAT width
+.bat_width:  .byte $20,$40,$80,$80,$20,$40,$80,$80
+; BAT height
+.bat_height: .byte $20,$20,$20,$20,$40,$40,$40,$40
+
+;;
+;; function: vdc_calc_addr
+;; Compute VRAM address for a given tile in BAT.
+;;
+;; Parameters:
+;;   X - BAT x coordinate.
+;;   A - BAT y coordinate.
+;;
+;; Return:
+;;   _di - VRAM location
+;;
+vdc_calc_addr:
+	; [todo]
+    rts
+
+;;
 ;; function: vdc_init
 ;; Initialize VDC.
 ;; 
@@ -27,6 +105,10 @@ vdc_init:
     cpy    #36
     bne    .l0
    
+    ; set BAT size
+    lda    #VDC_DEFAULT_BG_SIZE
+    jsr    vdc_set_bat_size
+
     ; make BAT point to a blank tile
     ; we choose a tile that will not cross bat (even for 128x128)
     st0    #VDC_MAWR

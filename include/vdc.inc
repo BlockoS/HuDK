@@ -472,6 +472,17 @@ VDC_DMA_SATB_AUTO   = %0001_0000
 ;;
 
 ;;
+;; macro: vdc_reg
+;; Initialize VDC register.
+;; 
+;; Assembly call:
+;;   > vdc_reg   #VDC_MAWR
+;;
+;; Parameters:
+;;   reg - VDC register.
+;;
+
+;;
 ;; Group: Default VDC values.
 ;;
   .ifndef VDC_DEFAULT_BG_SIZE
