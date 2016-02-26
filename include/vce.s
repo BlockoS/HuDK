@@ -30,3 +30,34 @@ vce_init:
     stwz   color_data
    
     rts
+
+;;
+;; function: vce_load_palette
+;;
+;; Parameters:
+;;   A - index of the first sub-palette (0-31)
+;;   Y - number of sub-palette to copy
+;;   _si - address of the sub-palette data
+;;
+vce_load_palette:
+    ; convert sub-palette index to color index
+    asl    A
+    asl    A
+    asl    A
+    asl    A
+    ; set VCE color index register
+    sta    color_reg.lo
+    cla
+    rol    A
+    sta    color_reg.hi
+    
+    ; copy sub-palette using tia by chunks of 32 bytes
+    memcpy_mode #SOURCE_INC_DEST_ALT
+    memcpy_args <_si, #color_data, #32
+.l0:
+    jsr    memcpy
+    addw   #32, memcpy_src
+    dey
+    bne    .l0
+
+    rts

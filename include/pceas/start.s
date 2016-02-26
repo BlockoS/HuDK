@@ -1,5 +1,8 @@
   .include "pceas/macro.inc"
   .include "pceas/word.inc"
+  .include "pceas/memcpy.inc"
+  .include "system.inc"
+  .include "memcpy.inc"
   .include "irq.inc"
   .include "io.inc"
   .include "psg.inc"
@@ -10,6 +13,7 @@
  
   .if !(CDROM)
     ; IRQ vectors (HuCard only)
+    .code
     .bank 0
     .org  $fff6
     .dw   _irq_2
