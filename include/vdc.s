@@ -81,6 +81,42 @@ vdc_calc_addr:
     rts
 
 ;;
+;; function: vdc_load_data
+;; Copy data to VRAM.
+;;
+;; Parameters:
+;;   _di - VRAM address where the data will be copied.
+;;   _bl - first bank of the source data.
+;;   _si - data address.
+;;   _cx - number of words to copy.
+;;
+vdc_load_data:
+    jsr    map_data
+    jsr    vdc_set_write
+    
+    ldx    <_cl
+    cly
+.l0:
+        lda    [_si], Y
+        sta    video_data_l
+        iny
+        lda    [_si], Y
+        sta    video_data_h
+        iny
+        bne    .l1
+            inc    <_si+1
+.l1:
+    dex
+    bne    .l0
+    jsr    remap_data 
+    dec    <_ch
+    bpl    .l0
+
+    jsr    unmap_data
+
+    rts
+
+;;
 ;; function: vdc_init
 ;; Initialize VDC.
 ;; 
@@ -174,5 +210,4 @@ vdc_init:
     .byte $13                       ; SATB adddress
     .byte low(VDC_DEFAULT_SATB_ADDR)
     .byte high(VDC_DEFAULT_SATB_ADDR)
-
 

@@ -46,6 +46,9 @@ Group: General  {
 
    File: 16-bit word macros  (no auto-title, include/word.inc)
    File: System variables  (no auto-title, include/system.inc)
+   File: Utility routines  (no auto-title, include/utils.s)
+   File: Memory copy.  (include/memcpy.inc)
+   File: System variables  (include/system.inc)
    }  # Group: General
 
 Group: Controls  {
@@ -60,10 +63,6 @@ Group: Audio  {
 
       File: Registers  (no auto-title, include/psg.inc)
       File: Functions.  (no auto-title, include/psg.s)
-      File: Joypad Functions.  (include/joypad.s)
-      File: VCE Functions.  (include/vce.s)
-      File: Memory copy.  (include/memcpy.inc)
-      File: System variables  (include/system.inc)
       }  # Group: PSG - Programmable Sound Generator
 
    }  # Group: Audio
