@@ -374,32 +374,32 @@ VDC_CR_RW_INC_128        = $1800
 ;; bits: VDC_BG_32x32
 ;; 32x32 virtual background map.
 ;;
-VDC_BG_32x32  = %0_000_0000
+VDC_BG_32x32  = %00000000
 ;;
 ;; bits: VDC_BG_64x32
 ;; 64x32 virtual background map.
 ;;
-VDC_BG_64x32  = %0_001_0000
+VDC_BG_64x32  = %00010000
 ;;
 ;; bits: VDC_BG_128x32
 ;; 128x32 virtual background map.
 ;;
-VDC_BG_128x32 = %0_010_0000
+VDC_BG_128x32 = %00100000
 ;;
 ;; bits: VDC_BG_32x64
 ;; 32x64 virtual background map.
 ;;
-VDC_BG_32x64  = %0_100_0000
+VDC_BG_32x64  = %01000000
 ;;
 ;; bits: VDC_BG_64x64
 ;; 64x64 virtual background map.
 ;;
-VDC_BG_64x64  = %0_101_0000
+VDC_BG_64x64  = %01010000
 ;;
 ;; bits: VDC_BG_128x64
 ;; 128x64 virtual background map.
 ;;
-VDC_BG_128x64 = %0_110_0000
+VDC_BG_128x64 = %01100000
 
 ;;
 ;; Group: DMA Control Register Flags.
@@ -409,37 +409,37 @@ VDC_BG_128x64 = %0_110_0000
 ;; bits: VDC_DMA_SATB_ENABLE
 ;; Enables VRAM to SATB end of transfer interrupt.
 ;;
-VDC_DMA_SATB_ENABLE = %0000_0001 
+VDC_DMA_SATB_ENABLE = %00000001 
 ;;
 ;; bits: VDC_DMA_VRAM_ENABLE
 ;; Enables VRAM to VRAM end of transfer interrupt.
 ;;
-VDC_DMA_VRAM_ENABLE = %0000_0010
+VDC_DMA_VRAM_ENABLE = %00000010
 ;;
 ;; bits: VDC_DMA_SRC_INC
 ;; Source address direction (increment).
 ;;
-VDC_DMA_SRC_INC     = %0000_0000
+VDC_DMA_SRC_INC     = %00000000
 ;;
 ;; bits: VDC_DMA_SRC_DEC
 ;; Source address direction (decrement).
 ;;
-VDC_DMA_SRC_DEC     = %0000_0100
+VDC_DMA_SRC_DEC     = %00000100
 ;;
 ;; bits: VDC_DMA_DST_INC
 ;; Destination address direction (increment).
 ;;
-VDC_DMA_DST_INC     = %0000_0000
+VDC_DMA_DST_INC     = %00000000
 ;;
 ;; bits: VDC_DMA_DST_DEC 
 ;; Destination address direction (decrement).
 ;;
-VDC_DMA_DST_DEC     = %0000_1000
+VDC_DMA_DST_DEC     = %00001000
 ;;
 ;; bits: VDC_DMA_SATB_AUTO
 ;; Enable SATB DMA auto-transfer.
 ;;
-VDC_DMA_SATB_AUTO   = %0001_0000
+VDC_DMA_SATB_AUTO   = %00010000
 
 ;;
 ;; Group: VDC Helper Macros.
