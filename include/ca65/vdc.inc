@@ -11,7 +11,7 @@ vdc_bat_vmask:  .res 1
       ; low resolution (standard)
       .byte $02					    ; Horizontal Display Start (HDS)
       .byte (18 - (xres / 16))      ; Horizontal Sync Width (HWS)
-    .elsif (xres < 356)
+    .elseif (xres < 356)
       ; high resolution
       .byte $03
       .byte (25 - (xres / 16))
@@ -24,12 +24,12 @@ vdc_bat_vmask:  .res 1
 
 ; Compute the value of the HDR register for a given horizontal screen
 ; resolution.
-  .macro VDC_HDR_db
+  .macro VDC_HDR_db xres
       .byte ((xres / 8) - 1)                          ; HDW
-    .if (\1 < 268)
+    .if (xres < 268)
       ; low resolution (standard)
       .byte (38 - ((18 - (xres / 16)) + (xres / 8)))  ; HDE
-    .elsif (\1 < 356)
+    .elseif (xres < 356)
       ; high resolution
       .byte (51 - ((25 - (xres / 16)) + (xres / 8)))
     .else
