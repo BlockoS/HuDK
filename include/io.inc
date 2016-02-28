@@ -46,7 +46,7 @@ joyport = $1000
 ;;
 ;; This bit is set to 0 if a CD-ROM is attached and 1 otherwise.
 ;;
-IO_CD_MASK      = %1000_0000
+IO_CD_MASK      = %10000000
 ;;
 ;; bits: IO_COUNTRY_MASK
 ;; Country detection.
@@ -54,7 +54,7 @@ IO_CD_MASK      = %1000_0000
 ;; This bit is set to 1 for Japanses models (PC-Engine, CoreGrafx, ...) and
 ;; is set to 0 for US models (TurboGrafx 16).
 ;;
-IO_COUNTRY_MASK = %0100_0000
+IO_COUNTRY_MASK = %01000000
 ;;
 ;; bits: IO_JOYPAD_MASK
 ;; Joypad port pin.
@@ -85,7 +85,7 @@ IO_COUNTRY_MASK = %0100_0000
 ;; Note that once all 5 controllers have been read, the multitap will return 
 ;; $00 for D3-D0 until the sequence is reset again.
 ;;
-IO_JOYPAD_MASK  = %0000_1111
+IO_JOYPAD_MASK  = %00001111
 
 ;;
 ;; Group: 2-buttons Joypad Bitfield. 
@@ -95,42 +95,42 @@ IO_JOYPAD_MASK  = %0000_1111
 ;; bits: IO_JOYPAD_I
 ;; Bit in the <joyport> for button I (SEL=0). 
 ;;
-IO_JOYPAD_I   = %0000_0001
+IO_JOYPAD_I   = %00000001
 ;;
 ;; bits: IO_JOYPAD_II
 ;; Bit in the <joyport> for button II (SEL=0).  
 ;;
-IO_JOYPAD_II  = %0000_0010
+IO_JOYPAD_II  = %00000010
 ;;
 ;; bits: IO_JOYPAD_SEL
 ;; Bit in the <joyport> for the Select button (SEL=0). 
 ;;
-IO_JOYPAD_SEL = %0000_0100
+IO_JOYPAD_SEL = %00000100
 ;;
 ;; bits: IO_JOYPAD_RUN
 ;; Bit in the <joyport> for the RUN button (SEL=0). 
 ;;
-IO_JOYPAD_RUN = %0000_1000
+IO_JOYPAD_RUN = %00001000
 ;;
 ;; bits: IO_JOYPAD_UP
 ;; Bit in the <joyport> for the up direction on the D-PAD (SEL=1). 
 ;;
-IO_JOYPAD_UP    = %0000_0001
+IO_JOYPAD_UP    = %00000001
 ;;
 ;; bits: IO_JOYPAD_RIGHT
 ;; Bit in the <joyport> for the right direction on the D-PAD (SEL=1). 
 ;;
-IO_JOYPAD_RIGHT = %0000_0010
+IO_JOYPAD_RIGHT = %00000010
 ;;
 ;; bits: IO_JOYPAD_DOWN
 ;; Bit in the <joyport> for the down direction on the D-PAD (SEL=1). 
 ;;
-IO_JOYPAD_DOWN  = %0000_0100
+IO_JOYPAD_DOWN  = %00000100
 ;;
 ;; bits: IO_JOYPAD_LEFT
 ;; Bit in the <joyport> for the left direction on the D-PAD (SEL=1). 
 ;;
-IO_JOYPAD_LEFT  = %0000_1000
+IO_JOYPAD_LEFT  = %00001000
 
 ;;
 ;; Group: 6-buttons Joypad Bitfield. 
@@ -140,22 +140,22 @@ IO_JOYPAD_LEFT  = %0000_1000
 ;; bits: IO_JOYPAD_III
 ;; Bit in the <joyport> for button III on a 6-button joypad. 
 ;;
-IO_JOYPAD_III = %0000_0001
+IO_JOYPAD_III = %00000001
 ;;
 ;; bits: IO_JOYPAD_IV
 ;; Bit in the <joyport> for button IV on a 6-button joypad. 
 ;;
-IO_JOYPAD_IV  = %0000_0010
+IO_JOYPAD_IV  = %00000010
 ;;
 ;; bits: IO_JOYPAD_V
 ;; Bit in the <joyport> for button V on a 6-button joypad. 
 ;;
-IO_JOYPAD_V   = %0000_0100
+IO_JOYPAD_V   = %00000100
 ;;
 ;; bits: IO_JOYPAD_VI
 ;; Bit in the <joyport> for button VI on a 6-button joypad. 
 ;;
-IO_JOYPAD_VI  = %0000_1000
+IO_JOYPAD_VI  = %00001000
 
 ;;
 ;; macro: joypad_delay
