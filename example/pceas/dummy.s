@@ -18,7 +18,10 @@ main:
 
     ; setup bat
     stw    #$0300, <_si
-    stw    #$0000, <_di
+
+    ldx    #0
+    lda    #1
+    jsr    vdc_calc_addr
 
     ldy    #$06
 .l0:

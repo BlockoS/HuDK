@@ -77,7 +77,33 @@ vdc_set_bat_size:
 ;;   _di - VRAM location
 ;;
 vdc_calc_addr:
-	; [todo]
+    ; BAT address formula :
+    ;   addr = (bat_y * bat_width) + bat_x
+    ; the multiplication can be safely replaced by bit shifts as bat_width
+    ; is either 32, 64 or 128.
+    phx
+    and   vdc_bat_vmask
+    stz   <_di
+    ldx   vdc_bat_width
+    cpx   #64
+    beq   .w_64
+    cpx   #128
+    beq   .w_128
+.w_32:
+    lsr   A
+    ror   <_di
+.w_64:
+    lsr   A
+    ror   <_di
+.w_128:
+    lsr   A
+    ror   <_di
+    sta   <_di+1
+    ; bat_x can be added with a simple bit OR.
+    pla
+    and   vdc_bat_hmask
+    ora   <_di
+    sta   <_di
     rts
 
 ;;
