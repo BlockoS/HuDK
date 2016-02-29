@@ -20,16 +20,16 @@ color_ctrl = colorport
 ;; VCE control table index register.
 ;;
 color_reg = colorport+2
-color_reg.lo = color_reg
-color_reg.hi = color_reg+1
+color_reg_lo = color_reg
+color_reg_hi = color_reg+1
 
 ;;
 ;; ushort: color_data
 ;; VCE Color table data register.
 ;;
 color_data = colorport+4
-color_data.lo = color_data
-color_data.hi = color_data+1
+color_data_lo = color_data
+color_data_hi = color_data+1
 
 ;;
 ;; Section: Control Register Flags.

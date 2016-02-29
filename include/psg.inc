@@ -25,15 +25,15 @@ psg_chn = psgport
 ;;
 psg_mainvol = psgport+1
 ;;
-;; ubyte: psg_freq.lo
+;; ubyte: psg_freq_lo
 ;; Fine frequency adjust.
 ;;
-psg_freq.lo = psgport+2
+psg_freq_lo = psgport+2
 ;;
-;; ubyte: psg_freq.hi
+;; ubyte: psg_freq_hi
 ;; Rough frequency adjust.
 ;;
-psg_freq.hi = psgport+3
+psg_freq_hi = psgport+3
 ;;
 ;; ubyte: psg_ctrl
 ;; Control register.
@@ -74,27 +74,27 @@ psg_lfoctrl = psgport+9
 ;; PSG control register bit masks
 ;;  1 - Channel on
 ;;  0 - Channel off
-PSG_CTRL_CHAN_ON = %1000_0000
+PSG_CTRL_CHAN_ON = %10000000
 ;;
 ;; bits: PSG_CTRL_WRITE_RESET
 ;; Reset waveform write index to 0
 ;;
-PSG_CTRL_WRITE_RESET = %0100_0000
+PSG_CTRL_WRITE_RESET = %01000000
 ;;
 ;; bits: PSG_CTRL_DDA_ON
 ;; DDA output.
 ;;  1 - on
 ;;  0 - off
 ;;
-PSG_CTRL_DDA_ON = %1100_0000
+PSG_CTRL_DDA_ON = %11000000
 ;;
 ;; bits: PSG_CTRL_VOL_MASK
 ;; Channel volume.
 ;;
-PSG_CTRL_VOL_MASK = %0001_1111
+PSG_CTRL_VOL_MASK = %00011111
 ;;
 ;; bits: PSG_CTRL_FULL_VOLUME
 ;; Channel maximum volume (bit 5 is unused)
 ;;
-PSG_CTRL_FULL_VOLUME = %0011_1111
+PSG_CTRL_FULL_VOLUME = %00111111
 

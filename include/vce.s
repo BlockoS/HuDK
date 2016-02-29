@@ -46,10 +46,10 @@ vce_load_palette:
     asl    A
     asl    A
     ; set VCE color index register
-    sta    color_reg.lo
+    sta    color_reg_lo
     cla
     rol    A
-    sta    color_reg.hi
+    sta    color_reg_hi
     
     ; copy sub-palette using tia by chunks of 32 bytes
     memcpy_mode #SOURCE_INC_DEST_ALT
