@@ -2,10 +2,18 @@
 main:
     lda    #bank(hudson.bitmap)
     sta    <_bl
-    stw    #$3000, <_di
+    stw    #$2200, <_di
     stw    #hudson.bitmap, <_si
-    stw    #(hudson.bitmap.end-hudson.bitmap), <_cx
+    stw    #((hudson.bitmap.end - hudson.bitmap) >> 1), <_cx
     jsr    vdc_load_data
+    
+    lda    #bank(font_8x8)
+    sta    <_bl
+    stw    #$2e00, <_di
+    stw    #font_8x8, <_si
+    stw    #(FONT_8x8_COUNT*8), <_cx
+    jsr    vdc_load_1bpp
+    
     
     lda    #bank(hudson.bitmap)
     sta    <_bl
@@ -17,10 +25,10 @@ main:
     jsr    vce_load_palette
 
     ; setup bat
-    stw    #$0300, <_si
+    stw    #$0220, <_si
 
     ldx    #0
-    lda    #1
+    lda    #10
     jsr    vdc_calc_addr
 
     ldy    #$06
@@ -52,3 +60,5 @@ hudson.palette:
 hudson.bitmap:
     .incbin "data/hudson.dat"
 hudson.bitmap.end:
+
+    .include "font.inc"

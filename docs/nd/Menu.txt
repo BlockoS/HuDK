@@ -49,6 +49,7 @@ Group: General  {
    File: Utility routines  (no auto-title, include/utils.s)
    File: Memory copy.  (include/memcpy.inc)
    File: System variables  (include/system.inc)
+   File: 8x8 monochrome 1bpp font.  (include/font.inc)
    }  # Group: General
 
 Group: Controls  {
