@@ -25,12 +25,12 @@ psg_chn = psgport
 ;;
 psg_mainvol = psgport+1
 ;;
-;; ubyte: psg_freq.lo
+;; ubyte: psg_freq_lo
 ;; Fine frequency adjust.
 ;;
 psg_freq_lo = psgport+2
 ;;
-;; ubyte: psg_freq.hi
+;; ubyte: psg_freq_hi
 ;; Rough frequency adjust.
 ;;
 psg_freq_hi = psgport+3
