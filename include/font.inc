@@ -120,3 +120,12 @@ font_8x8:
     .byte $00,$00,$00,$00,$00,$00,$00,$00    ;
     .byte $00,$00,$00,$00,$00,$00,$00,$00    ;
     .byte $00,$00,$00,$00,$00,$00,$00,$00    ;
+
+  .ifdef MAGICKIT
+    .include "pceas/font.inc"
+  .else
+    .ifdef CA65
+    .include "ca65/font.inc"
+    .endif
+  .endif
+

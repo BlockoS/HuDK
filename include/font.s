@@ -2,15 +2,6 @@
 ;; Title: Font routines.
 ;;
 
-  .ifdef MAGICKIT
-    .include "pceas/font.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/font.inc"
-    .endif
-  .endif
-
-    .code
 ;;
 ;; function: font_load_default
 ;; Load default font to VRAM.
