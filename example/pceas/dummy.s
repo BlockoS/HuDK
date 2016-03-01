@@ -6,14 +6,9 @@ main:
     stw    #hudson.bitmap, <_si
     stw    #((hudson.bitmap.end - hudson.bitmap) >> 1), <_cx
     jsr    vdc_load_data
-    
-    lda    #bank(font_8x8)
-    sta    <_bl
-    stw    #$2e00, <_di
-    stw    #font_8x8, <_si
-    stw    #(FONT_8x8_COUNT*8), <_cx
-    jsr    vdc_load_1bpp
-    
+   
+    stw    #$2e00, <_di 
+    jsr    font_load_default
     
     lda    #bank(hudson.bitmap)
     sta    <_bl

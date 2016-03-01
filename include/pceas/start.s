@@ -20,7 +20,7 @@
 	.include "psg.s"
 	.include "vdc.s"
     .include "vce.s"
-
+    .include "font.s"
   .else
     ; [todo]
   .endif ; !(CDROM)
