@@ -507,4 +507,10 @@ VDC_DEFAULT_XRES = 256
 VDC_DEFAULT_SATB_ADDR = $7F00
   .endif
 
-
+  .ifdef PCEAS
+    .include "pceas/vdc.inc"
+  .else
+    .ifdef CA65
+    .include "ca65/vdc.inc"
+    .endif
+  .endif

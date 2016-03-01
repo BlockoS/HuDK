@@ -1,16 +1,3 @@
-  .include "pceas/macro.inc"
-  .include "pceas/word.inc"
-  .include "pceas/memcpy.inc"
-  .include "system.inc"
-  .include "memcpy.inc"
-  .include "irq.inc"
-  .include "io.inc"
-  .include "psg.inc"
-  .include "vdc.inc"
-  .include "vce.inc"
-  .include "pceas/irq.inc"
-  .include "pceas/vdc.inc"
- 
   .if !(CDROM)
     ; IRQ vectors (HuCard only)
     .code

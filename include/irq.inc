@@ -37,4 +37,10 @@ timer_ctrl = timerport+1
     stz    timer_ctrl
   .endmacro
 
-; [todo] include compiler specific
+  .ifdef PCEAS
+    .include "pceas/irq.inc"
+  .else
+    .ifdef CA65
+    .include "ca65/irq.inc"
+    .endif
+  .endif

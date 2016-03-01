@@ -69,4 +69,12 @@ SOURCE_INC_DEST_INC = $73
 ;;   src - source.
 ;;   dst - destination.
 ;;   len - number of bytes to copy.
-;; 
+;;
+
+  .ifdef PCEAS
+    .include "pceas/memcpy.inc"
+  .else
+    .ifdef CA65
+    .include "ca65/memcpy.inc"
+    .endif
+  .endif 

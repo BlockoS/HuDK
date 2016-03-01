@@ -257,3 +257,11 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+
+  .ifdef PCEAS
+    .include "pceas/word.inc"
+  .else
+    .ifdef CA65
+    .include "ca65/word.inc"
+    .endif
+  .endif

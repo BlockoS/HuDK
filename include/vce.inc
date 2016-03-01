@@ -44,19 +44,19 @@ color_data_hi = color_data+1
 ;; Bit 7 selects the video mode. 2 modes are available : black & white, and 
 ;; color.
 ;;
-VCE_COLOR_MODE_MASK = %1_0000000
+VCE_COLOR_MODE_MASK = %10000000
 ;;
 ;; bits: VCE_BLUR_MASK
 ;; Bit 2 is used to enable or disable sprites and background characters edge
 ;; blur.
 ;;
-VCE_BLUR_MASK = %00000_1_00
+VCE_BLUR_MASK = %00000100
 ;;
 ;; bits: VCE_DOT_CLOCK_MASK
 ;; Bits 0 and 1 selects the dot clock. This determines how many pixels are
 ;; displayed on each horizontal line.
 ;;
-VCE_DOT_CLOCK_MASK  = %000000_11
+VCE_DOT_CLOCK_MASK  = %00000011
 
 ;;
 ;; Group: VCE color modes
@@ -71,7 +71,7 @@ VCE_COLOR_MODE_BW   = %1_0000000
 ;; bits: VCE_COLOR_MODE_RGB
 ;; Color video.
 ;;
-VCE_COLOR_MODE_RGB  = %0_0000000
+VCE_COLOR_MODE_RGB  = %00000000
 
 ;;
 ;; Group: VCE blur.
@@ -81,12 +81,12 @@ VCE_COLOR_MODE_RGB  = %0_0000000
 ;; bits: VCE_BLUR_ON
 ;; Blur edges of the sprites and background characters. 
 ;;
-VCE_BLUR_ON  = %00000_1_00
+VCE_BLUR_ON  = %00000100
 ;;
 ;; bits: VCE_BLUR_OFF
 ;; Disable edges blur.
 ;;
-VCE_BLUR_OFF = %00000_0_00
+VCE_BLUR_OFF = %00000000
 
 ;;
 ;; Group: VCE dot clock.
@@ -96,17 +96,17 @@ VCE_BLUR_OFF = %00000_0_00
 ;; bits: VCE_DOT_CLOCK_10MHZ
 ;; 10MHz dot clock.
 ;;
-VCE_DOT_CLOCK_10MHZ = %000000_10
+VCE_DOT_CLOCK_10MHZ = %00000010
 ;;
 ;; bits: VCE_DOT_CLOCK_7MHZ
 ;; 7MHz dot clock.
 ;;
-VCE_DOT_CLOCK_7MHZ  = %000000_01
+VCE_DOT_CLOCK_7MHZ  = %00000001
 ;;
 ;; bits: VCE_DOT_CLOCK_5MHZ
 ;; 5MHz dot clock.
 ;;
-VCE_DOT_CLOCK_5MHZ  = %000000_00
+VCE_DOT_CLOCK_5MHZ  = %00000000
 
 ;;
 ;; Group: VCE Helper Macros.
@@ -122,3 +122,10 @@ VCE_DOT_CLOCK_5MHZ  = %000000_00
 ;;   b - Blue
 ;;
 
+  .ifdef PCEAS
+    .include "pceas/vce.inc"
+  .else
+    .ifdef CA65
+    .include "ca65/vce.inc"
+    .endif
+  .endif

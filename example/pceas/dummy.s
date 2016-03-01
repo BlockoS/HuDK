@@ -1,4 +1,5 @@
-    .include "pceas/start.s"
+PCEAS=1
+    .include "hudk.s"
 main:
     lda    #bank(hudson.bitmap)
     sta    <_bl
