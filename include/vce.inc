@@ -122,7 +122,7 @@ VCE_DOT_CLOCK_5MHZ  = %00000000
 ;;   b - Blue
 ;;
 
-  .ifdef PCEAS
+  .ifdef MAGICKIT
     .include "pceas/vce.inc"
   .else
     .ifdef CA65

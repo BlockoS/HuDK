@@ -258,7 +258,7 @@
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
 
-  .ifdef PCEAS
+  .ifdef MAGICKIT
     .include "pceas/word.inc"
   .else
     .ifdef CA65

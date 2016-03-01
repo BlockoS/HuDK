@@ -71,7 +71,7 @@ SOURCE_INC_DEST_INC = $73
 ;;   len - number of bytes to copy.
 ;;
 
-  .ifdef PCEAS
+  .ifdef MAGICKIT
     .include "pceas/memcpy.inc"
   .else
     .ifdef CA65

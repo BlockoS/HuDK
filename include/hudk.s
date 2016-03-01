@@ -1,4 +1,4 @@
-  .ifdef PCEAS
+  .ifdef MAGICKIT
     .include "pceas/macro.inc"
   .endif
     .include "word.inc"
@@ -10,7 +10,7 @@
     .include "vdc.inc"
     .include "vce.inc"
 
-  .ifdef PCEAS
+  .ifdef MAGICKIT
     .include "pceas/start.s"
   .else
     .ifdef CA65

@@ -1,4 +1,3 @@
-PCEAS=1
     .include "hudk.s"
 main:
     lda    #bank(hudson.bitmap)

@@ -37,7 +37,7 @@ timer_ctrl = timerport+1
     stz    timer_ctrl
   .endmacro
 
-  .ifdef PCEAS
+  .ifdef MAGICKIT
     .include "pceas/irq.inc"
   .else
     .ifdef CA65
