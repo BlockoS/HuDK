@@ -36,7 +36,7 @@ vdc_set_write:
 ;;   A - BAT size (see <Background Map Virtual Size>) 
 ;;
 vdc_set_bat_size:
-    and    #%0_111_0000
+    and    #%01110000
     pha
     vdc_reg #VDC_MWR
     pla
