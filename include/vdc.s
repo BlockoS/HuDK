@@ -48,22 +48,22 @@ vdc_set_bat_size:
     lsr    A
     tax
     ; -- width
-    lda    .bat_width, X
+    lda    bat_width_array, X
     sta    vdc_bat_width
     stz    vdc_bat_width+1
     dec    A
     sta    vdc_bat_hmask
     ; -- height
-    lda    .bat_height, X
+    lda    bat_height_array, X
     sta    vdc_bat_height
     dec    A
     sta    vdc_bat_vmask
     rts
 
 ; BAT width
-.bat_width:  .byte $20,$40,$80,$80,$20,$40,$80,$80
+bat_width_array:  .byte $20,$40,$80,$80,$20,$40,$80,$80
 ; BAT height
-.bat_height: .byte $20,$20,$20,$20,$40,$40,$40,$40
+bat_height_array: .byte $20,$20,$20,$20,$40,$40,$40,$40
 
 ;;
 ;; function: vdc_calc_addr
