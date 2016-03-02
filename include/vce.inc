@@ -66,7 +66,7 @@ VCE_DOT_CLOCK_MASK  = %00000011
 ;; bits: VCE_COLOR_MODE_BW
 ;; Black and white video.
 ;;
-VCE_COLOR_MODE_BW   = %1_0000000
+VCE_COLOR_MODE_BW   = %10000000
 ;;
 ;; bits: VCE_COLOR_MODE_RGB
 ;; Color video.
