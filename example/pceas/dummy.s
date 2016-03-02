@@ -1,6 +1,6 @@
     .include "hudk.s"
 main:
-    lda    #bank(hudson.bitmap)
+    lda    #.bank(hudson.bitmap)
     sta    <_bl
     stw    #$2200, <_di
     stw    #hudson.bitmap, <_si
@@ -8,9 +8,13 @@ main:
     jsr    vdc_load_data
    
     stw    #$2e00, <_di 
-    jsr    font_load_default
+    lda    #.bank(font_8x8)
+    sta    <_bl
+    stw    #font_8x8, <_si
+    stw    #(FONT_8x8_COUNT*8), <_cx
+    jsr    font_load
     
-    lda    #bank(hudson.bitmap)
+    lda    #.bank(hudson.bitmap)
     sta    <_bl
     stw    #hudson.palette, <_si
     jsr    map_data

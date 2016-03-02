@@ -3,8 +3,8 @@
 ;;
 
 ;;
-;; function: font_load_default
-;; Load default font to VRAM.
+;; function: font_load
+;; Load 1bpp font to VRAM.
 ;;
 ;; Load a 8x8 1bpp font and set font base address for text
 ;; display routines.
@@ -17,8 +17,11 @@
 ;;
 ;; Parameters:
 ;;   _di - VRAM address where the font will be copied.
+;;   _bl - font bank
+;;   _si - font address
+;;   _cx - number of characters to load
 ;;
-font_load_default:
+font_load:
     ; font_base = _di >> 4
     lda    <_di+1
     sta    <font_base+1
@@ -33,10 +36,6 @@ font_load_default:
     ror    A
     sta    <font_base
  
-    lda    #bank(font_8x8)
-    sta    <_bl
-    stw    #font_8x8, <_si
-    stw    #(FONT_8x8_COUNT*8), <_cx
     jsr    map_data
     jsr    vdc_set_write
     
