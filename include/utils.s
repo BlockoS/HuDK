@@ -16,16 +16,16 @@
 map_data:
     ldx    <_bl
     ; save mpr 3 and 4.
-    tma    #03
+    tma3
     sta    <_bl
-    tma    #04
+    tma4
     sta    <_bh
 
     ; map bank
     txa
-    tam    #03
+    tam3
     inc    A
-    tam    #04
+    tam4
 
     ; remap data address
     lda    <_si+1
@@ -50,10 +50,10 @@ remap_data:
         sec
         sbc    #$20
         sta    <_si+1
-        tma    #04
-        tam    #03
+        tma4
+        tam3
         inc    A
-        tam    #04
+        tam4
 .l0:
     rts
 
@@ -66,7 +66,7 @@ remap_data:
 ;;
 unmap_data:
     lda    <_bl
-    tam    #03
+    tam3
     lda    <_bh
-    tam    #04
+    tam4
     rts
