@@ -7,12 +7,39 @@
 ;; >@ABCDEFGHIJKLMNO
 ;; >PQRSTUVWXYZ[\]^_
 ;; > abcdefghijklmno
-;; >pqrstuvwxyz
+;; >pqrstuvwxyz{|}~
 
 ;;
 ;; ubyte: FONT_8x8_COUNT
 ;; Number of characters embedded in the font.
 FONT_8x8_COUNT=$60
+
+;;
+;; ubyte: FONT_8x8_ASCII_FIRST
+;; ASCII code of the first font character.
+;;
+FONT_ASCII_FIRST=$20
+;;
+;; ubyte: FONT_8x8_ASCII_LAST
+;; ASCII code of the last font character.
+;;
+FONT_ASCII_LAST =$7e
+
+;;
+;; ubyte: FONT_DIGIT_INDEX
+;; Tile index of the first digit character ('0').
+;;
+FONT_DIGIT_INDEX=$10
+;;
+;; ubyte: FONT_UPPER_CASE_INDEX
+;; Tile index of the first uppercase character ('A').
+;;
+FONT_UPPER_CASE_INDEX=$21
+;;
+;; ubyte: FONT_LOWER_CASE_INDEX
+;; Tile index of the first lowercase character ('a').
+;;
+FONT_LOWER_CASE_INDEX=$41
 
 ;;
 ;; array: font_8x8
@@ -115,10 +142,10 @@ font_8x8:
     .byte $00,$00,$c6,$6c,$10,$6c,$c6,$00    ;x
     .byte $00,$00,$66,$66,$66,$3e,$06,$3c    ;y
     .byte $00,$00,$fe,$0c,$38,$60,$fe,$00    ;z
-    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;
-    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;
-    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;
-    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;
+    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;{ [todo]
+    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;| [todo]
+    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;} [todo]
+    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;~ [todo]
     .byte $00,$00,$00,$00,$00,$00,$00,$00    ;
 
   .ifdef MAGICKIT

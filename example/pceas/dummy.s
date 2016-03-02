@@ -40,6 +40,16 @@ main:
     dey
     bne   .l0
 
+    ldx   #12
+    lda   #5
+    jsr   vdc_calc_addr
+    jsr   vdc_set_write
+
+    lda    #'H'
+    jsr    print_char
+    lda    #$01
+    jsr    print_digit
+
     ; enable background display
     vdc_reg #VDC_CR
     stw    #(VDC_CR_BG_ENABLE), video_data

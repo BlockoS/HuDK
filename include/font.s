@@ -32,7 +32,7 @@ font_load_default:
     lda    #bank(font_8x8)
     sta    <_bl
     stw    #font_8x8, <_si
-    stw    #(FONT_8x8_COUNT*3), <_cx
+    stw    #(FONT_8x8_COUNT*8), <_cx
     jmp    vdc_load_1bpp
 
 ;;
