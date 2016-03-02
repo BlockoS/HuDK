@@ -10,7 +10,11 @@
 ;; display routines.
 ;; The first 96 characters of the font must match the ones
 ;; of the [$20,$7A] range of the ASCII table. 
-;; 
+;;
+;; Note:
+;; Background color for the font is the palette entry #2.
+;; Whereas foreground color is at index #1.
+;;
 ;; Parameters:
 ;;   _di - VRAM address where the font will be copied.
 ;;
@@ -33,7 +37,49 @@ font_load_default:
     sta    <_bl
     stw    #font_8x8, <_si
     stw    #(FONT_8x8_COUNT*8), <_cx
-    jmp    vdc_load_1bpp
+    jsr    map_data
+    jsr    vdc_set_write
+    
+    ldx    <_cl
+    beq    .l3
+    cly
+.l0:
+        lda    [_si], Y
+        sta    video_data_l     ; bitplane #0
+        eor    #$ff
+        sta    video_data_h     ; bitplane #1
+        iny
+        cpy    #$08
+        bne    .l2
+            cly
+            ; unroll loop for the last 2 bitplanes
+            st1    #$00         ; bitplane #2
+            st2    #$00         ; bitplane #3
+            st2    #$00         ; bitplane #2+3
+            st2    #$00
+            st2    #$00
+            st2    #$00
+            st2    #$00
+            st2    #$00
+            st2    #$00
+
+            lda    <_si         ; increment source pointer
+            clc
+            adc    #$08
+            sta    <_si
+            bcc    .l2
+                inc    <_si+1
+.l2:
+    dex
+    bne    .l0
+    jsr    remap_data 
+.l3:
+    dec    <_ch
+    bpl    .l0
+
+    jsr    unmap_data
+
+    rts
 
 ;;
 ;; function: font_set_addr

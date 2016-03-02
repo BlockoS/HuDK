@@ -143,59 +143,6 @@ vdc_load_data:
     jsr    unmap_data
 
     rts
-;;
-;; function: vdc_load_1bpp
-;; Copy data to the first bitplane of VRAM.
-;;
-;; Parameters:
-;;   _di - VRAM address where the data will be copied.
-;;   _bl - first bank of the source data.
-;;   _si - data address.
-;;   _cx - number of bytes to copy.
-;;
-vdc_load_1bpp:
-    jsr    map_data
-    jsr    vdc_set_write
-    
-    ldx    <_cl
-    beq    .l3
-    cly
-.l0:
-        lda    [_si], Y
-        sta    video_data_l     ; bitplane #0
-        st2    #$00             ; bitplane #1
-        iny
-        cpy    #$08
-        bne    .l2
-            cly
-            ; unroll loop for the last 2 bitplanes
-            st1    #$00         ; bitplane #2
-            st2    #$00         ; bitplane #3
-            st2    #$00         ; bitplane #2+3
-            st2    #$00
-            st2    #$00
-            st2    #$00
-            st2    #$00
-            st2    #$00
-            st2    #$00
-
-            lda    <_si         ; increment source pointer
-            clc
-            adc    #$08
-            sta    <_si
-            bcc    .l2
-                inc    <_si+1
-.l2:
-    dex
-    bne    .l0
-    jsr    remap_data 
-.l3:
-    dec    <_ch
-    bpl    .l0
-
-    jsr    unmap_data
-
-    rts
 
 ;;
 ;; function: vdc_init
