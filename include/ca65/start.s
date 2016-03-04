@@ -19,6 +19,7 @@
     .include "vdc.s"
     .include "vce.s"
     .include "font.s"
+    .include "print.s"
   .else
     ; [todo]
   .endif ; !(CDROM)
