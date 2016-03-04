@@ -21,7 +21,7 @@ OBJECT_CA65  = $(EXAMPLE_CA65)/dummy.o
 LINK_CA65    = $(EXAMPLE_CA65)/dummy.cfg
 OUTPUT_CA65  = $(EXAMPLE_CA65)/dummy.pce
 
-CA65_FEATURES = --feature bracket_as_indirect --feature underline_in_numbers
+CA65_FEATURES = --feature bracket_as_indirect
 CA65_INCLUDES = -I example -I include
 
 CA65_FLAGS  = -DCA65 $(CA65_FEATURES) $(CA65_INCLUDES) -t pce -v
