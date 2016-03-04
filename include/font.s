@@ -114,9 +114,11 @@ font_set_addr:
 ;;   A - Palette index.
 ;;
 font_set_pal:
+    sax
     lda    <font_base+1
     and    #$0f
     sta    <_al
+    sax
     asl    A
     asl    A
     asl    A

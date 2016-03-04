@@ -16,11 +16,11 @@ main:
     
     lda    #.bank(hudson.bitmap)
     sta    <_bl
+
     stw    #hudson.palette, <_si
     jsr    map_data
-
     cla
-    ldy    #$01
+    ldy    #$02
     jsr    vce_load_palette
 
     ; setup bat
@@ -42,17 +42,22 @@ main:
         dex
         bne    .l1
     dey
-    bne   .l0
+    bne    .l0
 
-    ldx   #12
-    lda   #5
-    jsr   vdc_calc_addr
-    jsr   vdc_set_write
-
-    lda    #'H'
-    jsr    print_char
     lda    #$01
-    jsr    print_digit
+    jsr    font_set_pal
+
+    ldx    #7
+    lda    #1
+    jsr    vdc_calc_addr
+    jsr    vdc_set_write
+
+    lda    #18
+    sta    <_al
+    lda    #7
+    sta    <_ah
+	stw    #ascii_string, <_si
+    jsr    print_string
 
     ; enable background display
     vdc_reg #VDC_CR
@@ -60,11 +65,17 @@ main:
 
     bra    *
 
+ascii_string:
+    .db "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
+    .db "Aenean commodo ligula eget dolor.\nAenean massa.",$00
+    
     .bank  $01
     .org   $6000
 
 hudson.palette:
     .incbin "data/hudson.pal"
+    .dw $0000, $01ff, $0007, $0000, $0000, $0000, $0000, $0000
+    .dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 
 hudson.bitmap:
     .incbin "data/hudson.dat"

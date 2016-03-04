@@ -81,10 +81,37 @@ print_digit:
 ;;
 ;; Parameters:
 ;;   _si - string address
-;;   _cx - string length
 ;;   _al - textarea width
 ;;   _ah - textarea height
 ;;
 print_string:
+    ldx    <_ah
+@print_loop:
+    cly
+@print_line:
+        lda    [_si], Y
+        beq    @end             ; end of line
+        iny
+        cmp    #$0a             ; newline
+        beq    @next_line
+        jsr    print_char
+       
+        cpy    <_al
+        bne    @print_line
+@next_line:
+    dex
+    beq    @end
 
+    tya
+    clc
+    adc    <_si
+    sta    <_si
+    bcc    @l0
+        inc    <_si+1
+@l0:
+    addw   vdc_bat_width, <_di    
+    jsr    vdc_set_write
+
+    bra    @print_loop
+@end:
     rts
