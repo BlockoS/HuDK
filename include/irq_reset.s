@@ -7,9 +7,9 @@ _reset:
     ldx    #$ff                ; initialize the stack pointer
     txs
     lda    #$ff                ; maps the I/O to the first page
-    tam    #$00
+    tam0
     lda    #$f8                ; and the RAM bank to the second page
-    tam    #$01
+    tam1
     stz    <$00                ; clear RAM
     tii    $2000, $2001, $1fff
     timer_disable              ; disable timer
