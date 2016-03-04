@@ -21,7 +21,10 @@ OBJECT_CA65  = $(EXAMPLE_CA65)/dummy.o
 LINK_CA65    = $(EXAMPLE_CA65)/dummy.cfg
 OUTPUT_CA65  = $(EXAMPLE_CA65)/dummy.pce
 
-CA65_FLAGS  = -DCA65 -I example -I include -t pce -v
+CA65_FEATURES = --feature bracket_as_indirect --feature underline_in_numbers
+CA65_INCLUDES = -I example -I include
+
+CA65_FLAGS  = -DCA65 $(CA65_FEATURES) $(CA65_INCLUDES) -t pce -v
 LD65_FLAGS  = -o $(OUTPUT_CA65) -C $(LINK_CA65)
 #==============================================================================#
 .phony: all ca65 pceas clean
@@ -33,8 +36,8 @@ pceas:
 
 ca65:
 	@echo ca65 example still not finished yet
-#	$(CA65) $(CA65_FLAGS) $(SOURCE_CA65)
-#	$(LD65) $(LD65_FLAGS) $(OBJECT_CA65)
+	$(CA65) $(CA65_FLAGS) $(SOURCE_CA65)
+	$(LD65) $(LD65_FLAGS) $(OBJECT_CA65)
 
 clean:
 	$(RM) $(OUTPUT_PCEAS) $(SYMBOLS_PCEAS)
