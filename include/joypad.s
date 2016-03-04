@@ -26,7 +26,7 @@ joypad_read:
     joypad_delay
 
     clx
-.loop:
+@loop:
     lda    #$01         ; read directions (SEL=1)
     sta    joyport
     joypad_delay
@@ -49,7 +49,7 @@ joypad_read:
 
     inx
     cpx    #$05
-    bcc    .loop
+    bcc    @loop
 
     rts
 
@@ -89,24 +89,24 @@ joypad_6_read:
     ; so that joypad contains the directions and standard buttons and joypad_6
     ; the extra buttons or 0 for a 2-buttons joypad.
     clx
-.l0:
+@l0:
     lda    joypad_6, X
     tay
     and    #$f0
     cmp    #$f0
-    beq    .no_swap
+    beq    @no_swap
        lda    joypad, X
        sta    joypad_6, X
        say
        sta    joypad, X
-.no_swap:
+@no_swap:
     ; now set joypad_6 entry to zero for 2-buttons joypads.
     tya
     and    #$f0
     cmp    #$f0
-    bne    .no_reset
+    bne    @no_reset
         stz    joypad_6, X
-.no_reset: 
+@no_reset: 
     inx
     cpx    #$05
     bne    .l0

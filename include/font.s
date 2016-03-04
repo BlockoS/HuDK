@@ -40,16 +40,16 @@ font_load:
     jsr    vdc_set_write
     
     ldx    <_cl
-    beq    .l3
+    beq    @l3
     cly
-.l0:
+@l0:
         lda    [_si], Y
         sta    video_data_l     ; bitplane #0
         eor    #$ff
         sta    video_data_h     ; bitplane #1
         iny
         cpy    #$08
-        bne    .l2
+        bne    @l2
             cly
             ; unroll loop for the last 2 bitplanes
             st1    #$00         ; bitplane #2
@@ -66,15 +66,15 @@ font_load:
             clc
             adc    #$08
             sta    <_si
-            bcc    .l2
+            bcc    @l2
                 inc    <_si+1
-.l2:
+@l2:
     dex
-    bne    .l0
+    bne    @l0
     jsr    remap_data 
-.l3:
+@l3:
     dec    <_ch
-    bpl    .l0
+    bpl    @l0
 
     jsr    unmap_data
 

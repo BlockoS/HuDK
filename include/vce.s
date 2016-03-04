@@ -54,10 +54,10 @@ vce_load_palette:
     ; copy sub-palette using tia by chunks of 32 bytes
     memcpy_mode #SOURCE_INC_DEST_ALT
     memcpy_args <_si, #color_data, #32
-.l0:
+@l0:
     jsr    memcpy
     addw   #32, memcpy_src
     dey
-    bne    .l0
+    bne    @l0
 
     rts

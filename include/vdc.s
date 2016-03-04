@@ -86,16 +86,16 @@ vdc_calc_addr:
     stz   <_di
     ldx   vdc_bat_width
     cpx   #64
-    beq   .w_64
+    beq   @w_64
     cpx   #128
-    beq   .w_128
-.w_32:
+    beq   @w_128
+@w_32:
     lsr   A
     ror   <_di
-.w_64:
+@w_64:
     lsr   A
     ror   <_di
-.w_128:
+@w_128:
     lsr   A
     ror   <_di
     sta   <_di+1
@@ -121,24 +121,24 @@ vdc_load_data:
     jsr    vdc_set_write
     
     ldx    <_cl
-    beq    .l2
+    beq    @l2
     cly
-.l0:
+@l0:
         lda    [_si], Y
         sta    video_data_l
         iny
         lda    [_si], Y
         sta    video_data_h
         iny
-        bne    .l1
+        bne    @l1
             inc    <_si+1
-.l1:
+@l1:
     dex
-    bne    .l0
+    bne    @l0
     jsr    remap_data 
-.l2:
+@l2:
     dec    <_ch
-    bpl    .l0
+    bpl    @l0
 
     jsr    unmap_data
 
@@ -156,18 +156,18 @@ vdc_load_data:
 ;;
 vdc_init:
     cly
-.l0:
-    lda    .vdc_init_table, Y
+@l0:
+    lda    @vdc_init_table, Y
     sta    video_reg
     iny
-    lda    .vdc_init_table, Y
+    lda    @vdc_init_table, Y
     sta    video_data_l
     iny
-    lda    .vdc_init_table, Y
+    lda    @vdc_init_table, Y
     sta    video_data_h
     iny
     cpy    #36
-    bne    .l0
+    bne    @l0
    
     ; set BAT size
     lda    #VDC_DEFAULT_BG_SIZE
@@ -180,47 +180,47 @@ vdc_init:
     st2    #$00
 
   .if (VDC_DEFAULT_BG_SIZE = VDC_BG_32x32)
-.tile_addr = (32*32*2)
+@tile_addr = (32*32*2)
   .else
     .if ((VDC_DEFAULT_BG_SIZE = VDC_BG_64x32) | (VDC_DEFAULT_BG_SIZE = VDC_BG_32x64))
-.tile_addr = (64*32*2)
+@tile_addr = (64*32*2)
     .else
       .if ((VDC_DEFAULT_BG_SIZE = VDC_BG_64x64) | (VDC_DEFAULT_BG_SIZE = VDC_BG_128x32))
-.tile_addr = (64*64*2)
+@tile_addr = (64*64*2)
       .else
-.tile_addr = (128*128*2)
+@tile_addr = (128*128*2)
       .endif
     .endif
   .endif
     st0    #VDC_DATA
-    ldy    #high(.tile_addr)
-.l1:
+    ldy    #high(@tile_addr)
+@l1:
     clx
-.l2:
-        st1    #low(.tile_addr>>4)
-        st2    #high(.tile_addr>>4)
+@l2:
+        st1    #low(@tile_addr>>4)
+        st2    #high(@tile_addr>>4)
         inx
-        bne    .l2
+        bne    @l2
     dey
-    bne    .l1
+    bne    @l1
 
     ; clear tile
     st0    #VDC_MAWR
-    st1    #low(.tile_addr)
-    st2    #high(.tile_addr)
+    st1    #low(@tile_addr)
+    st2    #high(@tile_addr)
 
     st0    #VDC_DATA
     st1    #$00
     ldx    #$10
-.l3:
+@l3:
         st2    #$00
     dex
-    bne    .l3
+    bne    @l3
  
     rts
 
 ; Default VDC initialization table.
-.vdc_init_table:
+@vdc_init_table:
     .byte $05, $00, $00             ; CR  control register
     .byte $06, $00, $00             ; RCR scanline interrupt counter
     .byte $07, $00, $00             ; BXR background horizontal scroll offset

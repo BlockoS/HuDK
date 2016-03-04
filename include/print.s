@@ -28,12 +28,12 @@
 print_char:
     sec
     sbc    #FONT_ASCII_FIRST
-    bcc    .unknown 
+    bcc    @unknown 
     cmp    #FONT_8x8_COUNT
-    bcc    .go 
-.unknown:
+    bcc    @go 
+@unknown:
       lda    #$1f        ; '?'
-.go:
+@go:
     clc
     adc     <font_base
     sta     video_data_l
@@ -54,10 +54,10 @@ print_char:
 ;;
 print_digit:
     cmp    #10
-    bcc    .l0
+    bcc    @l0
         ; The digit is out of bound.
         lda    #$0f     ; '?'
-.l0:
+@l0:
     clc
     adc    #FONT_DIGIT_INDEX
     clc
@@ -68,3 +68,23 @@ print_digit:
     sta     video_data_h
     rts
 
+;;
+;; function : print_string
+;; Display a null (0) terminated string.
+;;              
+;; The characters must have been previously converted to fit to current font. 
+;; Currently line feed and carriage return are not supported. No clamping is 
+;; performed either. 
+;;
+;; Remark:
+;; The VDC write register must point to a valid BAT location.
+;;
+;; Parameters:
+;;   _si - string address
+;;   _cx - string length
+;;   _al - textarea width
+;;   _ah - textarea height
+;;
+print_string:
+
+    rts

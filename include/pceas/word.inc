@@ -73,9 +73,9 @@
 ; Increment a word-sized value at stated memory location.
   .macro incw
     inc    \1
-    bne    .x_\@
+    bne    @x_\@
     inc    \1+1
-.x_\@:
+@x_\@:
   .endmacro
 
 ; Decrement a word-sized value at stated memory location.

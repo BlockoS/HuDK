@@ -46,7 +46,7 @@ map_data:
 remap_data:
     ; check if data needs to be remapped
     lda    <_si+1
-    bpl    .l0
+    bpl    @l0
         sec
         sbc    #$20
         sta    <_si+1
@@ -54,7 +54,7 @@ remap_data:
         tam3
         inc    A
         tam4
-.l0:
+@l0:
     rts
 
 ;;

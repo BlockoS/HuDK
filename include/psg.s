@@ -17,12 +17,12 @@ psg_init:
    stz    psg_lfoctrl        ; disable LFO
 
    lda    #(PSG_CHAN_COUNT-1)
-.loop:
+@loop:
    sta    psg_chn            ; set channel to use
    stz    psg_ctrl           ; disable channel
    stz    psg_pan            ; mute channel
    dec    A
-   bpl    .loop
+   bpl    @loop
 
    lda    #4                 ; disable noise for the last 2 channels
    sta    psg_chn
