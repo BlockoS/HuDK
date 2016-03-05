@@ -69,7 +69,7 @@ print_digit:
     rts
 
 ;;
-;; function : print_string
+;; function: print_string
 ;; Display a null (0) terminated string.
 ;;              
 ;; The characters must have been previously converted to fit to current font. 
@@ -80,9 +80,9 @@ print_digit:
 ;; The VDC write register must point to a valid BAT location.
 ;;
 ;; Parameters:
-;;   _si - string address
-;;   _al - textarea width
-;;   _ah - textarea height
+;;   _si - string address.
+;;   _al - textarea width.
+;;   _ah - textarea height.
 ;;
 print_string:
     ldx    <_ah
