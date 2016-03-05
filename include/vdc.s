@@ -145,6 +145,58 @@ vdc_load_data:
     rts
 
 ;;
+;; function: vdc_fill_bat
+;; Set an area in BAT to a given tile and palette.
+;;
+;; Parameters:
+;;   X - BAT x position.
+;;   A - BAT y position.
+;;   _al - BAT area width. 
+;;   _ah - BAT area height.
+;;   _si - Tile offset
+;;   _bl - Palette index
+;;
+vdc_fill_bat:
+    jsr   vdc_calc_addr
+
+    lda    <_si
+    ; bat_data = (_bl<<12) | (_si>>4)
+    lsr    <_bl
+    ror    <_si+1
+    ror    A
+
+    lsr    <_bl
+    ror    <_si+1
+    ror    A
+
+    lsr    <_bl
+    ror    <_si+1
+    ror    A
+    
+    lsr    <_bl
+    ror    <_si+1
+    ror    A
+
+vdc_fill_bat_ex:    
+    sta    video_data_l
+
+    ldy    <_ah
+@l0:
+    jsr    vdc_set_write
+    addw   vdc_bat_width, <_di
+
+    ldx    <_al    
+@l1:
+        lda    <_si+1
+        sta    video_data_h
+
+        dex
+        bne    @l1
+    dey
+    bne    @l0
+    rts
+
+;;
 ;; function: vdc_init
 ;; Initialize VDC.
 ;; 

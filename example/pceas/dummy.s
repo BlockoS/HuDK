@@ -47,18 +47,25 @@ main:
     lda    #$01
     jsr    font_set_pal
 
-    ldx    #7
-    lda    #1
-    jsr    vdc_calc_addr
-    jsr    vdc_set_write
-
+	stw    #ascii_string, <_si
     lda    #18
     sta    <_al
     lda    #7
     sta    <_ah
-	stw    #ascii_string, <_si
+    ldx    #7
+    lda    #1
     jsr    print_string
 
+    lda    #18
+    sta    <_al
+    lda    #5
+    sta    <_ah
+    lda    #'#'
+    sta    <_bl
+    ldx    #02
+    lda    #17
+    jsr    print_fill
+ 
     ; enable background display
     vdc_reg #VDC_CR
     stw    #(VDC_CR_BG_ENABLE), video_data

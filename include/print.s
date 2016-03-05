@@ -81,12 +81,23 @@ print_digit:
 ;;
 ;; Parameters:
 ;;   _si - string address.
+;;     X - textarea x tile position.
+;;     A - textarea y tile position.
 ;;   _al - textarea width.
 ;;   _ah - textarea height.
 ;;
+;; Return:
+;;   _cl
+;;   _ch
+;;
 print_string:
+    jsr    vdc_calc_addr 
+
     ldx    <_ah
 @print_loop:
+    jsr    vdc_set_write
+    addw   vdc_bat_width, <_di    
+
     cly
 @print_line:
         lda    [_si], Y
@@ -109,9 +120,39 @@ print_string:
     bcc    @l0
         inc    <_si+1
 @l0:
-    addw   vdc_bat_width, <_di    
-    jsr    vdc_set_write
-
     bra    @print_loop
 @end:
     rts
+
+;;
+;; function: print_fill
+;; Fill an area with a given character.
+;;
+;; Parameters:
+;;   X - BAT x position.
+;;   A - BAT y position.
+;;   _al - BAT area width. 
+;;   _ah - BAT area height.
+;;   _bl - ASCII code.
+;;
+print_fill:
+    jsr    vdc_calc_addr
+
+    lda    <_bl
+    sec
+    sbc    #FONT_ASCII_FIRST
+    bcc    @unknown 
+    cmp    #FONT_8x8_COUNT
+    bcc    @go 
+@unknown:
+      cla
+@go:
+    clc
+    adc     <font_base
+    pha
+    cla
+    adc     <font_base+1
+    sta     <_si+1
+
+    pla
+    jmp    vdc_fill_bat_ex
