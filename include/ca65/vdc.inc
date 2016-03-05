@@ -45,7 +45,7 @@ vdc_bat_vmask:  .res 1
     .if (.match (.left (1, {reg}), #))
       st0    reg
     .else
-      sta    video_reg
+      sta    a:video_reg
     .endif
   .endmacro
 
