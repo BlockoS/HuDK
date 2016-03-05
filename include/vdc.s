@@ -245,12 +245,12 @@ vdc_init:
     .endif
   .endif
     st0    #VDC_DATA
-    ldy    #high(@tile_addr)
+    ldy    #.hibyte(@tile_addr)
 @l1:
     clx
 @l2:
-        st1    #low(@tile_addr>>4)
-        st2    #high(@tile_addr>>4)
+        st1    #.lobyte(@tile_addr>>4)
+        st2    #.hibyte(@tile_addr>>4)
         inx
         bne    @l2
     dey
@@ -258,8 +258,8 @@ vdc_init:
 
     ; clear tile
     st0    #VDC_MAWR
-    st1    #low(@tile_addr)
-    st2    #high(@tile_addr)
+    st1    #.lobyte(@tile_addr)
+    st2    #.hibyte(@tile_addr)
 
     st0    #VDC_DATA
     st1    #$00
@@ -288,6 +288,6 @@ vdc_init:
     .byte $0E, $0C, $00             ; VCR +
     .byte $0F, $10, $00             ; DCR DMA control register
     .byte $13                       ; SATB adddress
-    .byte low(VDC_DEFAULT_SATB_ADDR)
-    .byte high(VDC_DEFAULT_SATB_ADDR)
+    .byte .lobyte(VDC_DEFAULT_SATB_ADDR)
+    .byte .hibyte(VDC_DEFAULT_SATB_ADDR)
 
