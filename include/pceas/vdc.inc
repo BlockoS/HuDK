@@ -54,3 +54,28 @@ vdc_bat_vmask  .ds 1
     .endif
   .endmacro
 
+; Set VDC data.
+  .macro vdc_data
+  .if (\# = 1)
+    lda    LOW_BYTE \1
+    sta    video_data_l
+    lda    HIGH_BYTE \1
+    sta    video_data_h
+  .else
+    lda    \1
+    sta    video_data_l
+    lda    \2
+    sta    video_data_h
+  .endif
+  .endmacro
+
+; Set VDC data LSB.
+  .macro vdc_data_l
+    sta    video_data_l
+  .endm
+
+; Set VDC data MSB.
+  .macro vdc_data_h
+    sta    video_data_h
+  .endm
+

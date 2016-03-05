@@ -10,9 +10,9 @@
 ;;   _di - VRAM location.
 ;;
 vdc_set_read:
-    vdc_reg #VDC_MARR
-    stw    <_di, video_data
-    vdc_reg #VDC_DATA
+    vdc_reg  #VDC_MARR
+    vdc_data <_di
+    vdc_reg  #VDC_DATA
     rts
 
 ;;
@@ -23,9 +23,9 @@ vdc_set_read:
 ;;   _di - VRAM location.
 ;;
 vdc_set_write:
-    vdc_reg #VDC_MAWR
-    stw    <_di, video_data
-    vdc_reg #VDC_DATA
+    vdc_reg  #VDC_MAWR
+    vdc_data <_di
+    vdc_reg  #VDC_DATA
     rts
 
 ;;
@@ -40,7 +40,7 @@ vdc_set_bat_size:
     pha
     vdc_reg #VDC_MWR
     pla
-    sta    video_data_l
+    vdc_data_l
     ; compute BAT dimensions
     lsr    A
     lsr    A
@@ -125,10 +125,10 @@ vdc_load_data:
     cly
 @l0:
         lda    [_si], Y
-        sta    video_data_l
+        vdc_data_l
         iny
         lda    [_si], Y
-        sta    video_data_h
+        vdc_data_h
         iny
         bne    @l1
             inc    <_si+1
@@ -178,7 +178,7 @@ vdc_fill_bat:
     ror    A
 
 vdc_fill_bat_ex:    
-    sta    video_data_l
+    vdc_data_l
 
     ldy    <_ah
 @l0:
@@ -188,7 +188,7 @@ vdc_fill_bat_ex:
     ldx    <_al    
 @l1:
         lda    <_si+1
-        sta    video_data_h
+        vdc_data_h
 
         dex
         bne    @l1
@@ -213,10 +213,10 @@ vdc_init:
     sta    video_reg
     iny
     lda    @vdc_init_table, Y
-    sta    video_data_l
+    vdc_data_l
     iny
     lda    @vdc_init_table, Y
-    sta    video_data_h
+    vdc_data_h
     iny
     cpy    #36
     bne    @l0

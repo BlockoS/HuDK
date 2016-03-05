@@ -37,7 +37,7 @@ main:
 
     ldx    #$20
 .l1:
-        stw    <_si, video_data
+        vdc_data <_si
         incw   <_si
         dex
         bne    .l1
@@ -67,8 +67,8 @@ main:
     jsr    print_fill
  
     ; enable background display
-    vdc_reg #VDC_CR
-    stw    #(VDC_CR_BG_ENABLE), video_data
+    vdc_reg  #VDC_CR
+    vdc_data #(VDC_CR_BG_ENABLE)
 
     bra    *
 

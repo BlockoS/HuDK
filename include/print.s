@@ -36,10 +36,10 @@ print_char:
 @go:
     clc
     adc     <font_base
-    sta     video_data_l
+    vdc_data_l
     cla
     adc     <font_base+1
-    sta     video_data_h
+    vdc_data_h
     rts
 
 ;;
@@ -62,10 +62,10 @@ print_digit:
     adc    #FONT_DIGIT_INDEX
     clc
     adc     <font_base
-    sta     video_data_l
+    vdc_data_l
     cla
     adc     <font_base+1
-    sta     video_data_h
+    vdc_data_h
     rts
 
 ;;

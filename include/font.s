@@ -44,9 +44,9 @@ font_load:
     cly
 @l0:
         lda    [_si], Y
-        sta    video_data_l     ; bitplane #0
+        vdc_data_l              ; bitplane #0
         eor    #$ff
-        sta    video_data_h     ; bitplane #1
+        vdc_data_h              ; bitplane #1
         iny
         cpy    #$08
         bne    @l2

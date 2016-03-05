@@ -482,6 +482,33 @@ VDC_DMA_SATB_AUTO   = %00010000
 ;;   reg - VDC register.
 ;;
 
+;
+;; macro: vdc_data
+;; Set VDC data.
+;;
+;; Assembly call:
+;;   > vdc_data    <_si
+;;   > vdc_data    $2210, $3200
+;;
+
+;;
+;; macro: vdc_data_l
+;; Set VDC data LSB.
+;;
+;; Assembly call:
+;;   > lda    something
+;;   > vdc_data_l
+;;
+
+;;
+;; macro: vdc_data_h
+;; Set VDC data MSB.
+;;
+;; Assembly call:
+;;   > lda    some_data
+;;   > vdc_data_h
+;;
+
 ;;
 ;; Group: Default VDC values.
 ;;
