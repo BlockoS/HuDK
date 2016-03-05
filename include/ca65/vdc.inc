@@ -49,3 +49,28 @@ vdc_bat_vmask:  .res 1
     .endif
   .endmacro
 
+; Set VDC data.
+  .macro vdc_data dl, dh
+  .if .paramcount = 1
+    lda .lobyte(dl)
+    sta a:video_data_l
+    lda .hibyte(dl)
+    sta a:video_data_l
+  .else
+    lda dl
+    sta a:video_data_l
+    lda dh
+    sta a:video_data_l
+  .endif
+  .endmacro
+
+; Set VDC data LSB.
+  .macro vdc_data_l
+    sta    a:video_data_l
+  .endmacro
+
+; Set VDC data MSB.
+  .macro vdc_data_h
+    sta    a:video_data_h
+  .endmacro
+
