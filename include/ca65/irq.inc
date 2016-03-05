@@ -2,7 +2,7 @@
 ; \syntax irq_enable flag
 ; \param [in] flag IRQs flag 
   .macro irq_enable flag
-    .if (.match (.left (1, {arg}), #)) 
+    .if (.match (.left (1, {flag}), #)) 
       lda    flag^7
     .else
       lda    flag
