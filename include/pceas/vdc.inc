@@ -55,7 +55,7 @@ vdc_bat_vmask  .ds 1
   .endmacro
 
 ; Set VDC register from value in A.
-  .macro vdc_setreg reg
+  .macro vdc_setreg
     sta    video_reg
   .endmacro
 
