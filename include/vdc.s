@@ -210,7 +210,7 @@ vdc_init:
     cly
 @l0:
     lda    @vdc_init_table, Y
-    sta    video_reg
+    vdc_setreg
     iny
     lda    @vdc_init_table, Y
     vdc_data_l

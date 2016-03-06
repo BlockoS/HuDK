@@ -482,6 +482,14 @@ VDC_DMA_SATB_AUTO   = %00010000
 ;;   reg - VDC register.
 ;;
 
+;;
+;; macro: vdc_setreg
+;; Set VDC register from value in A.
+;;
+;; Assembly call:
+;;   > vdc_setreg
+;;
+
 ;
 ;; macro: vdc_data
 ;; Set VDC data.
