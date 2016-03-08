@@ -22,6 +22,7 @@
     .include "vce.s"
     .include "font.s"
     .include "print.s"
+    .include "map.s"
   .else
     ; [todo]
   .endif ; !(CDROM)
