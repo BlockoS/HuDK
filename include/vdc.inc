@@ -529,7 +529,7 @@ VDC_DEFAULT_BG_SIZE = VDC_BG_64x64
   .ifndef VDC_DEFAULT_XRES
 ;;
 ;; ushort: VDC_DEFAULT_XRES
-;; Default horizonale resolution.
+;; Default horizontal resolution.
 ;;
 VDC_DEFAULT_XRES = 256
   .endif
