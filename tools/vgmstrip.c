@@ -4,6 +4,10 @@
 #include <string.h>
 #include <errno.h>
 
+#ifndef PATH_MAX
+#define PATH_MAX 1024
+#endif // PATH_MAX
+
 #define VGM_HUC6280_CMD 0xb9
 #define VGM_FRAME_END 0x62
 #define VGM_DATA_END 0x66
@@ -112,8 +116,7 @@ int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len)
     size_t   count;
 
     uint32_t i;
-
-    // uint32_t loop_offset = (header->loop_offset + 0x1c) - header->data_offset - 0x34;
+    uint32_t loop_offset = (header->loop_offset + 0x1c) - header->data_offset - 0x34;
     uint32_t data_size = header->gd3_offset - header->data_offset;
 
     fseek(stream, header->data_offset+0x34, SEEK_SET);
@@ -132,13 +135,17 @@ int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len)
         return -1;
     }
 
-    // [todo] recomputed loop offset
-
     src = *out;
     dst = *out;
     for(i=0; i<data_size;)
     {
-        uint8_t command = src[i++];
+        uint8_t command;
+        if(i == loop_offset)
+        {
+            header->loop_offset = i;
+        }
+
+        command  = src[i++];
         if(VGM_HUC6280_CMD == command)
         {
             *dst++ = src[i++]; 
@@ -157,27 +164,82 @@ int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len)
     return 0;
 }
 
-int output(uint32_t bank, uint32_t org, const char *basename)
+int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint32_t org, const char *basename)
 {
-    // [todo]
+    FILE *stream;
+    char filename[PATH_MAX];
+
+    size_t out_count;
+    size_t write_count;
+    uint8_t i, j;
+
+    for(out_count=8192, i=0; len>0; buffer+=out_count, len-=out_count, i++)
+    {
+        snprintf(filename, PATH_MAX, "%s%04x.bin", basename, i++);
+        stream = fopen(filename, "wb");
+        if(NULL == stream)
+        {
+            fprintf(stderr, "failed to open %s : %s\n", filename, strerror(errno));
+            return -1;
+        }
+       
+        out_count = (len >= 8192) ? 8192 : len; 
+        write_count = fwrite(buffer, 1, out_count, stream);
+        fclose(stream);
+        if(write_count != out_count)
+        {
+            fprintf(stderr, "write error %s : %s\n", filename, strerror(errno));
+            return -1;
+        }
+	} 
+
+    snprintf(filename, PATH_MAX, "%s.inc", basename);
+    stream = fopen(filename, "wb");
+    if(NULL == stream)
+    {
+        fprintf(stderr, "failed to open %s : %s\n", filename, strerror(errno));
+        return -1;
+    }
+
+    org &= 0x1fff;
+    fprintf(stream, "%s_bank=$%02x\n%s_loop=$%04x\n", 
+                    basename, bank + (header->loop_offset/8192),
+                    basename, org  + header->loop_offset);
+
+    for(j=0; j<i; j++)
+    {
+        fprintf(stream, "    .bank $%02x\n"
+                        "    .org $%04x\n"
+                        ".include \"%s%04x.bin\"\n"
+                      , bank+j
+                      , org
+                      , basename, j);
+    }
+    fclose(stream);
+
     return 0;
 } 
 
 void usage()
 {
-    // [todo]
+    fprintf(stdout, "vgmstrip input.vgm out\n");
 }
 
 int main(int argc, char **argv)
 {
     FILE *stream;
     int err;
+    int ret;
 
     vgm_header header;
-    uint8_t *buffer;
-    size_t len;
 
-    // [todo] command line paring
+    // [todo] getopt for bank and org
+
+    if(argc < 3)
+    {
+        usage();
+        return EXIT_FAILURE;
+    }
 
     stream = fopen(argv[1], "rb");
     if(NULL == stream)
@@ -186,28 +248,28 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
+    ret = EXIT_FAILURE;
     err = vgm_read_header(stream, &header);
-    if(err < 0)
+    if(err >= 0)
     {
-        // [todo]
+        uint8_t *buffer = NULL;
+        size_t len = 0;
+        err = process(stream, &header, &buffer, &len);
+        if(err >= 0)
+        {
+		    err = output(&header, buffer, len, 0x00, 0x0000, argv[2]);
+            if(err >= 0)
+            {
+                // [todo] some kind of pattern/matching lz77 stuff?
+                ret = EXIT_SUCCESS;
+            }
+        }
+        if(NULL != buffer)
+        {
+            free(buffer);
+        }
     }
-
-    buffer = NULL;
-    len = 0;
-    err = process(stream, &header, &buffer, &len);
-    if(err < 0)
-    {
-        // [todo]
-    }
-
     fclose(stream);
 
-    // [todo] pattern matching?
-
-    if(NULL != buffer)
-    {
-        free(buffer);
-    }
-
-    return EXIT_SUCCESS;
+    return ret;
 }
