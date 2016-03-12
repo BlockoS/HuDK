@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <errno.h>
+#include <getopt.h>
 
 #ifndef PATH_MAX
 #define PATH_MAX 1024
@@ -153,10 +154,11 @@ int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len)
         }
         else if(VGM_FRAME_END == command)
         {
-            *dst++ = 0xff; 
+            *dst++ = 0xf0; 
         }
         else if(VGM_DATA_END == command)
         {
+            *dst++ = 0xff;
             break;
         }
     }
@@ -175,7 +177,7 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
 
     for(out_count=8192, i=0; len>0; buffer+=out_count, len-=out_count, i++)
     {
-        snprintf(filename, PATH_MAX, "%s%04x.bin", basename, i++);
+        snprintf(filename, PATH_MAX, "%s%04x.bin", basename, i);
         stream = fopen(filename, "wb");
         if(NULL == stream)
         {
@@ -201,7 +203,6 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
         return -1;
     }
 
-    org &= 0x1fff;
     fprintf(stream, "%s_bank=$%02x\n%s_loop=$%04x\n", 
                     basename, bank + (header->loop_offset/8192),
                     basename, org  + header->loop_offset);
@@ -210,8 +211,8 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
     {
         fprintf(stream, "    .bank $%02x\n"
                         "    .org $%04x\n"
-                        ".include \"%s%04x.bin\"\n"
-                      , bank+j
+                        "    .incbin \"%s%04x.bin\"\n"
+                      , bank + j
                       , org
                       , basename, j);
     }
@@ -222,7 +223,9 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
 
 void usage()
 {
-    fprintf(stdout, "vgmstrip input.vgm out\n");
+    fprintf(stdout, "usage: vgmstrip -b bank -o org input.vgm out\n"
+                    "-b or --bank : Start ROM bank (in hexadecimal)\n"
+                    "-o or --org  : Start bank offset (in hexadecimal)\n");
 }
 
 int main(int argc, char **argv)
@@ -232,22 +235,70 @@ int main(int argc, char **argv)
     int ret;
 
     vgm_header header;
+    uint32_t bank;
+    uint32_t org;
 
-    // [todo] getopt for bank and org
+    const char *filename;
+    const char *basename;
 
-    if(argc < 3)
+    uint32_t opt_flag;
+    int opt_index;
+    struct option long_opt[] =
+    {
+       { "bank", required_argument, 0, 'b' },
+       {  "org", required_argument, 0, 'o' },
+       {      0,                 0, 0,  0  } 
+    };
+
+    opt_flag = 0;
+    while(1)
+    {
+        ret = getopt_long(argc, argv, "b:o:", long_opt, &opt_index);
+        if(ret < 0)
+        {
+            break;
+        }
+        switch(ret)
+        {
+            case 'b':
+                bank = strtoul(optarg, NULL, 16);
+                if(errno)
+                {
+                    fprintf(stderr, "invalid bank value : %s\n", strerror(errno));
+                    return EXIT_FAILURE;
+                }
+                opt_flag |= 1;
+                break;
+            case 'o':
+                org = strtoul(optarg, NULL, 16);
+                if(errno)
+                {
+                    fprintf(stderr, "invalid offset value : %s\n", strerror(errno));
+                    return EXIT_FAILURE;
+                }
+                opt_flag |= 2;
+                break;
+            default:
+                usage();
+                return EXIT_FAILURE;
+        }
+    }
+    if((3 != opt_flag) || ((argc-optind) < 2))
     {
         usage();
         return EXIT_FAILURE;
     }
 
-    stream = fopen(argv[1], "rb");
+    filename = argv[optind];
+    basename = argv[optind+1];
+    
+    stream = fopen(filename, "rb");
     if(NULL == stream)
     {
-        fprintf(stderr, "Failed to open %s : %s\n", argv[1], strerror(errno));
+        fprintf(stderr, "Failed to open %s : %s\n", filename, strerror(errno));
         return EXIT_FAILURE;
     }
-
+    
     ret = EXIT_FAILURE;
     err = vgm_read_header(stream, &header);
     if(err >= 0)
@@ -257,7 +308,7 @@ int main(int argc, char **argv)
         err = process(stream, &header, &buffer, &len);
         if(err >= 0)
         {
-		    err = output(&header, buffer, len, 0x00, 0x0000, argv[2]);
+		    err = output(&header, buffer, len, bank, org, basename);
             if(err >= 0)
             {
                 // [todo] some kind of pattern/matching lz77 stuff?
