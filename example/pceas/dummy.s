@@ -80,12 +80,12 @@ ascii_string:
     .org   $6000
 
 hudson.palette:
-    .incbin "data/hudson.pal"
+    .incbin "data/hudk.pal"
     .dw $0000, $01ff, $0007, $0000, $0000, $0000, $0000, $0000
     .dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 
 hudson.bitmap:
-    .incbin "data/hudson.dat"
+    .incbin "data/hudk.dat"
 hudson.bitmap.end:
 
     .include "font.inc"
