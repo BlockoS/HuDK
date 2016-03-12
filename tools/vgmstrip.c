@@ -175,6 +175,9 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
     size_t write_count;
     uint8_t i, j;
 
+    uint32_t loop_org;
+    uint32_t loop_bank;
+
     for(out_count=8192, i=0; len>0; buffer+=out_count, len-=out_count, i++)
     {
         snprintf(filename, PATH_MAX, "%s%04x.bin", basename, i);
@@ -203,9 +206,17 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
         return -1;
     }
 
-    fprintf(stream, "%s_bank=$%02x\n%s_loop=$%04x\n", 
-                    basename, bank + (header->loop_offset/8192),
-                    basename, org  + header->loop_offset);
+    loop_bank = bank + (header->loop_offset >> 13); 
+    loop_org  = org + (header->loop_offset & 0x1fff);
+
+    fprintf(stream, "%s_bank=$%02x\n"
+                    "%s_base_address=$%04x\n" 
+                    "%s_loop_bank=$%02x\n"
+                    "%s_loop=$%04x\n",
+                    basename, bank,
+                    basename, org,
+                    basename, loop_bank,
+                    basename, loop_org);
 
     for(j=0; j<i; j++)
     {
