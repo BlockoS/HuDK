@@ -105,6 +105,7 @@ vgm_next_byte:
         cmp    <vgm_end
         bcc    .l0
             stw    <vgm_base, <vgm_ptr
+            inc    <vgm_bank
             lda    <vgm_bank
             tam6
 .l0:
