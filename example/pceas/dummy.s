@@ -1,10 +1,10 @@
     .include "hudk.s"
 main:
-    lda    #.bank(hudson.bitmap)
+    lda    #.bank(hudk.bitmap)
     sta    <_bl
     stw    #$2200, <_di
-    stw    #hudson.bitmap, <_si
-    stw    #((hudson.bitmap.end - hudson.bitmap) >> 1), <_cx
+    stw    #hudk.bitmap, <_si
+    stw    #((hudk.bitmap.end - hudk.bitmap) >> 1), <_cx
     jsr    vdc_load_data
    
     stw    #$2e00, <_di 
@@ -14,10 +14,10 @@ main:
     stw    #(FONT_8x8_COUNT*8), <_cx
     jsr    font_load
     
-    lda    #.bank(hudson.bitmap)
+    lda    #.bank(hudk.bitmap)
     sta    <_bl
 
-    stw    #hudson.palette, <_si
+    stw    #hudk.palette, <_si
     jsr    map_data
     cla
     ldy    #$02
@@ -79,13 +79,13 @@ ascii_string:
     .bank  $01
     .org   $6000
 
-hudson.palette:
+hudk.palette:
     .incbin "data/hudk.pal"
     .dw $0000, $01ff, $0007, $0000, $0000, $0000, $0000, $0000
     .dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 
-hudson.bitmap:
+hudk.bitmap:
     .incbin "data/hudk.dat"
-hudson.bitmap.end:
+hudk.bitmap.end:
 
     .include "font.inc"
