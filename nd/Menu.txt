@@ -49,6 +49,7 @@ Group: General  {
    File: Utility routines  (no auto-title, include/utils.s)
    File: Memory copy.  (include/memcpy.inc)
    File: System variables  (include/system.inc)
+   File: Tilemap functions.  (include/map.s)
    }  # Group: General
 
 Group: Controls  {
@@ -58,6 +59,8 @@ Group: Controls  {
    }  # Group: Controls
 
 Group: Audio  {
+
+   File: VGM Replay.  (no auto-title, include/vgm.s)
 
    Group: PSG - Programmable Sound Generator  {
 
