@@ -23,6 +23,7 @@
     .include "font.s"
     .include "print.s"
     .include "map.s"
+    .include "math.s"
   .else
     ; [todo]
   .endif ; !(CDROM)
