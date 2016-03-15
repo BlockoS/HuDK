@@ -49,7 +49,7 @@ Group: General  {
    File: Utility routines  (no auto-title, include/utils.s)
    File: Memory copy.  (include/memcpy.inc)
    File: System variables  (include/system.inc)
-   File: Tilemap functions.  (include/map.s)
+   File: Math routines.  (include/math.s)
    }  # Group: General
 
 Group: Controls  {
@@ -92,6 +92,11 @@ Group: Video  {
       File: Font routines.  (include/font.s)
       File: Text output routines.  (include/print.s)
       }  # Group: Font
+
+   Group: Map  {
+
+      File: Tilemap functions.  (no auto-title, include/map.s)
+      }  # Group: Map
 
    }  # Group: Video
 
