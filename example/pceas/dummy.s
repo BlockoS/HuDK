@@ -94,29 +94,11 @@ main:
 
     map_set tilemap, $2e00, tile_palettes, #05, #07, #01
 
-    lda #00
-    sta <map_bat_top
-    lda #32
-    sta <map_bat_bottom
-    
-    clx
-    lda <map_bat_top
-    jsr vdc_calc_addr
-    stw <_di, <map_bat_top_base
+    ldx    #00
+    lda    vdc_bat_height 
+    jsr    map_set_bat_bounds
 
-    lda #21
-    sta <_al
-    lda #17
-    sta <_ah
-    lda #$00
-    sta <_cl
-    lda #$00
-    sta <_ch
-    lda #$07
-    sta <_dl
-    lda #$07
-    sta <_dh
-    jsr map_load
+    map_copy #21, #17, #00, #00, #07, #07
  
 .loop:
     vdc_reg  #VDC_CR

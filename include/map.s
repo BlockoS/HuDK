@@ -42,7 +42,7 @@ map_bat_top_base .ds 2
 ;; Macro: map_set
 ;; Set current map pointers and infos.
 ;;
-;; Assembly call
+;; Assembly call:
 ;;   > map_set map, tile, colortab, w, h, m
 ;;
 ;; Parameters:
@@ -53,6 +53,41 @@ map_bat_top_base .ds 2
 ;;   h - Map height
 ;;   m - Map coordinate wrapping mode
 ;;
+
+;;
+;; Macro: map_copy
+;; Map copy helper macro.
+;; 
+;; Assembly call:
+;;   > map_copy bx, by, mx, my, w, h
+;;
+;; Parameters:
+;;   bx - BAT X position.
+;;   by - BAT Y position.
+;;   mx - Map X position.
+;;   my - Map Y position.
+;;   w  - Number of column to copy.
+;;   h  - Number of line to copy.
+;;
+
+;;
+;; Function: map_set_bat_bounds
+;; Defines the vertical bounds of the BAT map area.
+;; By default the upper and lower bounds are set to 0 and vdc_bat_height.
+;;
+;; Note:
+;;   This routine must be called whenever the BAT area size is modified.
+;;
+;; Parameters:
+;;   X - Vertical upper bound (top).
+;;   A - Vertical lower bound (bottom).
+;;
+map_set_bat_bounds:
+    stx    <map_bat_top
+    sta    <map_bat_bottom
+    jsr    vdc_calc_addr
+    stw    <_di, <map_bat_top_base
+    rts
 
 ; [todo] 16x16 map_load version
 

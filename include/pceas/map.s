@@ -12,3 +12,20 @@
     lda    \6
     sta    <map_wrap
   .endmacro
+
+; Map copy helper macro.
+  .macro map_copy
+    lda    \1
+    sta    <_al
+    lda    \2
+    sta    <_ah
+    lda    \3
+    sta    <_cl
+    lda    \4
+    sta    <_ch
+    lda    \5
+    sta    <_dl
+    lda    \6
+    sta    <_dh
+    jsr    map_load
+  .endmacro
