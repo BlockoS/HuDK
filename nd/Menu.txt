@@ -47,9 +47,9 @@ Group: General  {
    File: 16-bit word macros  (no auto-title, include/word.inc)
    File: System variables  (no auto-title, include/system.inc)
    File: Utility routines  (no auto-title, include/utils.s)
-   File: Memory copy.  (include/memcpy.inc)
-   File: System variables  (include/system.inc)
-   File: Math routines.  (include/math.s)
+   File: Memory copy  (no auto-title, include/memcpy.inc)
+   File: System variables  (no auto-title, include/system.inc)
+   File: Math routines  (no auto-title, include/math.s)
    }  # Group: General
 
 Group: Controls  {
@@ -60,12 +60,12 @@ Group: Controls  {
 
 Group: Audio  {
 
-   File: VGM Replay.  (no auto-title, include/vgm.s)
+   File: VGM Replay  (no auto-title, include/vgm.s)
 
    Group: PSG - Programmable Sound Generator  {
 
       File: Registers  (no auto-title, include/psg.inc)
-      File: Functions.  (no auto-title, include/psg.s)
+      File: Routines  (no auto-title, include/psg.s)
       }  # Group: PSG - Programmable Sound Generator
 
    }  # Group: Audio
@@ -76,28 +76,25 @@ Group: Video  {
 
       File: Description  (no auto-title, docs/vdc.txt)
       File: I/O Ports and Registers  (no auto-title, include/vdc.inc)
-      File: Functions  (no auto-title, include/vdc.s)
+      File: Routines  (no auto-title, include/vdc.s)
       }  # Group: HuC6270 - Video Display Controller (VDC)
 
    Group: HuC6260 - Video Color Encoder (VCE)  {
 
       File: Description  (no auto-title, docs/vce.txt)
       File: I/O ports  (no auto-title, include/vce.inc)
-      File: Functions  (no auto-title, include/vce.s)
+      File: Routines  (no auto-title, include/vce.s)
       }  # Group: HuC6260 - Video Color Encoder (VCE)
 
    Group: Font  {
 
-      File: 8x8 monochrome 1bpp font.  (include/font.inc)
-      File: Font routines.  (include/font.s)
-      File: Text output routines.  (include/print.s)
+      File: 8x8 monochrome 1bpp font  (no auto-title, include/font.inc)
+      File: Font routines  (no auto-title, include/font.s)
+      File: Text output routines  (no auto-title, include/print.s)
       }  # Group: Font
 
-   Group: Map  {
-
-      File: Tilemap functions.  (no auto-title, include/map.s)
-      }  # Group: Map
-
+   File: Tilemap routines  (no auto-title, include/map.s)
+   File: Sprite routines  (no auto-title, include/sprite.s)
    }  # Group: Video
 
 Group: Index  {
