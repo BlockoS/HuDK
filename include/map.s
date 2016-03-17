@@ -8,8 +8,7 @@
 ;;                       should wrap around the origin. 
 ;; map data   - (N bytes) Tile indices. 
 ;;
-;; [todo] tile palette
-;; [todo] tile data
+;; [todo] explain tile palette and data
 ;;
 
     .zp
@@ -30,43 +29,31 @@ map_bat_top      .ds 1
 map_bat_bottom   .ds 1
 map_bat_top_base .ds 2
 
+  .ifdef MAGICKIT
+    .include "pceas/map.s"
+  .else
+    .ifdef CA65
+    .include "ca65/map.s"
+    .endif
+  .endif
+
     .code
 ;;
-;; function: tile_load
-;; Load tile data to VRAM.
+;; Macro: map_set
+;; Set current map pointers and infos.
+;;
+;; Assembly call
+;;   > map_set map, tile, colortab, w, h, m
 ;;
 ;; Parameters:
-;;   _bl - Tile data bank.
-;;   _si - Tile data address.
-;;   _cx - Tile count.
-;;   _di - VRAM destination.
-tile_load:
-    stw    <_di, <map_tile_base
-    lsr    A
-    ror    <map_tile_base
-    lsr    A
-    ror    <map_tile_base
-    lsr    A
-    ror    <map_tile_base
-    lsr    A
-    ror    <map_tile_base
-    sta    <map_tile_base+1
-   
-    ; word count = tile count * 16
-    lda    <_ch
-    asl    <_cl
-    rol    A 
-    asl    <_cl
-    rol    A 
-    asl    <_cl
-    rol    A 
-    asl    <_cl
-    rol    A 
-    sta    <_cx
+;;   map - Map base address
+;;   tile - tiles VRAM address
+;;   colortab - tiles palette table address
+;;   w - Map width
+;;   h - Map height
+;;   m - Map coordinate wrapping mode
+;;
 
-    jmp    vdc_load_data
-
-; [todo] map_set or map_init routine
 ; [todo] 16x16 map_load version
 
 ;;
@@ -262,6 +249,7 @@ map_load:
     rts
 
 ; Update bat and tilemap line pointers.
+; For internal use only.
 map_load_next_line:
 @next_bat_y:
     inc    <_bl

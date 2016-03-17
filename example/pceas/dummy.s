@@ -92,24 +92,7 @@ main:
 ;    adc #$20
 ;    sta <vgm_end
 
-    smb0 <map_wrap
-
-    lda <font_base
-    sta <map_tile_base
-    lda <font_base+1
-    and #$0f
-    sta <map_tile_base+1
-
-    lda #bank(tilemap)
-    sta <map_bank
-    stw #(tilemap), <map_address
-
-    lda #bank(tile_palettes)
-    sta <map_pal_bank
-    stw #tile_palettes, <map_pal_address
-
-    stw #05, <map_width
-    stw #07, <map_height
+    map_set tilemap, $2e00, tile_palettes, #05, #07, #01
 
     lda #00
     sta <map_bat_top

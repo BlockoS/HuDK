@@ -107,6 +107,32 @@ vdc_calc_addr:
     rts
 
 ;;
+;; function: vdc_load_tiles
+;; Load 8x8 tiles data to VRAM.
+;;
+;; Parameters:
+;;   _bl - Tile data bank.
+;;   _si - Tile data address.
+;;   _cx - Tile count.
+;;   _di - VRAM destination.
+vdc_load_tiles:
+    ; word count = tile count * 16
+    lda    <_ch
+    asl    <_cl
+    rol    A 
+    asl    <_cl
+    rol    A 
+    asl    <_cl
+    rol    A 
+    asl    <_cl
+    rol    A 
+    sta    <_cx
+; Warning! Do not put anything between vdc_load_tiles and vdc_load_data.
+; If for any reason you will have to do it, uncomment the following line and
+; remove this comment.
+;    jmp    vdc_load_data
+
+;;
 ;; function: vdc_load_data
 ;; Copy data to VRAM.
 ;;
