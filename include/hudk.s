@@ -5,7 +5,7 @@
     .include "system.inc"
     .include "memcpy.inc"
     .include "irq.inc"
-    .include "io.inc"
+    .include "joypad.inc"
     .include "psg.inc"
     .include "vdc.inc"
     .include "vce.inc"

@@ -1,5 +1,5 @@
 ;;
-;; Title: I/O port.
+;; Title: Joypad port.
 ;;
 
 ;;
@@ -172,3 +172,13 @@ IO_JOYPAD_VI  = %00001000
   .endmacro
 
 
+  .bss
+;;
+;; ubyte: joypad
+;; [todo]
+;;
+joypad    .ds 5
+;;
+;; ubyte: joypad_6
+;; [todo]
+joypad_6 .ds 5
