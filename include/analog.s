@@ -2,8 +2,31 @@
 ;; Title: Analog joypag functions.
 ;;
 
-; [todo] doc
-; [todo] convert to standard button layout
+;;
+;; ubyte: JOY_ANALOG_BYTTONS_0
+;; Holds the state of A, B, SELECT, START and other unknown buttons...
+;;
+JOY_ANALOG_BUTTONS_O = 0 
+;;
+;; ubyte: JOY_ANALOG_BUTTONS_1
+;; May hold the states for other unknown buttons.
+;;
+JOY_ANALOG_BUTTONS_1 = 4 ; [todo] unconfirmed
+;;
+;; ubyte: JOY_ANALOG_X
+;; Value of the analog stick horizontal axis.
+;;
+JOY_ANALOG_X         = 1
+;;
+;; ubyte: JOY_ANALOG_Y
+;; Value of the analog stick vertical axis.
+;;
+JOY_ANALOG_Y         = 2
+;;
+;; ubyte: JOY_ANALOG_SLIDER
+;; Value of the slider stick.
+;;
+JOY_ANALOG_SLIDER    = 3 ; [todo] unconfirmed
 
 ;;
 ;; function: analog_joypad_read
@@ -124,3 +147,19 @@ analog_lut:
     .db $00,$01,$08,$09,$02,$03,$0a,$0b
     .db $04,$05,$0c,$0d,$06,$07,$0e,$0f
 
+;;
+;; function: analog_convert
+;; Convert button to the standard joypad layout.
+;; 
+;; Return:
+;;   joypad - The first 4 bits will contains the state of the A, B, SELECT and
+;;            START buttons just like a standard joypad.
+analog_convert:
+    lda    joypad
+    asl    A
+    rol    A
+    bcc    @l0
+        ora    #$02
+@l0:
+    sta    joypad
+    rts

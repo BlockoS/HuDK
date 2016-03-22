@@ -175,10 +175,12 @@ IO_JOYPAD_VI  = %00001000
   .bss
 ;;
 ;; ubyte: joypad
-;; [todo]
+;; This array holds the values for 5 2-buttons joypad.
 ;;
 joypad    .ds 5
 ;;
 ;; ubyte: joypad_6
-;; [todo]
+;; This array contains the values for buttons III, IV, V and VI of 6 buttons
+;; joypads.
+;;
 joypad_6 .ds 5
