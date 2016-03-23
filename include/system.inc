@@ -3,6 +3,11 @@
 ;;
 
 ;;
+;; ushort: irq_m
+;; Interrupt control register.
+;;
+irq_m = $20f5
+;;
 ;; ushort: _bp
 ;; Base pointer.
 _bp = $20ec
