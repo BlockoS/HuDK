@@ -50,13 +50,8 @@ Group: General  {
    File: Memory copy  (no auto-title, include/memcpy.inc)
    File: System variables  (no auto-title, include/system.inc)
    File: Math routines  (no auto-title, include/math.s)
+   File: Interrupts management  (no auto-title, include/irq.inc)
    }  # Group: General
-
-Group: Controls  {
-
-   File: I/O Port  (no auto-title, include/io.inc)
-   File: Joypad Functions  (no auto-title, include/joypad.s)
-   }  # Group: Controls
 
 Group: Audio  {
 
@@ -77,6 +72,7 @@ Group: Video  {
       File: Description  (no auto-title, docs/vdc.txt)
       File: I/O Ports and Registers  (no auto-title, include/vdc.inc)
       File: Routines  (no auto-title, include/vdc.s)
+      File: Sprite descprition and utilities  (no auto-title, include/sprite.inc)
       }  # Group: HuC6270 - Video Display Controller (VDC)
 
    Group: HuC6260 - Video Color Encoder (VCE)  {
@@ -96,6 +92,13 @@ Group: Video  {
    File: Tilemap routines  (no auto-title, include/map.s)
    File: Sprite routines  (no auto-title, include/sprite.s)
    }  # Group: Video
+
+Group: Controls  {
+
+   File: Joypad port  (no auto-title, include/joypad.inc)
+   File: Joypad functions  (no auto-title, include/joypad.s)
+   File: Analog joypad functions  (no auto-title, include/analog.s)
+   }  # Group: Controls
 
 Group: Index  {
 
