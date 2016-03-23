@@ -41,6 +41,8 @@ INT_IRQ_2      = 0
 ;;
 ;; A way to differentiate between those interrupts is to check the value of the
 ;; VDC status register.
+;; 
+;; This vector overrides the HuDK IRQ1, VSYNC and HSYNC vectors.
 ;;
 INT_IRQ_1      = 1
 ;;
@@ -58,11 +60,15 @@ INT_NMI        = 3
 ;; Called during IRQ1 and if the vertical blanking flag (vblank) of the VDC
 ;; status register is set.
 ;;
+;; This vector overrides the HuDK VSYNC vector.
+;;
 INT_VSYNC      = 4
 ;;
 ;; ubyte: INT_HSYNC
 ;; Called during IRQ1 and if the scanline interrupt flag (vblank) of the VDC
 ;; status register is set.
+;;
+;; This vector overrides the HuDK HSYNC vector.
 ;;
 INT_HSYNC      = 5
 ;;
@@ -71,6 +77,10 @@ INT_HSYNC      = 5
 ;; pressed.
 ;;
 INT_SOFT_RESET = 6
+
+; [todo] irq_enable
+; [todo] irq_disable
+; [todo] irq_set_vec
 
 ; Timer port
 timerport = $0c00
@@ -97,10 +107,3 @@ timer_ctrl = timerport+1
     stz    timer_ctrl
   .endmacro
 
-  .ifdef MAGICKIT
-    .include "pceas/irq.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/irq.inc"
-    .endif
-  .endif
