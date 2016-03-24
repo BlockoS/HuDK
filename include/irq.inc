@@ -127,7 +127,7 @@ SOFT_RESET = 6
 ;; macro: irq_set_vec
 ;; [todo]
 
-user_hook = 2200
+user_hook = $2200
 irq2_hook  = user_hook + (IRQ2 * 2)
 irq1_hook  = user_hook + (IRQ1 * 2)
 timer_hook = user_hook + (TIMER * 2)
