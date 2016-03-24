@@ -13,8 +13,7 @@ _reset:
     stz    <$00                ; clear RAM
     tii    $2000, $2001, $1fff
     timer_disable              ; disable timer
-    stz    <irq_m              ; disable interrupts
-    stz    irq_disable
+    irq_off INT_ALL            ; disable interrupts
     timer_ack                  ; reset timer
 _init:
     memcpy_init                ; initialize memcpy ramcode

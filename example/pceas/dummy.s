@@ -1,5 +1,8 @@
     .include "hudk.s"
     .include "vgm.s"
+
+    .code
+    .include "analog.s"
 main:
     lda    #.bank(hudk.bitmap)
     sta    <_bl
