@@ -1,7 +1,7 @@
 Format: 1.52
 
 
-Title: . .
+Title: 
 SubTitle: 
 
 Footer: (C)opyright 2016 distributed under the MIT license.
