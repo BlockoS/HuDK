@@ -116,16 +116,25 @@ HSYNC = 5
 SOFT_RESET = 6
 
 ;;
-;; macro: irq_enable_vec
-;;
+;; macro: irq_enable_vec 
+;; [todo]
 
 ;;
 ;; macro: irq_disable_vec
-;;
+;; [todo]
 
 ;;
 ;; macro: irq_set_vec
-;;
+;; [todo]
+
+user_hook = 2200
+irq2_hook  = user_hook + (IRQ2 * 2)
+irq1_hook  = user_hook + (IRQ1 * 2)
+timer_hook = user_hook + (TIMER * 2)
+nmi_hook   = user_hook + (NMI * 2)
+vsync_hook = user_hook + (VSYNC * 2)
+hsync_hook = user_hook + (HSYNC * 2)
+reset_hook = user_hook + (SOFT_RESET * 2)
 
   .ifdef MAGICKIT
     .include "pceas/irq.inc"
