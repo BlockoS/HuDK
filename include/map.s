@@ -89,11 +89,9 @@ map_set_bat_bounds:
     stw    <_di, <map_bat_top_base
     rts
 
-; [todo] 16x16 map_load version
-
 ;;
 ;; function: map_load
-;; Load a portion of the tilemap to VRAM.
+;; Load a portion of a 8x8 tilemap to VRAM.
 ;;
 ;; Parameters:
 ;;   _al - BAT X position.
@@ -112,82 +110,9 @@ map_load:
     tma4
     pha
     
-    ; save BAT position
-    ; compute vram address
     ldx    <_al
-    phx
     lda    <_ah
-    pha
-    jsr    vdc_calc_addr
-
-    ; save map x position
-    lda    <_cl
-    sta    <_bh
-
-    ; compute pointer to the tilemap line
-    lda    <map_address
-    sta    <_si
-    lda    <map_address+1
-    and    #$1f
-    sta    <_si+1
-    lda    <map_width+1
-    beq    @map_width_std
-@map_width_256:
-        ; special case for map width of 256
-        ; map_ptr = map + (my * 256)
-        clc
-        lda    <_ch
-        sta    <_al
-        adc    <_si+1
-        sta    <_si+1
-        bra    @map_data_bank
-
-@map_width_std:
-        ; map_ptr = map + (my * map_width)
-        lda    <_ch
-        sta    <_al
-        lda    <map_width
-        sta    <_bl
-        jsr    mulu8 
-        addw   <_cx, <_si
-
-@map_data_bank:
-    ; compute map bank
-    rol    A
-    rol    A
-    rol    A
-    rol    A
-    and    #$0f
-    clc
-    adc    <map_bank
-    tam3
-    inc    A
-    tam4
-
-    ; compute tile palette bank
-    lda    <map_pal_bank
-    tam2
-
-    ; adjust tilemap pointer
-    lda    <_si+1
-    and    #$1f
-    ora    #$60
-    sta    <_si+1
-    ; adjust tile palette pointer
-    lda    <map_pal_address
-    sta    <_bp
-    lda    <map_pal_address+1 
-    and    #$1f
-    ora    #$40
-    sta    <_bp+1
-
-    ; retrieve bat position
-    pla
-    and    vdc_bat_vmask
-    sta    <_bl
-    pla
-    and    vdc_bat_vmask
-    sta    <_ch
+    jsr    _map_init
 
     bra    @line_setup
     ; small recap
@@ -350,3 +275,136 @@ map_load_next_line:
     stz    <_al 
     rts
 
+;;
+;; function: map_load_16
+;; Load a portion of a 16x16 tilemap to VRAM.
+;;
+;; Parameters:
+;;   _al - BAT X position.
+;;   _ah - BAT Y position.
+;;   _cl - Map X position.
+;;   _ch - Map Y position.
+;;   _dl - Number of column to copy.
+;;   _dh - Number of row to copy.
+;;
+map_load_16:
+    ; save mprs 2, 3 and 4
+    tma2
+    pha
+    tma3
+    pha
+    tma4
+    pha
+
+    lda    <_al
+    asl    A
+    tax
+    lda    <_ah
+    asl    A    
+    jsr    _map_init
+
+    ; [todo] bra    @line_setup
+    ; small recap
+    ; _ch - BAT X position
+    ; _bl - BAT Y position
+    ; _bh - MAP X position
+    ; _al - MAP Y position
+    ; _dl - Horizontal tile count
+    ; _dh - Vertical tile count
+    ; _si - MAP pointer
+    ; _bp - Tile palette pointer
+
+@loop:
+    ; [todo] jsr    map_load_next_line
+    ; [todo]
+@end:
+    ; restore mprs 2, 3 and 4
+    pla
+    tam4
+    pla
+    tam3
+    pla
+    tam2
+
+    rts
+
+; [todo]
+;;   X - BAT X position.
+;;   A - BAT Y position.
+_map_init:
+    ; save BAT position
+    ; compute vram address
+    phx
+    pha
+    jsr    vdc_calc_addr
+
+    ; save map x position
+    lda    <_cl
+    sta    <_bh
+
+    ; compute pointer to the tilemap line
+    lda    <map_address
+    sta    <_si
+    lda    <map_address+1
+    and    #$1f
+    sta    <_si+1
+    lda    <map_width+1
+    beq    @map_width_std
+@map_width_256:
+        ; special case for map width of 256
+        ; map_ptr = map + (my * 256)
+        clc
+        lda    <_ch
+        sta    <_al
+        adc    <_si+1
+        sta    <_si+1
+        bra    @map_data_bank
+
+@map_width_std:
+        ; map_ptr = map + (my * map_width)
+        lda    <_ch
+        sta    <_al
+        lda    <map_width
+        sta    <_bl
+        jsr    mulu8 
+        addw   <_cx, <_si
+
+@map_data_bank:
+    ; compute map bank
+    rol    A
+    rol    A
+    rol    A
+    rol    A
+    and    #$0f
+    clc
+    adc    <map_bank
+    tam3
+    inc    A
+    tam4
+
+    ; compute tile palette bank
+    lda    <map_pal_bank
+    tam2
+
+    ; adjust tilemap pointer
+    lda    <_si+1
+    and    #$1f
+    ora    #$60
+    sta    <_si+1
+    ; adjust tile palette pointer
+    lda    <map_pal_address
+    sta    <_bp
+    lda    <map_pal_address+1 
+    and    #$1f
+    ora    #$40
+    sta    <_bp+1
+
+    ; retrieve bat position
+    pla
+    and    vdc_bat_vmask
+    sta    <_bl
+    pla
+    and    vdc_bat_vmask
+    sta    <_ch
+
+    rts
