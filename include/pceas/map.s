@@ -29,3 +29,20 @@
     sta    <_dh
     jsr    map_load
   .endmacro
+
+  .macro map_copy_16
+    lda    \1
+    sta    <_al
+    lda    \2
+    sta    <_ah
+    lda    \3
+    sta    <_cl
+    lda    \4
+    sta    <_ch
+    lda    \5
+    sta    <_dl
+    lda    \6
+    sta    <_dh
+    jsr    map_load_16
+  .endmacro
+

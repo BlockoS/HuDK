@@ -126,7 +126,7 @@ map_load:
     ; _bp - Tile palette pointer
 
 @loop:
-    jsr    map_load_next_line
+    jsr    _map_load_next_line
 
 @line_setup:
     vdc_reg  #VDC_MAWR
@@ -210,7 +210,7 @@ map_load:
 
 ; Update bat and tilemap line pointers.
 ; For internal use only.
-map_load_next_line:
+_map_load_next_line:
 @next_bat_y:
     inc    <_bl
     lda    <_bl
@@ -275,6 +275,82 @@ map_load_next_line:
     stz    <_al 
     rts
 
+; [todo]
+_map_load_next_line_16:
+@next_bat_y:
+    lda    <_bl
+    clc
+    adc    #$02
+    cmp    <map_bat_bottom
+    bcc    @bat_inc_y
+        ; reset BAT Y position 
+        lda    <map_bat_top
+        sta    <_bl
+        ; reset map pointer
+        lda    <_di
+        and    vdc_bat_hmask
+        clc
+        adc    <map_bat_top_base
+        sta    <_di
+        sta    <_di+2
+        cla
+        adc    <map_bat_top_base+1 
+        sta    <_di+1
+        sta    <_di+3
+        bra    @next_tile_y
+
+@bat_inc_y:
+    ; move BAT pointer to the next line
+    sta    <_bl
+    lda    vdc_bat_width
+    asl    A
+    bcc    @l0
+        inc    <_di+1
+@l0:
+    adc    <_di
+    sta    <_di
+    sta    <_di+2
+    bcc    @l1
+        inc    <_di+1
+@l1:
+    lda    <_di+1
+    sta    <_di+3 
+@next_tile_y: ; [todo] jmp to 8x8 version?
+    inc    <_al
+    beq    @check_tile_y_wrap
+    lda    <_al
+    cmp    <map_height
+    beq    @check_tile_y_wrap
+        ; go to next tilemap line
+        addw   <map_width, <_si
+        ; check if we need to remap the tilemap
+        cmp    #$80
+        bcc    @end
+            sec
+            sbc    #$20
+            tma4
+            tam3
+            inc    A
+            tam4
+@end:
+            rts
+@check_tile_y_wrap:
+    ; wrap tilemap bank
+    lda    <map_bank
+    tam3
+    inc    A
+    tam4
+    ; reset tilemap pointer
+    lda    <map_address
+    sta    <_si
+    lda    <map_address+1
+    and    #$1f
+    ora    #$60
+    sta    <map_address+1
+    ; reset MAP Y position
+    stz    <_al 
+    rts
+
 ;;
 ;; function: map_load_16
 ;; Load a portion of a 16x16 tilemap to VRAM.
@@ -303,7 +379,9 @@ map_load_16:
     asl    A    
     jsr    _map_init
 
-    ; [todo] bra    @line_setup
+    stw    <_di, <_di+2
+
+    bra    @line_setup
     ; small recap
     ; _ch - BAT X position
     ; _bl - BAT Y position
@@ -315,8 +393,111 @@ map_load_16:
     ; _bp - Tile palette pointer
 
 @loop:
-    ; [todo] jsr    map_load_next_line
-    ; [todo]
+    jsr    _map_load_next_line_16
+
+@line_setup:
+    ; MAP X position
+    ldy    <_bh
+    ; copy horizontal tile count
+    lda    <_dl
+    sta    <_cl
+    ; copy BAT X position
+    lda    <_ch
+    sta    <_ah
+
+    bra    @copy
+@next_bat_x:
+        ; increment bat x position
+        lda    <_ah
+        clc
+        adc    #$02
+        and    vdc_bat_hmask
+        sta    <_ah
+        ; reset it to the beginning of the BAT line
+        ; if it goes past the BAT width
+        bne    @inc_bat_x
+            lda    vdc_bat_hmask
+            eor    #$ff
+            and    <_di+2
+            sta    <_di+2
+            bra    @next_tile_x
+@inc_bat_x:
+            lda    <_di+2
+            clc
+            adc    #$02
+            sta    <_di+2
+            bcc    @next_tile_x
+                inc    <_di+3
+@next_tile_x:
+        ; increment tilemap x position
+        iny
+        cpy    <map_width
+        bne    @copy
+            ; restart at the beginning of the tilemap line if wrap mode is
+            ; activated, otherwise fill the area with the tile at index #0.
+            bbs0   <map_wrap, @tile_repeat
+            ldy    <map_width
+            dey
+            lda    <map_tile_base
+            sta    <_di+4
+            lda    <map_tile_base+1
+            ora    [_bp]
+            sta    <_di+5
+            bra    @l0
+@tile_repeat:
+            cly
+@copy:
+        ; write bat entry
+        lda    [_si], Y
+        tax
+        sxy
+        stz    <_di+5
+        asl    A
+        rol    <_di+5
+        asl    A
+        rol    <_di+5
+        adc    <map_tile_base
+        sta    <_di+4
+        lda    <_di+5
+        adc    <map_tile_base+1
+        ora    [_bp], Y
+        sta    <_di+5
+        ; restore tilemap index
+        sxy
+@l0:
+        vdc_reg  #VDC_MAWR
+        vdc_data <_di+2
+        
+        vdc_reg  #VDC_DATA
+        stw    <_di+4, video_data
+        incw   <_di+4
+        stw    <_di+4, video_data
+        incw   <_di+4
+
+        vdc_reg  #VDC_MAWR
+        lda    <_di+2
+        clc
+        adc    vdc_bat_width
+        sta    video_data_l
+        bcc    @l1
+            inc    <_di+3
+@l1:
+	    lda    <_di+3
+        sta    video_data_h
+
+        vdc_reg  #VDC_DATA
+        stw    <_di+4, video_data
+        incw   <_di+4
+        stw    <_di+4, video_data
+
+        dec    <_cl
+        beq    @l2
+        jmp    @next_bat_x
+@l2:
+    dec    <_dh
+    beq    @end
+    jmp    @loop
+
 @end:
     ; restore mprs 2, 3 and 4
     pla
