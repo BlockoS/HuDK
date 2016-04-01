@@ -8,8 +8,8 @@
 ;;                       should wrap around the origin. 
 ;; map data   - (N bytes) Tile indices. 
 ;;
-;; [todo] explain tile palette and data
-;;
+;; Tile data:
+;; [todo]
 
     .zp
 map_infos:
@@ -208,74 +208,8 @@ map_load:
 
     rts
 
-; Update bat and tilemap line pointers.
+; Update bat and tilemap line pointers for 16x16 tilemap copy.
 ; For internal use only.
-_map_load_next_line:
-@next_bat_y:
-    inc    <_bl
-    lda    <_bl
-    cmp    <map_bat_bottom
-    bcc    @bat_inc_y
-        ; reset BAT Y position 
-        lda    <map_bat_top
-        sta    <_bl
-        ; reset map pointer
-        lda    <_di
-        and    vdc_bat_hmask
-        clc
-        adc    <map_bat_top_base
-        sta    <_di
-        cla
-        adc    <map_bat_top_base+1 
-        sta    <_di+1
-        bra    @next_tile_y
-
-@bat_inc_y:
-    ; move BAT pointer to the next line
-    lda    <_di
-    clc
-    adc    vdc_bat_width
-    sta    <_di
-    bcc    @next_tile_y
-        inc    <_di+1
-
-@next_tile_y:
-    inc    <_al
-    beq    @check_tile_y_wrap
-    lda    <_al
-    cmp    <map_height
-    beq    @check_tile_y_wrap
-        ; go to next tilemap line
-        addw   <map_width, <_si
-        ; check if we need to remap the tilemap
-        cmp    #$80
-        bcc    @end
-            sec
-            sbc    #$20
-            tma4
-            tam3
-            inc    A
-            tam4
-@end:
-            rts
-@check_tile_y_wrap:
-    ; wrap tilemap bank
-    lda    <map_bank
-    tam3
-    inc    A
-    tam4
-    ; reset tilemap pointer
-    lda    <map_address
-    sta    <_si
-    lda    <map_address+1
-    and    #$1f
-    ora    #$60
-    sta    <map_address+1
-    ; reset MAP Y position
-    stz    <_al 
-    rts
-
-; [todo]
 _map_load_next_line_16:
 @next_bat_y:
     lda    <_bl
@@ -297,7 +231,7 @@ _map_load_next_line_16:
         adc    <map_bat_top_base+1 
         sta    <_di+1
         sta    <_di+3
-        bra    @next_tile_y
+        bra    _map_load_next_tile_y
 
 @bat_inc_y:
     ; move BAT pointer to the next line
@@ -315,7 +249,39 @@ _map_load_next_line_16:
 @l1:
     lda    <_di+1
     sta    <_di+3 
-@next_tile_y: ; [todo] jmp to 8x8 version?
+    bra    _map_load_next_tile_y
+
+; Update bat and tilemap line pointers.
+; For internal use only.
+_map_load_next_line:
+@next_bat_y:
+    inc    <_bl
+    lda    <_bl
+    cmp    <map_bat_bottom
+    bcc    @bat_inc_y
+        ; reset BAT Y position 
+        lda    <map_bat_top
+        sta    <_bl
+        ; reset map pointer
+        lda    <_di
+        and    vdc_bat_hmask
+        clc
+        adc    <map_bat_top_base
+        sta    <_di
+        cla
+        adc    <map_bat_top_base+1 
+        sta    <_di+1
+        bra    _map_load_next_tile_y
+
+@bat_inc_y:
+    ; move BAT pointer to the next line
+    lda    <_di
+    clc
+    adc    vdc_bat_width
+    sta    <_di
+    bcc    _map_load_next_tile_y
+        inc    <_di+1
+_map_load_next_tile_y:
     inc    <_al
     beq    @check_tile_y_wrap
     lda    <_al
@@ -509,9 +475,12 @@ map_load_16:
 
     rts
 
-; [todo]
-;;   X - BAT X position.
-;;   A - BAT Y position.
+;
+; Compute VRAM BAT and tilemap pointers.
+; Parameters:
+;   X - BAT X position.
+;   A - BAT Y position.
+;
 _map_init:
     ; save BAT position
     ; compute vram address
