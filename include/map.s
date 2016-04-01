@@ -8,8 +8,13 @@
 ;;                       should wrap around the origin. 
 ;; map data   - (N bytes) Tile indices. 
 ;;
-;; Tile data:
-;; [todo]
+;; For a 8x8 tilemap, the tile indices are just the offset to a VRAM tile. 
+;; On the other hand, for a 16x16 tilemap, the tile indices are the offset to
+;; a bloc of 4 consecutive VRAM tiles that will make the 16x16 map tile.
+;;
+;; The tiles palette array specify the index of the palette to use for a given
+;; tile. For 16x16 tilemap, the palette index will be used for all 4 VRAM tile.
+;;
 
     .zp
 map_infos:
@@ -60,6 +65,22 @@ map_bat_top_base .ds 2
 ;; 
 ;; Assembly call:
 ;;   > map_copy bx, by, mx, my, w, h
+;;
+;; Parameters:
+;;   bx - BAT X position.
+;;   by - BAT Y position.
+;;   mx - Map X position.
+;;   my - Map Y position.
+;;   w  - Number of column to copy.
+;;   h  - Number of line to copy.
+;;
+
+;;
+;; Macro: map_copy_16
+;; 16x16 tilemap copy helper macro.
+;; 
+;; Assembly call:
+;;   > map_copy_16 bx, by, mx, my, w, h
 ;;
 ;; Parameters:
 ;;   bx - BAT X position.
