@@ -51,6 +51,7 @@ Group: General  {
    File: System variables  (no auto-title, include/system.inc)
    File: Math routines  (no auto-title, include/math.s)
    File: Interrupts management  (no auto-title, include/irq.inc)
+   File: Backup RAM  (no auto-title, include/bram.s)
    }  # Group: General
 
 Group: Audio  {
