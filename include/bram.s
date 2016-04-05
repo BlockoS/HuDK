@@ -30,6 +30,17 @@
 ;;   This 2 bytes are set to zeroes. They are not part of the BRAM "used area".
 ;;   It is used as a linked list terminator.
 ;;
+;; The following BRAM routines [todo] System Card:
+;;   - bm_format
+;;   - bm_free 
+;;   - bm_read
+;;   - bm_write
+;;   - bm_delete
+;;   - bm_files
+;;
+
+; [todo] checksum computation routine.
+; [todo] rsset for header?
 
 BM_SEGMENT = $F7
 BM_ADDR    = $8000
@@ -39,6 +50,11 @@ bm_lock   = $1803
 bm_unlock = $1807
 
     .bss
+;;
+;; byte: bm_error
+;; [todo]
+;;
+bm_error .ds 1
 
 ; Backup of mpr #4 
 _bm_mpr4 .ds 1
@@ -201,27 +217,65 @@ bm_format:
 ;; function: bm_free
 ;; Returns the number of free bytes.
 ;;
+;; Returns:
+;;    carry flag - 1 upon success or 0 if an error occured.
+;;    A - MSB of the number of free bytes or $ff if an error occured.
+;;    X - LSB of the number of free bytes or $ff if an error occured.
+;;    bm_error - Error code.
+;; 
 bm_free:
-
+    jsr    bm_enable
+    bcs    @err
+@compute:
+    sec
+    lda    BM_ADDR+4
+    sbc    BM_ADDR+6
+    tax
+    lda    BM_ADDR+5
+    sbc    BM_ADDR+7
+    sax
+    sec
+    sbc    #$12
+    sax
+    sbc    #$00
+    bpl    @ok
+@reset:
+        cla
+        clx
+@ok:
+    pha
+    jsr    bm_disable
+    pla
+    stz    bm_error  
+    clc
+    rts
+@err:
+    sta    bm_error  
+    jsr    bm_disable
+    lda    #$ff
+    tax
+    sec
+    rts
 ;;
 ;; function: bm_read
 ;; Read entry data.
 ;;
 bm_read:
-
+    rts
 ;;
 ;; function: bm_write
 ;; Write data.
 ;;
 bm_write:
-
+    rts
 ;;
 ;; function: bm_delete
 ;; Delete the specified entry.
 ;; 
 bm_delete:
-
+    rts
 ;;
 ;; function: bm_files
 ;; 
 bm_files:
+    rts
