@@ -16,7 +16,7 @@
 ;;
 ;; BRAM Entry Header:
 ;;   00-01 - Entry size. This size includes the $10 bytes of the entry header.
-;;   02-03 - Checksum. .
+;;   02-03 - Checksum.
 ;;   04-0f - Entry name. 
 ;;
 ;; BRAM Entry name:
@@ -30,7 +30,8 @@
 ;;   This 2 bytes are set to zeroes. They are not part of the BRAM "used area".
 ;;   It is used as a linked list terminator.
 ;;
-;; The following BRAM routines [todo] System Card:
+;; For CD-ROM programs, the following BRAM routines are provided from the System
+;; Card:
 ;;   - bm_format
 ;;   - bm_free 
 ;;   - bm_read
@@ -40,7 +41,6 @@
 ;;
 
 ; [todo] checksum computation routine.
-; [todo] rsset for header?
 
 BM_SEGMENT = $F7
 BM_ADDR    = $8000
@@ -256,6 +256,49 @@ bm_free:
     tax
     sec
     rts
+
+;;
+;; function: bm_checksum
+;; Compute checksum.
+;;
+;; Parameters:
+;;   _si - BRAM file entry pointer.
+;;
+;; Return:
+;;   _dx - checksum
+;;
+bm_checksum:
+    lda    [_si]            ; get file size.
+    sec                     ; and substract the size of "file size" and checksum
+    sbc    #$04
+    sta    <_cl
+    ldy    #$01
+    lda    [_si], Y
+    sbc    #$01
+    sta    <_ch
+
+    stw    <_si, <_bx       ; compute checksum
+    ldy    #$04
+    stwz   <_dx
+@compute:
+    lda    [_bx], Y
+    clc
+    adc    <_dl
+    sta    <_cl
+    bcc    @l1
+        inc    <_dh
+@l1:
+    iny
+    bne    @l2
+        inc    <_bh
+@l2:
+    dec    <_cl
+    bne    @compute
+    dec    <_ch
+    bne    @compute
+    rts
+
+
 ;;
 ;; function: bm_read
 ;; Read entry data.
