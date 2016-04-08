@@ -40,11 +40,21 @@
 ;;   - bm_files
 ;;
 
-; [todo] checksum computation routine.
-
 BM_SEGMENT = $F7
-BM_ADDR    = $8000
-BM_END     = $8004
+
+bm_addr   = $8000
+bm_entry  = bm_addr+$10
+
+  .rsset bm_addr
+bm_header   .rs 4
+bm_end      .rs 2
+bm_next     .rs 2
+bm_reserved .rs 8
+
+   .rsset $00
+bm_entry_size     .rs 2
+bm_entry_checksum .rs 2
+bm_entry_name     .rs 12
 
 bm_lock   = $1803
 bm_unlock = $1807
@@ -52,7 +62,7 @@ bm_unlock = $1807
     .bss
 ;;
 ;; byte: bm_error
-;; [todo]
+;; Error code.
 ;;
 bm_error .ds 1
 
@@ -103,7 +113,7 @@ bm_enable:
     bsr    bm_lock          ; unlock and map BRAM
     ldx    #3               ; check if the BRAM starts with "HUBM"
 @loop:
-        lda    BM_ADDR, X
+        lda    bm_header, X
         cmp    _bm_id, X
         bne    @invalid
         dex
@@ -187,16 +197,16 @@ bm_format:
     ldx    #$07             ; format BRAM header
 @l0:
     lda    _bm_id, X
-    sta    BM_ADDR, X
+    sta    bm_header, X
     dex
     bpl    @l0
 
-    stwz   BM_ADDR+10       ; set the size of the first entry to 0
+    stwz   bm_entry         ; set the size of the first entry to 0
 
     ; Determine the size of the writeable area by walking every 256 bytes and
     ; checking the 8 first bytes are writeable.
     ; Note that BRAM can go from 2k to 8k.
-    stw    #BM_ADDR, <_di
+    stw    #bm_header, <_di
 @l1:
     bsr    bm_check_write
     bcs    @l2
@@ -207,8 +217,8 @@ bm_format:
     bra    @l1
 @l1:
     lda    <_di+1           ; update the address of the last BRAM byte in the 
-    sta    BM_END+1         ; header.
-    stz    BM_END
+    sta    bm_end+1         ; header.
+    stz    bm_end
 
 @ok:
     jmp    bm_disable
@@ -228,11 +238,11 @@ bm_free:
     bcs    @err
 @compute:
     sec
-    lda    BM_ADDR+4
-    sbc    BM_ADDR+6
+    lda    bm_end
+    sbc    bm_next
     tax
-    lda    BM_ADDR+5
-    sbc    BM_ADDR+7
+    lda    bm_end+1
+    sbc    bm_next+1
     sax
     sec
     sbc    #$12
@@ -296,6 +306,68 @@ bm_checksum:
     bne    @compute
     dec    <_ch
     bne    @compute
+    rts
+
+;;
+;; function: bm_open
+;; Finds the BRAM entry whose name is given as argument.
+;; 
+;; Parameters:
+;;   _bx - pointer to the BRAM entry name.
+;;
+;; Return:
+;;   carry flag - ?
+;;   bm_error   - ?
+;;
+bm_open:
+    jsr    bm_enable
+    bcs    @end
+    stw    bm_entry, <_si
+@find:
+    lda    [_si]                ; The last entry is a sentinel with a size of 0.
+    sta    <_cl                 ; This means that we did not find our entry.
+    ldy    #$01
+    lda    [_si], Y
+    sta    <_ch
+    ora    <_cl
+    beq    @not_found
+        cly
+        ldx    #bm_entry_name   ; Check entry name.
+@cmp_name:
+        lda    [_bx], Y
+        sxy
+        cmp    [_si], Y
+        bne    @next
+            sxy
+            inx
+            iny
+            cpy    #12
+            bcc    @cmp_name
+@check_size:
+        lda    <_ch
+        bne    @ok
+        lda    <_ch
+        cmp    #$10
+        bcc    @empty_file
+@next:
+    addw   <_cx, <_si
+    bra    @find
+@ok:
+    stz    bm_error
+    clc
+    rts 
+@empty_file:
+    lda    #$04
+    bra    @end
+@corrupted_dir:
+    lda    #$03
+    bra    @end
+@not_found:
+    lda    #$01
+@end:
+    sta    bm_error
+    jsr    bm_disable
+    sec
     rts
 
 
