@@ -231,8 +231,8 @@ bm_format:
 ;;    carry flag - 1 upon success or 0 if an error occured.
 ;;    A - MSB of the number of free bytes or $ff if an error occured.
 ;;    X - LSB of the number of free bytes or $ff if an error occured.
-;;    bm_error - Error code.
-;; 
+;;    bm_error - Error code ($00: success, $ff: error).
+;;
 bm_free:
     jsr    bm_enable
     bcs    @err
@@ -316,8 +316,14 @@ bm_checksum:
 ;;   _bx - pointer to the BRAM entry name.
 ;;
 ;; Return:
-;;   carry flag - ?
-;;   bm_error   - ?
+;;   carry flag - 1 upon success or 0 if an error occured.
+;;   _si - Pointer to the beginning of the first matching BRAM entry.
+;;   bm_error - Error code.
+;;
+;; Error code values:
+;;   $01 - file not found
+;;   $04 - empty file
+;;   $ff - invalid header
 ;;
 bm_open:
     jsr    bm_enable
@@ -359,9 +365,6 @@ bm_open:
 @empty_file:
     lda    #$04
     bra    @end
-@corrupted_dir:
-    lda    #$03
-    bra    @end
 @not_found:
     lda    #$01
 @end:
@@ -369,7 +372,6 @@ bm_open:
     jsr    bm_disable
     sec
     rts
-
 
 ;;
 ;; function: bm_read
