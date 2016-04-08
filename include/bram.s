@@ -16,7 +16,12 @@
 ;;
 ;; BRAM Entry Header:
 ;;   00-01 - Entry size. This size includes the $10 bytes of the entry header.
-;;   02-03 - Checksum.
+;;   02-03 - Checksum. The checksum is the sum of the entry bytes starting from
+;;           byte #4 (i.e all bytes except the entry size and checksum). The
+;;           value stored is the opposite of the computed checksum. This way
+;;           the consistency check only consists in adding the ssum the stored
+;;           checksum and the newly computed one. If this sum is 0, the entry is
+;;           valid.
 ;;   04-0f - Entry name. 
 ;;
 ;; BRAM Entry name:
@@ -269,7 +274,8 @@ bm_free:
 
 ;;
 ;; function: bm_checksum
-;; Compute checksum.
+;; Compute checksum. The checksum is the sum of all entry bytes except the first
+;; 4 ones (file size and checksum).
 ;;
 ;; Parameters:
 ;;   _si - BRAM file entry pointer.
@@ -377,7 +383,35 @@ bm_open:
 ;; function: bm_read
 ;; Read entry data.
 ;;
+;; Parameters:
+;;   _bx - pointer to the BRAM entry name.
+;;
 bm_read:
+    jsr    bm_open
+    bcs    @error
+    jsr    bm_checkcum              ; verify checksum
+    bcs    @error
+    ldy    #bm_entry_checksum
+    lda    [_si], Y
+    clc
+    adc    <_dl
+    bne    @checksum_error
+    iny
+    lda    [_si], Y
+    clc
+    adc    <_dh
+    bne    @checksum_error
+@read:
+    ; [todo]
+    jsr    bm_disable
+    clc
+    rts
+@checksum_error:
+    ; [todo]
+    jsr    bm_disable
+    sec
+    rts
+@error:
     rts
 ;;
 ;; function: bm_write
