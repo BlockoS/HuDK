@@ -65,10 +65,7 @@ bm_lock   = $1803
 bm_unlock = $1807
 
     .bss
-;;
-;; byte: bm_error
-;; Error code.
-;;
+; Current error code
 bm_error .ds 1
 
 ; Backup of mpr #4 
@@ -82,15 +79,13 @@ _bm_id: .db 'H','U','B','M'
                   ; here this value is for a freshly formatted BRAM
 
 ;;
-;; function: bm_lock
+;; function: bm_bind
 ;; Unlock and map BRAM to mpr #4.
 ;;
 ;; Warning:
-;; This routine disables interrupts and switches the CPU to slow mode.
+;; This routine switches the CPU to slow mode.
 ;; 
-bm_lock:
-    sei                     ; disable interrupts
-
+bm_bind:
     tma4                    ; save mpr4 segment
     sta    _bm_mpr4
 
@@ -104,18 +99,68 @@ bm_lock:
     rts
 
 ;;
-;; function: bm_enable
-;; Unlock and map BRAM to mpr #4. It also checks if the header is valid.
+;; function: bm_unbind
+;; Lock BRAM and restore mpr #4.
 ;;
 ;; Warning:
-;; This routine disables interrupts and switches the CPU to slow mode.
+;; This routines switches the CPU to fast mode.
+;;
+bm_unbind:
+    lda    _bm_mpr4         ; restore mpr #4
+    tam4
+
+    lda    bm_lock          ; lock BRAM
+    
+    csh                     ; switch to fast mode
+
+    rts
+
+;;
+;; function: bm_test
+;; Test if data can safely be written to BRAM.
+;;
+;; Warning:
+;;   bm_bind must have been previously called.
+;;
+;; Return:
+;;   The carry flag is cleared if the backup RAM storage is valid.
+;;
+bm_test:
+    ldx    #$07
+@l0:
+        lda    bm_addr, X   ; read a bytes from BRAM
+        eor    #$ff         ; invert it
+        sta    <_di, X      ; save it in RAM 
+        sta    bm_addr, X   ; and finally write it back to BRAM
+        dex
+        bpl    @l0
+    ldx    #$07 
+@l1:
+        lda    bm_addr, X   ; check if what we have just written was
+        cmp    <_di, X      ; correctly stored to BRAM
+        bne    @err
+        eor    #$ff         ; restore BRAM data
+        sta    bm_addr, X
+        dex
+        bpl    @l1
+    clc
+    rts
+@err:
+    sec
+    rts
+
+;;
+;; function: bm_check_header
+;; Checks if the BRAM header is valid.
+;;
+;; Warning:
+;;   bm_bind must have been previously called.
 ;;
 ;; Return:
 ;;   The carry flag is cleared and A is set to 0 if the header is valid.
 ;;   Otherwise the carry flag is set and A is set to $ff.
 ;;
-bm_enable:
-    bsr    bm_lock          ; unlock and map BRAM
+bm_check_header:
     ldx    #3               ; check if the BRAM starts with "HUBM"
 @loop:
         lda    bm_header, X
@@ -133,69 +178,14 @@ bm_enable:
     rts
 
 ;;
-;; function: bm_disable
-;; Lock BRAM and restore mpr #4.
-;;
-;; Warning:
-;; This routines switches the CPU to fast mode and enables interrupts.
-;;
-bm_disable:
-    lda    _bm_mpr4         ; restore mpr #4
-    tam4
-
-    lda    bm_lock          ; lock BRAM
-    
-    csh                     ; switch to fast mode
-    cli                     ; enable interrupts
-
-    rts
-
-;;
-;; function: bm_check_write
-;; Check if we can safely write to BRAM.
-;;
-;; Only the first 8 bytes are tested.
-;;
-;; Parameters:
-;;   _di - current BRAM address
-;;
-;; Return:
-;;   The carry flag is set if an error occured.
-;;
-bm_check_write:
-    ldy    #$07
-@l0:
-    lda    [_di], Y         ; read byte from BRAM
-    eor    #$ff             ; invert it
-    sta    _ax, Y           ; save it for latter 
-    sta    [_di], Y         ; write it back to BRAM
-    dey
-    bpl    @l0
-    
-    ldy    #$07
-@l1:
-    lda    [_di], Y         ; re-read byte from BRAM
-    cmp    _ax, Y           ; check if it is what was written in the previous
-    bne    @err             ; loop
-    eor    #$ff             ; restore BRAM value
-    sta    [_di], Y
-    dey
-    bpl    @l1
-@ok:
-    clc
-    rts
-@err:
-    sec
-    rts
-
-;;
 ;; function: bm_format
 ;; Initialize backup memory.
 ;; Set header info and and limit of BRAM to the maximum amount of memory
 ;; available on this hardware.
 ;;
 bm_format:
-    jsr    bm_enable        ; enable BRAM and check if the header is valid
+    jsr    bm_bind          ; bind BRAM
+    jsr    bm_check_header  ; and check if the header is valid
     bcc    @ok              ; do not format if the header is ok
 
 @format:
@@ -208,25 +198,25 @@ bm_format:
 
     stwz   bm_entry         ; set the size of the first entry to 0
 
-    ; Determine the size of the writeable area by walking every 256 bytes and
-    ; checking the 8 first bytes are writeable.
+    ; Determine the size of the writeable area by walking every 256 
+    ; bytes and checking if the 8 first bytes are writeable.
     ; Note that BRAM can go from 2k to 8k.
     stw    #bm_header, <_di
 @l1:
-    bsr    bm_check_write
+    jsr    bm_test
     bcs    @l2
     lda    <_di+1
     cmp    #$a0             ; stop at the next bank.
     beq    @l2
     inc    <_di+1           ; check the next 256 bytes block.
     bra    @l1
-@l1:
+@l2:
     lda    <_di+1           ; update the address of the last BRAM byte in the 
     sta    bm_end+1         ; header.
     stz    bm_end
 
 @ok:
-    jmp    bm_disable
+    jmp    bm_unbind
 
 ;;
 ;; function: bm_free
@@ -239,7 +229,7 @@ bm_format:
 ;;    bm_error - Error code ($00: success, $ff: error).
 ;;
 bm_free:
-    jsr    bm_enable
+    jsr    bm_bind
     bcs    @err
 @compute:
     sec
@@ -259,14 +249,14 @@ bm_free:
         clx
 @ok:
     pha
-    jsr    bm_disable
+    jsr    bm_unbind
     pla
     stz    bm_error  
     clc
     rts
 @err:
     sta    bm_error  
-    jsr    bm_disable
+    jsr    bm_unbind
     lda    #$ff
     tax
     sec
@@ -323,8 +313,9 @@ bm_checksum:
 ;;
 ;; Return:
 ;;   carry flag - 1 upon success or 0 if an error occured.
-;;   _si - Pointer to the beginning of the first matching BRAM entry.
 ;;   bm_error - Error code.
+;;   _si - Pointer to the beginning of the first matching BRAM entry.
+;;   _cx - Entry size
 ;;
 ;; Error code values:
 ;;   $01 - file not found
@@ -332,7 +323,7 @@ bm_checksum:
 ;;   $ff - invalid header
 ;;
 bm_open:
-    jsr    bm_enable
+    jsr    bm_bind
     bcs    @end
     stw    bm_entry, <_si
 @find:
@@ -375,22 +366,86 @@ bm_open:
     lda    #$01
 @end:
     sta    bm_error
-    jsr    bm_disable
+    jsr    bm_unbind
     sec
     rts
 
+;;
+;; function: bm_adjust_pointer
+;;
+;; Parameters:
+;;   _si - pointer to BRAM entry.
+;;   _bp - offset (in bytes) in BRAM entry data.
+;;   _ax - number of byte to read from BRAM.
+;;
+;; Return:
+;;    The carry flag is cleared is the BRAM pointer was succesfully
+;;    adjusted to point to the requested BRAM entry data area. It is set
+;;    if the requested size is zero or if the requested area to read is
+;;    out the entry bounds.
+;;    <_ax, <_cx - adjusted size
+;;    <_dx - entry pointer
+;; 
+bm_adjust_pointer:
+    lda    <_al             ; test if the requested size is zero
+    ora    <_ah
+    beq    @err
+    lda    <_bp
+    clc
+    adc    #$16
+    sta    <_bl
+    lda    <_bp+1
+    adc    #$00
+    sta    <_bh
+    ldy    #1                ; check if the offset does not cross entry
+    cmp    [_si], Y          ; limits
+    bne    @l0
+    lda    <_bl
+    cmp    [_si]
+@l0:
+    bcc    @l1
+@err:
+    sec
+    rts
+@l1:
+    addw   <_si, <_bx, <_dx
+    addw   <_ax, <_bx       ; adjust length
+    lda    [_si]
+    sec
+    sbc    <_bl
+    sta    <_bl
+    lda    [_si], Y
+    sbc    <_bh
+    sta    <_bh
+    bpl    @ok
+        addw    <_bx, <_ax
+@ok:
+    stw    <_ax, <_cx
+    clc
+    rts
+    
 ;;
 ;; function: bm_read
 ;; Read entry data.
 ;;
 ;; Parameters:
+;;   _di - pointer to the output buffer.
 ;;   _bx - pointer to the BRAM entry name.
+;;   _bp - offset (in bytes) in BRAM entry data.
+;;   _ax - number of bytes to read from BRAM.
+;;
+;; Return:
+;;   _ax - number of bytes to read from BRAM.
+;;   _dx - entry pointer
+;;   bm_error - Error code.
+;;
+;; Error values:
+;;   $02 - invalid checksum.
 ;;
 bm_read:
     jsr    bm_open
     bcs    @error
-    jsr    bm_checkcum              ; verify checksum
-    bcs    @error
+    jsr    bm_checksum              ; verify checksum
     ldy    #bm_entry_checksum
     lda    [_si], Y
     clc
@@ -402,28 +457,107 @@ bm_read:
     adc    <_dh
     bne    @checksum_error
 @read:
-    ; [todo]
-    jsr    bm_disable
+    jsr    bm_adjust_pointer
+    bcs    @ok
+    cly
+@copy:
+        lda    [_dx], Y
+        sta    [_di], Y
+        iny
+        bne    @next
+            inc    <_dx+1
+            inc    <_di+1
+@next:
+        dec    <_cl
+        bne    @copy
+        dec    <_ch
+        bpl    @copy
+@ok:
+    jsr    bm_unbind
+    stz    bm_error
     clc
     rts
 @checksum_error:
-    ; [todo]
-    jsr    bm_disable
+    lda    #$02
+    sta    bm_error
+    jsr    bm_unbind
     sec
-    rts
 @error:
     rts
+
 ;;
 ;; function: bm_write
-;; Write data.
+;; Update entry data.
+;;
+;; Warning:
+;; The entry will not be resized if the offset and size exceed the
+;; current entry area.
+;;
+;; Parameters:
+;;   _di - pointer to the input buffer.
+;;   _bx - pointer to the BRAM entry name.
+;;   _bp - offset (in bytes) in BRAM entry data.
+;;   _ax - number of bytes to write BRAM.
+;;
+;; Return:
+;;   bm_error - Error code.
+;;
+;; Error values:
 ;;
 bm_write:
+    jsr    bm_open
+    bcs    @end
+    jsr    bm_adjust_pointer
+    bcs    @ok
+    cly
+@copy:
+        lda    [_di], Y
+        sta    [_dx], Y
+        iny
+        bne    @next
+            inc    <_dx+1
+            inc    <_di+1
+@next:
+        dec    <_cl
+        bne    @copy
+        dec    <_ch
+        bpl    @copy
+@checksum:
+    jsr    bm_checksum
+    ldy    bm_entry_checksum
+    cla
+    sec
+    sbc    <_dl
+    sta    [_si], Y
+    iny
+    cla
+    sbc    <_dh
+    sta    [_si], Y
+@ok:
+    jsr    bm_unbind
+    stz    bm_error
+    clc
+@end:
     rts
+
 ;;
 ;; function: bm_delete
 ;; Delete the specified entry.
+;;
+;; Parameters:
+;;   _bx - pointer to the BRAM entry name.
 ;; 
 bm_delete:
+    jsr    bm_open
+    bcs    @ok
+    stw    bm_next, <_bx    ; address of the byte after the last entry 
+    subw   <_dx, <_bx       ; #bytecount = end - next + 2
+    addw   #2, <_bx
+    memcpy_mode #SOURCE_INC_DEST_INC
+    memcpy_args <_dx, <_si, <_bx
+    jsr    memcpy
+    subw   <_cx, bm_next    ; adjust the address 
+@ok:
     rts
 ;;
 ;; function: bm_files
