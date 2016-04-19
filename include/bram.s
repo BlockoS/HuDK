@@ -178,6 +178,43 @@ bm_check_header:
     rts
 
 ;;
+;; function: bm_detect
+;; Detect if a BRAM is present on the system.
+;; 
+;; Return:
+;; The carry flag is set if an error occured and the value of bm_error
+;; is set as follow:
+;;   0 - BRAM is present and fully formated.
+;;   1 - BRAM is present but not formatted.
+;;   2 - no BRAM was found.
+;;
+bm_detect:
+    lda    #2 ; [todo]
+    sta    bm_error
+    
+    jsr    bm_bind
+    
+    jsr    bm_test
+    bcs    @error
+
+    dec    bm_error
+
+    jsr    bm_check_header
+    bcs    @error
+
+    dec    bm_error
+
+@ok:
+    jsr    bm_unbind
+    clc
+    rts
+
+@error:
+    jsr    bm_unbind
+    sec
+    rts
+    
+;;
 ;; function: bm_format
 ;; Initialize backup memory.
 ;; Set header info and and limit of BRAM to the maximum amount of memory
@@ -559,8 +596,17 @@ bm_delete:
     subw   <_cx, bm_next    ; adjust the address 
 @ok:
     rts
+    
 ;;
 ;; function: bm_files
-;; 
+;; Get file by index. 
+;;
+;; Parameters:
+;;   _al - file index
+;;
+;; Return:
+;;  [todo]
+;;
 bm_files:
+    ; [todo]
     rts
