@@ -189,27 +189,25 @@ bm_check_header:
 ;;   2 - no BRAM was found.
 ;;
 bm_detect:
-    lda    #2 ; [todo]
-    sta    bm_error
-    
+    stz    bm_error
+
     jsr    bm_bind
     
     jsr    bm_test
-    bcs    @error
-
-    dec    bm_error
+    bcs    @not_found
 
     jsr    bm_check_header
-    bcs    @error
-
-    dec    bm_error
+    bcs    @not_formatted
 
 @ok:
     jsr    bm_unbind
     clc
     rts
 
-@error:
+@not_found:
+    inc    bm_error
+@not_formatted:
+    inc    bm_error
     jsr    bm_unbind
     sec
     rts
@@ -266,7 +264,8 @@ bm_format:
 ;;    bm_error - Error code ($00: success, $ff: error).
 ;;
 bm_free:
-    jsr    bm_bind
+    jsr    bm_bind          ; bind BRAM
+    jsr    bm_check_header  ; and check if the header is valid
     bcs    @err
 @compute:
     sec
@@ -360,7 +359,8 @@ bm_checksum:
 ;;   $ff - invalid header
 ;;
 bm_open:
-    jsr    bm_bind
+    jsr    bm_bind              ; bind BRAM
+    jsr    bm_check_header      ; and check if the header is valid
     bcs    @end
     stw    bm_entry, <_si
 @find:
@@ -540,7 +540,7 @@ bm_read:
 ;;   bm_error - Error code.
 ;;
 ;; Error values:
-;;
+;;   [todo]
 bm_write:
     jsr    bm_open
     bcs    @end
@@ -594,19 +594,93 @@ bm_delete:
     memcpy_args <_dx, <_si, <_bx
     jsr    memcpy
     subw   <_cx, bm_next    ; adjust the address 
+    jsr    bm_unbind
+    stz    bm_error
+    clc
 @ok:
     rts
-    
+
 ;;
 ;; function: bm_files
 ;; Get file by index. 
 ;;
+;; [todo] entry info descriptions
+;;
 ;; Parameters:
-;;   _al - file index
+;;   _bx - Address to the buffer where the entry informations will be 
+;;         stored.
+;;   _al - File index.
 ;;
 ;; Return:
-;;  [todo]
+;;   _si - Entry address
+;;   bm_error - Error code.
+;;
+;; Error values:
+;;   $00 - Success.
+;;   $01 - Cannot find file.
+;;   $ff - BRAM is not formatted.
 ;;
 bm_files:
-    ; [todo]
+    jsr    bm_bind          ; bind BRAM
+    jsr    bm_check_header  ; and check if the header is valid
+    bcs    @end
+    
+    stw    #bm_entry, <_si
+    clx
+@loop:
+        ; check if we crossed the end of the "used" area
+        lda    <_si+1
+        cmp    bm_next+1
+        bcc    @next
+        bne    @not_found
+        lda    <_si
+        cmp    bm_next
+        bne    @not_found
+@next:
+        inx
+        cpx    <_al
+        beq    @copy
+        
+        ; jump to next entry
+        ldy    #bm_entry_size+1
+        lda    [_si], Y
+        tax
+        ldy    #bm_entry_size
+        lda    [_si], Y
+        clc
+        adc    <_si
+        sta    <_si
+        sax
+        adc    <_si+1
+        sta    <_si+1
+        bra    @loop
+
+    ldy    #bm_entry_name       ; copy entry user ID + entry name
+@copy:
+    lda    [_si], Y
+    sta    [_bx], Y
+    iny
+    cpy    #$10
+    bne    @copy
+    
+    addw   #12, <_bx            ; copy entry size
+    lda    [_si]
+    sta    [_bx]
+    ldy    #$01
+    lda    [_si], Y
+    sta    [_bx]
+    
+@ok:
+    stx    <_al
+    jsr    bm_unbind
+    stz    bm_error
+    clc
+@end:
+    rts
+@not_found:
+    stx    <_al
+    jsr    bm_unbind
+    lda    #$01
+    sta    bm_error
+    sec
     rts
