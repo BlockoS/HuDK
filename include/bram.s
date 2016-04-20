@@ -193,6 +193,7 @@ bm_detect:
 
     jsr    bm_bind
     
+    stw    #bm_header, <_di
     jsr    bm_test
     bcs    @not_found
 
@@ -211,7 +212,45 @@ bm_detect:
     jsr    bm_unbind
     sec
     rts
-    
+
+;;
+;; function: bm_size
+;; Get the storage capacity in bytes of the backup RAM.
+;; Standard value is 2KB, but it can go up to 8KB.
+;;
+;; Return:
+;;   _cx - BRAM total storage size (in bytes).
+;;   bm_error - Error code. 
+;;
+;; Error value:
+;;   $00 - Success.
+;;   $ff - BRAM not formatted.
+;;   
+bm_size:
+    jsr    bm_bind
+    jsr    bm_check_header
+    bcs    @err0
+        stw    bm_end, <_cx
+        subw   #bm_addr, <_cx
+        lda    <_ch
+        cmp    #$21
+        bcs    @err1
+        lda    <_ch
+        bpl    @end
+            stwz   <_cx
+@end:
+    jsr    bm_unbind
+    stz    bm_error
+    clc
+    rts
+@err1:
+    lda    #$ff
+    sta    bm_error
+@err0:
+    jsr    bm_unbind
+    clc
+    rts
+
 ;;
 ;; function: bm_format
 ;; Initialize backup memory.
@@ -261,7 +300,11 @@ bm_format:
 ;;    carry flag - 1 upon success or 0 if an error occured.
 ;;    A - MSB of the number of free bytes or $ff if an error occured.
 ;;    X - LSB of the number of free bytes or $ff if an error occured.
-;;    bm_error - Error code ($00: success, $ff: error).
+;;    bm_error - Error code. 
+;;
+;; Error Value:
+;;   $00 - Success. 
+;;   $ff - Error.
 ;;
 bm_free:
     jsr    bm_bind          ; bind BRAM
@@ -354,9 +397,9 @@ bm_checksum:
 ;;   _cx - Entry size
 ;;
 ;; Error code values:
-;;   $01 - file not found
-;;   $04 - empty file
-;;   $ff - invalid header
+;;   $01 - File not found
+;;   $04 - Empty file
+;;   $ff - BRAM is not formatted
 ;;
 bm_open:
     jsr    bm_bind              ; bind BRAM
@@ -420,6 +463,7 @@ bm_open:
 ;;    adjusted to point to the requested BRAM entry data area. It is set
 ;;    if the requested size is zero or if the requested area to read is
 ;;    out the entry bounds.
+;;
 ;;    <_ax, <_cx - adjusted size
 ;;    <_dx - entry pointer
 ;; 
