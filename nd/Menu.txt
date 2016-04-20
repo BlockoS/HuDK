@@ -52,6 +52,7 @@ Group: General  {
    File: Math routines  (no auto-title, include/math.s)
    File: Interrupts management  (no auto-title, include/irq.inc)
    File: Backup RAM  (no auto-title, include/bram.s)
+   File: BCD conversion routies.  (no auto-title, include/bcd.s)
    }  # Group: General
 
 Group: Audio  {
