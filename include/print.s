@@ -69,6 +69,56 @@ print_digit:
     rts
 
 ;;
+;; function: print_bcd
+;; Output a bcd number at the current BAT location.
+;;
+;; Parameters:
+;;   _ax - BCD encoded number (max 4 bytes).
+;;   X - BCD array top element index
+;;
+print_bcd:
+print_bcd.hi:
+    lda    <_ax, X
+    lsr    A
+    lsr    A
+    lsr    A
+    lsr    A
+    jsr    print_digit
+print_bcd.lo:
+    lda    <_ax, X
+    and    #$0f
+    jsr    print_digit
+    
+    dex
+    bpl     print_bcd
+    rts
+
+;;
+;; function: print_dec_u8
+;; Output an unsigned decimal number at the current BAT location.
+;;
+;; Parameters:
+;;   A - Unsigned byte.
+;;
+print_dec_u8:
+    jsr    binbcd8
+    ldx    #$01
+    jmp    print_bcd.lo
+
+;;
+;; function: print_dec_u8
+;; Output an unsigned decimal number at the current BAT location.
+;;
+;; Parameters:
+;;   A - Word LSB.
+;;   X - Word MSB.
+;;
+print_dec_u16:
+    jsr    binbcd16
+    ldx    #$02
+    jmp    print_bcd.lo
+
+;;
 ;; function: print_string
 ;; Display a null (0) terminated string.
 ;;              

@@ -1,6 +1,7 @@
     .include "hudk.s"
     .include "bram.s"
-
+    .include "bcd.s"
+    
     .code
 main:
     ; load default font
@@ -47,6 +48,18 @@ main:
     lda    #1               ; [todo]
     jsr    print_string
     
+    jsr    bm_size
+    bcs    @size_error
+        ldx    #7               ; [todo]
+        lda    #2               ; [todo]            
+        jsr    vdc_calc_addr 
+        jsr    vdc_set_write
+
+        lda   <_cl
+        ldx   <_ch
+        jsr   print_dec_u16
+@size_error:
+   
     ; enable background display
     vdc_reg  #VDC_CR
     vdc_data #(VDC_CR_BG_ENABLE)
@@ -61,9 +74,9 @@ bm_detect_msg.lo:
 bm_detect_msg.hi:
     .dwh bm_detect_msg00, bm_detect_msg01, bm_detect_msg02
 
-bm_detect_msg00: .db "backup ram detected", 0
-bm_detect_msg01: .db "backup ram not found", 0
-bm_detect_msg02: .db "backup ram is not formated", 0
+bm_detect_msg00: .db "detected", 0
+bm_detect_msg01: .db "not found", 0
+bm_detect_msg02: .db "not formatted", 0
 
 palette:
     .db $00,$00,$ff,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
