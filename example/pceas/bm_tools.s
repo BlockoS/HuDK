@@ -34,6 +34,15 @@ main:
     jsr    print_fill
 
     ; detect BRAM
+    stw    #bm_info_txt, <_si
+    lda    #32              ; [todo]
+    sta    <_al
+    lda    #32              ; [todo]
+    sta    <_ah
+    ldx    #1               ; [todo]
+    lda    #1               ; [todo]
+    jsr    print_string
+    
     jsr    bm_detect
     ldx    bm_error
     lda    bm_detect_msg.lo, X
@@ -44,13 +53,13 @@ main:
     sta    <_al
     lda    #32              ; [todo]
     sta    <_ah
-    ldx    #7               ; [todo]
+    ldx    #11              ; [todo]
     lda    #1               ; [todo]
     jsr    print_string
     
     jsr    bm_size
     bcs    @size_error
-        ldx    #7               ; [todo]
+        ldx    #11              ; [todo]
         lda    #2               ; [todo]            
         jsr    vdc_calc_addr 
         jsr    vdc_set_write
@@ -62,7 +71,7 @@ main:
         
     jsr    bm_free
     bcs    @free_error
-        ldx    #7               ; [todo]
+        ldx    #11              ; [todo]
         lda    #3               ; [todo]            
         jsr    vdc_calc_addr 
         jsr    vdc_set_write
@@ -86,9 +95,13 @@ bm_detect_msg.lo:
 bm_detect_msg.hi:
     .dwh bm_detect_msg00, bm_detect_msg01, bm_detect_msg02
 
-bm_detect_msg00: .db "detected", 0
+bm_detect_msg00: .db "ok", 0
 bm_detect_msg01: .db "not found", 0
 bm_detect_msg02: .db "not formatted", 0
+
+bm_info_txt: .db "   Status:\n"
+             .db "     Size:\n"
+             .db "Available:", 0
 
 palette:
     .db $00,$00,$ff,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
