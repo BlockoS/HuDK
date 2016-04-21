@@ -298,8 +298,7 @@ bm_format:
 ;;
 ;; Returns:
 ;;    carry flag - 1 upon success or 0 if an error occured.
-;;    A - MSB of the number of free bytes or $ff if an error occured.
-;;    X - LSB of the number of free bytes or $ff if an error occured.
+;;    _cx - Number of free bytes.
 ;;    bm_error - Error code. 
 ;;
 ;; Error Value:
@@ -311,8 +310,8 @@ bm_free:
     jsr    bm_check_header  ; and check if the header is valid
     bcs    @err
 @compute:
-    sec
     lda    bm_end
+    sec
     sbc    bm_next
     tax
     lda    bm_end+1
@@ -320,24 +319,22 @@ bm_free:
     sax
     sec
     sbc    #$12
+    sta    <_cl
     sax
     sbc    #$00
     bpl    @ok
 @reset:
-        cla
-        clx
+    stz    <_cl
+    cla
 @ok:
-    pha
+    sta    <_ch
     jsr    bm_unbind
-    pla
     stz    bm_error  
     clc
     rts
 @err:
     sta    bm_error  
     jsr    bm_unbind
-    lda    #$ff
-    tax
     sec
     rts
 

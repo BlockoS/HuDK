@@ -69,6 +69,40 @@ print_digit:
     rts
 
 ;;
+;; function: print_hex
+;; Output a hexadecimal digit at the current BAT location.
+;;
+;; Remark:
+;; The VDC write register must point to a valid BAT location.
+;;
+;; Parameters:
+;;   A - Digit value between 0 and 15.
+;;
+print_hex:
+    cmp    #$10
+    bcc    @l0
+        ; The digit is out of bound.
+        lda    #$1f     ; '?'
+        bra    @print
+@l0:
+    cmp    #$0a
+    bcc    @l1
+        ; Remember that the carry flag is set. 1 will be added to 
+        ; adc operand.
+        adc    #(FONT_UPPER_CASE_INDEX - FONT_DIGIT_INDEX - 10 - 1)
+@l1:
+    clc
+    adc    #FONT_DIGIT_INDEX
+@print:
+    clc
+    adc     <font_base
+    vdc_data_l
+    cla
+    adc     <font_base+1
+    vdc_data_h
+    rts
+
+;;
 ;; function: print_bcd
 ;; Output a bcd number at the current BAT location.
 ;;
@@ -106,7 +140,7 @@ print_dec_u8:
     jmp    print_bcd.lo
 
 ;;
-;; function: print_dec_u8
+;; function: print_dec_u16
 ;; Output an unsigned decimal number at the current BAT location.
 ;;
 ;; Parameters:
@@ -117,6 +151,38 @@ print_dec_u16:
     jsr    binbcd16
     ldx    #$02
     jmp    print_bcd.lo
+
+;;
+;; function: print_hex_u8
+;; Output a hexadecimal number at the current BAT location.
+;;
+;; Parameters:
+;;   A - Unsigned byte.
+;;
+print_hex_u8:
+    pha
+    lsr    A
+    lsr    A
+    lsr    A
+    lsr    A
+    jsr    print_hex
+    pla
+    and    #$0f
+    jmp    print_hex
+
+;;
+;; function: print_hex_u16
+;; Output a hexadecimal number at the current BAT location.
+;;
+;; Parameters:
+;;   A - Word LSB.
+;;   X - Word MSB.
+;;
+print_hex_u16:
+    sax                     ; print MSB
+    jsr    print_hex_u8
+    sax                     ; print LSB
+    jmp    print_hex_u8
 
 ;;
 ;; function: print_string

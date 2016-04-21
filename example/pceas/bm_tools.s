@@ -57,8 +57,20 @@ main:
 
         lda   <_cl
         ldx   <_ch
-        jsr   print_dec_u16
+        jsr   print_hex_u16
 @size_error:
+        
+    jsr    bm_free
+    bcs    @free_error
+        ldx    #7               ; [todo]
+        lda    #3               ; [todo]            
+        jsr    vdc_calc_addr 
+        jsr    vdc_set_write
+
+        lda   <_cl
+        ldx   <_ch
+        jsr   print_hex_u16
+@free_error:
    
     ; enable background display
     vdc_reg  #VDC_CR
