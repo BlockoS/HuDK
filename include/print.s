@@ -186,14 +186,9 @@ print_hex_u16:
 
 ;;
 ;; function: print_string
-;; Display a null (0) terminated string.
+;; Display a null (0) terminated string in a textarea.
 ;;              
 ;; The characters must have been previously converted to fit to current font. 
-;; Currently line feed and carriage return are not supported. No clamping is 
-;; performed either. 
-;;
-;; Remark:
-;; The VDC write register must point to a valid BAT location.
 ;;
 ;; Parameters:
 ;;   _si - string address.
@@ -201,10 +196,6 @@ print_hex_u16:
 ;;     A - textarea y tile position.
 ;;   _al - textarea width.
 ;;   _ah - textarea height.
-;;
-;; Return:
-;;   _cl
-;;   _ch
 ;;
 print_string:
     jsr    vdc_calc_addr 
@@ -237,6 +228,28 @@ print_string:
         inc    <_si+1
 @l0:
     bra    @print_loop
+@end:
+    rts
+
+;;
+;; function: print_string_raw
+;; Display a null (0) terminated string.
+;;
+;; Remark:
+;; The VDC write register must point to a valid BAT location.
+;; The string must be less than 256 characters long ('\0' included).
+;;
+;; Parameters:
+;;   _si - string address.
+;;
+print_string_raw:
+    cly
+@loop:
+    lda    [_si], Y
+    beq    @end
+    jsr    print_char
+    iny
+    bne    @loop
 @end:
     rts
 

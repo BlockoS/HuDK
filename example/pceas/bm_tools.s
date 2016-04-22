@@ -1,7 +1,11 @@
     .include "hudk.s"
     .include "bram.s"
     .include "bcd.s"
-    
+
+    .zp
+cursor_x .ds 1
+cursor_y .ds 1
+
     .code
 main:
     ; load default font
@@ -43,44 +47,8 @@ main:
     lda    #1               ; [todo]
     jsr    print_string
     
-    jsr    bm_detect
-    ldx    bm_error
-    lda    bm_detect_msg.lo, X
-    sta    <_si
-    lda    bm_detect_msg.hi, X
-    sta    <_si+1
-    lda    #32              ; [todo]
-    sta    <_al
-    lda    #32              ; [todo]
-    sta    <_ah
-    ldx    #11              ; [todo]
-    lda    #1               ; [todo]
-    jsr    print_string
-    
-    jsr    bm_size
-    bcs    @size_error
-        ldx    #11              ; [todo]
-        lda    #2               ; [todo]            
-        jsr    vdc_calc_addr 
-        jsr    vdc_set_write
+    jsr    bm_full_test
 
-        lda   <_cl
-        ldx   <_ch
-        jsr   print_hex_u16
-@size_error:
-        
-    jsr    bm_free
-    bcs    @free_error
-        ldx    #11              ; [todo]
-        lda    #3               ; [todo]            
-        jsr    vdc_calc_addr 
-        jsr    vdc_set_write
-
-        lda   <_cl
-        ldx   <_ch
-        jsr   print_hex_u16
-@free_error:
-   
     ; enable background display
     vdc_reg  #VDC_CR
     vdc_data #(VDC_CR_BG_ENABLE)
@@ -89,6 +57,53 @@ main:
 .loop:
     nop
     bra    .loop    
+
+set_cursor:
+    stx    <cursor_x
+    sta    <cursor_y
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    rts
+
+next_line:
+    ldx    <cursor_x
+    inc    <cursor_y
+    lda    <cursor_y
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    rts
+
+bm_full_test:
+    ldx    #11              ; [todo]
+    lda    #1
+    jsr    set_cursor
+
+    jsr    bm_detect
+    ldx    bm_error
+    lda    bm_detect_msg.lo, X
+    sta    <_si
+    lda    bm_detect_msg.hi, X
+    sta    <_si+1
+    jsr    print_string_raw
+
+    jsr    bm_size
+    bcc    @display_size
+        stwz    <_cx
+@display_size:
+    jsr   next_line
+    lda   <_cl
+    ldx   <_ch
+    jsr   print_dec_u16
+
+    jsr    bm_free
+    bcc    @display_free
+        stwz    <_cx
+@display_free:
+    jsr   next_line
+    lda   <_cl
+    ldx   <_ch
+    jsr   print_dec_u16
+    rts
 
 bm_detect_msg.lo:
     .dwl bm_detect_msg00, bm_detect_msg01, bm_detect_msg02
