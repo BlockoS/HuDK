@@ -74,15 +74,15 @@ binbcd8:
 ;; Andrew Jacobs, 28-Feb-2004
 ;;
 ;; Parameters:
-;;   A - Word LSB
-;;   X - Word MSB
+;;   A - Word MSB
+;;   X - Word LSB
 ;;
 ;; Return:
 ;;   _ax - Contains the bcd encoded number (3 bytes).
 ;;
 binbcd16:
-    sta     <_cl
-    stx     <_ch
+    stx     <_cl
+    sta     <_ch
     sed                     ; Switch to decimal mode
     cla                     ; Clear result
     stz     <_ax

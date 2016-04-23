@@ -144,8 +144,8 @@ print_dec_u8:
 ;; Output an unsigned decimal number at the current BAT location.
 ;;
 ;; Parameters:
-;;   A - Word LSB.
-;;   X - Word MSB.
+;;   A - Word MSB.
+;;   X - Word LSB.
 ;;
 print_dec_u16:
     jsr    binbcd16
@@ -175,12 +175,11 @@ print_hex_u8:
 ;; Output a hexadecimal number at the current BAT location.
 ;;
 ;; Parameters:
-;;   A - Word LSB.
-;;   X - Word MSB.
+;;   A - Word MSB.
+;;   X - Word LSB.
 ;;
 print_hex_u16:
-    sax                     ; print MSB
-    jsr    print_hex_u8
+    jsr    print_hex_u8     ; print MSB
     sax                     ; print LSB
     jmp    print_hex_u8
 

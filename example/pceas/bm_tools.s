@@ -7,7 +7,7 @@ cursor_x .ds 1
 cursor_y .ds 1
 
     .bss
-bm_entry_infos .ds 14
+bm_namebuf       .ds 14
 
     .code
 main:
@@ -50,24 +50,28 @@ main:
     lda    #1               ; [todo]
     jsr    print_string
     
-    jsr    bm_full_test ; [todo] set carry flag on error
+    jsr    bm_full_test     ; [todo] set carry flag on error
 
-    lda    #$01
-    sta    $3456
+    ldx    #2               ; [todo]
+    lda    #4
+    jsr    set_cursor
+
+    stz    bm_namebuf+13
+    stz    bm_namebuf+14
+    
+    stw    #bm_entry, <_bp
 @list:
-        lda    $3456
-        sta    <_al
-        inc    $3456
-        beq    @plop
-        stw    #bm_entry_infos, <_bx
-        jsr    bm_files
-        bcs    @plop
+        lda    #high(bm_namebuf)
+        ldx    #low(bm_namebuf)
+        jsr    bm_getptr.2
+        bcs    @end
+        sta    <_bp+1
+        stx    <_bp
         
         jsr    next_line
-        stw    #(bm_entry_infos+6), <_si
-        jsr    print_string_raw
+        jsr    print_entry_description
         bra    @list
-@plop:
+@end:
 
     ; enable background display
     vdc_reg  #VDC_CR
@@ -93,6 +97,30 @@ next_line:
     jsr    vdc_set_write
     rts
 
+print_entry_description:
+    ; print size
+    ldx    <_cl
+    lda    <_ch
+    jsr    print_dec_u16
+
+    ; spacing
+    lda    #' '
+    jsr    print_char
+
+    ; print user id
+    ldx    bm_namebuf
+    lda    bm_namebuf+1
+    jsr    print_hex_u16
+
+    ; spacing
+    lda    #' '
+    jsr    print_char
+
+    ; print name
+    stw    #bm_namebuf+2, <_si
+    jsr    print_string_raw
+    rts
+
 bm_full_test:
     ldx    #11              ; [todo]
     lda    #1
@@ -111,8 +139,8 @@ bm_full_test:
         stwz    <_cx
 @display_size:
     jsr   next_line
-    lda   <_cl
-    ldx   <_ch
+    ldx   <_cl
+    lda   <_ch
     jsr   print_dec_u16
 
     jsr    bm_free
@@ -120,8 +148,8 @@ bm_full_test:
         stwz    <_cx
 @display_free:
     jsr   next_line
-    lda   <_cl
-    ldx   <_ch
+    ldx   <_cl
+    lda   <_ch
     jsr   print_dec_u16
     rts
 

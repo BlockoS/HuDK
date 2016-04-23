@@ -736,12 +736,13 @@ bm_files:
 ;;
 ;; Parameters:
 ;;   _bp - Address of the current entry.
-;;   A - MSB of the destination address.
-;;   X - LSB of the destination address.
+;;   A - MSB of the destination address for the entry name.
+;;   X - LSB of the destination address for the entry name.
 ;;
 ;; Return:
 ;;   A - MSB of the next entry address.
 ;;   X - LSB of the next entry address.
+;;   _cx - Entry size.
 ;;   bm_error - Error code.
 ;;   carry flag - Set if an error occured.
 ;;
