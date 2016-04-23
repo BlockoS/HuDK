@@ -650,7 +650,7 @@ bm_delete:
 ;; Parameters:
 ;;   _bx - Address to the buffer where the entry informations will be 
 ;;         stored.
-;;   _al - File index.
+;;   _al - File index (starts at 1).
 ;;
 ;; Return:
 ;;   _si - Entry address
@@ -683,20 +683,21 @@ bm_files:
         beq    @copy
         
         ; jump to next entry
-        ldy    #bm_entry_size+1
-        lda    [_si], Y
-        tax
         ldy    #bm_entry_size
         lda    [_si], Y
         clc
         adc    <_si
-        sta    <_si
-        sax
+        pha
+        iny
+        lda    [_si], Y
         adc    <_si+1
         sta    <_si+1
+        pla
+        sta    <_si
         bra    @loop
 
     ldy    #bm_entry_name       ; copy entry user ID + entry name
+    subw   #02, <_bx
 @copy:
     lda    [_si], Y
     sta    [_bx], Y
@@ -704,13 +705,13 @@ bm_files:
     cpy    #$10
     bne    @copy
     
-    addw   #12, <_bx            ; copy entry size
+    addw   #$12, <_bx            ; copy entry size
     lda    [_si]
     sta    [_bx]
     ldy    #$01
     lda    [_si], Y
-    sta    [_bx]
-    
+    sta    [_bx], Y
+
 @ok:
     stx    <_al
     jsr    bm_unbind
@@ -725,3 +726,5 @@ bm_files:
     sta    bm_error
     sec
     rts
+
+; [todo] bm_getptr.2 <= copy current entry infos and setup pointer to next entry

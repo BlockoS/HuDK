@@ -6,6 +6,9 @@
 cursor_x .ds 1
 cursor_y .ds 1
 
+    .bss
+bm_entry_infos .ds 14
+
     .code
 main:
     ; load default font
@@ -47,7 +50,24 @@ main:
     lda    #1               ; [todo]
     jsr    print_string
     
-    jsr    bm_full_test
+    jsr    bm_full_test ; [todo] set carry flag on error
+
+    lda    #$01
+    sta    $3456
+@list:
+        lda    $3456
+        sta    <_al
+        inc    $3456
+        beq    @plop
+        stw    #bm_entry_infos, <_bx
+        jsr    bm_files
+        bcs    @plop
+        
+        jsr    next_line
+        stw    #(bm_entry_infos+6), <_si
+        jsr    print_string_raw
+        bra    @list
+@plop:
 
     ; enable background display
     vdc_reg  #VDC_CR
