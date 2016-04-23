@@ -676,7 +676,7 @@ bm_files:
         bne    @not_found
         lda    <_si
         cmp    bm_next
-        bne    @not_found
+        bcs    @not_found
 @next:
         inx
         cpx    <_al
@@ -727,4 +727,81 @@ bm_files:
     sec
     rts
 
-; [todo] bm_getptr.2 <= copy current entry infos and setup pointer to next entry
+;;
+;; function: bm_getptr.2
+;; Given a pointer with the BRAM, obtain the name of the entry and the
+;; pointer to the next entry.
+;;
+;; Set _bp to bm_entry for the first entry.
+;;
+;; Parameters:
+;;   _bp - Address of the current entry.
+;;   A - MSB of the destination address.
+;;   X - LSB of the destination address.
+;;
+;; Return:
+;;   A - MSB of the next entry address.
+;;   X - LSB of the next entry address.
+;;   bm_error - Error code.
+;;   carry flag - Set if an error occured.
+;;
+;; Error values:
+;;   $00 - Success.
+;;   $01 - Cannot find file. _bp is past the last entry.
+;;   $ff - BRAM is not formatted.
+;;
+bm_getptr.2:
+    sta    <_di+1
+    stx    <_di
+    jsr    bm_bind
+    jsr    bm_check_header
+    bcs    @end
+    
+    lda    <_bp+1
+    cmp    bm_next+1
+    bcc    @l0
+    bne    @not_found
+    lda    <_bp
+    cmp    bm_next
+    bcs    @not_found
+@l0:
+    lda    <_bp
+    ora    <_bp+1
+    beq    @end
+    
+    lda    [_bp]            ; _cx will contain the length of the entry
+    sta    <_cl
+    ldy    #1
+    lda    [_bp], Y
+    sta    <_ch
+    
+    ora    <_cl             ; test if the entry is empty
+    beq   @empty
+        ; <_si now points to the name of the entry
+        addw   #4, <_bp, <_si
+        ldy    #11
+@copy:
+        lda    [_si], Y
+        sta    [_di], Y
+        dey
+        bpl    @copy
+        
+        addw   <_cx, <_bp, <_ax ; next pointer
+        jsr    bm_unbind
+        stz    bm_error
+        lda    <_ah
+        ldx    <_al
+        clc
+        rts
+@empty:
+    cla
+    bra    @end
+@not_found:
+    lda    #$01
+@end:
+    sta    bm_error
+    jsr    bm_unbind
+    cla
+    clx
+    sec
+    rts
