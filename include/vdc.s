@@ -317,3 +317,117 @@ vdc_init:
     .byte .lobyte(VDC_DEFAULT_SATB_ADDR)
     .byte .hibyte(VDC_DEFAULT_SATB_ADDR)
 
+;;
+;; function: vdc_yres_224
+;; Set vertical (y) resolution to 224 pixels.
+;;
+;; Parameters:
+;; *none*
+;;
+vdc_yres_224:
+    st0    #VDC_VSR
+    ; vertical synchro width
+    st1    #$02
+    ; vertical display start
+    st2    #$17
+
+    st0    #VDC_VDR
+    ; vertical display width
+    st1    #$df
+    st2    #$00
+    rts
+
+;;
+;; function: vdc_yres_240
+;; Set vertical (y) resolution to 240 pixels.
+;;
+;; Parameters:
+;; *none*
+;;
+vdc_yres_240:
+    st0    #VDC_VSR
+    ; vertical synchro width
+    st1    #$02   
+    ; vertical display start
+    st2    #$0f
+
+    st0    #VDC_VDR
+    ; vertical display width
+    st1    #$ef
+    st2    #$00
+    rts
+
+;;
+;; function: vdc_xres_256
+;; Set horizontal (x) resolution to 256 pixels.
+;;
+;; Parameters:
+;; *none*
+;;
+vdc_xres_256:
+    st0    #VDC_HSR
+    ; horizontal sync width
+    st1    #$02
+    ; horizontal display start
+    st2    #$02
+
+    st0    #VDC_HDR
+    ; horizontal display width
+    st1    #$1f
+    ; horizontal display end
+    st2    #$04
+
+    ; enable edge blur and set dot clock to 5MHz
+    lda    #(VCE_BLUR_ON | VCE_DOT_CLOCK_5MHZ)
+    sta    color_ctrl
+    rts
+
+;;
+;; function: vdc_xres_320
+;; Set horizontal (x) resolution to 320 pixels.
+;;
+;; Parameters:
+;; *none*
+;;
+vdc_xres_320:
+    st0    #VDC_HSR
+    ; horizontal sync width
+    st1    #$02
+    ; horizontal display start
+    st2    #$04
+    
+    st0    #VDC_HDR
+    ; horizontal display width
+    st1    #$29
+    ; horizontal display end
+    st2    #$04
+    
+    ; enable edge blur and set dot clock to 7MHz
+    lda    #(VCE_BLUR_ON | VCE_DOT_CLOCK_7MHZ)
+    sta    color_ctrl
+    rts
+
+;;
+;; function: vdc_xres_512
+;; Set horizontal (x) resolution to 512 pixels.
+;;
+;; Parameters:
+;; *none*
+;;
+vdc_xres_512:
+    st0    #VDC_HSR
+    ; horizontal sync width
+    st1    #$02
+    ; horizontal display start
+    st2    #$0b
+    
+    st0    #VDC_HDR
+    ; horizontal display width
+    st1    #$3f
+    ; horizontal display end
+    st2    #$04
+    
+    ; enable edge blur and set dot clock to 10MHz
+    lda    #(VCE_BLUR_ON | VCE_DOT_CLOCK_10MHZ)
+    sta    color_ctrl
+    rts
