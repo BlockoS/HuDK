@@ -1,51 +1,78 @@
 ;;
 ;; Title: 8x8 monochrome 1bpp font.
 ;;
-;; The alphabet for this font is: 
-;; >!"#$%&'()*+,-./
-;; >0123456789:;>=<?
-;; >@ABCDEFGHIJKLMNO
-;; >PQRSTUVWXYZ[\]^_
-;; > abcdefghijklmno
-;; >pqrstuvwxyz{|}~
 
 ;;
 ;; ubyte: FONT_8x8_COUNT
 ;; Number of characters embedded in the font.
-FONT_8x8_COUNT=$60
+FONT_8x8_COUNT=$80
 
 ;;
 ;; ubyte: FONT_8x8_ASCII_FIRST
 ;; ASCII code of the first font character.
 ;;
-FONT_ASCII_FIRST=$20
+FONT_ASCII_FIRST=$00
 ;;
 ;; ubyte: FONT_8x8_ASCII_LAST
 ;; ASCII code of the last font character.
 ;;
-FONT_ASCII_LAST =$7e
+FONT_ASCII_LAST =$9e
 
 ;;
 ;; ubyte: FONT_DIGIT_INDEX
 ;; Tile index of the first digit character ('0').
 ;;
-FONT_DIGIT_INDEX=$10
+FONT_DIGIT_INDEX=$30
 ;;
 ;; ubyte: FONT_UPPER_CASE_INDEX
 ;; Tile index of the first uppercase character ('A').
 ;;
-FONT_UPPER_CASE_INDEX=$21
+FONT_UPPER_CASE_INDEX=$41
 ;;
 ;; ubyte: FONT_LOWER_CASE_INDEX
 ;; Tile index of the first lowercase character ('a').
 ;;
-FONT_LOWER_CASE_INDEX=$41
+FONT_LOWER_CASE_INDEX=$61
 
 ;;
 ;; array: font_8x8
 ;; 8x8 1bpp font data.
 ;;
 font_8x8:
+    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;empty
+    .byte $00,$00,$00,$00,$00,$00,$00,$ff    ;  
+    .byte $00,$00,$00,$00,$00,$00,$ff,$ff    ;
+    .byte $00,$00,$00,$00,$00,$ff,$ff,$ff    ;
+    .byte $00,$00,$00,$00,$ff,$ff,$ff,$ff    ;
+    .byte $00,$00,$00,$ff,$ff,$ff,$ff,$ff    ;
+    .byte $00,$00,$ff,$ff,$ff,$ff,$ff,$ff    ;
+    .byte $00,$ff,$ff,$ff,$ff,$ff,$ff,$ff    ;
+    .byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff    ;
+    .byte $10,$38,$7c,$fe,$fe,$7c,$10,$38    ; ace of spaces
+    .byte $00,$6c,$fe,$fe,$fe,$7c,$38,$10    ; ace of hearts
+    .byte $00,$10,$38,$7c,$fe,$7c,$38,$10    ; ace of diamonds
+    .byte $10,$38,$38,$7c,$fe,$7c,$10,$38    ; ace of clubs
+    .byte $38,$7c,$fe,$fe,$fe,$7c,$38,$00    ; full circle
+    .byte $38,$44,$82,$82,$82,$44,$38,$00    ; empty circle
+    .byte $01,$02,$04,$08,$10,$20,$40,$80
+    
+    .byte $80,$40,$20,$10,$08,$04,$02,$01
+    .byte $fe,$92,$92,$fe,$82,$82,$86,$82
+    .byte $40,$7c,$90,$7c,$50,$fe,$10,$10
+    .byte $7e,$42,$7e,$42,$7e,$42,$46,$82
+    .byte $fe,$82,$82,$fe,$82,$82,$fe,$82
+    .byte $08,$fc,$a8,$fe,$a4,$fc,$14,$0c
+    .byte $10,$38,$6c,$c6,$7c,$24,$4c,$00
+    .byte $00,$e8,$5a,$e8,$48,$ca,$64,$58
+    .byte $01,$03,$07,$0f,$1f,$3f,$7f,$ff
+    .byte $80,$c0,$e0,$f0,$f8,$fc,$fe,$ff
+    .byte $ff,$7f,$3f,$1f,$0f,$07,$03,$01
+    .byte $ff,$fe,$fc,$f8,$f0,$e0,$c0,$80
+    .byte $00,$04,$06,$ff,$06,$04,$00,$00
+    .byte $00,$20,$60,$ff,$60,$20,$00,$00
+    .byte $10,$38,$7c,$10,$10,$10,$10,$10
+    .byte $10,$10,$10,$10,$10,$7c,$38,$10
+    
     .byte $00,$00,$00,$00,$00,$00,$00,$00    ;SPACE
     .byte $cc,$cc,$cc,$88,$88,$00,$cc,$00    ;!
     .byte $6c,$6c,$d8,$00,$00,$00,$00,$00    ;"
@@ -142,11 +169,11 @@ font_8x8:
     .byte $00,$00,$c6,$6c,$10,$6c,$c6,$00    ;x
     .byte $00,$00,$66,$66,$66,$3e,$06,$3c    ;y
     .byte $00,$00,$fe,$0c,$38,$60,$fe,$00    ;z
-    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;{ [todo]
-    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;| [todo]
-    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;} [todo]
-    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;~ [todo]
-    .byte $00,$00,$00,$00,$00,$00,$00,$00    ;
+    .byte $08,$10,$10,$20,$10,$10,$08,$00    ;{
+    .byte $10,$10,$00,$00,$00,$10,$10,$00    ;|
+    .byte $10,$08,$08,$04,$08,$08,$10,$00    ;}
+    .byte $00,$00,$00,$32,$4c,$00,$00,$00    ;~
+    .byte $81,$42,$24,$18,$18,$24,$42,$81    ;  
 
   .ifdef MAGICKIT
     .include "pceas/font.inc"

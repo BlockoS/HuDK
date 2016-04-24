@@ -26,13 +26,10 @@
 ;;   A - ASCII character
 ;;
 print_char:
-    sec
-    sbc    #FONT_ASCII_FIRST
-    bcc    @unknown 
     cmp    #FONT_8x8_COUNT
     bcc    @go 
 @unknown:
-      lda    #$1f        ; '?'
+      lda    #$3f        ; '?'
 @go:
     clc
     adc     <font_base
@@ -82,7 +79,7 @@ print_hex:
     cmp    #$10
     bcc    @l0
         ; The digit is out of bound.
-        lda    #$1f     ; '?'
+        lda    #$3f     ; '?'
         bra    @print
 @l0:
     cmp    #$0a
@@ -267,9 +264,6 @@ print_fill:
     jsr    vdc_calc_addr
 
     lda    <_bl
-    sec
-    sbc    #FONT_ASCII_FIRST
-    bcc    @unknown 
     cmp    #FONT_8x8_COUNT
     bcc    @go 
 @unknown:
