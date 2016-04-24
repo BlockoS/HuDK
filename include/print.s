@@ -26,11 +26,6 @@
 ;;   A - ASCII character
 ;;
 print_char:
-    cmp    #FONT_8x8_COUNT
-    bcc    @go 
-@unknown:
-      lda    #$3f        ; '?'
-@go:
     clc
     adc     <font_base
     vdc_data_l
@@ -264,11 +259,6 @@ print_fill:
     jsr    vdc_calc_addr
 
     lda    <_bl
-    cmp    #FONT_8x8_COUNT
-    bcc    @go 
-@unknown:
-      cla
-@go:
     clc
     adc     <font_base
     pha
