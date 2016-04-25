@@ -19,3 +19,41 @@
     .endif
     sta    irq_disable
   .endmacro
+
+;
+; Enable IRQ vector.
+;
+  .macro irq_enable_vec
+    .if (\1 = 5)
+     smb    #6, <irq_m
+    .else
+     smb    \1, <irq_m
+    .endif
+  .endmacro
+
+;
+; Disable IRQ vector.
+;
+  .macro irq_disable_vec
+    .if (\1 = 5)
+     rmb    #6, <irq_m
+    .else
+     rmb    \1, <irq_m
+    .endif
+  .endmacro
+
+;
+; Set user interrupt functions.
+;
+  .macro irq_set_vec
+    sei                     ; disable interrupts
+
+    lda    \1
+    asl    A                ; compute offset in user function table
+    tax
+    lda    LOW_BYTE \2      ; store routine address
+    sta    user_jmptbl, X
+    inx
+    lda    HIGH_BYTE \2
+    sta    user_jmptbl, X
+  .endmacro

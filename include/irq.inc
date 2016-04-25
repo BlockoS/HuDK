@@ -117,15 +117,49 @@ SOFT_RESET = 6
 
 ;;
 ;; macro: irq_enable_vec 
-;; [todo]
+;; Enable IRQ vector.
+;;
+;;   - Bit 4 of irq_m is used to tell that the user vsync hook must be
+;;     run.  
+;;   - Bit 5 is for standard vsync hook.
+;;   - Bit 6 and 7 are the same things but for hsync.
+;;   - Standard and user [h|v]sync hooks are not mutually exclusive. If 
+;;     both bits are set, first the standard handler will be called then
+;;     the user one.
+;;
+;; Assembly call:
+;;   > irq_enable_vec vec
+;;
+;; Parameter:
+;;   vec - Vector to enable
+;;
 
 ;;
 ;; macro: irq_disable_vec
-;; [todo]
+;; Disable IRQ vector.
+;;
+;; Assembly call:
+;;   > irq_enable_vec vec
+;;
+;; Parameter:
+;;   vec - Vector to enable
+;;
 
 ;;
 ;; macro: irq_set_vec
-;; [todo]
+;; Set user interrupt functions.
+;;
+;; Warning:
+;; A,X and Y will be overwritten.
+;; Interrupts are disabled.
+;;
+;; Assembly call:
+;;   > irq_set_vec vec, addr
+;;
+;; Parameters:
+;;   vec - interrupt to hook.
+;;   addr - user function to be called when interrupt will be triggered.
+;;
 
 user_hook = $2200
 irq2_hook  = user_hook + (IRQ2 * 2)
