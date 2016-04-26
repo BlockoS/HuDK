@@ -11,13 +11,14 @@ _irq_1:
 @vsync:                     ; vsync interrupt
     bbr5   <vdc_sr, @hsync
 
-; [todo]    inc    irq_cnt          ; update irq counter (for wait_vsync)
+    inc    <irq_cnt         ; update irq counter (for wait_vsync)
 
-    st0    #$05             ; update display control (bg/sp)
-    lda    <vdc_crl         ; vdc control register
-    sta    video_data_l
-    lda    <vdc_crh
-    sta    video_data_h
+; [todo]
+;    st0    #$05             ; update display control (bg/sp)
+;    lda    <vdc_crl         ; vdc control register
+;    sta    video_data_l
+;    lda    <vdc_crh
+;    sta    video_data_h
 
     bbs5   <irq_m, @l3
 ; [todo]        jsr  _vsync_hndl
@@ -37,8 +38,9 @@ _irq_1:
         jsr  @user_hsync
 
 @exit:
-    lda    <vdc_reg         ; restore VDC register index
-    sta    video_reg
+; [todo]
+;    lda    <vdc_reg         ; restore VDC register index
+;    sta    video_reg
 
     ply                     ; restore registers
     plx
@@ -51,3 +53,5 @@ _irq_1:
     jmp    [hsync_hook]
 @user_vsync:
     jmp    [vsync_hook]
+
+; [todo] _vsync_hndl & _hsync_hndl

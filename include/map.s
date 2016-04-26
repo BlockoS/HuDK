@@ -247,11 +247,11 @@ _map_load_next_line_16:
         clc
         adc    <map_bat_top_base
         sta    <_di
-        sta    <_di+2
+        sta    <_r0
         cla
         adc    <map_bat_top_base+1 
         sta    <_di+1
-        sta    <_di+3
+        sta    <_r0+1
         bra    _map_load_next_tile_y
 
 @bat_inc_y:
@@ -264,12 +264,12 @@ _map_load_next_line_16:
 @l0:
     adc    <_di
     sta    <_di
-    sta    <_di+2
+    sta    <_r0
     bcc    @l1
         inc    <_di+1
 @l1:
     lda    <_di+1
-    sta    <_di+3 
+    sta    <_r0+1 
     bra    _map_load_next_tile_y
 
 ; Update bat and tilemap line pointers.
@@ -366,7 +366,7 @@ map_load_16:
     asl    A    
     jsr    _map_init
 
-    stw    <_di, <_di+2
+    stw    <_di, <_r0
 
     bra    @line_setup
     ; small recap
@@ -405,16 +405,16 @@ map_load_16:
         bne    @inc_bat_x
             lda    vdc_bat_hmask
             eor    #$ff
-            and    <_di+2
-            sta    <_di+2
+            and    <_r0
+            sta    <_r0
             bra    @next_tile_x
 @inc_bat_x:
-            lda    <_di+2
+            lda    <_r0
             clc
             adc    #$02
-            sta    <_di+2
+            sta    <_r0
             bcc    @next_tile_x
-                inc    <_di+3
+                inc    <_r0+1
 @next_tile_x:
         ; increment tilemap x position
         iny
@@ -426,10 +426,10 @@ map_load_16:
             ldy    <map_width
             dey
             lda    <map_tile_base
-            sta    <_di+4
+            sta    <_r1
             lda    <map_tile_base+1
             ora    [_bp]
-            sta    <_di+5
+            sta    <_r1+1
             bra    @l0
 @tile_repeat:
             cly
@@ -438,44 +438,44 @@ map_load_16:
         lda    [_si], Y
         tax
         sxy
-        stz    <_di+5
+        stz    <_r1+1
         asl    A
-        rol    <_di+5
+        rol    <_r1+1
         asl    A
-        rol    <_di+5
+        rol    <_r1+1
         adc    <map_tile_base
-        sta    <_di+4
-        lda    <_di+5
+        sta    <_r1
+        lda    <_r1+1
         adc    <map_tile_base+1
         ora    [_bp], Y
-        sta    <_di+5
+        sta    <_r1+1
         ; restore tilemap index
         sxy
 @l0:
         vdc_reg  #VDC_MAWR
-        vdc_data <_di+2
+        vdc_data <_r0
         
         vdc_reg  #VDC_DATA
-        stw    <_di+4, video_data
-        incw   <_di+4
-        stw    <_di+4, video_data
-        incw   <_di+4
+        stw    <_r1, video_data
+        incw   <_r1
+        stw    <_r1, video_data
+        incw   <_r1
 
         vdc_reg  #VDC_MAWR
-        lda    <_di+2
+        lda    <_r0
         clc
         adc    vdc_bat_width
         sta    video_data_l
         bcc    @l1
-            inc    <_di+3
+            inc    <_r0+1
 @l1:
-	    lda    <_di+3
+        lda    <_r0+1
         sta    video_data_h
 
         vdc_reg  #VDC_DATA
-        stw    <_di+4, video_data
-        incw   <_di+4
-        stw    <_di+4, video_data
+        stw    <_r1, video_data
+        incw   <_r1
+        stw    <_r1, video_data
 
         dec    <_cl
         beq    @l2

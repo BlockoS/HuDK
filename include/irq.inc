@@ -161,6 +161,17 @@ SOFT_RESET = 6
 ;;   addr - user function to be called when interrupt will be triggered.
 ;;
 
+;;
+;; ubyte: irq_cnt
+;; Interrupt counter.
+;;
+irq_cnt = $20f2
+;;
+;; ubyte: irq_m
+;; Interrupt control mask.
+;;
+irq_m = $20f5
+
 user_hook = $2200
 irq2_hook  = user_hook + (IRQ2 * 2)
 irq1_hook  = user_hook + (IRQ1 * 2)

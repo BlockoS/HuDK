@@ -1,7 +1,8 @@
     .include "hudk.s"
     .include "bram.s"
     .include "bcd.s"
-
+    .include "joypad.s"
+    
 MAIN_MENU   = 0
 FILE_MENU   = 1
 EDITOR_MENU = 2
@@ -58,6 +59,7 @@ main:
     lda    #$00
     jsr    print_fill
 
+    ; [todo] move to routine
     lda    #MAIN_MENU
     sta    <menu_id
     
@@ -87,7 +89,7 @@ main:
 
     stz    bm_namebuf+13
     stz    bm_namebuf+14
-    
+
     stz    <entry_count
     stw    #bm_entry, <_bp
 @list:
@@ -116,14 +118,26 @@ main:
 
     jsr    draw_main_menu
 
+    stz    <irq_m
+    ; set vsync vec
+    irq_on #INT_IRQ1
+    irq_enable_vec #VSYNC
+    irq_set_vec #VSYNC, #vsync_proc
+    
     ; enable background display
     vdc_reg  #VDC_CR
-    vdc_data #(VDC_CR_BG_ENABLE)
+    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
     
     cli 
-.loop:
+@loop:
     nop
-    bra    .loop    
+    bra    @loop
+
+vsync_proc:
+    ; [todo] palette cycling
+    jsr    joypad_read.1
+    rts
+
 
 joypad_callback:
     stz    <joybtn_id

@@ -3,30 +3,18 @@
 ;;
 
 ;;
-;; ubyte: vdc_crl
-;; Copy of the VDC control register LSB.
-;;
-vdc_crl = $20f3
-;;
-;; ubyte: vdc_crh
-;; Copy of the VDC control register MSB.
-;;
-vdc_crh = $20f4
-;;
-;; ubyte: irq_m
-;; Interrupt control mask.
-;;
-irq_m = $20f5
-;;
-;; ubyte: vdc_sr
-;; Copy of the VDC status register.
-;;
-vdc_sr = $20f6
-;;
 ;; ubyte: vdc_reg
 ;; Copy of the VDC register index.
 ;;
 ; [todo] vdc_reg = $20f7
+;;
+;; ushort: _r0
+;; 
+_r0 = $20e8
+;;
+;; ushort: _r1
+;; 
+_r1 = $20ea
 ;;
 ;; ushort: _bp
 ;; Base pointer.
@@ -87,4 +75,3 @@ _dl = _dx
 ;; ushort: _dh
 ;; _dx MSB
 _dh = _dx+1
-

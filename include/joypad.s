@@ -109,7 +109,7 @@ joypad_6_read:
 @no_reset: 
     inx
     cpx    #$05
-    bne    .l0
+    bne    @l0
 
     rts
 

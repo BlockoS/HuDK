@@ -52,8 +52,8 @@
     asl    A                ; compute offset in user function table
     tax
     lda    LOW_BYTE \2      ; store routine address
-    sta    user_jmptbl, X
+    sta    user_hook, X
     inx
     lda    HIGH_BYTE \2
-    sta    user_jmptbl, X
+    sta    user_hook, X
   .endmacro

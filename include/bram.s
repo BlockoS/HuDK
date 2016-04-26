@@ -130,14 +130,14 @@ bm_test:
 @l0:
         lda    bm_addr, X   ; read a bytes from BRAM
         eor    #$ff         ; invert it
-        sta    <_di, X      ; save it in RAM 
+        sta    <_ax, X      ; save it in RAM 
         sta    bm_addr, X   ; and finally write it back to BRAM
         dex
         bpl    @l0
     ldx    #$07 
 @l1:
         lda    bm_addr, X   ; check if what we have just written was
-        cmp    <_di, X      ; correctly stored to BRAM
+        cmp    <_ax, X      ; correctly stored to BRAM
         bne    @err
         eor    #$ff         ; restore BRAM data
         sta    bm_addr, X
