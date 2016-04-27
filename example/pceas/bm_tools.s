@@ -20,6 +20,8 @@ joybtn_id .ds 1
 menu_callbacks .ds 2
 callback       .ds 2
 
+color_index .ds 1
+
     .bss
 bm_namebuf       .ds 14
 current_menu     .ds 1
@@ -45,7 +47,7 @@ main:
     stw    #palette, <_si
     jsr    map_data
     cla
-    ldy    #$02
+    ldy    #$01
     jsr    vce_load_palette
     
     ; fill BAT with space character
@@ -65,10 +67,10 @@ main:
     
     asl    A
     tay
-    lda    joypad_callbacks, Y
+    lda    callback_table, Y
     sta    <menu_callbacks
     iny
-    lda    joypad_callbacks, Y
+    lda    callback_table, Y
     sta    <menu_callbacks+1
 
     ; detect BRAM
@@ -130,12 +132,32 @@ main:
     
     cli 
 @loop:
-    nop
+    lda    <irq_cnt
+    beq    @nop
+        stz    <irq_cnt
+        jsr    joypad_callback
+@nop:
     bra    @loop
 
 vsync_proc:
-    ; [todo] palette cycling
+    jsr    gradient_loop
     jsr    joypad_read.1
+    rts
+
+gradient_loop:
+    lda    <color_index
+    inc    A
+    and    #$1f
+    sta    <color_index
+    lsr    A
+    tax
+    lda    #$12
+    sta    color_reg_lo
+    stz    color_reg_hi
+    lda    gradient_lo, X
+    sta    color_data_lo
+    lda    gradient_hi, X
+    sta    color_data_hi
     rts
 
 
@@ -166,7 +188,7 @@ run_callback:
     
 ; I, II, SEL, RUN, up, right, down, left
 
-joypad_callbacks:
+callback_table:
     .dw    main_menu_callbacks
     .dw    file_menu_callbacks
     .dw    editor_menu_callbacks
@@ -319,7 +341,12 @@ bm_main_menu:
 
 palette:
     .db $00,$00,$ff,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-    .db $00,$00,$00,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-
+    .db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+ 
+gradient_lo:
+    .db $79,$38,$30,$28,$20,$18,$10,$08,$00,$08,$10,$18,$20,$28,$30,$38
+gradient_hi:
+    .db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    
     .include "font.inc"
 

@@ -45,18 +45,20 @@ vdc_bat_vmask  .ds 1
 
 ; Initialize VDC register.
   .macro vdc_reg
-    lda   \1
+    lda    \1
     ; [todo] zeropage copy of the vdc register
     .if (\?1 = ARG_IMMEDIATE)
       st0    \1
     .else
       sta    video_reg
     .endif
+    sta    <vdc_ri
   .endmacro
 
 ; Set VDC register from value in A.
   .macro vdc_setreg
     sta    video_reg
+    sta    <vdc_ri
   .endmacro
 
 ; Set VDC data.

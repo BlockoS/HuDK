@@ -47,11 +47,13 @@ vdc_bat_vmask:  .res 1
     .else
       sta    a:video_reg
     .endif
+    sta    <vdc_ri
   .endmacro
 
 ; Set VDC register from value in A.
   .macro vdc_setreg
     sta    a:video_reg
+    sta    <vdc_ri
   .endmacro
 
 ; Set VDC data.

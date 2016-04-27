@@ -460,6 +460,11 @@ vdc_crh = $20f4
 ;; Copy of the VDC status register.
 ;;
 vdc_sr = $20f6
+;;
+;; ubyte: vdc_ri
+;; Copy of the VDC register index.
+;;
+vdc_ri = $20f7
 
 ;;
 ;; Group: VDC Helper Macros.

@@ -10,8 +10,8 @@
 ;; *none*
 ;;
 vce_init:
-	; set VCE dot clock based on the default resolution.
-	; enable edge blur in the same time.
+    ; set VCE dot clock based on the default resolution.
+    ; enable edge blur in the same time.
   .if (VDC_DEFAULT_XRES < 268)
     lda    #(VCE_BLUR_ON | VCE_DOT_CLOCK_5MHZ)
   .else
@@ -23,8 +23,8 @@ vce_init:
   .endif
     sta    color_ctrl
 
-	; set background color to black
-	stwz   color_reg
+    ; set background color to black
+    stwz   color_reg
     stwz   color_data
     stw    #256, color_reg
     stwz   color_data

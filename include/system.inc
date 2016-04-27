@@ -3,11 +3,6 @@
 ;;
 
 ;;
-;; ubyte: vdc_reg
-;; Copy of the VDC register index.
-;;
-; [todo] vdc_reg = $20f7
-;;
 ;; ushort: _r0
 ;; 
 _r0 = $20e8

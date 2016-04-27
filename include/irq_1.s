@@ -21,7 +21,7 @@ _irq_1:
 ;    sta    video_data_h
 
     bbs5   <irq_m, @l3
-; [todo]        jsr  _vsync_hndl
+        jsr  default_vsync_handler
 @l3:
     bbr4   <irq_m, @l4
         jsr  @user_vsync
@@ -30,23 +30,22 @@ _irq_1:
 @hsync:
     bbr2   <vdc_sr, @exit
     bbs7   <irq_m,  @l5
-
-; [todo]    jsr  _hsync_hndl
+        jsr  default_hsync_handler
 
 @l5:
     bbr6 <irq_m, @exit
         jsr  @user_hsync
 
 @exit:
-; [todo]
-;    lda    <vdc_reg         ; restore VDC register index
-;    sta    video_reg
+    lda    <vdc_reg         ; restore VDC register index
+    sta    video_reg
 
     ply                     ; restore registers
     plx
     pla
-
+    
     rti
+    
 @user_hook:
     jmp    [irq1_hook]
 @user_hsync:
@@ -54,4 +53,10 @@ _irq_1:
 @user_vsync:
     jmp    [vsync_hook]
 
-; [todo] _vsync_hndl & _hsync_hndl
+default_vsync_handler:
+    ; [todo]
+    rts
+    
+default_hsync_handler:
+    ; [todo]
+    rts
