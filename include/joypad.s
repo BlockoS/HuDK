@@ -19,6 +19,8 @@
 ;;   A, X
 ;;
 joypad_read:
+    tii    joypad, joyold, 5
+
     lda    #$01         ; reset multitap to joypad #1
     sta    joyport
     lda    #$03
@@ -47,6 +49,10 @@ joypad_read:
     eor    #$ff
     sta    joypad, X
 
+    eor    joyold, X
+    and    joypad, X
+    sta    joytrg, X
+
     inx
     cpx    #$05
     bcc    @loop
@@ -68,6 +74,8 @@ joypad_read:
 ;;   joypad_6 - states of buttons III, IV, V and VI or 0 for 2-button joypads.
 ;;
 joypad_6_read:
+    tii    joypad_6, joyold_6, 5
+
     jsr    joypad_read      ; first scan
 
     lda    joypad           ; unrolled copy loop
@@ -107,6 +115,12 @@ joypad_6_read:
     bne    @no_reset
         stz    joypad_6, X
 @no_reset: 
+
+    lda    joypad_6, X
+    eor    joyold_6, X
+    and    joypad_6, X
+    sta    joypad_6, X
+
     inx
     cpx    #$05
     bne    @l0
@@ -127,6 +141,9 @@ joypad_6_read:
 ;;   A, X, Y
 ;;
 joypad_read.1:
+    lda    joypad
+    sta    joyold
+
     lda    #$01         ; reset multitap to joypad #1
     sta    joyport
     lda    #$03
@@ -152,6 +169,10 @@ joypad_read.1:
     ora    joypad
     eor    #$ff
     sta    joypad
+
+    eor    joyold
+    and    joypad
+    sta    joytrg
 
     rts
 

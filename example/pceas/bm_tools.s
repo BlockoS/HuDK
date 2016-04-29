@@ -50,6 +50,10 @@ main:
     ldy    #$01
     jsr    vce_load_palette
     
+    lda    #$01                 ; [todo]
+    ldy    #$01
+    jsr    vce_load_palette
+    
     ; fill BAT with space character
     lda    #' '
     sta    <_bl
@@ -120,6 +124,17 @@ main:
 
     jsr    draw_main_menu
 
+    ; [todo]::begin
+    ldx    bm_main_menu_x  ; [todo]
+    lda    bm_main_menu_y  ; [todo]
+    jsr    set_cursor
+    jsr    vdc_set_read
+    
+    lda    #01             ; [todo]
+    ldy    bm_main_menu_w  ; [todo]
+    jsr    highlight_span
+    ; [todo]::end
+
     stz    <irq_m
     ; set vsync vec
     irq_on #INT_IRQ1
@@ -163,12 +178,14 @@ gradient_loop:
 
 joypad_callback:
     stz    <joybtn_id
-    lda    joypad
+    lda    joytrg
     sta    <joybtn
 @loop:
     lsr    <joybtn
     bcs    @run
-    beq    @end
+    bne    @next
+@end:
+    rts
 @run:
         lda    <joybtn_id
         asl    A
@@ -179,10 +196,10 @@ joypad_callback:
         lda    [menu_callbacks], Y
         sta    <callback+1
         jsr    run_callback
+@next:
         inc    <joybtn_id
         bra    @loop
-@end:
-    rts
+
 run_callback:
     jmp     [callback]
     
@@ -209,8 +226,50 @@ do_nothing:
     rts
 
 main_menu_I:
-main_menu_right:
+    rts
+
 main_menu_left:
+    stz    <_al
+    ldy    <menu_id
+    jsr    main_menu_highlight
+    
+    ldy    <menu_id
+    dey
+    bpl    @l0
+        ldy    #$03
+@l0:
+    inc    <_al
+    sty    <menu_id
+    jsr    main_menu_highlight
+    rts
+
+main_menu_right:
+    stz    <_al
+    ldy    <menu_id
+    jsr    main_menu_highlight
+
+    ldy    <menu_id
+    iny
+    cpy    #$04
+    bne    @l0
+        cly
+@l0:
+    inc    <_al
+    sty    <menu_id
+    jsr    main_menu_highlight
+    rts
+    
+main_menu_highlight:
+    lda    bm_main_menu_x, Y
+    tax
+    lda    bm_main_menu_y, Y
+    jsr    set_cursor
+    jsr    vdc_set_read
+    
+    lda    bm_main_menu_w, Y
+    tay
+    lda    <_al
+    jsr    highlight_span
     rts
 
 file_menu_I:
@@ -246,6 +305,23 @@ next_line:
     lda    <cursor_y
     jsr    vdc_calc_addr 
     jsr    vdc_set_write
+    rts
+
+highlight_span:
+    asl    A
+    asl    A
+    asl    A
+    asl    A
+    sta    <_al
+@loop:
+    ldx    video_data_l
+    lda    video_data_h
+    stx    video_data_l
+    and    #$0f
+    ora    <_al
+    sta    video_data_h
+    dey
+    bne    @loop
     rts
 
 print_entry_description:
@@ -336,9 +412,15 @@ bm_info_txt: .db "   Status:\n"
              .db "Available:", 0
 
 bm_main_menu:
-    .db "    EDIT    ",$a9,"     BACKUP    ",$a9
-    .db "     RESTORE    ",$a9,"     DELETE    ",$00
-
+    .db "     EDIT     ",$a9,"    BACKUP    ",$a9
+    .db "    RESTORE   ",$a9,"    DELETE    ",$00
+bm_main_menu_x:
+    .db 02, 17, 32, 47
+bm_main_menu_y:
+    .db 26, 26, 26, 26
+bm_main_menu_w:
+    .db 14, 14, 14, 14
+    
 palette:
     .db $00,$00,$ff,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
     .db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00

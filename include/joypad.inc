@@ -177,10 +177,31 @@ IO_JOYPAD_VI  = %00001000
 ;; ubyte: joypad
 ;; This array holds the values for 5 2-buttons joypad.
 ;;
-joypad    .ds 5
+joypad .ds 5
+;;
+;; ubyte: joytrg 
+;; Delta joypad values.
+;;
+joytrg .ds 5
+;;
+;; ubyte: joyold 
+;; Previous joypad values.
+;;
+joyold .ds 5
+
 ;;
 ;; ubyte: joypad_6
 ;; This array contains the values for buttons III, IV, V and VI of 6 buttons
 ;; joypads.
 ;;
 joypad_6 .ds 5
+;;
+;; ubyte: joytrg 
+;; Delta joypad values.
+;;
+joytrg_6 .ds 5
+;;
+;; ubyte: joyold 
+;; Previous joypad values.
+;;
+joyold_6 .ds 5
