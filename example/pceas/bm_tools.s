@@ -14,6 +14,9 @@ cursor_y .ds 1
 entry_count .ds 1
 
 menu_id   .ds 1
+action_id .ds 1
+file_id   .ds 1
+
 joybtn    .ds 1
 joybtn_id .ds 1
 
@@ -47,13 +50,9 @@ main:
     stw    #palette, <_si
     jsr    map_data
     cla
-    ldy    #$01
+    ldy    #$03
     jsr    vce_load_palette
-    
-    lda    #$01                 ; [todo]
-    ldy    #$01
-    jsr    vce_load_palette
-    
+        
     ; fill BAT with space character
     lda    #' '
     sta    <_bl
@@ -64,18 +63,6 @@ main:
     ldx    #$00
     lda    #$00
     jsr    print_fill
-
-    ; [todo] move to routine
-    lda    #MAIN_MENU
-    sta    <menu_id
-    
-    asl    A
-    tay
-    lda    callback_table, Y
-    sta    <menu_callbacks
-    iny
-    lda    callback_table, Y
-    sta    <menu_callbacks+1
 
     ; detect BRAM
     stw    #bm_info_txt, <_si
@@ -89,8 +76,41 @@ main:
     
     jsr    bm_full_test     ; [todo] set carry flag on error
 
-    ldx    #6               ; [todo]
-    lda    #8
+    jsr    display_file_list
+    
+    stz    <action_id
+    
+    lda    #MAIN_MENU
+    jsr    menu_set
+    
+    jsr    draw_main_menu
+
+    lda    #$01
+    sta    <_al
+    jsr    main_menu_highlight
+    
+    stz    <irq_m
+    ; set vsync vec
+    irq_on #INT_IRQ1
+    irq_enable_vec #VSYNC
+    irq_set_vec #VSYNC, #vsync_proc
+    
+    ; enable background display
+    vdc_reg  #VDC_CR
+    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
+    
+    cli 
+@loop:
+    lda    <irq_cnt
+    beq    @nop
+        stz    <irq_cnt
+        jsr    joypad_callback
+@nop:
+    bra    @loop
+
+display_file_list:
+    ldx    #bm_file_list_x0
+    lda    #bm_file_list_y
     jsr    set_cursor
 
     stz    bm_namebuf+13
@@ -111,48 +131,18 @@ main:
 
         bbr0   <entry_count, @newline
 @next_column:
-        ldx    #34              ; [todo]
+        ldx    #bm_file_list_x1
         bra    @set_cursor
 @newline:
-        ldx    #6               ; [todo]
+        ldx    #bm_file_list_x0
         inc    <cursor_y
 @set_cursor:
         lda    <cursor_y
         jsr    set_cursor
         bra    @list
 @end:
+    rts
 
-    jsr    draw_main_menu
-
-    ; [todo]::begin
-    ldx    bm_main_menu_x  ; [todo]
-    lda    bm_main_menu_y  ; [todo]
-    jsr    set_cursor
-    jsr    vdc_set_read
-    
-    lda    #01             ; [todo]
-    ldy    bm_main_menu_w  ; [todo]
-    jsr    highlight_span
-    ; [todo]::end
-
-    stz    <irq_m
-    ; set vsync vec
-    irq_on #INT_IRQ1
-    irq_enable_vec #VSYNC
-    irq_set_vec #VSYNC, #vsync_proc
-    
-    ; enable background display
-    vdc_reg  #VDC_CR
-    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
-    
-    cli 
-@loop:
-    lda    <irq_cnt
-    beq    @nop
-        stz    <irq_cnt
-        jsr    joypad_callback
-@nop:
-    bra    @loop
 
 vsync_proc:
     jsr    gradient_loop
@@ -222,44 +212,80 @@ editor_menu_callbacks:
     .dw editor_menu_I,  editor_menu_II,    editor_menu_SEL,  editor_menu_RUN
     .dw editor_menu_up, editor_menu_right, editor_menu_down, editor_menu_left
 
+menu_set:
+    sta    <menu_id
+    asl    A
+    tay
+    lda    callback_table, Y
+    sta    <menu_callbacks
+    iny
+    lda    callback_table, Y
+    sta    <menu_callbacks+1
+    rts
+
 do_nothing:
     rts
 
 main_menu_I:
+    lda    #$02
+    sta    <_al
+    jsr    main_menu_highlight
+
+    lda    #FILE_MENU
+    jsr    menu_set
+    
+    stz    <file_id
+    
+    ldx    #bm_file_list_x0
+    stx    <cursor_x
+    
+    lda    #bm_file_list_y
+    sta    <cursor_y
+
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    jsr    vdc_set_read
+    
+    ldy    #$02
+    lda    #$01
+    jsr    highlight_span
+
     rts
 
 main_menu_left:
     stz    <_al
-    ldy    <menu_id
     jsr    main_menu_highlight
     
-    ldy    <menu_id
+    ldy    <action_id
     dey
     bpl    @l0
         ldy    #$03
 @l0:
     inc    <_al
-    sty    <menu_id
+    sty    <action_id
+
     jsr    main_menu_highlight
     rts
 
 main_menu_right:
     stz    <_al
-    ldy    <menu_id
+    
     jsr    main_menu_highlight
 
-    ldy    <menu_id
+    ldy    <action_id
     iny
     cpy    #$04
     bne    @l0
         cly
 @l0:
     inc    <_al
-    sty    <menu_id
+    sty    <action_id
+
     jsr    main_menu_highlight
     rts
     
 main_menu_highlight:
+    ldy    <action_id
     lda    bm_main_menu_x, Y
     tax
     lda    bm_main_menu_y, Y
@@ -272,14 +298,103 @@ main_menu_highlight:
     jsr    highlight_span
     rts
 
+main_file_highlight:
+    rts
+
 file_menu_I:
+    rts
+    
 file_menu_II:
+    lda    #MAIN_MENU
+    jsr    menu_set
+
+    stz    <_ah
+    jsr    highlight_id
+
+    lda    #$01
+    sta    <_al
+    
+    jsr    main_menu_highlight
+    
+    rts
+    
 file_menu_SEL:
 file_menu_RUN:
+    rts
+    
 file_menu_up:
-file_menu_right:
+    stz    <_ah
+    jsr    highlight_id
+
+    lda    <file_id
+    cmp    #$02
+    bcc    @l0
+        sec
+        sbc    #$02
+        sta    <file_id
+        dec    <cursor_y
+@l0:
+    inc    <_ah
+    jsr    highlight_id
+    rts
+
 file_menu_down:
+    stz    <_ah
+    jsr    highlight_id
+
+    lda    <file_id
+    clc
+    adc    #$02
+    cmp    <entry_count
+    bcs    @l0
+        sta    <file_id
+        inc    <cursor_y
+@l0:
+    inc    <_ah
+    jsr    highlight_id
+    rts
+
+file_menu_right:
+    stz    <_ah
+    jsr    highlight_id
+
+    lda    <file_id
+    cmp    <entry_count
+    bcs    @l0
+    bit    #$01
+    bne    @l0
+        inc    <file_id
+        lda    #bm_file_list_x1
+        sta    <cursor_x
+@l0:
+    inc    <_ah
+    jsr    highlight_id
+    rts
+
 file_menu_left:
+    stz    <_ah
+    jsr    highlight_id
+    lda    <file_id
+    and    #$01
+    beq    @l0
+        dec    <file_id
+        lda    #bm_file_list_x0
+        sta    <cursor_x
+@l0:
+    inc    <_ah
+    jsr    highlight_id
+    rts
+
+highlight_id:
+    ldx    <cursor_x
+    lda    <cursor_y
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    jsr    vdc_set_read
+    
+    ldy    #$02
+    lda    <_ah
+    jsr    highlight_span
     rts
 
 editor_menu_I:
@@ -300,8 +415,8 @@ set_cursor:
     rts
 
 next_line:
-    ldx    <cursor_x
     inc    <cursor_y
+    ldx    <cursor_x
     lda    <cursor_y
     jsr    vdc_calc_addr 
     jsr    vdc_set_write
@@ -420,11 +535,21 @@ bm_main_menu_y:
     .db 26, 26, 26, 26
 bm_main_menu_w:
     .db 14, 14, 14, 14
-    
+
+bm_file_list_x0 = 6
+bm_file_list_x1 = 34
+bm_file_list_y  = 8
+
+; [todo] confirmation message
+
 palette:
     .db $00,$00,$ff,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
     .db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
- 
+    .db $00,$00,$ff,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    .db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    .db $00,$00,$ff,$01,$38,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    .db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+
 gradient_lo:
     .db $79,$38,$30,$28,$20,$18,$10,$08,$00,$08,$10,$18,$20,$28,$30,$38
 gradient_hi:
