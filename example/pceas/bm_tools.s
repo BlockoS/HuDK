@@ -17,6 +17,8 @@ menu_id   .ds 1
 action_id .ds 1
 file_id   .ds 1
 
+file_ptr .ds 2
+
 joybtn    .ds 1
 joybtn_id .ds 1
 
@@ -28,6 +30,7 @@ color_index .ds 1
     .bss
 bm_namebuf       .ds 14
 current_menu     .ds 1
+bm_data          .ds 1024
 
     .code
 main:
@@ -302,6 +305,7 @@ main_file_highlight:
     rts
 
 file_menu_I:
+    ; [todo]
     rts
     
 file_menu_II:
@@ -512,6 +516,39 @@ draw_main_menu:
     jsr    print_string_raw
     rts
 
+bm_load:
+    stw    #bm_entry, <_bp
+    ldy    <file_id
+@next_entry:
+    phy
+    
+    stw    <_bp, <file_ptr 
+    
+    lda    #high(bm_namebuf)
+    ldx    #low(bm_namebuf)
+    jsr    bm_getptr.2
+    sta    <_bp+1
+    stx    <_bp
+    
+    ply
+    dey
+    bpl    @next_entry
+
+    jsr    bm_bind
+    jsr    bm_check_header
+    bcs    @end
+
+    memcpy_mode #SOURCE_INC_DEST_INC
+    memcpy_args <file_ptr, #bm_data, <_cx
+    jsr    memcpy
+
+@end:
+    jsr    bm_unbind
+    rts
+
+bm_backup:
+    ; [todo]
+    rts
 
 bm_detect_msg.lo:
     .dwl bm_detect_msg00, bm_detect_msg01, bm_detect_msg02
