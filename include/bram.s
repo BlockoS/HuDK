@@ -729,7 +729,7 @@ bm_files:
 
 ;;
 ;; function: bm_getptr.2
-;; Given a pointer with the BRAM, obtain the name of the entry and the
+;; Given a pointer to the BRAM, obtain the name of the entry and the
 ;; pointer to the next entry.
 ;;
 ;; Set _bp to bm_entry for the first entry.
@@ -800,6 +800,119 @@ bm_getptr.2:
 @not_found:
     lda    #$01
 @end:
+    sta    bm_error
+    jsr    bm_unbind
+    cla
+    clx
+    sec
+    rts
+
+;;
+;; function: bm_create
+;; Create a new entry at the end of current storage.
+;;
+;; Parameters:
+;;   _bx - pointer to the entry name.
+;;   _ax - entry size.
+;;
+;; Return:
+;;   bm_error - Error code.
+;;   carry flag - Set if an error occured.
+;;
+;; Error values:
+;;   $00 - Success.
+;;   $01 - Cannot find file. _bp is past the last entry.
+;;   $05 - Not enough space for entry.
+;;   $ff - BRAM is not formatted.
+;;
+bm_create:
+    jsr    bm_bind
+    jsr    bm_check_header
+    bcc    @ok
+@err:
+    lda    #$05
+@end:
+    stz    bm_error
+    jsr    bm_unbind
+    clc
+    rts
+@ok:
+    ; check if there is enough space.
+    addw   #$12, bm_next, <_dx
+    addw   <_ax, <_dx
+    lda    bm_end+1
+    cmp    <_dh
+    bcc    @err
+    bne    @create_file
+    lda    bm_end
+    cmp    <_dl
+    bcc    @err
+@create_file:
+    ; compute offset of the unused area
+    stw    bm_next, <_si
+    lda    <_al
+    clc
+    adc    #$10
+    sta    [_si]
+    lda    <_ah
+    adc    #$00
+    ldy    #1
+    sta    [_si],Y
+    ; store it
+    lda    bm_next
+    clc
+    adc    [_si]
+    sta    <_dl
+    sta    bm_next
+    lda    bm_next+1
+    adc    [_si],Y
+    sta    <_dh
+    sta    bm_next+1
+    ; initialize sentinel
+    cla
+    sta    [_dx]
+    sta    [_dx], Y
+    ; copy entry name
+    clx
+    ldy    #4
+@copy:
+    sxy
+    lda    [_bx], Y
+    sxy
+    sta    [_si], Y
+    iny
+    inx
+    cpx    #12
+    bne    @copy
+    ; clear file
+    lda    <_al
+    ora    <_ah
+    beq    @checksum
+    stw    <_si, <_bx
+    ldy    #$10
+    cla
+@l0:
+    sta    [_bx], Y
+    iny
+    bne    @l1
+        inc    <_bh
+@l1:
+    dec    <_al
+    bne    @l0
+    dec    <_ah
+    bpl    @l0
+@checksum:
+    jsr    bm_checksum
+    ldy    #$02
+    cla
+    sec
+    sbc    <_dl
+    sta    [_si], Y
+    iny
+    cla
+    sbc    <_dh
+    sta    [_si], Y
+@success:
     sta    bm_error
     jsr    bm_unbind
     cla
