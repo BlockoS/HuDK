@@ -356,7 +356,7 @@ bm_checksum:
     sta    <_cl
     ldy    #$01
     lda    [_si], Y
-    sbc    #$01
+    sbc    #$00
     sta    <_ch
 
     stw    <_si, <_bx       ; compute checksum
@@ -366,7 +366,7 @@ bm_checksum:
     lda    [_bx], Y
     clc
     adc    <_dl
-    sta    <_cl
+    sta    <_dl
     bcc    @l1
         inc    <_dh
 @l1:
@@ -377,7 +377,7 @@ bm_checksum:
     dec    <_cl
     bne    @compute
     dec    <_ch
-    bne    @compute
+    bpl    @compute
     rts
 
 ;;
@@ -468,14 +468,9 @@ bm_adjust_pointer:
     lda    <_al             ; test if the requested size is zero
     ora    <_ah
     beq    @err
-    lda    <_bp
-    clc
-    adc    #$10
-    sta    <_bl
-    lda    <_bp+1
-    adc    #$00
-    sta    <_bh
+    addw   #16, <_bp, <_bx
     ldy    #1                ; check if the offset does not cross entry
+    lda    <_bh
     cmp    [_si], Y          ; limits
     bne    @l0
     lda    <_bl
@@ -486,7 +481,7 @@ bm_adjust_pointer:
     sec
     rts
 @l1:
-    addw   <_si, <_bx, <_dx
+    addw   <_bx, <_si, <_dx
     addw   <_ax, <_bx       ; adjust length
     lda    [_si]
     sec
@@ -602,7 +597,7 @@ bm_write:
         bpl    @copy
 @checksum:
     jsr    bm_checksum
-    ldy    bm_entry_checksum
+    ldy    #bm_entry_checksum
     cla
     sec
     sbc    <_dl

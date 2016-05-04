@@ -28,7 +28,7 @@ callback       .ds 2
 color_index .ds 1
 
     .bss
-bm_namebuf       .ds 14
+bm_namebuf       .ds 16
 current_menu     .ds 1
 bm_data          .ds 1024
 
@@ -558,29 +558,36 @@ bm_load:
 bm_backup:
     jsr    bm_load
     ; clear checksum
-    stwz   bm_data+bm_entry_checksum
+    stwz   bm_namebuf+bm_entry_checksum
     ; set file id
-    stw    #$BACA, bm_data+4
+    stw    #$BACA, bm_namebuf+4
+    ; copy file name
+    stw    bm_data+6,  bm_namebuf+6
+    stw    bm_data+8,  bm_namebuf+8
+    stw    bm_data+10, bm_namebuf+10
     ; add extension "BAK1"
-    stw    #$4142, bm_data+12
-    stw    #$314B, bm_data+14
+    stw    #$4142, bm_namebuf+12
+    stw    #$314B, bm_namebuf+14
     ; search for entry
 @check_name:
-    stw    #(bm_data+4), <_bx
+    stw    #(bm_namebuf+4), <_bx
     jsr    bm_exists
     bcs    @not_found
         ; change name
-        inc    bm_data+15
+        inc    bm_namebuf+15
         bra    @check_name
 @not_found:
+    ; set file size
+    addw   #16, bm_data, bm_namebuf
     ; create entry
-    subw   #16, bm_data, <_ax       ; skip header
-    stw    #(bm_data+4), <_bx
+    stw    bm_data, <_ax
+    stw    #(bm_namebuf+4), <_bx
     jsr    bm_create
     bcs    @err_create
     ; write data
-    stw    #(bm_data+16), <_di
-    stw    #(bm_data+ 4), <_bx
+    stw    #bm_data, <_di
+    stw    #(bm_namebuf+4), <_bx
+    stw    bm_data, <_ax
     stwz   <_bp
     jsr    bm_write
     bcs    @err_write
