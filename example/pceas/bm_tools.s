@@ -306,7 +306,16 @@ main_file_highlight:
 
 file_menu_I:
     ; [todo]
-    rts
+    lda    <action_id
+    asl    A
+    tax
+    jmp    [file_menu_table, X]
+
+file_menu_table:
+    .dw do_nothing
+    .dw do_backup
+    .dw do_nothing
+    .dw do_nothing
     
 file_menu_II:
     lda    #MAIN_MENU
@@ -547,7 +556,43 @@ bm_load:
     rts
 
 bm_backup:
-    ; [todo]
+    jsr    bm_load
+    ; clear checksum
+    stwz   bm_data+bm_entry_checksum
+    ; set file id
+    stw    #$BACA, bm_data+4
+    ; add extension "BAK1"
+    stw    #$4142, bm_data+12
+    stw    #$314B, bm_data+14
+    ; search for entry
+@check_name:
+    stw    #(bm_data+4), <_bx
+    jsr    bm_exists
+    bcs    @not_found
+        ; change name
+        inc    bm_data+15
+        bra    @check_name
+@not_found:
+    ; create entry
+    subw   #16, bm_data, <_ax       ; skip header
+    stw    #(bm_data+4), <_bx
+    jsr    bm_create
+    bcs    @err_create
+    ; write data
+    stw    #(bm_data+16), <_di
+    stw    #(bm_data+ 4), <_bx
+    stwz   <_bp
+    jsr    bm_write
+    bcs    @err_write
+        jmp   _reset
+@err_write:
+    ; [todo] error
+@err_create:
+    ; [todo] error
+    rts
+
+do_backup:
+    jsr    bm_backup
     rts
 
 bm_detect_msg.lo:

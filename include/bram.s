@@ -402,7 +402,7 @@ bm_open:
     jsr    bm_bind              ; bind BRAM
     jsr    bm_check_header      ; and check if the header is valid
     bcs    @end
-    stw    bm_entry, <_si
+    stw    #bm_entry, <_si
 @find:
     lda    [_si]                ; The last entry is a sentinel with a size of 0.
     sta    <_cl                 ; This means that we did not find our entry.
@@ -426,16 +426,16 @@ bm_open:
 @check_size:
         lda    <_ch
         bne    @ok
-        lda    <_ch
+        lda    <_cl
         cmp    #$10
-        bcc    @empty_file
-@next:
-    addw   <_cx, <_si
-    bra    @find
+        beq    @empty_file
 @ok:
     stz    bm_error
     clc
     rts 
+@next:
+    addw   <_cx, <_si
+    bra    @find
 @empty_file:
     lda    #$04
     bra    @end
@@ -470,7 +470,7 @@ bm_adjust_pointer:
     beq    @err
     lda    <_bp
     clc
-    adc    #$16
+    adc    #$10
     sta    <_bl
     lda    <_bp+1
     adc    #$00
@@ -829,12 +829,15 @@ bm_create:
     jsr    bm_bind
     jsr    bm_check_header
     bcc    @ok
+    bra    @end
 @err:
     lda    #$05
 @end:
-    stz    bm_error
+    sta    bm_error
     jsr    bm_unbind
-    clc
+    cla
+    clx
+    sec
     rts
 @ok:
     ; check if there is enough space.
@@ -913,9 +916,39 @@ bm_create:
     sbc    <_dh
     sta    [_si], Y
 @success:
-    sta    bm_error
+    stz    bm_error
     jsr    bm_unbind
+    clc
+    rts
+
+;;
+;; function: bm_exists
+;; Check if there is an entry which name matches the one given as
+;; parameter.
+;;
+;; Parameters:
+;;   _bx - pointer to the entry name.
+;;
+;; Return:
+;;   X - 1 if a matching entry exists, 0 otherwise.
+;;   carry flag - Cleared if a matching entry exists.
+;;   bm_error - Error code.
+;;
+;; Error values:
+;;   $00 - Success.
+;;   $01 - Cannot find file. _bp is past the last entry.
+;;   $ff - BRAM is not formatted.
+;;
+bm_exists:
+    jsr    bm_open
+    bcs    @err
+@ok:
+    jsr    bm_unbind
+    ldx    #$01
+    lda    bm_error
+    clc
+    rts
+@err:
     cla
     clx
-    sec
     rts
