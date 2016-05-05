@@ -2,7 +2,12 @@
     .include "bram.s"
     .include "bcd.s"
     .include "joypad.s"
-    
+   
+; [todo] 0. comments!
+; [todo] 1. delete
+; [todo] 2. restore
+; [todo] 3. edit
+
 MAIN_MENU   = 0
 FILE_MENU   = 1
 EDITOR_MENU = 2
@@ -102,6 +107,8 @@ main:
     vdc_reg  #VDC_CR
     vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
     
+    stz    <irq_cnt
+    
     cli 
 @loop:
     lda    <irq_cnt
@@ -146,12 +153,13 @@ display_file_list:
 @end:
     rts
 
-
+; VSync callback
 vsync_proc:
     jsr    gradient_loop
     jsr    joypad_read.1
     rts
 
+; make the 2nd color of the 2nd palette loops through gradient palette.
 gradient_loop:
     lda    <color_index
     inc    A
@@ -168,7 +176,7 @@ gradient_loop:
     sta    color_data_hi
     rts
 
-
+; trigger callback according to joystick state and current menu
 joypad_callback:
     stz    <joybtn_id
     lda    joytrg
@@ -484,6 +492,21 @@ print_entry_description:
     jsr    print_string_raw
     rts
 
+; display an error message on the "status" line
+print_error_msg:
+    lda    bm_err_msg.lo, X
+    sta    <_si
+    lda    bm_err_msg.hi, X
+    sta    <_si+1
+
+    ldx    #bm_err_x
+    lda    #bm_err_y
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    
+    jsr    print_string_raw
+    rts
+
 bm_full_test:
     ldx    #11              ; [todo]
     lda    #1
@@ -593,9 +616,12 @@ bm_backup:
     bcs    @err_write
         jmp   _reset
 @err_write:
-    ; [todo] error
+    clx
+    bra    @err_msg
 @err_create:
-    ; [todo] error
+    ldx    #$01
+@err_msg:
+    jsr    print_error_msg
     rts
 
 do_backup:
@@ -628,6 +654,15 @@ bm_main_menu_w:
 bm_file_list_x0 = 6
 bm_file_list_x1 = 34
 bm_file_list_y  = 8
+
+bm_err_x = 11
+bm_err_y = 1
+bm_err_msg.lo:
+    .dwl bm_err_write, bm_err_full
+bm_err_msg.hi:
+    .dwh bm_err_write, bm_err_full
+bm_err_write: .db "**** BRAM write failed! ****", 0
+bm_err_full:  .db "**** BRAM is full! ****", 0
 
 ; [todo] confirmation message
 
