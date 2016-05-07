@@ -94,8 +94,12 @@ bm_bind:
 
     csl                     ; switch to slow mode
 
-    lda    #$80             ; unlock BRAM
-    sta    bm_unlock 
+    lda    #$48             ; unlock BRAM
+    sta    bm_unlock
+	lda    #$75
+    sta    bm_unlock
+	lda    #$80 
+    sta    bm_unlock
     rts
 
 ;;
