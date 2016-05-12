@@ -25,6 +25,8 @@ menu_id   .ds 1
 action_id .ds 1
 file_id   .ds 1
 
+navigation_state .ds 1
+
 file_ptr .ds 2
 
 joybtn    .ds 1
@@ -90,6 +92,7 @@ main:
     jsr    display_file_list
     
     stz    <action_id
+    stz    <navigation_state
     
     lda    #MAIN_MENU
     jsr    menu_set
@@ -316,19 +319,24 @@ main_file_highlight:
     rts
 
 file_menu_I:
-    ; [todo]
+    bbs0   <navigation_state, @end
+    
     lda    <action_id
     asl    A
     tax
-    jmp    [file_menu_table, X]
+    jmp    [@file_menu_table, X]
+@end:
+    rts
 
-file_menu_table:
+@file_menu_table:
     .dw do_nothing
     .dw bm_backup
     .dw do_nothing
     .dw confirm_delete
     
 file_menu_II:
+    bbs0   <navigation_state, @end
+    
     lda    #MAIN_MENU
     jsr    menu_set
 
@@ -340,13 +348,23 @@ file_menu_II:
     
     jsr    main_menu_highlight
     
+@end:
     rts
     
 file_menu_SEL:
 file_menu_RUN:
+    bbr0   <navigation_state, @end
+    
+    ; [todo] delete or restore (see action_id) entry
+
+    rmb0   <navigation_state
+    jmp    _reset
+@end:
     rts
     
 file_menu_up:
+    bbs0   <navigation_state, @end
+    
     stz    <_ah
     jsr    highlight_id
 
@@ -360,9 +378,12 @@ file_menu_up:
 @l0:
     inc    <_ah
     jsr    highlight_id
+@end:
     rts
 
 file_menu_down:
+    bbs0   <navigation_state, @end
+    
     stz    <_ah
     jsr    highlight_id
 
@@ -376,9 +397,12 @@ file_menu_down:
 @l0:
     inc    <_ah
     jsr    highlight_id
+@end:
     rts
 
 file_menu_right:
+    bbs0   <navigation_state, @end
+    
     stz    <_ah
     jsr    highlight_id
 
@@ -393,9 +417,12 @@ file_menu_right:
 @l0:
     inc    <_ah
     jsr    highlight_id
+@end:
     rts
 
 file_menu_left:
+    bbs0   <navigation_state, @end
+    
     stz    <_ah
     jsr    highlight_id
     lda    <file_id
@@ -407,6 +434,7 @@ file_menu_left:
 @l0:
     inc    <_ah
     jsr    highlight_id
+@end:
     rts
 
 highlight_id:
@@ -656,6 +684,8 @@ bm_backup:
 
 ;
 confirm_delete:
+    smb0   <navigation_state
+
     stw    #bm_data, <_bx
     lda    <file_id
     inc    A
@@ -687,8 +717,6 @@ confirm_delete:
     stw    #bm_confirmation_msg, <_si
     jsr    print_string_raw
 
-    ; [todo] set state
-    ; [todo] lock file list navigation
     rts
 
 bm_detect_msg.lo:
