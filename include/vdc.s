@@ -202,14 +202,16 @@ vdc_fill_bat:
     lsr    <_bl
     ror    <_si+1
     ror    A
-
+    sta    <_si
+    
 vdc_fill_bat_ex:    
-    vdc_data_l
-
     ldy    <_ah
 @l0:
     jsr    vdc_set_write
     addw   vdc_bat_width, <_di
+
+    lda    <_si
+    vdc_data_l
 
     ldx    <_al    
 @l1:

@@ -324,11 +324,10 @@ file_menu_I:
     lda    <action_id
     asl    A
     tax
-    jmp    [@file_menu_table, X]
+    jmp    [@jump_table, X]
 @end:
     rts
-
-@file_menu_table:
+@jump_table:
     .dw do_nothing
     .dw bm_backup
     .dw do_nothing
@@ -347,20 +346,43 @@ file_menu_II:
     sta    <_al
     
     jsr    main_menu_highlight
-    
 @end:
     rts
     
 file_menu_SEL:
+    bbr0   <navigation_state, @end
+
+    lda    #' '
+    sta    <_bl
+    lda    #62                  ; [todo]
+    sta    <_al
+    lda    #2                   ; [todo]
+    sta    <_ah
+    ldx    #1                   ; [todo]
+    lda    #5                   ; [todo]
+    jsr    print_fill
+
+    rmb0   <navigation_state
+    jmp    file_menu_II
+@end:
+    rts
+
 file_menu_RUN:
     bbr0   <navigation_state, @end
     
-    ; [todo] delete or restore (see action_id) entry
-
     rmb0   <navigation_state
-    jmp    _reset
+
+    lda    <action_id
+    asl    A
+    tax
+    jmp    [@jump_table, X]
 @end:
     rts
+@jump_table:
+    .dw do_nothing
+    .dw do_nothing
+    .dw _reset          ; [todo] restore entry
+    .dw bm_delete.2
     
 file_menu_up:
     bbs0   <navigation_state, @end
@@ -719,6 +741,12 @@ confirm_delete:
 
     rts
 
+; [todo]
+bm_delete.2:
+    ; [todo]
+    jmp    _reset
+    rts
+
 bm_detect_msg.lo:
     .dwl bm_detect_msg00, bm_detect_msg01, bm_detect_msg02
 bm_detect_msg.hi:
@@ -760,8 +788,8 @@ bm_delete_msg:
     .db "Do you really want to delete ", 0
 ; [todo] position    
 bm_confirmation_msg:
-    .db "Press SELECT to CANCEL / SELECT to CONFIRM.", 0
-    
+    .db "Press SELECT to CANCEL / RUN to CONFIRM.", 0
+
 palette:
     .db $00,$00,$ff,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
     .db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00

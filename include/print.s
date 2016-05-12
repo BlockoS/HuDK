@@ -260,11 +260,11 @@ print_fill:
 
     lda    <_bl
     clc
-    adc     <font_base
-    pha
+    adc    <font_base
+    sta    <_si
     cla
-    adc     <font_base+1
-    sta     <_si+1
+    adc    <font_base+1
+    sta    <_si+1
 
-    pla
+    lda    <_si
     jmp    vdc_fill_bat_ex
