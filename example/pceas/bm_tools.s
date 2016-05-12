@@ -5,6 +5,9 @@
    
 ; [todo] 0. comments!
 ; [todo] 1. delete
+; [todo]    1.1 delete menu state
+; [todo]    1.2 confirmation message
+; [todo]    1.3 delete entry
 ; [todo] 2. restore
 ; [todo] 3. edit
 
@@ -321,9 +324,9 @@ file_menu_I:
 
 file_menu_table:
     .dw do_nothing
-    .dw do_backup
+    .dw bm_backup
     .dw do_nothing
-    .dw do_nothing
+    .dw confirm_delete
     
 file_menu_II:
     lda    #MAIN_MENU
@@ -651,8 +654,41 @@ bm_backup:
     jsr    print_error_msg
     rts
 
-do_backup:
-    jsr    bm_backup
+;
+confirm_delete:
+    stw    #bm_data, <_bx
+    lda    <file_id
+    inc    A
+    sta    <_al
+    jsr    bm_files
+    ; [todo] error msg?
+    
+    ; print message    
+    ldx    #1
+    lda    #5
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    stw    #bm_delete_msg, <_si
+    jsr    print_string_raw
+    
+    ; entry name
+    stw    #(bm_data+6), <_si
+    jsr    print_string_raw
+    
+    ; ?
+    lda    #'?'
+    jsr    print_char
+    
+    ; next line
+    addw   vdc_bat_width, <_di
+    
+    ; print confirmation
+    jsr    vdc_set_write
+    stw    #bm_confirmation_msg, <_si
+    jsr    print_string_raw
+
+    ; [todo] set state
+    ; [todo] lock file list navigation
     rts
 
 bm_detect_msg.lo:
@@ -691,8 +727,13 @@ bm_err_msg.hi:
 bm_err_write: .db "**** BRAM write failed! ****", 0
 bm_err_full:  .db "**** BRAM is full! ****", 0
 
-; [todo] confirmation message
-
+; [todo] position
+bm_delete_msg:
+    .db "Do you really want to delete ", 0
+; [todo] position    
+bm_confirmation_msg:
+    .db "Press SELECT to CANCEL / SELECT to CONFIRM.", 0
+    
 palette:
     .db $00,$00,$ff,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
     .db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00

@@ -96,9 +96,9 @@ bm_bind:
 
     lda    #$48             ; unlock BRAM
     sta    bm_unlock
-	lda    #$75
+    lda    #$75
     sta    bm_unlock
-	lda    #$80 
+    lda    #$80 
     sta    bm_unlock
     rts
 
