@@ -460,6 +460,9 @@ highlight_span:
     bne    @loop
     rts
 
+;
+; Print entry description (entry number, size, file id, name)
+;
 print_entry_description:
     ; entry number
     lda    <entry_count
@@ -492,7 +495,12 @@ print_entry_description:
     jsr    print_string_raw
     rts
 
-; display an error message on the "status" line
+;
+; Display an error message on the "status" line
+;
+; Parameters:
+;   X - error id
+;
 print_error_msg:
     lda    bm_err_msg.lo, X
     sta    <_si
@@ -508,8 +516,8 @@ print_error_msg:
     rts
 
 bm_full_test:
-    ldx    #11              ; [todo]
-    lda    #1
+    ldx    #bm_err_x
+    lda    #bm_err_y
     jsr    set_cursor
 
     jsr    bm_detect
@@ -539,15 +547,24 @@ bm_full_test:
     jsr   print_dec_u16
     rts
 
+;
+; Draw main menu.
+;
 draw_main_menu:
-    ldx    #02             ; [todo]
-    lda    #26             ; [todo]
+    ldx    bm_main_menu_x
+    lda    bm_main_menu_y
     jsr    set_cursor
 
     stw    #bm_main_menu, <_si
     jsr    print_string_raw
     rts
-
+    
+;
+; Load a complete backup entry to RAM.
+; 
+; Parameters:
+;   file_id - id of the entry to load.
+;
 bm_load:
     stw    #bm_entry, <_bp
     ldy    <file_id
@@ -578,6 +595,16 @@ bm_load:
     jsr    bm_unbind
     rts
 
+;
+; Create a backup entry.
+; A backup entry contains the complete original entry (even its header).
+; The file id is $baca and the extension BAKn (with n starting at 1) is
+; added to the original filename.
+; Once the backup is finished the program jumps to the RESET vector.
+;
+; Parameters:
+;   file_id - id of the entry to backup.
+;
 bm_backup:
     jsr    bm_load
     ; clear checksum
