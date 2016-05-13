@@ -741,9 +741,12 @@ confirm_delete:
 
     rts
 
-; [todo]
+;
+; Delete entry and restart.
+;
 bm_delete.2:
-    ; [todo]
+    stw    #(bm_data+4), <_bx
+    jsr    bm_delete
     jmp    _reset
     rts
 
