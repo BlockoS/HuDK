@@ -395,10 +395,12 @@ bm_checksum:
 ;;   carry flag - 1 upon success or 0 if an error occured.
 ;;   bm_error - Error code.
 ;;   _si - Pointer to the beginning of the first matching BRAM entry.
-;;   _cx - Entry size
+;;   _dx - Pointer to the next BRAM entry.
+;;   _cx - Entry size.
 ;;
 ;; Error code values:
 ;;   $01 - File not found
+;;   $03 - Directory is corrupted.
 ;;   $04 - Empty file
 ;;   $ff - BRAM is not formatted
 ;;
@@ -406,15 +408,29 @@ bm_open:
     jsr    bm_bind              ; bind BRAM
     jsr    bm_check_header      ; and check if the header is valid
     bcs    @end
+    
     stw    #bm_entry, <_si
 @find:
-    lda    [_si]                ; The last entry is a sentinel with a size of 0.
-    sta    <_cl                 ; This means that we did not find our entry.
+    lda    [_si]
+    sta    <_cl
     ldy    #$01
     lda    [_si], Y
     sta    <_ch
     ora    <_cl
     beq    @not_found
+        addw   <_si, <_cx, <_dx ; Compute the address of the next entry.
+        cmp    bm_end+1         ; Check if it does not go out of the
+        bcc    @l0              ; BRAM area.
+        bne    @directory_corrupted
+        cmp    bm_end
+        bcs    @directory_corrupted
+@l0:
+        lda    <_ch             ; Entry must be a least 16 bytes long.
+        bne    @l1
+        lda    <_cl
+        cmp    #$10
+        bcc    @directory_corrupted
+@l1:
         cly
         ldx    #bm_entry_name   ; Check entry name.
 @cmp_name:
@@ -438,10 +454,14 @@ bm_open:
     clc
     rts 
 @next:
-    addw   <_cx, <_si
+    stw    <_dx, <_si
     bra    @find
+
 @empty_file:
     lda    #$04
+    bra    @end
+@directory_corrupted:
+    lda    #$03
     bra    @end
 @not_found:
     lda    #$01

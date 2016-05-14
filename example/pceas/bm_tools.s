@@ -91,17 +91,20 @@ main:
 
     jsr    display_file_list
     
+    jsr    draw_main_menu
+
     stz    <action_id
     stz    <navigation_state
     
     lda    #MAIN_MENU
     jsr    menu_set
     
-    jsr    draw_main_menu
-
     lda    #$01
     sta    <_al
     jsr    main_menu_highlight
+
+    stz    <_ah
+    jsr    highlight_id
     
     stz    <irq_m
     ; set vsync vec
@@ -784,7 +787,7 @@ bm_err_msg.lo:
 bm_err_msg.hi:
     .dwh bm_err_write, bm_err_full
 bm_err_write: .db "**** BRAM write failed! ****", 0
-bm_err_full:  .db "**** BRAM is full! ****", 0
+bm_err_full:  .db "**** Not enough space! ****", 0
 
 ; [todo] position
 bm_delete_msg:
