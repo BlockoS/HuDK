@@ -99,13 +99,13 @@ main:
     lda    #MAIN_MENU
     jsr    menu_set
     
+    stz    <_ah
+    jsr    highlight_id
+
     lda    #$01
     sta    <_al
     jsr    main_menu_highlight
 
-    stz    <_ah
-    jsr    highlight_id
-    
     stz    <irq_m
     ; set vsync vec
     irq_on #INT_IRQ1
@@ -333,7 +333,7 @@ file_menu_I:
 @jump_table:
     .dw do_nothing
     .dw bm_backup
-    .dw do_nothing
+    .dw confirm_restore
     .dw confirm_delete
     
 file_menu_II:
@@ -384,7 +384,7 @@ file_menu_RUN:
 @jump_table:
     .dw do_nothing
     .dw do_nothing
-    .dw _reset          ; [todo] restore entry
+    .dw bm_restore
     .dw bm_delete.2
     
 file_menu_up:
@@ -708,6 +708,9 @@ bm_backup:
     rts
 
 ;
+; Display a confirmation message for entry deletion.
+; Lock pad movement and buttons I, II.
+; 
 confirm_delete:
     smb0   <navigation_state
 
@@ -753,6 +756,71 @@ bm_delete.2:
     jmp    _reset
     rts
 
+;
+; Check if the entry is a backup.
+; Display a confirmation message.
+; Lock pad movement and buttons I, II.
+; 
+confirm_restore:
+    smb0   <navigation_state
+
+    jsr    bm_load
+    ; [todo] error msg?
+    ; check if it is a backup
+    lda    bm_data+4
+    cmp    #$ca
+    bne    @not_a_backup
+    lda    bm_data+5
+    cmp    #$ba
+    beq    @ok
+@not_a_backup:
+        ldx    #$02
+        jsr    print_error_msg
+        rmb0   <navigation_state
+        rts
+@ok:
+    ; print message    
+    ldx    #1
+    lda    #5
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    stw    #bm_restore_msg, <_si
+    jsr    print_string_raw
+    
+    ; entry name
+    stw    #(bm_data+6), <_si
+    jsr    print_string_raw
+    
+    ; ?
+    lda    #'?'
+    jsr    print_char
+    
+    ; next line
+    addw   vdc_bat_width, <_di
+    
+    ; print confirmation
+    jsr    vdc_set_write
+    stw    #bm_confirmation_msg, <_si
+    jsr    print_string_raw
+
+    rts
+
+;
+; Restore entry and restart.
+;
+bm_restore:
+    ; [todo] check if the original file exists
+    stw    bm_data+20, <_bx
+    jsr    bm_exists
+    bcs    @err
+    ; [todo] 
+    jmp    _reset
+    rts
+@err:
+    ; [todo]
+    jsr    file_menu_SEL
+    rts
+    
 bm_detect_msg.lo:
     .dwl bm_detect_msg00, bm_detect_msg01, bm_detect_msg02
 bm_detect_msg.hi:
@@ -783,15 +851,18 @@ bm_file_list_y  = 8
 bm_err_x = 11
 bm_err_y = 1
 bm_err_msg.lo:
-    .dwl bm_err_write, bm_err_full
+    .dwl bm_err_write, bm_err_full, bm_err_backup
 bm_err_msg.hi:
-    .dwh bm_err_write, bm_err_full
-bm_err_write: .db "**** BRAM write failed! ****", 0
-bm_err_full:  .db "**** Not enough space! ****", 0
-
+    .dwh bm_err_write, bm_err_full, bm_err_backup
+bm_err_write:  .db "**** BRAM write failed! ****", 0
+bm_err_full:   .db "**** Not enough space! ****", 0
+bm_err_backup: .db "**** Not a backup file! ****", 0
 ; [todo] position
+
 bm_delete_msg:
     .db "Do you really want to delete ", 0
+bm_restore_msg:
+    .db "Do you want to restore ", 0
 ; [todo] position    
 bm_confirmation_msg:
     .db "Press SELECT to CANCEL / RUN to CONFIRM.", 0
