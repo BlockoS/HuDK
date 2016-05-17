@@ -4,12 +4,8 @@
     .include "joypad.s"
    
 ; [todo] 0. comments!
-; [todo] 1. delete
-; [todo]    1.1 delete menu state
-; [todo]    1.2 confirmation message
-; [todo]    1.3 delete entry
-; [todo] 2. restore
-; [todo] 3. edit
+; [todo] 1. restore
+; [todo] 2. edit
 
 MAIN_MENU   = 0
 FILE_MENU   = 1
@@ -563,8 +559,8 @@ print_error_msg:
     lda    bm_err_msg.hi, X
     sta    <_si+1
 
-    ldx    #bm_err_x
-    lda    #bm_err_y
+    ldx    #bm_msg_x
+    lda    #bm_msg_y
     jsr    vdc_calc_addr 
     jsr    vdc_set_write
     
@@ -572,8 +568,8 @@ print_error_msg:
     rts
 
 bm_full_test:
-    ldx    #bm_err_x
-    lda    #bm_err_y
+    ldx    #bm_detect_msg_x
+    lda    #bm_detect_msg_y
     jsr    set_cursor
 
     jsr    bm_detect
@@ -663,6 +659,11 @@ bm_load:
 ;
 bm_backup:
     jsr    bm_load
+    bcc    @ok
+@err_load:
+    ldx    #bm_err_load
+    jmp    print_error_msg
+@ok:
     ; clear checksum
     stwz   bm_namebuf+bm_entry_checksum
     ; set file id
@@ -699,38 +700,35 @@ bm_backup:
     bcs    @err_write
         jmp   _reset
 @err_write:
-    clx
-    bra    @err_msg
+    ldx    #bm_err_write
+    jmp    print_error_msg
 @err_create:
-    ldx    #$01
-@err_msg:
-    jsr    print_error_msg
-    rts
+    ldx    #bm_err_full
+    jmp    print_error_msg
 
 ;
-; Display a confirmation message for entry deletion.
-; Lock pad movement and buttons I, II.
-; 
-confirm_delete:
-    smb0   <navigation_state
+; Print confirmation message
+;
+; Parameters:
+;    X - confirmation message id
+;  _bx - entry name
+;
+print_confirmation_msg:
+    ; set string
+    lda    bm_confirm_msg.lo, X
+    sta    <_si
+    lda    bm_confirm_msg.hi, X
+    sta    <_si+1
 
-    stw    #bm_data, <_bx
-    lda    <file_id
-    inc    A
-    sta    <_al
-    jsr    bm_files
-    ; [todo] error msg?
-    
     ; print message    
-    ldx    #1
-    lda    #5
+    ldx    #bm_msg_x
+    lda    #bm_msg_y
     jsr    vdc_calc_addr 
     jsr    vdc_set_write
-    stw    #bm_delete_msg, <_si
     jsr    print_string_raw
     
     ; entry name
-    stw    #(bm_data+6), <_si
+    stw    <_bx, <_si
     jsr    print_string_raw
     
     ; ?
@@ -745,6 +743,26 @@ confirm_delete:
     stw    #bm_confirmation_msg, <_si
     jsr    print_string_raw
 
+    rts
+    
+;
+; Display a confirmation message for entry deletion.
+; Lock pad movement and buttons I, II.
+; 
+confirm_delete:
+    smb0   <navigation_state
+
+    stw    #bm_data, <_bx
+    lda    <file_id
+    inc    A
+    sta    <_al
+    jsr    bm_files
+    ; [todo] error msg?
+
+    stw    #(bm_data+6), <_bx
+    ldx    #bm_confirm_delete
+    jsr    print_confirmation_msg
+    
     rts
 
 ;
@@ -765,7 +783,11 @@ confirm_restore:
     smb0   <navigation_state
 
     jsr    bm_load
-    ; [todo] error msg?
+    bcs    @err_load
+    ; check if the original file exists
+    stw    #bm_data+20, <_bx
+    jsr    bm_exists
+    bcs    @orig_missing
     ; check if it is a backup
     lda    bm_data+4
     cmp    #$ca
@@ -773,54 +795,37 @@ confirm_restore:
     lda    bm_data+5
     cmp    #$ba
     beq    @ok
+@err_load:
+        ldx    #bm_err_load
+        bra    @err
+@orig_missing:
+        ldx    #bm_err_orig
+        bra    @err
 @not_a_backup:
-        ldx    #$02
+        ldx    #bm_err_backup
+@err:
         jsr    print_error_msg
         rmb0   <navigation_state
         rts
 @ok:
-    ; print message    
-    ldx    #1
-    lda    #5
-    jsr    vdc_calc_addr 
-    jsr    vdc_set_write
-    stw    #bm_restore_msg, <_si
-    jsr    print_string_raw
+    ; print message
+    stw    #(bm_data+22), <_bx
+    ldx    #bm_confirm_restore
+    jsr    print_confirmation_msg
     
-    ; entry name
-    stw    #(bm_data+6), <_si
-    jsr    print_string_raw
-    
-    ; ?
-    lda    #'?'
-    jsr    print_char
-    
-    ; next line
-    addw   vdc_bat_width, <_di
-    
-    ; print confirmation
-    jsr    vdc_set_write
-    stw    #bm_confirmation_msg, <_si
-    jsr    print_string_raw
-
     rts
 
 ;
 ; Restore entry and restart.
 ;
 bm_restore:
-    ; [todo] check if the original file exists
-    stw    bm_data+20, <_bx
-    jsr    bm_exists
-    bcs    @err
-    ; [todo] 
     jmp    _reset
     rts
-@err:
-    ; [todo]
-    jsr    file_menu_SEL
-    rts
-    
+;    jsr    file_menu_SEL
+
+bm_detect_msg_x = 11
+bm_detect_msg_y = 1
+
 bm_detect_msg.lo:
     .dwl bm_detect_msg00, bm_detect_msg01, bm_detect_msg02
 bm_detect_msg.hi:
@@ -848,22 +853,41 @@ bm_file_list_x0 = 6
 bm_file_list_x1 = 34
 bm_file_list_y  = 8
 
-bm_err_x = 11
-bm_err_y = 1
-bm_err_msg.lo:
-    .dwl bm_err_write, bm_err_full, bm_err_backup
-bm_err_msg.hi:
-    .dwh bm_err_write, bm_err_full, bm_err_backup
-bm_err_write:  .db "**** BRAM write failed! ****", 0
-bm_err_full:   .db "**** Not enough space! ****", 0
-bm_err_backup: .db "**** Not a backup file! ****", 0
-; [todo] position
+bm_msg_x = 1
+bm_msg_y = 5
 
-bm_delete_msg:
+    .rsset 0
+bm_err_write  .rs 1
+bm_err_load   .rs 1
+bm_err_full   .rs 1
+bm_err_backup .rs 1
+bm_err_orig   .rs 1
+
+bm_err_msg.lo:
+    .dwl bm_err_write_msg, bm_err_load_msg, bm_err_full_msg, bm_err_backup_msg
+    .dwl bm_err_orig_msg
+bm_err_msg.hi:
+    .dwh bm_err_write_msg, bm_err_load_msg, bm_err_full_msg, bm_err_backup_msg
+    .dwh bm_err_orig_msg
+bm_err_write_msg:  .db "**** BRAM write failed! ****", 0
+bm_err_load_msg:   .db "**** Failed to load file! ****", 0
+bm_err_full_msg:   .db "**** Not enough space! ****", 0
+bm_err_backup_msg: .db "**** Not a backup file! ****", 0
+bm_err_orig_msg:   .db "**** Original file is missing! ****", 0
+
+    .rsset 0
+bm_confirm_delete  .rs 1
+bm_confirm_restore .rs 1
+
+bm_confirm_msg.lo:
+    .dwl bm_confirm_delete_msg, bm_confirm_restore_msg
+bm_confirm_msg.hi:
+    .dwh bm_confirm_delete_msg, bm_confirm_restore_msg 
+
+bm_confirm_delete_msg:
     .db "Do you really want to delete ", 0
-bm_restore_msg:
+bm_confirm_restore_msg:
     .db "Do you want to restore ", 0
-; [todo] position    
 bm_confirmation_msg:
     .db "Press SELECT to CANCEL / RUN to CONFIRM.", 0
 
@@ -881,4 +905,3 @@ gradient_hi:
     .db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
     
     .include "font.inc"
-
