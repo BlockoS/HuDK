@@ -351,17 +351,9 @@ file_menu_II:
 file_menu_SEL:
     bbr0   <navigation_state, @end
 
-    lda    #' '
-    sta    <_bl
-    lda    #62                  ; [todo]
-    sta    <_al
-    lda    #2                   ; [todo]
-    sta    <_ah
-    ldx    #1                   ; [todo]
-    lda    #5                   ; [todo]
-    jsr    print_fill
-
+    jsr    clear_msg_box
     rmb0   <navigation_state
+
     jmp    file_menu_II
 @end:
     rts
@@ -548,7 +540,7 @@ print_entry_description:
     rts
 
 ;
-; Display an error message on the "status" line
+; Display an error message
 ;
 ; Parameters:
 ;   X - error id
@@ -566,7 +558,58 @@ print_error_msg:
     
     jsr    print_string_raw
     rts
+;
+; Display confirmation message
+;
+; Parameters:
+;    X - confirmation message id
+;  _bx - entry name
+;
+print_confirmation_msg:
+    ; set string
+    lda    bm_confirm_msg.lo, X
+    sta    <_si
+    lda    bm_confirm_msg.hi, X
+    sta    <_si+1
 
+    ; print message    
+    ldx    #bm_msg_x
+    lda    #bm_msg_y
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    jsr    print_string_raw
+    
+    ; entry name
+    stw    <_bx, <_si
+    jsr    print_string_raw
+    
+    ; ?
+    lda    #'?'
+    jsr    print_char
+    
+    ; next line
+    addw   vdc_bat_width, <_di
+    
+    ; print confirmation
+    jsr    vdc_set_write
+    stw    #bm_confirmation_msg, <_si
+    jsr    print_string_raw
+
+    rts
+
+; [todo]
+clear_msg_box:
+    lda    #' '
+    sta    <_bl
+    lda    #bm_msg_w
+    sta    <_al
+    lda    #bm_msg_h
+    sta    <_ah
+    ldx    #bm_msg_x
+    lda    #bm_msg_y
+    jmp    print_fill
+
+; [todo]
 bm_full_test:
     ldx    #bm_detect_msg_x
     lda    #bm_detect_msg_y
@@ -705,45 +748,6 @@ bm_backup:
 @err_create:
     ldx    #bm_err_full
     jmp    print_error_msg
-
-;
-; Print confirmation message
-;
-; Parameters:
-;    X - confirmation message id
-;  _bx - entry name
-;
-print_confirmation_msg:
-    ; set string
-    lda    bm_confirm_msg.lo, X
-    sta    <_si
-    lda    bm_confirm_msg.hi, X
-    sta    <_si+1
-
-    ; print message    
-    ldx    #bm_msg_x
-    lda    #bm_msg_y
-    jsr    vdc_calc_addr 
-    jsr    vdc_set_write
-    jsr    print_string_raw
-    
-    ; entry name
-    stw    <_bx, <_si
-    jsr    print_string_raw
-    
-    ; ?
-    lda    #'?'
-    jsr    print_char
-    
-    ; next line
-    addw   vdc_bat_width, <_di
-    
-    ; print confirmation
-    jsr    vdc_set_write
-    stw    #bm_confirmation_msg, <_si
-    jsr    print_string_raw
-
-    rts
     
 ;
 ; Display a confirmation message for entry deletion.
@@ -855,6 +859,8 @@ bm_file_list_y  = 8
 
 bm_msg_x = 1
 bm_msg_y = 5
+bm_msg_w = 62
+bm_msg_h = 2
 
     .rsset 0
 bm_err_write  .rs 1
