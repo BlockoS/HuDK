@@ -117,7 +117,7 @@
 ;;
 ;; Macro: subw
 ;; Substract word-sized value plus carry from value at stated memory location.
-;; This is equivalent to call the clc instruction followed by the <sbcw> macro.
+;; This is equivalent to call the sec instruction followed by the <sbcw> macro.
 ;;
 ;; See Also:
 ;;   <sbcw>
