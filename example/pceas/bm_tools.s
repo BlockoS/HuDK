@@ -788,44 +788,68 @@ confirm_restore:
 
     jsr    bm_load
     bcs    @err_load
-    ; check if the original file exists
-    stw    #bm_data+20, <_bx
-    jsr    bm_exists
-    bcs    @orig_missing
     ; check if it is a backup
     lda    bm_data+4
     cmp    #$ca
     bne    @not_a_backup
     lda    bm_data+5
     cmp    #$ba
-    beq    @ok
-@err_load:
-        ldx    #bm_err_load
-        bra    @err
+    bne    @not_a_backup
+    ; check if the original file exists
+    stw    #bm_data+20, <_bx
+    jsr    bm_exists
+    bcc    @ok
 @orig_missing:
-        ldx    #bm_err_orig
-        bra    @err
-@not_a_backup:
-        ldx    #bm_err_backup
-@err:
-        jsr    print_error_msg
-        rmb0   <navigation_state
-        rts
+    jmp    bm_restore.ext
 @ok:
     ; print message
     stw    #(bm_data+22), <_bx
     ldx    #bm_confirm_restore
     jsr    print_confirmation_msg
-    
+    rts
+@err_load:
+    ldx    #bm_err_load
+    bra    @err
+@not_a_backup:
+    ldx    #bm_err_backup
+@err:
+    jsr    print_error_msg
+    rmb0   <navigation_state
     rts
 
 ;
 ; Restore entry and restart.
 ;
 bm_restore:
+    ; delete original entry
+    stw    #bm_data+20, <_bx
+    jsr    bm_delete
+    bcs    @err_delete
+bm_restore.ext = *
+    ; create a new entry
+    subw   #$10, bm_data+16, <_ax
+    stw    #bm_data+20, <_bx
+    jsr    bm_create
+    bcs    @err_create
+    stw    #bm_data+32, <_di
+    stw    #bm_data+20, <_bx
+    stz    <_bp
+    subw   #$10, bm_data+16, <_ax
+    jsr    bm_write
+    bcs    @err_write
     jmp    _reset
+@err_delete:
+    ldx    #bm_err_delete
+    bra    @err
+@err_create:
+    ldx    #bm_err_create
+    bra    @err
+@err_write:
+    ldx    #bm_err_write
+@err:
+    jsr    print_error_msg
+    rmb0   <navigation_state
     rts
-;    jsr    file_menu_SEL
 
 bm_detect_msg_x = 11
 bm_detect_msg_y = 1
@@ -864,22 +888,24 @@ bm_msg_h = 2
 
     .rsset 0
 bm_err_write  .rs 1
+bm_err_create .rs 1
+bm_err_delete .rs 1
 bm_err_load   .rs 1
 bm_err_full   .rs 1
 bm_err_backup .rs 1
-bm_err_orig   .rs 1
 
 bm_err_msg.lo:
-    .dwl bm_err_write_msg, bm_err_load_msg, bm_err_full_msg, bm_err_backup_msg
-    .dwl bm_err_orig_msg
+    .dwl bm_err_write_msg, bm_err_create_msg, bm_err_delete_msg
+    .dwl bm_err_load_msg, bm_err_full_msg, bm_err_backup_msg
 bm_err_msg.hi:
-    .dwh bm_err_write_msg, bm_err_load_msg, bm_err_full_msg, bm_err_backup_msg
-    .dwh bm_err_orig_msg
+    .dwh bm_err_write_msg, bm_err_create_msg, bm_err_delete_msg
+    .dwh bm_err_load_msg, bm_err_full_msg, bm_err_backup_msg
 bm_err_write_msg:  .db "**** BRAM write failed! ****", 0
+bm_err_create_msg: .db "**** Failed to create file! ****", 0
+bm_err_delete_msg: .db "**** Failed to delete file! ****", 0
 bm_err_load_msg:   .db "**** Failed to load file! ****", 0
 bm_err_full_msg:   .db "**** Not enough space! ****", 0
 bm_err_backup_msg: .db "**** Not a backup file! ****", 0
-bm_err_orig_msg:   .db "**** Original file is missing! ****", 0
 
     .rsset 0
 bm_confirm_delete  .rs 1
