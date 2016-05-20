@@ -581,7 +581,8 @@ print_confirmation_msg:
     
     ; entry name
     stw    <_bx, <_si
-    jsr    print_string_raw
+    ldx    #10
+    jsr    print_string_n
     
     ; ?
     lda    #'?'
@@ -831,6 +832,7 @@ bm_restore.ext = *
     stw    #bm_data+20, <_bx
     jsr    bm_create
     bcs    @err_create
+    ; write entry data
     stw    #bm_data+32, <_di
     stw    #bm_data+20, <_bx
     stz    <_bp

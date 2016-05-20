@@ -245,6 +245,29 @@ print_string_raw:
     rts
 
 ;;
+;; function: print_string_n
+;; Display the n first characters of a string.
+;;
+;; Remark:
+;; The VDC write register must point to a valid BAT location.
+;; The string must be less than 256 characters long.
+;;
+;; Parameters:
+;;   _si - string address.
+;;     X - number of characters to print.
+;;
+print_string_n:
+    cly
+@loop:
+    lda    [_si], Y
+    jsr    print_char
+    iny
+    dex
+    bpl    @loop
+@end:
+    rts
+
+;;
 ;; function: print_fill
 ;; Fill an area with a given character.
 ;;
