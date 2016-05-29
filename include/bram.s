@@ -7,7 +7,7 @@
 ;;
 ;; The backup ram (BRAM for short) "file system" is organized as follows :
 ;; 
-;; BRAM Header ($10 bytes):
+;; BRAM Header (16 bytes):
 ;;
 ;;   00-03 - Header tag (equals to "HUBM")
 ;;   04-05 - Pointer to the first byte after BRAM.
@@ -600,7 +600,11 @@ bm_read:
 ;;   bm_error - Error code.
 ;;
 ;; Error values:
-;;   [todo]
+;;   $01 - File not found
+;;   $03 - Directory is corrupted.
+;;   $04 - Empty file
+;;   $ff - BRAM is not formatted
+;;
 bm_write:
     jsr    bm_open
     bcs    @end
@@ -662,9 +666,13 @@ bm_delete:
 
 ;;
 ;; function: bm_files
-;; Get file by index. 
+;; Get file by index and store the information in a buffer.
 ;;
-;; [todo] entry info descriptions
+;; Entry format:
+;;
+;;   00-01 - User ID.
+;;   02-0f - Entry name.
+;;   10-11 - Entry size.
 ;;
 ;; Parameters:
 ;;   _bx - Address to the buffer where the entry informations will be 
