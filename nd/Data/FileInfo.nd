@@ -1,55 +1,56 @@
 1.52
 Assembly
-/home/mooz/Dev/HuDK/master/include/pceas/map.s	1459367412	0	/home/mooz/Dev/HuDK/master/include/pceas/map.s
-/home/mooz/Dev/HuDK/master/tools/vgmstrip.c	1457813956	0	/home/mooz/Dev/HuDK/master/tools/vgmstrip.c
-/home/mooz/Dev/HuDK/master/include/psg.s	1457080376	1	PSG Functions.
-/home/mooz/Dev/HuDK/master/include/irq_reset.s	1458831947	0	/home/mooz/Dev/HuDK/master/include/irq_reset.s
-/home/mooz/Dev/HuDK/master/include/vce.inc	1456941942	1	VCE I/O Ports.
-/home/mooz/Dev/HuDK/master/include/joypad.inc	1458666232	1	Joypad port.
-/home/mooz/Dev/HuDK/master/include/hudk.s	1458633498	0	/home/mooz/Dev/HuDK/master/include/hudk.s
-/home/mooz/Dev/HuDK/master/include/ca65/font.inc	1456867017	0	/home/mooz/Dev/HuDK/master/include/ca65/font.inc
-/home/mooz/Dev/HuDK/master/include/vdc.s	1458202320	1	VDC Functions.
-/home/mooz/Dev/HuDK/master/include/utils.s	1457080376	1	Utility routines.
-/home/mooz/Dev/HuDK/master/include/irq_1.s	1458838443	0	/home/mooz/Dev/HuDK/master/include/irq_1.s
+/home/mooz/Dev/HuDK/master/include/irq_2.s	1458838499	0	/home/mooz/Dev/HuDK/master/include/irq_2.s
+/home/mooz/Dev/HuDK/master/example/data/datastorm.inc	1457816058	0	/home/mooz/Dev/HuDK/master/example/data/datastorm.inc
+/home/mooz/Dev/HuDK/master/include/pceas/macro.inc	1455744804	0	/home/mooz/Dev/HuDK/master/include/pceas/macro.inc
+/home/mooz/Dev/HuDK/master/include/irq_timer.s	1458837716	0	/home/mooz/Dev/HuDK/master/include/irq_timer.s
+/home/mooz/Dev/HuDK/master/include/analog.s	1458666823	1	Analog joypag functions.
+/home/mooz/Dev/HuDK/master/include/word.inc	1463599949	1	/home/mooz/Dev/HuDK/master/include/word.inc
+/home/mooz/Dev/HuDK/master/include/psg.inc	1456730815	1	PSG registers.
+/home/mooz/Dev/HuDK/master/include/irq_reset.s	1462387160	0	/home/mooz/Dev/HuDK/master/include/irq_reset.s
+/home/mooz/Dev/HuDK/master/include/font.inc	1461509718	1	8x8 monochrome 1bpp font.
+/home/mooz/Dev/HuDK/master/include/system.inc	1461784988	1	System variables
+/home/mooz/Dev/HuDK/master/include/bram.s	1464552668	1	Backup RAM.
+/home/mooz/Dev/HuDK/master/include/irq.inc	1461689539	1	Interrupts management.
+/home/mooz/Dev/HuDK/master/include/irq_1.s	1461785607	0	/home/mooz/Dev/HuDK/master/include/irq_1.s
+/home/mooz/Dev/HuDK/master/include/font.s	1457210303	1	Font routines.
+/home/mooz/Dev/HuDK/master/include/psg.s	1463848543	1	PSG Functions.
 /home/mooz/Dev/HuDK/master/include/vgm.s	1457882524	1	VGM replay.
-/home/mooz/Dev/HuDK/master/include/memcpy.inc	1456863565	1	Memory copy.
-/home/mooz/Dev/HuDK/master/example/pceas/dummy.s	1461046894	0	/home/mooz/Dev/HuDK/master/example/pceas/dummy.s
-/home/mooz/Dev/HuDK/master/example/pceas/bm_tools.s	1461135552	0	/home/mooz/Dev/HuDK/master/example/pceas/bm_tools.s
-/home/mooz/Dev/HuDK/master/include/map.s	1459539073	1	Tilemap functions.
-/home/mooz/Dev/HuDK/master/include/sprite.inc	1458491935	1	Sprite descprition and utilities
-/home/mooz/Dev/HuDK/master/include/math.s	1458063371	1	Math routines.
-/home/mooz/Dev/HuDK/master/include/ca65/vce.inc	1457811344	0	/home/mooz/Dev/HuDK/master/include/ca65/vce.inc
-/home/mooz/Dev/HuDK/master/include/sprite.s	1458492068	1	Sprite routines.
-/home/mooz/Dev/HuDK/master/include/pceas/vce.inc	1457811344	0	/home/mooz/Dev/HuDK/master/include/pceas/vce.inc
-/home/mooz/Dev/HuDK/master/include/pceas/memcpy.inc	1456486060	0	/home/mooz/Dev/HuDK/master/include/pceas/memcpy.inc
-/home/mooz/Dev/HuDK/master/include/ca65/vdc.inc	1457372152	0	/home/mooz/Dev/HuDK/master/include/ca65/vdc.inc
-/home/mooz/Dev/HuDK/master/include/irq.inc	1458840017	1	Interrupts management.
-/home/mooz/Dev/HuDK/master/include/system.inc	1459442324	1	System variables
-/home/mooz/Dev/HuDK/master/include/ca65/start.s	1457133009	0	/home/mooz/Dev/HuDK/master/include/ca65/start.s
 /home/mooz/Dev/HuDK/master/include/irq_nmi.s	1458838284	0	/home/mooz/Dev/HuDK/master/include/irq_nmi.s
 /home/mooz/Dev/HuDK/master/include/ca65/word.inc	1457335443	0	/home/mooz/Dev/HuDK/master/include/ca65/word.inc
-/home/mooz/Dev/HuDK/master/include/bram.s	1461134919	1	Backup RAM.
-/home/mooz/Dev/HuDK/master/include/ca65/memcpy.inc	1456867864	0	/home/mooz/Dev/HuDK/master/include/ca65/memcpy.inc
-/home/mooz/Dev/HuDK/master/include/pceas/font.inc	1456866917	0	/home/mooz/Dev/HuDK/master/include/pceas/font.inc
-/home/mooz/Dev/HuDK/master/include/irq_2.s	1458838499	0	/home/mooz/Dev/HuDK/master/include/irq_2.s
+/home/mooz/Dev/HuDK/master/include/math.s	1458063371	1	Math routines.
+/home/mooz/Dev/HuDK/master/include/vdc.s	1463072583	1	VDC Functions.
 /home/mooz/Dev/HuDK/master/include/pceas/word.inc	1457080376	0	/home/mooz/Dev/HuDK/master/include/pceas/word.inc
-/home/mooz/Dev/HuDK/master/include/pceas/irq.inc	1458831829	0	/home/mooz/Dev/HuDK/master/include/pceas/irq.inc
 /home/mooz/Dev/HuDK/master/docs/vce.txt	1456436291	1	HuC6260 - Video Color Encoder (VCE).
+/home/mooz/Dev/HuDK/master/include/vce.inc	1456941942	1	VCE I/O Ports.
+/home/mooz/Dev/HuDK/master/include/vsplit.s	1464277949	0	/home/mooz/Dev/HuDK/master/include/vsplit.s
 /home/mooz/Dev/HuDK/master/include/ca65/irq.inc	1458831850	0	/home/mooz/Dev/HuDK/master/include/ca65/irq.inc
-/home/mooz/Dev/HuDK/master/include/word.inc	1456863619	1	/home/mooz/Dev/HuDK/master/include/word.inc
-/home/mooz/Dev/HuDK/master/include/pceas/macro.inc	1455744804	0	/home/mooz/Dev/HuDK/master/include/pceas/macro.inc
-/home/mooz/Dev/HuDK/master/include/font.inc	1457645125	1	8x8 monochrome 1bpp font.
-/home/mooz/Dev/HuDK/master/include/bcd.s	1461169505	1	BCD conversion routines.
-/home/mooz/Dev/HuDK/master/include/analog.s	1458666823	1	Analog joypag functions.
+/home/mooz/Dev/HuDK/master/example/pceas/dummy.s	1463159247	0	/home/mooz/Dev/HuDK/master/example/pceas/dummy.s
 /home/mooz/Dev/HuDK/master/include/ca65/map.s	1458236461	0	/home/mooz/Dev/HuDK/master/include/ca65/map.s
-/home/mooz/Dev/HuDK/master/include/pceas/vdc.inc	1457372152	0	/home/mooz/Dev/HuDK/master/include/pceas/vdc.inc
-/home/mooz/Dev/HuDK/master/include/pceas/start.s	1458250636	0	/home/mooz/Dev/HuDK/master/include/pceas/start.s
-/home/mooz/Dev/HuDK/master/include/font.s	1457210303	1	Font routines.
-/home/mooz/Dev/HuDK/master/include/vce.s	1457080376	1	VCE Functions.
-/home/mooz/Dev/HuDK/master/include/psg.inc	1456730815	1	PSG registers.
-/home/mooz/Dev/HuDK/master/include/irq_timer.s	1458837716	0	/home/mooz/Dev/HuDK/master/include/irq_timer.s
-/home/mooz/Dev/HuDK/master/include/print.s	1461135680	1	Text output routines.
 /home/mooz/Dev/HuDK/master/docs/vdc.txt	1456077701	1	HuC6270 - Video Display Controller (VDC).
-/home/mooz/Dev/HuDK/master/include/vdc.inc	1457645125	1	VDC I/O Ports and Registers.
-/home/mooz/Dev/HuDK/master/include/joypad.s	1457080376	1	Joypad Functions.
-/home/mooz/Dev/HuDK/master/example/data/datastorm.inc	1457816058	0	/home/mooz/Dev/HuDK/master/example/data/datastorm.inc
+/home/mooz/Dev/HuDK/master/include/ca65/memcpy.inc	1456867864	0	/home/mooz/Dev/HuDK/master/include/ca65/memcpy.inc
+/home/mooz/Dev/HuDK/master/include/ca65/font.inc	1456867017	0	/home/mooz/Dev/HuDK/master/include/ca65/font.inc
+/home/mooz/Dev/HuDK/master/include/joypad.s	1461961705	1	Joypad Functions.
+/home/mooz/Dev/HuDK/master/include/pceas/irq.inc	1461699238	0	/home/mooz/Dev/HuDK/master/include/pceas/irq.inc
+/home/mooz/Dev/HuDK/master/tools/vgmstrip.c	1457813956	0	/home/mooz/Dev/HuDK/master/tools/vgmstrip.c
+/home/mooz/Dev/HuDK/master/include/pceas/vce.inc	1457811344	0	/home/mooz/Dev/HuDK/master/include/pceas/vce.inc
+/home/mooz/Dev/HuDK/master/include/ca65/vce.inc	1457811344	0	/home/mooz/Dev/HuDK/master/include/ca65/vce.inc
+/home/mooz/Dev/HuDK/master/include/print.s	1463756994	1	Text output routines.
+/home/mooz/Dev/HuDK/master/include/ca65/start.s	1457133009	0	/home/mooz/Dev/HuDK/master/include/ca65/start.s
+/home/mooz/Dev/HuDK/master/include/bcd.s	1461442649	1	BCD conversion routines.
+/home/mooz/Dev/HuDK/master/include/pceas/memcpy.inc	1456486060	0	/home/mooz/Dev/HuDK/master/include/pceas/memcpy.inc
+/home/mooz/Dev/HuDK/master/include/vce.s	1461788470	1	VCE Functions.
+/home/mooz/Dev/HuDK/master/include/pceas/map.s	1459367412	0	/home/mooz/Dev/HuDK/master/include/pceas/map.s
+/home/mooz/Dev/HuDK/master/include/hudk.s	1458633498	0	/home/mooz/Dev/HuDK/master/include/hudk.s
+/home/mooz/Dev/HuDK/master/include/map.s	1461702284	1	Tilemap functions.
+/home/mooz/Dev/HuDK/master/include/sprite.inc	1464553638	1	Sprite descprition and utilities
+/home/mooz/Dev/HuDK/master/include/pceas/vdc.inc	1461785590	0	/home/mooz/Dev/HuDK/master/include/pceas/vdc.inc
+/home/mooz/Dev/HuDK/master/include/ca65/vdc.inc	1461785693	0	/home/mooz/Dev/HuDK/master/include/ca65/vdc.inc
+/home/mooz/Dev/HuDK/master/include/pceas/start.s	1458250636	0	/home/mooz/Dev/HuDK/master/include/pceas/start.s
+/home/mooz/Dev/HuDK/master/include/utils.s	1457080376	1	Utility routines.
+/home/mooz/Dev/HuDK/master/include/pceas/font.inc	1456866917	0	/home/mooz/Dev/HuDK/master/include/pceas/font.inc
+/home/mooz/Dev/HuDK/master/example/pceas/bm_tools.s	1463757368	0	/home/mooz/Dev/HuDK/master/example/pceas/bm_tools.s
+/home/mooz/Dev/HuDK/master/include/memcpy.inc	1456863565	1	Memory copy.
+/home/mooz/Dev/HuDK/master/include/sprite.s	1458492068	1	Sprite routines.
+/home/mooz/Dev/HuDK/master/include/joypad.inc	1461961029	1	Joypad port.
+/home/mooz/Dev/HuDK/master/include/vdc.inc	1461785552	1	VDC I/O Ports and Registers.
