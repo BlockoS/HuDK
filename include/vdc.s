@@ -296,7 +296,11 @@ vdc_init:
         st2    #$00
     dex
     bne    @l3
- 
+
+    ; disable interrupts and display
+    vdc_reg  #VDC_CR
+    vdc_data #$0000
+     
     rts
 
 ; Default VDC initialization table.
@@ -433,3 +437,4 @@ vdc_xres_512:
     lda    #(VCE_BLUR_ON | VCE_DOT_CLOCK_10MHZ)
     sta    color_ctrl
     rts
+
