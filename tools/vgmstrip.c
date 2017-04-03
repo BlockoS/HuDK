@@ -1,3 +1,12 @@
+/* vgmstrip.c -- Strips PC Engine VGM and outputs ASM files
+ * suitable for replay.
+ *
+ * Copyright (C) 2016 MooZ
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -15,6 +24,7 @@
 
 #define VGM_HEADER_SIZE 0x100
 
+/* Offsets (in bytes) of various infos in the VGM header. */
 enum VGM_OFFSET
 {
     VGM_ID                 = 0x00,
@@ -31,6 +41,7 @@ enum VGM_OFFSET
     VGM_HUC6280_CLOCK      = 0xa4
 };
 
+/* VGM header. */
 typedef struct
 {
     uint32_t eof_offset;
@@ -51,6 +62,7 @@ typedef struct
     uint32_t huc6280_clock;
 } vgm_header;
 
+/* VGM magic id */
 static const uint8_t vgm_id[] = { 0x56, 0x67, 0x6d, 0x20 };
 
 uint16_t read_u16(uint8_t *buffer)
@@ -64,6 +76,7 @@ uint32_t read_u32(uint8_t *buffer)
            | (buffer[1] <<  8) | (buffer[0]      );
 }
 
+/* Read vgm header and check it's a valid PC Engine tune. */
 int vgm_read_header(FILE *stream, vgm_header *header)
 {
     uint8_t raw_header[VGM_HEADER_SIZE];
@@ -111,6 +124,7 @@ int vgm_read_header(FILE *stream, vgm_header *header)
     return 0;
 }
 
+/* Read vgm data and strip unecessary data. */
 int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len)
 {
     uint8_t  *src, *dst;
@@ -166,6 +180,7 @@ int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len)
     return 0;
 }
 
+/* Cut the vgm in slices of 8kB and writes assembly files containing data and bank infos. */
 int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint32_t org, const char *basename)
 {
     FILE *stream;
@@ -232,6 +247,7 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
     return 0;
 } 
 
+/* display program arguments on the command line. */
 void usage()
 {
     fprintf(stdout, "usage: vgmstrip -b bank -o org input.vgm out\n"
@@ -239,6 +255,7 @@ void usage()
                     "-o or --org  : Start bank offset (in hexadecimal)\n");
 }
 
+/* main entry point. */
 int main(int argc, char **argv)
 {
     FILE *stream;
