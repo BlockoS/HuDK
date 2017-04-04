@@ -34,9 +34,9 @@
 ;;
 
   .ifdef MAGICKIT
-    .include "pceas/word.inc"
+    .include "pceas/byte.inc"
   .else
     .ifdef CA65
-    .include "ca65/word.inc"
+    .include "ca65/byte.inc"
     .endif
   .endif
