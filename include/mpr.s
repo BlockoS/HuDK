@@ -1,5 +1,5 @@
 ;;
-;; Title: Utility routines.
+;; Title: Memory mapping utility routines.
 ;;
 
 ;;

@@ -1,6 +1,7 @@
   .ifdef MAGICKIT
     .include "pceas/macro.inc"
   .endif
+    .include "byte.inc"
     .include "word.inc"
     .include "system.inc"
     .include "memcpy.inc"

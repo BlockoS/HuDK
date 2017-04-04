@@ -82,7 +82,7 @@ sprite_y:
 ;;   A - X coordinate MSB
 ;;   X - X coordinate LSB
 ;;
-sprite_y:
+sprite_x:
     pha
     vdc_reg #VDC_MAWR
     addw    #$01, <_si, video_data
@@ -117,7 +117,7 @@ sprite_hide:
 ;; function: sprite_show
 ;; Show current sprite. 
 ;;
-sprite_hide:
+sprite_show:
     vdc_reg #VDC_MARR 
     vdc_data <_si
 
