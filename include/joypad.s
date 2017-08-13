@@ -119,7 +119,7 @@ joypad_6_read:
     lda    joypad_6, X
     eor    joyold_6, X
     and    joypad_6, X
-    sta    joypad_6, X
+    sta    joytrg_6, X
 
     inx
     cpx    #$05
