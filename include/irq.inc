@@ -172,7 +172,8 @@ irq_cnt = $20f2
 ;;
 irq_m = $20f5
 
-user_hook = $2200
+    .bss
+user_hook  .ds 14 ; = $2200
 irq2_hook  = user_hook + (IRQ2 * 2)
 irq1_hook  = user_hook + (IRQ1 * 2)
 timer_hook = user_hook + (TIMER * 2)

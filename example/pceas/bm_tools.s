@@ -4,8 +4,8 @@
     .include "joypad.s"
    
 ; [todo] 0. comments!
-; [todo] 1. restore
-; [todo] 2. edit
+; [todo] 1. edit
+; [todo] 2. finalize GUI
 
 MAIN_MENU   = 0
 FILE_MENU   = 1
@@ -161,7 +161,7 @@ display_file_list:
 ; VSync callback
 vsync_proc:
     jsr    gradient_loop
-    jsr    joypad_read.1
+    jsr    joypad_read
     rts
 
 ; make the 2nd color of the 2nd palette loops through gradient palette.

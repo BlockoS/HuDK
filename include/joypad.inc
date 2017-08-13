@@ -171,7 +171,6 @@ IO_JOYPAD_VI  = %00001000
     nop
   .endmacro
 
-
   .bss
 ;;
 ;; ubyte: joypad
