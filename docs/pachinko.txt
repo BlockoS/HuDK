@@ -1,0 +1,57 @@
+
+Title: Pachinko controller.
+
+Group: Description
+
+The Pachinko controller is a standard joypad controller coupled with a dial.
+The dial controls the speed at which the balls are sent.
+
+This controler is used in the following games :
+
+  - Pachio-Kun Jūban Shōbu - パチ夫くん十番勝負
+  - Pachio-Kun Maboroshi No Densetsu - パチ夫くん幻の伝説
+  - Pachio-Kun Warau Uchū - パチ夫くん笑う宇宙
+  - Pachio-Kun 3 Pachisuro & Pachinko - パチ夫くん3パチスロ＆パチ
+
+Group: Interface
+
+Basically the controller acts as 2 joypads plugged on a 2 ports multitap.
+The first and second read of the *joyport* will return the directions and the
+buttons. While the third and fourth will give the dial value.
+
+This means that a call to joypad_read will do the trick.
+*joypad+0* will contain the joypad directions and buttons and *joypad+1* the
+dial.
+
+Note the dial value can range from *$84* to *$fb*. However this value is usually
+clamped (*$9c* and *$ef* for Pachio-Kun Jūban Shōbu (パチ夫くん十番勝負)). 
+
+(start code)
+    jsr  joypad_read
+
+    ; Clamp dial values.
+    lda  joypad+1
+
+    cmp  #$9c
+    bcc  @clamp.lo
+    
+    cmp  #$ef
+    bcs  @clamp.hi
+
+    bra  @store
+
+@clamp.lo:
+    lda  #$9c
+    bra  @store
+
+@clamp.hi:
+    lda  #$ef
+
+@store:
+    sta  dial
+
+(end code)
+
+Group: Source
+
+<Archaic Pixels at http://archaicpixels.com/Pachinko_Controller>
