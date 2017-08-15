@@ -113,7 +113,7 @@ VCE_DOT_CLOCK_5MHZ  = %00000000
 ;;
  
 ;;
-;; macro: RGB_dw
+;; macro: RGB
 ;; Convert 3bit R, G, B to 9bit palette entry.
 ;;
 ;; Parameters:
