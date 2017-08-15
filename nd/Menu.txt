@@ -101,6 +101,7 @@ Group: Controls  {
    File: Joypad port  (no auto-title, include/joypad.inc)
    File: Joypad functions  (no auto-title, include/joypad.s)
    File: Analog joypad functions  (no auto-title, include/analog.s)
+   File: Pachinko controller  (no auto-title, docs/pachinko.txt)
    }  # Group: Controls
 
 Group: Index  {
