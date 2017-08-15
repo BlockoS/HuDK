@@ -55,10 +55,10 @@ SOURCE_INC_DEST_INC = $73
 
 ;;
 ;; macro: memcpy_mode
-;; Set memcpy mode (see <Copy modes>).
+;; Set memcpy mode (see <Copy Modes>).
 ;;
 ;; Parameters:
-;;   mode - Memory copy mode.
+;;   mode - memory copy mode.
 ;;
 
 ;;
@@ -69,6 +69,25 @@ SOURCE_INC_DEST_INC = $73
 ;;   src - source.
 ;;   dst - destination.
 ;;   len - number of bytes to copy.
+;;
+
+;;
+;; macro: memcpy_ex
+;; Copy *len* bytes from the *src* to *dst*.
+;; This is equivalent to :
+;;   > memcpy_mode mode
+;;   > memcpy_args src, dst, len
+;;   > jsr    memcpy
+;;
+;; Assembly call:
+;;   > memcpy_ex <_si, #video_data, #$0100, #SOURCE_INC_DEST_ALT
+;;
+;; Parameters:
+;;   src - source.
+;;   dst - destination.
+;;   len - number of bytes to copy.
+;;   mode - memory copy mode (see <Copy Modes>).
+;;          *optinal* (default: SOURCE_INC_DEST_ALT). 
 ;;
 
   .ifdef MAGICKIT
