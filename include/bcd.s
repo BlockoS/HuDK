@@ -1,8 +1,6 @@
 ;;
 ;; Title: BCD conversion routines.
 ;;
-    .include "hudk.inc"
-
     .code
 ;;
 ;; function: binbcd8

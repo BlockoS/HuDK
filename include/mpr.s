@@ -1,8 +1,13 @@
 ;;
 ;; Title: Memory mapping utility routines.
 ;;
-
-    .include "hudk.inc"
+.ifdef CA65   
+    .include "system.inc"
+    
+    .export unmap_data
+	.export remap_data
+	.export map_data
+.endif
 
 ;;
 ;; function: map_data

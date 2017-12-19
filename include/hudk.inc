@@ -1,3 +1,7 @@
+;; include for any projetct based on HuDK
+;;
+;;  DO NOT include in a HuDK source file
+
   .ifdef MAGICKIT
     .include "pceas/macro.inc"
   .endif

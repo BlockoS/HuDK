@@ -15,7 +15,6 @@
 ;; The tiles palette array specify the index of the palette to use for a given
 ;; tile. For 16x16 tilemap, the palette index will be used for all 4 VRAM tile.
 ;;
-    .include "hudk.inc"
 
     .zp
 map_infos:

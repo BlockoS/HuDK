@@ -2,7 +2,18 @@
 ;; Title: VDC Functions.
 ;;
 
-    .include "hudk.inc"
+.ifdef CA65   
+    .include "word.inc"
+	.include "system.inc"
+	.include "vdc.inc"
+	.include "vce.inc"
+
+; from mpr.s
+	.import unmap_data
+	.import remap_data
+	.import map_data
+.endif
+
 
 ;;
 ;; function: vdc_set_read

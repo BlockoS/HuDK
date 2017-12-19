@@ -1,8 +1,6 @@
 ;;
 ;; Title: Math routines.
 ;;
-    .include "hudk.inc"
-
     .code
 ;;
 ;; function: mulu8

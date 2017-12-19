@@ -1,5 +1,3 @@
-    .include "hudk.inc"
-
   .ifdef MAGICKIT
     .include "pceas/start.s"
   .else
