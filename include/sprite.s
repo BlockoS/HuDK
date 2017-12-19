@@ -1,6 +1,8 @@
 ;;
 ;; Title: Sprite routines.
 ;;
+    .include "hudk.inc"
+
     .zp
 sprite_vram_base .ds 2
 

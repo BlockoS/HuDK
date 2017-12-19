@@ -1,3 +1,5 @@
+    .include "hudk.inc"
+
 _irq_1:
     bbs1   <irq_m, @user_hook
 

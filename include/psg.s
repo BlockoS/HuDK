@@ -2,6 +2,8 @@
 ;; Title: PSG Functions.
 ;;
 
+    .include "hudk.inc"
+
 ;;
 ;; function: psg_init
 ;; Initialize PSG.

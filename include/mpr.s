@@ -2,6 +2,8 @@
 ;; Title: Memory mapping utility routines.
 ;;
 
+    .include "hudk.inc"
+
 ;;
 ;; function: map_data
 ;;   Map data to mpr 3 and 4.

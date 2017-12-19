@@ -2,6 +2,8 @@
 ;; Title: Font routines.
 ;;
 
+    .include "hudk.inc"
+
 ;;
 ;; function: font_load
 ;; Load 1bpp font to VRAM.

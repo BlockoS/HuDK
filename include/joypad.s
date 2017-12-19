@@ -2,6 +2,8 @@
 ;; Title: Joypad Functions.
 ;;
 
+    .include "hudk.inc"
+
   .macro joypad_reset_multitap
     lda    #$01         ; reset multitap to joypad #1
     sta    joyport

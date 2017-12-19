@@ -45,6 +45,9 @@
 ;;   - bm_files
 ;;
 
+   .include "hudk.inc"
+
+
 BM_SEGMENT = $F7
 
 bm_addr   = $8000

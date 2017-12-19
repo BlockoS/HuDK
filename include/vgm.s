@@ -114,6 +114,9 @@
 ;; >    rts
 ;;
 
+
+    .include "hudk.inc"
+
 ;;
 ;; ubyte: vgm_mpr
 ;; MPR used to map VGM data.

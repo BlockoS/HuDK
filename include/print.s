@@ -13,6 +13,8 @@
 ;; >    lda    #'o'
 ;; >    jsr    print_char
 
+    .include "hudk.inc"
+
 ;;
 ;; function: print_char
 ;; Output an ASCII character at the current BAT location.

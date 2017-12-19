@@ -2,6 +2,8 @@
 ;; Title: VCE Functions.
 ;;
 
+    .include "hudk.inc"
+
 ;;
 ;; function: vce_init
 ;; Set VCE dot clock, edge blur and background color.

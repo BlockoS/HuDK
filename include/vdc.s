@@ -2,6 +2,8 @@
 ;; Title: VDC Functions.
 ;;
 
+    .include "hudk.inc"
+
 ;;
 ;; function: vdc_set_read
 ;; Set VDC VRAM read pointer.

@@ -2,6 +2,8 @@
 ;; Title: Analog joypag functions.
 ;;
 
+	.include "hudk.inc"
+
 ;;
 ;; ubyte: JOY_ANALOG_BYTTONS_0
 ;; Holds the state of A, B, SELECT, START and other unknown buttons...
