@@ -301,7 +301,7 @@ vdc_init:
 
     ; disable interrupts and display
     vdc_reg  #VDC_CR
-    vdc_data #$0000
+    vdc_data $0000
      
     rts
 
