@@ -1,3 +1,8 @@
+    .bss
+user_hook  .ds 14 ; = $2200
+
+
+
 ;
 ; Enable one or multiples IRQ interrupts.
   .macro irq_on
