@@ -70,3 +70,11 @@ _dl = _dx
 ;; ushort: _dh
 ;; _dx MSB
 _dh = _dx+1
+
+  .ifdef MAGICKIT
+    .include "pceas/system.inc"
+  .else
+    .ifdef CA65
+    .include "ca65/system.inc"
+    .endif
+  .endif
