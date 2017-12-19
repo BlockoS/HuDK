@@ -152,10 +152,10 @@ vdc_load_data:
     beq    @l2
     cly
 @l0:
-        lda    [_si], Y
+        lda    [<_si], Y
         vdc_data_l
         iny
-        lda    [_si], Y
+        lda    [<_si], Y
         vdc_data_h
         iny
         bne    @l1
