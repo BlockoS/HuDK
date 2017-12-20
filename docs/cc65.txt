@@ -1,0 +1,118 @@
+To use HuDK with CC65, you first need to give pce.lib a diet : remove default PCEnigne code and keep only C runtime
+
+Do to this, you have to use 
+	ar65 d pce.lib module_name.o
+
+To avoid you to call it on every module, you'll find at the end of the file the Makefile to call at cc65 root folder.
+Update it if CC65 ever update its pce target.
+
+
+
+Link this pce_runtime.lib with all HuDK and game object files to produce the .pce ROM file, like this
+	ld65 -C HuDK/cfg/hucard8K.cfg  -o game.pce <hudk_files.o> <game_files.o> pce_runtime.lib 
+
+
+
+
+
+
+
+
+
+============= Makefile.pce_runtime
+TO_REMOVE = _scrsize.o \
+			chline.o   \
+			clock.o \
+			clrscr.o \
+			color.o \
+			conio.o \
+			cputc.o \
+			crt0.o \
+			ctype.o \
+			cvline.o \
+			extzp.o \
+			gotoxy.o \
+			irq.o \
+			joy_stat_stddrv.o \
+			kplot.o \
+			libref.o \
+			memcpy.o \
+			memmove.o \
+			memset.o \
+			psg.o \
+			revers.o \
+			tgi-kernel.o \
+			tgi_arc.o \
+			tgi_bar.o \
+			tgi_circle.o \
+			tgi_clear.o \
+			tgi_clippedline.o \
+			tgi_curtoxy.o \
+			tgi_done.o \
+			tgi_ellipse.o \
+			tgi_free_vectorfont.o \
+			tgi_getaspectratio.o \
+			tgi_getcolor.o \
+			tgi_getcolorcount.o \
+			tgi_getdefpalette.o \
+			tgi_geterror.o \
+			tgi_geterrormsg.o \
+			tgi_getmaxcolor.o \
+			tgi_getmaxx.o \
+			tgi_getmaxy.o \
+			tgi_getpagecount.o \
+			tgi_getpalette.o \
+			tgi_getpixel.o \
+			tgi_getset.o \
+			tgi_gettextheight.o \
+			tgi_gettextwidth.o \
+			tgi_getxres.o \
+			tgi_getyres.o \
+			tgi_gotoxy.o \
+			tgi_imulround.o \
+			tgi_init.o \
+			tgi_install_vectorfont.o \
+			tgi_ioctl.o \
+			tgi_line.o \
+			tgi_linepop.o \
+			tgi_lineto.o \
+			tgi_load.o \
+			tgi_load_vectorfont.o \
+			tgi_outcode.o \
+			tgi_outtext.o \
+			tgi_outtextxy.o \
+			tgi_pieslice.o \
+			tgi_popxy.o \
+			tgi_popxy2.o \
+			tgi_setaspectratio.o \
+			tgi_setcolor.o \
+			tgi_setdrawpage.o \
+			tgi_setpalette.o \
+			tgi_setpixel.o \
+			tgi_settextdir.o \
+			tgi_settextstyle.o \
+			tgi_setviewpage.o \
+			tgi_unload.o \
+			tgi_vectorchar.o \
+			ticktock.o \
+			vce.o \
+			vdc.o \
+			waitvsync.o \
+			pce-stdjoy-joy.o
+
+
+AR=./bin/ar65
+
+
+.PHONY: all
+
+define remove_module
+
+$(AR) dv lib/pce_runtime.lib $(module_name)
+
+endef # remove_module
+
+all:
+	cp ./lib/pce.lib ./lib/pce_runtime.lib
+	$(foreach module_name,$(TO_REMOVE),$(remove_module))
+

@@ -11,7 +11,7 @@ LD65 = $(CC65_HOME)/bin/ld65
 OUTPUT := obj/example/ca65
 EXAMPLE_CA65 = ./example/ca65
 
-SOURCE_CA65 := ./include/hudk.s
+SOURCE_CA65 := ./include/start.s
 SOURCE_CA65 += $(EXAMPLE_CA65)/dummy.s
 SOURCE_CA65 += ./include/vgm.s
 SOURCE_CA65 += ./include/analog.s
@@ -19,7 +19,7 @@ SOURCE_CA65 += ./include/analog.s
 OBJECT_CA65 := $(subst $(EXAMPLE_CA65)/, $(OUTPUT)/,$(SOURCE_CA65:.s=.o))
 OBJECT_CA65 := $(subst ./include/, $(OUTPUT)/,$(OBJECT_CA65:.s=.o))
 
-LINK_CA65    = $(EXAMPLE_CA65)/dummy.cfg
+LINK_CA65    = ./cfg/hucard8K.cfg
 OUTPUT_CA65  = $(EXAMPLE_CA65)/dummy.pce
 
 CA65_FEATURES = --feature bracket_as_indirect
