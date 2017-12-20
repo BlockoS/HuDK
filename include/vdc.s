@@ -8,10 +8,13 @@
 	.include "vdc.inc"
 	.include "vce.inc"
 
+	.code
 ; from mpr.s
 	.import unmap_data
 	.import remap_data
 	.import map_data
+	
+	.export vdc_init
 .endif
 
 

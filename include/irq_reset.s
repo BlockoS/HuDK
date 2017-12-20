@@ -1,6 +1,5 @@
 ; Reset interrupt (HuCard only).
 ; This routine is called when the console is powered up.
-
 _reset:
     sei                        ; disable interrupts
     csh                        ; switch cpu to high speed mode
@@ -18,11 +17,13 @@ _reset:
     timer_ack                  ; reset timer
 _init:
     memcpy_init                ; initialize memcpy ramcode
-    jsr    psg_init            ; initialize sound (mute everything)
-    jsr    vdc_init            ; initialize display with default values
-                               ; bg, sprites and display interrupts are disable
-    jsr    vce_init            ; initialize dot clock, background and border
-                               ; color.
+;todo
+;    jsr    psg_init            ; initialize sound (mute everything)
+;    jsr    vdc_init            ; initialize display with default values
+;                               ; bg, sprites and display interrupts are disable
+;    jsr    vce_init            ; initialize dot clock, background and border
+;                               ; color.
 
     ; [todo] set default/dummy interrupts hooks if needed
-    jmp   main    
+    jsr  _main    
+	jmp	_reset

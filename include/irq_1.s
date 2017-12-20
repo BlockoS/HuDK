@@ -24,17 +24,17 @@ _irq_1:
         jsr  default_vsync_handler
 @l3:
     bbr4   <irq_m, @l4
-        jsr  @user_vsync
+    jsr  @user_vsync
 @l4:
 
 @hsync:
     bbr2   <vdc_sr, @exit
     bbs7   <irq_m,  @l5
-        jsr  default_hsync_handler
+    jsr  default_hsync_handler
 
 @l5:
     bbr6 <irq_m, @exit
-        jsr  @user_hsync
+    jsr  @user_hsync
 
 @exit:
     lda    <vdc_reg         ; restore VDC register index
