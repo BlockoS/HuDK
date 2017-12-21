@@ -1,5 +1,8 @@
 ; $fffe Reset interrupt (HuCard only).
 ; This routine is called when the console is powered up.
+;
+; TODO : setXXXIRQHandler(cfunc) with cfunc=NULL mean no_hook	
+	
 	
 _reset:
     sei                        ; disable interrupts
@@ -53,11 +56,19 @@ _reset:
         stx     sp + 1
 .endif
 
+; TODO reset irq_hooks to no_hook
+
+
+
+
 	cli							; enable interrup
 
 _init:
     memcpy_init                ; initialize memcpy ramcode
 								; !! macro, not proc
+
+
+	jsr reset_hooks
 
 ;todo
 ;    jsr    psg_init            ; initialize sound (mute everything)
@@ -74,3 +85,37 @@ _init:
     jsr  _main
     
 	jmp	_reset
+	
+; reset all hooks
+reset_hooks:
+	stz		<irq_m
+	
+	lda     #>(no_hook)
+	ldx     #<(no_hook)
+	
+	sta     irq2_hook
+	stx     irq2_hook+1
+
+	sta     irq1_hook
+	stx     irq1_hook+1
+
+	sta     timer_hook
+	stx     timer_hook+1
+
+	sta     nmi_hook
+	stx     nmi_hook+1
+
+	sta     vsync_hook
+	stx     vsync_hook+1
+
+	sta     hsync_hook
+	stx     hsync_hook+1
+
+	sta     reset_hook
+	stx     reset_hook+1
+	
+	rts
+
+	
+no_hook:
+	rts

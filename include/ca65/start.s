@@ -15,7 +15,6 @@
 	; needed by CC65 :(
      .export         __STARTUP__ : absolute = 1      ; Mark as startup
 
-	
 	; cc65 imports
     .import	zerobss
     ; Linker generated

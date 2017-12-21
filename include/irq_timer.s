@@ -6,6 +6,10 @@ _timer:
     rti
 
 @user_hook:
-; TODO : jmp and not jsr + rti ? problem with C ?
 ; TODO : no ack ?
-    jmp    [timer_hook]
+
+; TODO : save AXY
+    jsr    [timer_hook]
+; TODO : restore AXY
+	rti
+	
