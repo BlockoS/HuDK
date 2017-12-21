@@ -1,3 +1,10 @@
+; $fff8 IRQ1 (VDC) handler
+; see VDC Status register to define what really happened
+; but mainly bit 2 : HSync (see VREG 6)and bit 5 : VSync
+; TODO : look for others interrup
+; - about sprites related interrupts (collide and limit)
+; - related to DMA
+
 _irq_1:
     bbs1   <irq_m, @user_hook
 
