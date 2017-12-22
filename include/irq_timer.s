@@ -3,15 +3,14 @@
 _timer:
     timer_ack     ; acknowledge timer interrupt
 
-    bbs2   <irq_m, @user_hook
-    rti
-
-@user_hook:
 	phy
 	phx
 	pha
 
-    jsr    [timer_hook]
+    bbr2   <irq_m, @no_hook
+    jsr    @user_timer
+
+@no_hook:
 
     pla
     plx
@@ -19,3 +18,5 @@ _timer:
 
 	rti
 	
+@user_timer:
+	jmp [timer_hook]

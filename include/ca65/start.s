@@ -36,17 +36,10 @@
 	
   .include "irq_reset.s"
 
-;; TODO
-;  .include "irq_nmi.s"
-_nmi:
-;  .include "irq_timer.s"
-_timer:
-;  .include "irq_1.s"
-_irq_1:
-;  .include "irq_2.s"
-_irq_2:
-	rti
-	
+  .include "irq_nmi.s"
+  .include "irq_timer.s"
+  .include "irq_1.s"
+  .include "irq_2.s"
 	
 .else
     ; [todo]

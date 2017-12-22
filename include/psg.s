@@ -2,6 +2,9 @@
 ;; Title: PSG Functions.
 ;;
 
+
+	.code
+
 ;;
 ;; function: psg_init
 ;; Initialize PSG.

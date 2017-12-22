@@ -14,11 +14,13 @@ _irq_1:
     phy
 
     lda    video_reg        ; get VDC status register (SR)
-    sta    <vdc_sr			; save SR
+    sta    <vdc_sr			; store SR to avoid to call it everytimes
+							; we wan't to check what occured
 
-@vsync:                     ; vsync interrupt
-    bbr5   <vdc_sr, @hsync
+@check_vsync:                     ; vsync interrupt
+    bbr5   <vdc_sr, @check_hsync	; check SR's bit 5 : VSync
 
+	; bit5 = 1
     inc    <irq_cnt         ; update irq counter (for wait_vsync)
 
 ; [todo]
@@ -28,15 +30,23 @@ _irq_1:
 ;    lda    <vdc_crh
 ;    sta    video_data_h
 
+; TODO why bother with a default vsync handler ?
+
     bbs5   <irq_m, @l3
-        jsr  default_vsync_handler
+	jsr  default_vsync_handler
+
+
+
+
 @l3:
     bbr4   <irq_m, @l4
     jsr  @user_vsync
+
 @l4:
 
-@hsync:
-    bbr2   <vdc_sr, @exit
+@check_hsync:
+    bbr2   <vdc_sr, @exit		
+    
     bbs7   <irq_m,  @l5
     jsr  default_hsync_handler
 
@@ -45,21 +55,33 @@ _irq_1:
     jsr  @user_hsync
 
 @exit:
-    lda    <vdc_reg         ; restore VDC register index
-    sta    video_reg
+; TODO : check spriteoverflow ?
+
+
+ ; See what BlockOS was trying to do (vdc_reg is a macro!)
+ ; vdc_ri ?
+ ;   lda    <vdc_reg         ; restore VDC register index
+ ;   sta    video_reg
 
     ply                     ; restore registers
     plx
     pla
     
     rti
+
+; note : jump's rts will jump back to jsr call to @user_xxx
+;		so see what AFTER jsr call to know what occurs after this jmp
     
 @user_hook:
     jmp    [irq1_hook]
+    
 @user_hsync:
     jmp    [hsync_hook]
+
 @user_vsync:
     jmp    [vsync_hook]
+
+
 
 default_vsync_handler:
     ; [todo]

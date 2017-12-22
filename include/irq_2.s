@@ -1,20 +1,31 @@
 ;; $fff6 IRQ2 (External IRQ, BRK) handler
 ;; TODO : CD specific handler ?
-;; TODO : why not call user_hook EVERy time ?
 
 _irq_2:
-    bbs0   <irq_m, @user_hook
-    rti
-    
-@user_hook:
 	phy
 	phx
 	pha
 
-    jsr    [irq2_hook]
 
+	; TODO : any HuDK dedicated stuff goes here
+
+    bbr0   <irq_m, @no_hook ;6 + 2	
+	
+	;vs
+	;lda	<irq_m		;4
+	;bit #0			;2
+	;be  @no_hook	;2+2
+
+
+	; since jsr [xxx] doesn't exist, let's do the trick !
+    jsr    @user_irq2
+
+@no_hook:
     pla
     plx
     ply
 
 	rti
+	
+@user_irq2:
+	jmp [irq2_hook]

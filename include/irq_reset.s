@@ -9,6 +9,7 @@ _reset:
     csh                        ; switch cpu to high speed mode
     cld                        ; clear decimal flag
     
+    
     ldx    #$ff                ; initialize the stack pointer ($21ff)
     txs
     
@@ -40,6 +41,7 @@ _reset:
     timer_disable              ; disable timer
     irq_off INT_ALL            ; disable interrupts
     timer_ack                  ; reset timer
+
 
 .ifdef CA65
 ;TODO is it really needed since we zeroed RAM ?
@@ -90,8 +92,8 @@ _init:
 reset_hooks:
 	stz		<irq_m
 	
-	lda     #>(no_hook)
-	ldx     #<(no_hook)
+	lda     #<(no_hook)
+	ldx     #>(no_hook)
 	
 	sta     irq2_hook
 	stx     irq2_hook+1
