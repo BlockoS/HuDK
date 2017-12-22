@@ -1,15 +1,21 @@
 ; $fffa see Timer register, at $0C00 
 
 _timer:
-    bbs2   <irq_m, @user_hook
     timer_ack     ; acknowledge timer interrupt
+
+    bbs2   <irq_m, @user_hook
     rti
 
 @user_hook:
-; TODO : no ack ?
+	phy
+	phx
+	pha
 
-; TODO : save AXY
     jsr    [timer_hook]
-; TODO : restore AXY
+
+    pla
+    plx
+    ply
+
 	rti
 	

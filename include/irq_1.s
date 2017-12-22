@@ -4,6 +4,7 @@
 ; TODO : look for others interrup
 ; - about sprites related interrupts (collide and limit)
 ; - related to DMA
+; TODO : registers seems to not be restored when using hooks
 
 _irq_1:
     bbs1   <irq_m, @user_hook
@@ -12,8 +13,8 @@ _irq_1:
     phx
     phy
 
-    lda    video_reg        ; get VDC status register
-    sta    <vdc_sr
+    lda    video_reg        ; get VDC status register (SR)
+    sta    <vdc_sr			; save SR
 
 @vsync:                     ; vsync interrupt
     bbr5   <vdc_sr, @hsync
