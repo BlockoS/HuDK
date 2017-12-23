@@ -1,4 +1,9 @@
-*.pce
+**.pce
+
+# cc65 output
+**.o
+**.o.s
+**.d
 
 # pceas output
 *.sym

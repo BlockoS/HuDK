@@ -15,6 +15,7 @@
 	; needed by CC65 :(
      .export         __STARTUP__ : absolute = 1      ; Mark as startup
 
+
 	; cc65 imports
     .import	zerobss
     ; Linker generated
@@ -27,6 +28,9 @@
  
 	; handle C's void main(void) and ASM's _main:
 	.import	_main	
+	
+	.export _VDC_setVSyncHandler
+	.export _VDC_setHSyncHandler
 	
   .include "irq_reset.s"
   .include "irq_nmi.s"

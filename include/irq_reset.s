@@ -1,9 +1,12 @@
 ; $fffe Reset interrupt (HuCard only).
 ; This routine is called when the console is powered up.
 ;
+; void __fastcall__ VDC_setVSyncHandler( void (*handler) (void) );
+;			reset with NULL
+; void __fastcall__ VDC_setHSyncHandler( void (*handler) (void) );
+; 			reset with NULL
 ; TODO : setXXXIRQHandler(cfunc) with cfunc=NULL mean no_hook	
-	
-	
+
 _reset:
     sei                        ; disable interrupts
     csh                        ; switch cpu to high speed mode
@@ -117,7 +120,33 @@ reset_hooks:
 	stx     reset_hook+1
 	
 	rts
-
 	
 no_hook:
+	rts
+	
+	
+	
+
+_VDC_setVSyncHandler:
+; TODO : update irq_m
+; TODO : check ax=0 (check X only since if X = 0, A is ZP address...no possible)
+	lda     #<(no_hook)
+	ldx     #>(no_hook)
+
+@set:
+	sta     vsync_hook
+	stx     vsync_hook+1
+
+	rts
+	
+_VDC_setHSyncHandler:
+; TODO : update irq_m
+; TODO : check ax=0 (check X only since if X = 0, A is ZP address...no possible)
+	lda     #<(no_hook)
+	ldx     #>(no_hook)
+
+@set:
+	sta     hsync_hook
+	stx     hsync_hook+1
+
 	rts

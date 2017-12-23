@@ -62,6 +62,7 @@ _irq_1:
 	
 	;default vsync HuDK handler
     inc    <irq_cnt         ; update irq counter (for wait_vsync)
+    ;todo : reset vsplit
 
 ; [todo] default vsync HuDK handler
 ; TODO 	see	HuC' clock ?
