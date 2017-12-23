@@ -170,6 +170,16 @@ irq_cnt = $20f2
 ;; ubyte: irq_m
 ;; Interrupt control mask.
 ;;
+;; from Hu7cd doc
+;; BIT0 - irq2 user interrupt mask
+;; BIT1 - irq1 user interrupt mask
+;; BIT2 - timer user interrupt mask
+;; BIT3 - nmi user interrupt mask
+;; BIT4 - (if !BIT1), vsync user interrut mask
+;; BIT5 - "irq1 occured but not on vsync" user interrupt mask
+;; BIT6 - (if !BIT1), raster/hsync user interrupt mask
+;; BIT7 - "irq1 occured but not on hsync" user interrupt mask
+
 irq_m = $20f5
 
 
