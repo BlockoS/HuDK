@@ -4,6 +4,7 @@
 **.o
 **.o.s
 **.d
+**.map
 
 # pceas output
 *.sym

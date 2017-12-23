@@ -20,7 +20,7 @@ OBJECT_CA65 := $(subst $(EXAMPLE_CA65)/, $(OUTPUT)/,$(SOURCE_CA65:.s=.o))
 OBJECT_CA65 := $(subst ./include/, $(OUTPUT)/,$(OBJECT_CA65:.s=.o))
 
 LINK_CA65    = ./cfg/hucard8K.cfg
-OUTPUT_CA65  = $(EXAMPLE_CA65)/dummy.pce
+OUTPUT_CA65  = $(EXAMPLE_CA65)/hudk_ca65_sample.pce
 
 CA65_FEATURES = --feature bracket_as_indirect
 CA65_INCLUDES = -I ./example -I ./include
