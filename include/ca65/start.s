@@ -26,16 +26,9 @@
     .importzp       sp
  
 	; handle C's void main(void) and ASM's _main:
-	.import	_main
-       
-    ; imports needed by irq_reset
-;    .import vce_init
-;    .import vdc_init
-;    .import psg_init
-	
+	.import	_main	
 	
   .include "irq_reset.s"
-
   .include "irq_nmi.s"
   .include "irq_timer.s"
   .include "irq_1.s"
