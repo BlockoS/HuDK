@@ -15,6 +15,7 @@ SYSTEM_OBJ :=$(patsubst %.s,%.o, $(SYSTEM_SRC))
 
 CORE_SRC:=$(HUDK_PATH)/include/mpr.s
 CORE_SRC+=$(HUDK_PATH)/include/vdc.s
+CORE_SRC+=$(HUDK_PATH)/include/psg.s
 CORE_OBJ :=$(patsubst %.s,%.o, $(CORE_SRC))
 
 GAME_SRC :=main.c

@@ -8,6 +8,7 @@
    .include "vdc.inc"
 ;   .include "vce.inc" 
 
+
   .ifdef MAGICKIT
     .include "pceas/start.s"
   .else

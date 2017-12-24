@@ -7,6 +7,11 @@
 ; 			reset with NULL
 ; TODO : setXXXIRQHandler(cfunc) with cfunc=NULL mean no_hook	
 
+		.code
+		
+		; from psg.s
+		.import psg_init
+
 _reset:
     sei                        ; disable interrupts
     csh                        ; switch cpu to high speed mode
@@ -76,7 +81,7 @@ _init:
 	jsr reset_hooks
 
 ;todo
-;    jsr    psg_init            ; initialize sound (mute everything)
+    jsr    psg_init            ; initialize sound (mute everything)
 ;    jsr    vdc_init            ; initialize display with default values
 ;                               ; bg, sprites and display interrupts are disable
 ;    jsr    vce_init            ; initialize dot clock, background and border
