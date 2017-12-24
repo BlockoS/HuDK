@@ -4,9 +4,9 @@
 
 	.code
 
-.ifdef CA65   
     .include "psg.inc"
-    
+
+.ifdef CA65   
     .export	psg_init
 .endif
 

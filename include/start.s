@@ -6,7 +6,6 @@
    .include "irq.inc"
    .include "memcpy.inc"
    .include "vdc.inc"
-;   .include "vce.inc" 
 
 
   .ifdef MAGICKIT
