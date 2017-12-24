@@ -1,12 +1,6 @@
 ;; TODO create a crt0.s with concat content of irq_xx.s
 ;; CC65's start would only inlcude crt0.s
 ;; while PCEAS's start.s would also include others .s 
- 
-	; imports needed by irq_reset
-   .include "irq.inc"
-   .include "memcpy.inc"
-   .include "vdc.inc"
-
 
   .ifdef MAGICKIT
     .include "pceas/start.s"

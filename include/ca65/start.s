@@ -12,32 +12,17 @@
 	; sice ca65 doesn't handle .org
     .segment "STARTUP"
 
+
 	; needed by CC65 :(
-     .export         __STARTUP__ : absolute = 1      ; Mark as startup
+	.export         __STARTUP__ : absolute = 1      ; Mark as startup
 
-
-	; cc65 imports
-    .import	zerobss
-    ; Linker generated
-	.import         __RAM_START__, __RAM_SIZE__
-	.import         __DATA_LOAD__,__DATA_RUN__, __DATA_SIZE__
-	;.import         __BSS_SIZE__
-
-    ; TODO see if we don't conflict with HuDK ?! with stack pointer handled differently
-    .importzp       sp
- 
-	; handle C's void main(void) and ASM's _main:
-	.import	_main	
-	
-	.export _VDC_setVSyncHandler
-	.export _VDC_setHSyncHandler
-	
-  .include "irq_reset.s"
-  .include "irq_nmi.s"
-  .include "irq_timer.s"
-  .include "irq_1.s"
-  .include "irq_2.s"
-	
+	.include "irq_reset.s"
+	.include "irq_nmi.s"
+	.include "irq_timer.s"
+	.include "irq_1.s"
+	.include "irq_2.s"
 .else
+
     ; [todo]
+
 .endif ; !(CDROM)

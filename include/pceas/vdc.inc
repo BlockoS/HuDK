@@ -5,6 +5,8 @@ vdc_bat_height .ds 1
 vdc_bat_hmask  .ds 1
 vdc_bat_vmask  .ds 1
 
+	.code
+
 ; Compute the value of the HSR register for a given horizontal screen
 ; resolution.
   .macro VDC_HSR_db

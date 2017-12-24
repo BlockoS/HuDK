@@ -35,3 +35,4 @@ joytrg_6: 	.res 5, 0
 ;;
 joyold_6: 	.res 5, 0
 
+	.code

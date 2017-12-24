@@ -204,3 +204,5 @@ joytrg_6 .ds 5
 ;; Previous joypad values.
 ;;
 joyold_6 .ds 5
+
+	.code

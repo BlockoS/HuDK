@@ -1,4 +1,4 @@
-  .if !(CDROM)
+.if !(CDROM)
     ; IRQ vectors (HuCard only)
     .code
     .bank 0
@@ -25,6 +25,6 @@
     .include "map.s"
     .include "sprite.s"
     .include "math.s"
-  .else
+.else
     ; [todo]
-  .endif ; !(CDROM)
+.endif ; !(CDROM)
