@@ -8,9 +8,13 @@
 ; TODO : setXXXIRQHandler(cfunc) with cfunc=NULL mean no_hook	
 
 		.code
-		
-		; from psg.s
-		.import psg_init
+
+.ifdef CA65   
+		.import psg_init	; from psg.s
+		.import vdc_init	; from vdc.s
+		.import vce_init	; from vce.s
+.endif
+
 
 _reset:
     sei                        ; disable interrupts

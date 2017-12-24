@@ -2,6 +2,19 @@
 ;; Title: VCE Functions.
 ;;
 
+	.code
+
+    .include "vce.inc"
+    .include "vdc.inc"
+    .include "memcpy.inc"
+    .include "word.inc"
+    .include "system.inc" ; use of _si
+
+	.code
+.ifdef CA65   
+    .export	vce_init
+.endif
+
 ;;
 ;; function: vce_init
 ;; Set VCE dot clock, edge blur and background color.
