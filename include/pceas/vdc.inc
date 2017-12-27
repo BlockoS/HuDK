@@ -86,3 +86,10 @@ vdc_bat_vmask  .ds 1
     sta    video_data_h
   .endm
 
+; Wait for vsync to occur.
+  .macro vdc_wait_vsync
+    stz    <irq_cnt
+@wait_vsync\@:
+    lda    <irq_cnt
+    beq    @wait_vsync\@
+  .endm
