@@ -1,3 +1,7 @@
+;; include for any projetct based on HuDK
+;;
+;;  DO NOT include in a HuDK source file
+
   .ifdef MAGICKIT
     .include "pceas/macro.inc"
   .endif
@@ -10,11 +14,4 @@
     .include "psg.inc"
     .include "vdc.inc"
     .include "vce.inc"
-
-  .ifdef MAGICKIT
-    .include "pceas/start.s"
-  .else
-    .ifdef CA65
-    .include "ca65/start.s"
-    .endif
-  .endif
+    

@@ -171,44 +171,38 @@ IO_JOYPAD_VI  = %00001000
     nop
   .endmacro
 
+  .bss
 ;;
 ;; ubyte: joypad
-;; This array holds the values for 5 2-buttons joypads.
+;; This array holds the values for 5 2-buttons joypad.
 ;;
-
+joypad .ds 5
 ;;
 ;; ubyte: joytrg 
-;; Delta joypad values for 5 2-buttons joypads.
+;; Delta joypad values.
 ;;
-
+joytrg .ds 5
 ;;
 ;; ubyte: joyold 
-;; Previous 5 joypads values.
+;; Previous joypad values.
 ;;
-
+joyold .ds 5
 
 ;;
 ;; ubyte: joypad_6
-;; This array contains the values for buttons III, IV, V and VI of 5 6-buttons
+;; This array contains the values for buttons III, IV, V and VI of 6 buttons
 ;; joypads.
 ;;
-
+joypad_6 .ds 5
 ;;
 ;; ubyte: joytrg 
-;; Delta joypad values of 5 6-buttons joypads.
+;; Delta joypad values.
 ;;
-
+joytrg_6 .ds 5
 ;;
 ;; ubyte: joyold 
-;; Previous 5 6-buttons joypad values.
+;; Previous joypad values.
 ;;
+joyold_6 .ds 5
 
-
-
- .ifdef MAGICKIT
-    .include "pceas/joypad.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/joypad.inc"
-    .endif
-  .endif
+	.code

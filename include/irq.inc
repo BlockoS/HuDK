@@ -170,17 +170,18 @@ irq_cnt = $20f2
 ;; ubyte: irq_m
 ;; Interrupt control mask.
 ;;
+;; from Hu7cd doc
+;; BIT0 - irq2 user interrupt mask
+;; BIT1 - irq1 user interrupt mask
+;; BIT2 - timer user interrupt mask
+;; BIT3 - nmi user interrupt mask
+;; BIT4 - (if !BIT1), vsync user interrut mask
+;; BIT5 - "irq1 occured but not on vsync" user interrupt mask
+;; BIT6 - (if !BIT1), raster/hsync user interrupt mask
+;; BIT7 - "irq1 occured but not on hsync" user interrupt mask
+
 irq_m = $20f5
 
-    .bss
-user_hook  .ds 14 ; = $2200
-irq2_hook  = user_hook + (IRQ2 * 2)
-irq1_hook  = user_hook + (IRQ1 * 2)
-timer_hook = user_hook + (TIMER * 2)
-nmi_hook   = user_hook + (NMI * 2)
-vsync_hook = user_hook + (VSYNC * 2)
-hsync_hook = user_hook + (HSYNC * 2)
-reset_hook = user_hook + (SOFT_RESET * 2)
 
   .ifdef MAGICKIT
     .include "pceas/irq.inc"
@@ -189,6 +190,14 @@ reset_hook = user_hook + (SOFT_RESET * 2)
     .include "ca65/irq.inc"
     .endif
   .endif
+
+irq2_hook  = user_hook + (IRQ2 * 2)
+irq1_hook  = user_hook + (IRQ1 * 2)
+timer_hook = user_hook + (TIMER * 2)
+nmi_hook   = user_hook + (NMI * 2)
+vsync_hook = user_hook + (VSYNC * 2)
+hsync_hook = user_hook + (HSYNC * 2)
+reset_hook = user_hook + (SOFT_RESET * 2)
 
 
 ; Timer port

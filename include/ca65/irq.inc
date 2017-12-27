@@ -1,3 +1,8 @@
+    .bss
+user_hook:  .res 14, 0
+
+	.code
+
 ;
 ; Enable one or multiples IRQ interrupts.
   .macro irq_on i

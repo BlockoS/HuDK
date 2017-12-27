@@ -1,6 +1,13 @@
 ;;
 ;; Title: Memory mapping utility routines.
 ;;
+.ifdef CA65   
+    .include "system.inc"
+    
+    .export unmap_data
+	.export remap_data
+	.export map_data
+.endif
 
 ;;
 ;; function: map_data

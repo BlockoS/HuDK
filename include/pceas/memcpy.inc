@@ -4,6 +4,8 @@ memcpy_src .ds 2
 memcpy_dst .ds 2
 memcpy_len .ds 2
 memcpy_rts .ds 1
+
+	.code
     
 ; Set memcpy mode.
   .macro  memcpy_mode

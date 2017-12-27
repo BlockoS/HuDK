@@ -1,4 +1,4 @@
-  .if !(CDROM)
+.if !(CDROM)
     ; IRQ vectors (HuCard only)
     .code
     .bank 0
@@ -10,7 +10,13 @@
     .dw   _reset
 
     .org  $e000
-	.include "mpr.s"
+    .include "irq_reset.s"
+    .include "irq_nmi.s"
+    .include "irq_timer.s"
+    .include "irq_1.s"
+    .include "irq_2.s"
+
+    .include "mpr.s"
     .include "psg.s"
     .include "vdc.s"
     .include "vce.s"
@@ -20,13 +26,6 @@
     .include "map.s"
     .include "sprite.s"
     .include "math.s"
-
-    .include "irq_reset.s"
-    .include "irq_nmi.s"
-    .include "irq_timer.s"
-    .include "irq_1.s"
-    .include "irq_2.s"
-
-  .else
+.else
     ; [todo]
-  .endif ; !(CDROM)
+.endif ; !(CDROM)

@@ -1,4 +1,10 @@
-*.pce
+**.pce
+
+# cc65 output
+**.o
+**.o.s
+**.d
+**.map
 
 # pceas output
 *.sym
