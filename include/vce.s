@@ -1,20 +1,15 @@
 ;;
 ;; Title: VCE Functions.
 ;;
+  .include "vdc.inc"
+  .include "vce.inc"
 
-	.code
+  .code
 
-    .include "vce.inc"
-    .include "vdc.inc"
-    .include "memcpy.inc"
-    .include "word.inc"
-    .include "system.inc" ; use of _si
-
-	.code
-.ifdef CA65   
+  .ifdef CA65   
     .export	vce_init
     .export vce_load_palette
-.endif
+  .endif
 
 ;;
 ;; function: vce_init

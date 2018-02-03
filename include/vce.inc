@@ -1,3 +1,5 @@
+  .ifndef _VCE_INC_
+_VCE_INC_ = 1
 ;;
 ;; Section: VCE I/O Ports.
 ;;
@@ -129,3 +131,5 @@ VCE_DOT_CLOCK_5MHZ  = %00000000
     .include "ca65/vce.inc"
     .endif
   .endif
+  
+  .endif ; _VCE_INC_

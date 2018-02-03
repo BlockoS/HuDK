@@ -1,3 +1,4 @@
+  .include "vdc.inc"
 ;;
 ;; Title: VDC Functions.
 ;
@@ -7,12 +8,13 @@
 ; 			reset with NULL
 ; TODO : setXXXHandler(cfunc) with cfunc=NULL mean no_hook	
 
-.ifdef CA65   
+  .include "vdc.inc"
+  .include "vce.inc"
+
+  .ifdef CA65   
     .include "word.inc"
-	.include "system.inc"
+    .include "system.inc"
 	.include "irq.inc"
-	.include "vdc.inc"
-	.include "vce.inc"
 
 	.code
 ; from mpr.s
@@ -27,30 +29,16 @@
 
 .endif
 
-
-
 _VDC_setVSyncHandler:
 ; TODO : update irq_m
 ; TODO : check ax=0 (check X only since if X = 0, A is ZP address...no possible)
-	lda     #<(no_hook)
-	ldx     #>(no_hook)
-
-@set:
-	sta     vsync_hook
-	stx     vsync_hook+1
-
+	stw #no_hook, vsync_hook
 	rts
 	
 _VDC_setHSyncHandler:
 ; TODO : update irq_m
 ; TODO : check ax=0 (check X only since if X = 0, A is ZP address...no possible)
-	lda     #<(no_hook)
-	ldx     #>(no_hook)
-
-@set:
-	sta     hsync_hook
-	stx     hsync_hook+1
-
+    stw #no_hook, hsync_hook
 	rts
 
 ;;
@@ -201,10 +189,10 @@ vdc_load_data:
     beq    @l2
     cly
 @l0:
-        lda    [<_si], Y
+        lda    [_si], Y
         vdc_data_l
         iny
-        lda    [<_si], Y
+        lda    [_si], Y
         vdc_data_h
         iny
         bne    @l1
@@ -380,30 +368,8 @@ vdc_init:
 reset_hooks:
 	stz		<irq_m
 	
-	lda     #<(no_hook)
-	ldx     #>(no_hook)
-	
-	sta     irq2_hook
-	stx     irq2_hook+1
-
-	sta     irq1_hook
-	stx     irq1_hook+1
-
-	sta     timer_hook
-	stx     timer_hook+1
-
-	sta     nmi_hook
-	stx     nmi_hook+1
-
-	sta     vsync_hook
-	stx     vsync_hook+1
-
-	sta     hsync_hook
-	stx     hsync_hook+1
-
-	sta     reset_hook
-	stx     reset_hook+1
-	
+	stw #no_hook, irq2_hook
+	tai irq2_hook, irq1_hook, 12
 	rts
 	
 no_hook:

@@ -1,5 +1,5 @@
     .bss
-user_hook  .ds 14 ; = $2200
+user_hook  .ds 14
 
 	.code
 

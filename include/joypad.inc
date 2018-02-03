@@ -203,9 +203,7 @@ IO_JOYPAD_VI  = %00001000
 ;; Previous 5 6-buttons joypad values.
 ;;
 
-
-
- .ifdef MAGICKIT
+  .ifdef MAGICKIT
     .include "pceas/joypad.inc"
   .else
     .ifdef CA65

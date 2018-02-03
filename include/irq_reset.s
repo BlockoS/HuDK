@@ -1,33 +1,30 @@
 ; $fffe Reset interrupt (HuCard only).
 ; This routine is called when the console is powered up.
 
-	.code
-	
-   .include "irq.inc"
-   .include "memcpy.inc"
-   .include "vdc.inc"
+  .code
+  .ifdef CA65   
+    .include "irq.inc"
+    .include "memcpy.inc"
+    .include "vdc.inc"
 
-
-.ifdef CA65   
-	.import psg_init	; from psg.s
-	.import vdc_init	; from vdc.s
-	.import vce_init	; from vce.s
+    .import psg_init	; from psg.s
+    .import vdc_init	; from vdc.s
+    .import vce_init	; from vce.s
 				
-	; cc65 imports
+    ; cc65 imports
     .import	zerobss
 
     ; Linker generated
-	.import         __RAM_START__, __RAM_SIZE__
-	.import         __DATA_LOAD__,__DATA_RUN__, __DATA_SIZE__
-	;.import         __BSS_SIZE__
+    .import __RAM_START__, __RAM_SIZE__
+    .import __DATA_LOAD__,__DATA_RUN__, __DATA_SIZE__
+    ;.import __BSS_SIZE__
 
     ; TODO see if we don't conflict with HuDK ?! with stack pointer handled differently
-    .importzp       sp
- 
-	; handle C's void main(void) and ASM's _main:
-	.import	_main	
-.endif
+    .importzp sp
 
+    ; handle C's void main(void) and ASM's _main:
+    .import	_main	
+.endif
 
 _reset:
     sei                        ; disable interrupts
@@ -57,8 +54,6 @@ _reset:
     ;tam     #%01000000      ; C000-DFFF  Page 5
     ;lda     #0
     ;tam     #%10000000      ; e000-fFFF  hucard/syscard bank 0
-
-
     
     stz    <$00                ; clear RAM
     tii    $2000, $2001, $1fff
@@ -68,7 +63,7 @@ _reset:
     timer_ack                  ; reset timer
 
 
-.ifdef CA65
+  .ifdef CA65
 ;TODO is it really needed since we zeroed RAM ?
     ; Clear the BSS data
     jsr     zerobss
@@ -85,15 +80,11 @@ _reset:
 
 ; TODO reset irq_hooks to no_hook
 
-
-
-
 	cli							; enable interrup
 
 _init:
     memcpy_init                ; initialize memcpy ramcode
-								; !! macro, not proc
-
+                               ; !! macro, not proc
 ;todo
     jsr    psg_init            ; initialize sound (mute everything)
     jsr    vdc_init            ; initialize display with default values

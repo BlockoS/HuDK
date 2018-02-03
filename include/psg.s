@@ -6,9 +6,9 @@
 
     .include "psg.inc"
 
-.ifdef CA65   
+  .ifdef CA65   
     .export	psg_init
-.endif
+  .endif
 
 ;;
 ;; function: psg_init

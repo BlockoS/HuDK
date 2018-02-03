@@ -1,11 +1,11 @@
 
-    .bss
+  .bss
 vdc_bat_width  .ds 2
 vdc_bat_height .ds 1
 vdc_bat_hmask  .ds 1
 vdc_bat_vmask  .ds 1
 
-	.code
+  .code
 
 ; Compute the value of the HSR register for a given horizontal screen
 ; resolution.
