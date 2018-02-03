@@ -10,6 +10,7 @@
 ;;
 ;; $b9 rr dd - HuC6280 command. *rr* is the index of the PSG register, 
 ;;             *dd* the byte to be written.
+;; $60       - TODO
 ;; $62       - End of frame (wait for next vsync).
 ;; $66       - End of data.
 ;;
@@ -23,6 +24,7 @@
 ;;
 ;; rr dd - *rr* is the index of the PSG register. Its value is between 0 and 9.
 ;;         *dd* is the data byte to be written to the register.
+;; $e0   - Wait for more than 2 frames (up to 17).
 ;; $f0   - End of frame.
 ;; $ff   - End of data.
 ;; 
@@ -151,6 +153,11 @@ vgm_loop_bank .ds 1
 ;; VGM loop address.
 ;;
 vgm_loop_ptr  .ds 2
+;;
+;; ubyte: vgm_wait
+;; Frame delay.
+;;
+vgm_wait .ds 1
 
     .code
 ;;
@@ -201,10 +208,15 @@ vgm_next_byte:
 ;; Read VGM frame data.
 ;;
 vgm_update:
+    lda    <vgm_wait
+    beq    .play
+        dec    <vgm_wait
+        rts
+.play
     vgm_map
 .loop
     lda    [vgm_ptr]
-    cmp    #$f0
+    cmp    #$e0
     bcs    .check_end
         tax
         jsr    vgm_next_byte
@@ -214,15 +226,21 @@ vgm_update:
 
         jsr    vgm_next_byte
 
-        bra    .loop
+        bra    .loop    
 .check_end:
     cmp    #$ff
-    bne    .frame_end
+    bne    .wait
         vgm_unmap
         lda    <vgm_loop_bank
         sta    <vgm_bank
         stw    <vgm_loop_ptr, <vgm_ptr
         rts
+.wait:
+    cmp    #$f0
+    beq    .frame_end
+    sec
+    sbc    #$df
+    sta    <vgm_wait
 .frame_end:
     jsr    vgm_next_byte
     vgm_unmap

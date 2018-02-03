@@ -18,11 +18,17 @@
 #define PATH_MAX 1024
 #endif // PATH_MAX
 
-#define VGM_HUC6280_CMD 0xb9
-#define VGM_FRAME_END 0x62
-#define VGM_DATA_END 0x66
-
 #define VGM_HEADER_SIZE 0x100
+#define SAMPLES_PER_FRAME 0x2df
+
+/* Supported VGM commands */
+enum VGM_COMMAND
+{
+    VGM_HUC6280_CMD = 0xb9,
+    VGM_WAIT_CMD    = 0x61,
+    VGM_FRAME_END   = 0x62,
+    VGM_DATA_END    = 0x66
+};
 
 /* Offsets (in bytes) of various infos in the VGM header. */
 enum VGM_OFFSET
@@ -166,6 +172,23 @@ int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len)
             *dst++ = src[i++]; 
             *dst++ = src[i++]; 
         }
+        else if(VGM_WAIT_CMD == command)
+        {
+            /* determine the number of frames to wait */
+            uint16_t samples = (src[i+1] << 8) | src[i];
+            uint16_t frames = samples / SAMPLES_PER_FRAME;
+            for(; frames >= 0x11; frames-=0x11)
+            {
+                *dst++ = 0xef;
+            }
+            if(1 == frames) {
+                *dst++ = 0xf0;
+            }
+            else if(frames) {
+                *dst++ = 0xe0 + (frames - 2);
+           }
+           i += 2;
+        }
         else if(VGM_FRAME_END == command)
         {
             *dst++ = 0xf0; 
@@ -174,6 +197,11 @@ int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len)
         {
             *dst++ = 0xff;
             break;
+        }
+        else
+        {
+            fprintf(stderr, "unsupported command %x\n", command);
+            return -1;
         }
     }
     *len = dst - src;
