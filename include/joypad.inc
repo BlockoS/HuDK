@@ -158,6 +158,47 @@ IO_JOYPAD_V   = %00000100
 IO_JOYPAD_VI  = %00001000
 
 ;;
+;; bits: JOYPAD_I
+;; Bit in the joypad for button I.
+;;
+JOYPAD_I = IO_JOYPAD_I
+;;
+;; bits: JOYPAD_II
+;; Bit in the joypad for button II.  
+;;
+JOYPAD_II = IO_JOYPAD_II
+;;
+;; bits: JOYPAD_SEL
+;; Bit in the joypad for the Select button. 
+;;
+JOYPAD_SEL = IO_JOYPAD_SEL
+;;
+;; bits: JOYPAD_RUN
+;; Bit in the joypad for the RUN button.
+;;
+JOYPAD_RUN = IO_JOYPAD_RUN
+;;
+;; bits: JOYPAD_UP
+;; Bit in the joypad for the up direction. 
+;;
+JOYPAD_UP = (IO_JOYPAD_UP << 4)
+;;
+;; bits: JOYPAD_RIGHT
+;; Bit in the joypad for the right direction. 
+;;
+JOYPAD_RIGHT = (IO_JOYPAD_RIGHT << 4)
+;;
+;; bits: JOYPAD_DOWN
+;; Bit in the joypad for the down direction.. 
+;;
+JOYPAD_DOWN = (IO_JOYPAD_DOWN << 4)
+;;
+;; bits: JOYPAD_LEFT
+;; Bit in the joypad for the left direction. 
+;;
+JOYPAD_LEFT = (IO_JOYPAD_LEFT << 4)
+
+;;
 ;; macro: joypad_delay
 ;; 9 cycles delay before reading data after SEL line update.
 ;;

@@ -1,7 +1,6 @@
     .code
 
     .include "start.s"
-    .include "bcd.s"
     .include "vgm.s"
     
 _main:
@@ -55,8 +54,6 @@ vgm_setup:
 vsync_proc:
 	jsr    vgm_update
     rts
-    
-    .include "font.inc"
-    
+
     .data
     .include "song.inc"

@@ -31,11 +31,14 @@
     .include "psg.s"
     .include "vdc.s"
     .include "vce.s"
-    .include "font.s"
+    .include "font.s"    
+    .include "font.inc"
     .include "print.s"
     .include "map.s"
     .include "sprite.s"
     .include "math.s"
+    .include "bcd.s"
+
   .else
     ; [todo]
   .endif ; !(CDROM)
