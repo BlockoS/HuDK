@@ -1,7 +1,7 @@
 ;;
 ;; Title: Font routines.
 ;;
-
+    .code
 ;;
 ;; function: font_load
 ;; Load 1bpp font to VRAM.

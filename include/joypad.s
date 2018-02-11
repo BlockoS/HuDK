@@ -33,6 +33,7 @@
     sta    \1, X
   .endmacro
 
+  .code
 ;;
 ;; function: joypad_read
 ;; Poll joypads state.

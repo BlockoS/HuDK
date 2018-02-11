@@ -1,14 +1,11 @@
 ;;
 ;; Title: Memory mapping utility routines.
 ;;
-  .ifdef CA65   
-    .include "system.inc"
-    
-    .export unmap_data
-	.export remap_data
-	.export map_data
-  .endif
+  .ifdef CA65
+    .include "ca65/mpr.s"
+  .endif 
 
+  .code
 ;;
 ;; function: map_data
 ;;   Map data to mpr 3 and 4.

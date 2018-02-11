@@ -1,5 +1,3 @@
-  .ifndef _VDC_INC_
-_VDC_INC_ = 1
 ;;
 ;; Section: VDC I/O Ports and Registers.
 ;;
@@ -576,5 +574,3 @@ VDC_DEFAULT_SATB_ADDR = $7F00
     .include "ca65/vdc.inc"
     .endif
   .endif
-
-  .endif ; _VDC_INC_

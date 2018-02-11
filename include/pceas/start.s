@@ -15,6 +15,9 @@
     .include "word.inc"
     .include "system.inc"
     .include "memcpy.inc"
+    .include "vdc.inc"
+    .include "vce.inc"
+    .include "psg.inc"
     .include "irq.inc"
 
     .include "irq_reset.s"

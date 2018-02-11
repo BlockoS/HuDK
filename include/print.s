@@ -12,7 +12,7 @@
 ;; >    jsr    print_char
 ;; >    lda    #'o'
 ;; >    jsr    print_char
-
+  .code
 ;;
 ;; function: print_char
 ;; Output an ASCII character at the current BAT location.
