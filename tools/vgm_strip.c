@@ -1,7 +1,7 @@
 /* vgmstrip.c -- Strips PC Engine VGM and outputs ASM files
  * suitable for replay.
  *
- * Copyright (C) 2016 MooZ
+ * Copyright (C) 2016-2018 MooZ
  *
  * This software may be modified and distributed under the terms
  * of the MIT license.  See the LICENSE file for details.
@@ -209,7 +209,7 @@ int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len)
 }
 
 /* Cut the vgm in slices of 8kB and writes assembly files containing data and bank infos. */
-int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint32_t org, const char *basename)
+int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint32_t org, const char *song_name, const char *output_directory)
 {
     FILE *stream;
     char filename[PATH_MAX];
@@ -223,7 +223,7 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
 
     for(out_count=8192, i=0; len>0; buffer+=out_count, len-=out_count, i++)
     {
-        snprintf(filename, PATH_MAX, "%s%04x.bin", basename, i);
+        snprintf(filename, PATH_MAX, "%s/%s%04x.bin", output_directory, song_name, i);
         stream = fopen(filename, "wb");
         if(NULL == stream)
         {
@@ -241,7 +241,7 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
         }
 	} 
 
-    snprintf(filename, PATH_MAX, "%s.inc", basename);
+    snprintf(filename, PATH_MAX, "%s/%s.inc", output_directory, song_name);
     stream = fopen(filename, "wb");
     if(NULL == stream)
     {
@@ -256,10 +256,10 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
                     "%s_base_address=$%04x\n" 
                     "%s_loop_bank=$%02x\n"
                     "%s_loop=$%04x\n",
-                    basename, bank,
-                    basename, org,
-                    basename, loop_bank,
-                    basename, loop_org);
+                    song_name, bank,
+                    song_name, org,
+                    song_name, loop_bank,
+                    song_name, loop_org);
 
     for(j=0; j<i; j++)
     {
@@ -268,7 +268,7 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
                         "    .incbin \"%s%04x.bin\"\n"
                       , bank + j
                       , org
-                      , basename, j);
+                      , song_name, j);
     }
     fclose(stream);
 
@@ -278,7 +278,7 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
 /* display program arguments on the command line. */
 void usage()
 {
-    fprintf(stdout, "usage: vgmstrip -b bank -o org input.vgm out\n"
+    fprintf(stdout, "usage: vgmstrip -b bank -o org song_name input.vgm output_directory\n"
                     "-b or --bank : Start ROM bank (in hexadecimal)\n"
                     "-o or --org  : Start bank offset (in hexadecimal)\n");
 }
@@ -295,7 +295,8 @@ int main(int argc, char **argv)
     uint32_t org;
 
     const char *filename;
-    const char *basename;
+    const char *song_name;
+    const char *output_directory;
 
     uint32_t opt_flag;
     int opt_index;
@@ -339,14 +340,15 @@ int main(int argc, char **argv)
                 return EXIT_FAILURE;
         }
     }
-    if((3 != opt_flag) || ((argc-optind) < 2))
+    if((3 != opt_flag) || ((argc-optind) < 3))
     {
         usage();
         return EXIT_FAILURE;
     }
 
-    filename = argv[optind];
-    basename = argv[optind+1];
+    song_name = argv[optind]; 
+    filename = argv[optind+1];
+    output_directory = argv[optind+2];
     
     stream = fopen(filename, "rb");
     if(NULL == stream)
@@ -364,10 +366,9 @@ int main(int argc, char **argv)
         err = process(stream, &header, &buffer, &len);
         if(err >= 0)
         {
-		    err = output(&header, buffer, len, bank, org, basename);
+		    err = output(&header, buffer, len, bank, org, song_name, output_directory);
             if(err >= 0)
             {
-                // [todo] some kind of pattern/matching lz77 stuff?
                 ret = EXIT_SUCCESS;
             }
         }
