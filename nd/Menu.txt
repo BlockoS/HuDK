@@ -1,4 +1,4 @@
-Format: 1.52
+Format: 1.51
 
 
 Title: 
@@ -47,13 +47,13 @@ Group: General  {
    File: System variables  (no auto-title, include/system.inc)
    File: Memory copy  (no auto-title, include/memcpy.inc)
    File: Memory mapping  (no auto-title, include/mpr.s)
-   File: System variables  (no auto-title, include/system.inc)
    File: Math routines  (no auto-title, include/math.s)
    File: Interrupts management  (no auto-title, include/irq.inc)
    File: Backup RAM  (no auto-title, include/bram.s)
    File: BCD conversion routies.  (no auto-title, include/bcd.s)
    File: 16-bit word macros  (no auto-title, include/word.inc)
    File: Byte macros  (no auto-title, include/byte.inc)
+   File: Random  (no auto-title, include/random.s)
    }  # Group: General
 
 Group: Audio  {
