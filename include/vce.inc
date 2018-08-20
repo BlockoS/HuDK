@@ -122,6 +122,55 @@ VCE_DOT_CLOCK_5MHZ  = %00000000
 ;;   b - Blue
 ;;
 
+;;
+;; Group: Predefined colors
+;;
+;; ushort: VCE_BLACK
+;; VCE value for black.
+;;
+VCE_BLACK = $000
+;;
+;; ushort: VCE_WHITE
+;; VCE value for white.
+;;
+VCE_WHITE = $1ff
+;;
+;; ushort: VCE_RED
+;; VCE value for red.
+;;
+VCE_RED = $038 
+;;
+;; ushort: VCE_GREEN
+;; VCE value for green.
+;;
+VCE_GREEN = $1C0
+;;
+;; ushort: VCE_BLUE
+;; VCE value for blue.
+;;
+VCE_BLUE = $007
+;;
+;; ushort: VCE_YELLOW
+;; VCE value for yellow.
+;;
+VCE_YELLOW = $1F8
+;;
+;; ushort: VCE_MAGENTA
+;; VCE value for magenta.
+;;
+VCE_MAGENTA = $03F
+;;
+;; ushort: VCE_CYAN
+;; VCE value for yellow.
+;;
+VCE_CYAN = $1C7
+;;
+;; ushort: VCE_GREY
+;; VCE value for grey.
+;;
+VCE_GREY = $124
+
+
   .ifdef MAGICKIT
     .include "pceas/vce.inc"
   .else
