@@ -16,6 +16,8 @@
     sta    joyport
     joypad_delay
    
+    lda    \1, X
+    sta    \2, X
     lda    joyport
     asl    A
     asl    A
@@ -38,7 +40,7 @@
 ;; function: joypad_read
 ;; Poll joypads state.
 ;;
-;; This routine assumes that a multitap with 5 2-button joypads are plugged to
+;; This routine assumes that a multitap with 5 2-button joypads is plugged to
 ;; the joypad port. 
 ;;
 ;; Parameters:
@@ -51,13 +53,11 @@
 ;;   A, X
 ;;
 joypad_read:
-    tii    joypad, joyold, 5
-
     joypad_reset_multitap
 
     clx
 @loop:
-    joypad_poll joypad
+    joypad_poll joypad, joyold
     
     eor    joyold, X
     and    joypad, X
@@ -88,7 +88,7 @@ joypad_6_read:
     joypad_reset_multitap               ; first scan
     clx
 @first_scan:
-        joypad_poll joypad
+        joypad_poll joypad, joyold
         inx
         cpx    #$05
         bne    @first_scan
@@ -96,7 +96,7 @@ joypad_6_read:
     joypad_reset_multitap               ; second scan
     clx
 @second_scan:
-        joypad_poll joypad_6
+        joypad_poll joypad_6, joyold_6
         inx
         cpx    #$05
         bne    @second_scan
@@ -124,7 +124,7 @@ joypad_6_read:
             sta    joypad, X
             bra    @next
 @reset:
-            stz    joypad_6
+            stz    joypad_6, X
 @next:
         ; Compute "triggers".
         lda    joypad_6, X
