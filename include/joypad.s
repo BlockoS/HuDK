@@ -108,26 +108,27 @@ joypad_6_read:
     ; the extra buttons or 0 for a 2-buttons joypad.
     clx
 @l0:
-        lda    joypad_6, X
-        and    #$f0
-        cmp    #$f0
+        ldy    joypad_6, X
+        tya
+        and    #$50
+        cmp    #$50
         beq    @next
         
-        tay
-        
-        lda    joypad, X
-        and    #$f0
-        cmp    #$f0
+        ldy    joypad, X
+        tya
+        and    #$50
+        cmp    #$50
         bne    @reset
-            sta    joypad_6, X
-            say
+            lda    joypad_6, X
             sta    joypad, X
             bra    @next
 @reset:
-            stz    joypad_6, X
+        cly
 @next:
+        tya
+        and     #$5f
+        sta    joypad_6, X
         ; Compute "triggers".
-        lda    joypad_6, X
         eor    joyold_6, X
         and    joypad_6, X
         sta    joytrg_6, X
