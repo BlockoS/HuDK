@@ -4,22 +4,30 @@
 ;; http://codebase64.org/doku.php?id=base:small_fast_8-bit_prng 
 ;; 
     .zp
-seed    .ds 1
-
+seed    .ds 2
 	.code
 ;;
 ;; Function: rand8_seed
 ;; Set pseudo-random number seed.
 ;;
 ;; Parameters:
-;;    A - Seed.
+;;    X - Seed LSB
+;;    A - Seed MSB.
 rand8_seed:
-    cmp    #$00
+    cpx    #$00
     bne    @store
-        lda    #$b8
+        ldx    #$b8
 @store:
-    sta    <seed
+    stx    <seed
+    
+    and    #$0f
+    tax
+    lda    @magic_eor, X
+    sta    <seed+1
     rts
+@magic_eor:
+    .db $1d,$2b,$2d,$4d,$5f,$63,$65,$69
+    .db $71,$87,$8d,$a9,$c3,$cf,$e7,$f5
 
 ;;
 ;; Function: rand8
@@ -38,7 +46,7 @@ rand8:
     beq    @rand8_store
     bcc    @rand8_store
 @rand8_xor:
-    eor    #$1d
+    eor    <seed+1
 @rand8_store:
     sta    <seed
     rts
