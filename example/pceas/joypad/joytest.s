@@ -1,6 +1,6 @@
 ; [todo] comments!
-; [todo] defines
 ; [todo] print joypad #id
+; [todo] trg stack
 
     .include "start.s"
     
@@ -9,6 +9,11 @@ SATB_ADDR = $4000
 ; Joypad types
 JOYPAD_2 = 0
 JOYPAD_6 = 1
+
+JOYPAD_BOX_WIDTH = 32
+JOYPAD_BOX_HEIGHT = 4
+JOYPAD_BOX_X = 2
+JOYPAD_BOX_Y = 1
 
     .zp
 _x .ds 1
@@ -19,7 +24,7 @@ joypad_type .ds 5
 
     .code
 _main:
-    ; Default values
+    ; we consider that we have 5 2 buttons joypads
     lda    #JOYPAD_2
     clx
 .reset:
@@ -38,7 +43,8 @@ _main:
     ; set font palette index
     lda    #$00
     jsr    font_set_pal
-    ; and load it
+    
+    ; load tile palettes
     stb    #bank(palette), <_bl
     stw    #palette, <_si
     jsr    map_data
@@ -46,16 +52,6 @@ _main:
     ldy    #$20
     jsr    vce_load_palette
  
-    ; [todo] load gfx
-
-    ; load sprite palette
-    stb    #bank(palette), <_bl
-    stw    #palette, <_si
-    jsr    map_data
-    lda    #$10
-    ldy    #$10
-    jsr    vce_load_palette
-
     ; clear irq config flag
     stz    <irq_m
     ; set vsync vec
@@ -65,34 +61,36 @@ _main:
     
     ; enable background display
     vdc_reg  #VDC_CR
-    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_SPR_ENABLE | VDC_CR_VBLANK_ENABLE)
+    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
 
-    stw    #SATB_ADDR, <_si
-    jsr    sprite_set_base
-
-    vdc_reg  #VDC_DMA_CR	
-    vdc_data #VDC_DMA_SATB_AUTO
-
-    vdc_reg  #VDC_SATB_SRC
-    vdc_data #SATB_ADDR
-
-    stz    <_y
-    lda    #5
-    sta    <_x 
+    stb    #JOYPAD_BOX_Y, <_y
+    stz    <_r0 
 .l0:
     stw    #text, <_si
-    stb    #32, <_al                                            ; [todo] define
-    stb    #2, <_ah                                             ; [todo] define
-    ldx    #0                                                   ; [todo] define
+    stb    #JOYPAD_BOX_WIDTH, <_al
+    stb    #JOYPAD_BOX_HEIGHT, <_ah
+    ldx    #JOYPAD_BOX_X
     lda    <_y    
     jsr    print_string
     
+
+    ldx    #$01
+    lda    <_y
+    jsr    vdc_calc_addr
+    jsr    vdc_set_write
+    lda    #'1'
+    clc
+    adc    <_r0
+    jsr    print_char
+    
     lda    <_y
     clc
-    adc    #4                                                   ; [todo] define
+    adc    #JOYPAD_BOX_HEIGHT
     sta    <_y
     
-    dec    <_x
+    inc    <_r0
+    lda    <_r0
+    cmp    #5
     bne    .l0
 
 
@@ -110,7 +108,7 @@ vsync_proc:
     rts
 
 joy_print_status:
-    stz    <_y	
+    stb    #JOYPAD_BOX_Y, <_y
     cly
 .loop:
     ; Check if joypad type changed
@@ -129,18 +127,18 @@ joy_print_status:
         jsr    print_extra_buttons_line
 .no_change:
 
-    stz    <_x
+    stb    #JOYPAD_BOX_X, <_x
     lda    joypad, Y
-    ldx    #8                                                       ; [todo] define
+    ldx    #8
     jsr    print_buttons_status
 
     ; Display extra buttons status ?
     lda    joypad_type, Y
     cmp    #JOYPAD_6
     bne    .no_display_6
-        stz    <_x
+        stb    #JOYPAD_BOX_X, <_x
         lda    joypad_6, Y
-        ldx    #4                                                   ; [todo] define
+        ldx    #4
         inc    <_y
         jsr    print_buttons_status
         dec    <_y
@@ -148,7 +146,7 @@ joy_print_status:
 
     lda   <_y
     clc
-    adc   #4                                                         ; [todo] define
+    adc   #JOYPAD_BOX_HEIGHT
     sta   <_y
     
     iny
@@ -168,11 +166,13 @@ print_tbl:
 
 clear_extra_buttons_line:
     phy
-    stb    #32, <_al                                                ; [todo] define
-    stb    #2, <_ah                                                 ; [todo] define
+    stb    #JOYPAD_BOX_WIDTH, <_al
+    stb    #1, <_ah
     stb    #' ', <_bl
-    ldx    #0                                                       ; [todo] define
+    ldx    #JOYPAD_BOX_X
     lda    extra_buttons_bat_y, Y
+    clc
+    adc    #JOYPAD_BOX_Y
     jsr    print_fill
     ply
     rts
@@ -180,10 +180,12 @@ clear_extra_buttons_line:
 print_6_buttons_line:
     phy
     stw    #text_6, <_si
-    stb    #32, <_al                                                ; [todo] define
-    stb    #2, <_ah                                                 ; [todo] define    
-    ldx    #0                                                       ; [todo] define
+    stb    #JOYPAD_BOX_WIDTH, <_al
+    stb    #1, <_ah
+    ldx    #JOYPAD_BOX_X
     lda    extra_buttons_bat_y, Y
+    clc
+    adc    #JOYPAD_BOX_Y
     jsr    print_string
     ply
     rts
@@ -218,7 +220,7 @@ print_buttons_status:
     jsr    vdc_set_write
     jsr    vdc_set_read
     
-    ldy    #6                                                           ; [todo] define
+    ldy    #6
 .l1:
     lda    video_data_l
     sta    video_data_l
@@ -269,7 +271,7 @@ palette_on:
 
 ; text
 text:
-    .db ". UP   . DOWN . LEFT . RIGHT \n"
-    .db ". I    . II   . SEL  . RUN   ", 0
+    .db "| UP   | DOWN | LEFT | RIGHT|\n"
+    .db "| I    | II   | SEL  | RUN  |", 0
 text_6:
-    .db ". III  . IV   . V    . VI    ", 0
+    .db "| III  | IV   | V    | VI   |", 0
