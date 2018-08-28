@@ -244,7 +244,7 @@
 ;;
 
 ;;
-;; Macro: pullw
+;; Macro: plw
 ;;
 ;; Pull word-sized value from the stack.
 ;;
