@@ -65,3 +65,58 @@ divu8:
     sta   <_dl
     rts
 
+;;
+;; function: mulu16
+;; Multiply 2 unsigned words.
+;;
+;; Parameters:
+;;   _al - first operand LSB.
+;;   _ah - first operand MSB.
+;;   _bl - second operand LSB.
+;;   _bh - second operand MSB.
+;;
+;; Return 
+;;   _cx - result bytes 0 and 1.
+;;   _dx - result bytes 2 and 3.
+;;
+mulu16:
+    stz    <_dx
+    stz    <_dx+1
+
+    ldx    #16
+@loop:
+    lsr    <_ah
+    ror    <_al
+    bcc    @next 
+        lda    <_dx
+        clc
+        adc    <_bl
+        sta    <_dx
+        lda    <_dx+1 
+        adc    <_bh
+@next:
+    ror    A 
+    sta    <_dx+1 
+    ror    <_dx
+    ror    <_cx+1 
+    ror    <_cx
+    dex
+    bne    @loop
+
+    rts
+
+;;
+;; function: mulu32
+;; Multiply 2 unsigned double words.
+;;
+;; Parameters:
+;;   _ax - 
+;;   _bx -
+;;   _cx - 
+;;   _dx -
+;;
+;; Return 
+;;
+mulu32:
+    ; [todo]
+    rts
