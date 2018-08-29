@@ -1,95 +1,99 @@
 1.51
 Assembly
+/home/mooz/Dev/HuDK/master/include/pceas/irq_reset.s	1518346408	0	/home/mooz/Dev/HuDK/master/include/pceas/irq_reset.s
+/home/mooz/Dev/HuDK/master/include/print.s	1518345535	1	Text output routines.
+/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/progress.make	1534010509	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/progress.make
+/home/mooz/Dev/HuDK/master/example/pceas/vgm/vgm_play.s	1534022650	0	/home/mooz/Dev/HuDK/master/example/pceas/vgm/vgm_play.s
+/home/mooz/Dev/HuDK/master/include/vgm.s	1517678297	1	VGM replay.
+/home/mooz/Dev/HuDK/master/include/map.s	1513464934	1	Tilemap functions.
+/home/mooz/Dev/HuDK/master/tools/vgm_strip.c	1534022650	0	/home/mooz/Dev/HuDK/master/tools/vgm_strip.c
+/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/flags.make	1534019079	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/flags.make
+/home/mooz/Dev/HuDK/master/include/dword.inc	1535472321	1	/home/mooz/Dev/HuDK/master/include/dword.inc
+/home/mooz/Dev/HuDK/master/build/CMakeFiles/3.5.1/CompilerIdCXX/CMakeCXXCompilerId.cpp	1534010506	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/3.5.1/CompilerIdCXX/CMakeCXXCompilerId.cpp
+/home/mooz/Dev/HuDK/master/example/data/datastorm.inc	1457816058	0	/home/mooz/Dev/HuDK/master/example/data/datastorm.inc
+/home/mooz/Dev/HuDK/master/include/vsplit.s	1464277949	0	/home/mooz/Dev/HuDK/master/include/vsplit.s
+/home/mooz/Dev/HuDK/master/docs/cc65.txt	1514397741	0	/home/mooz/Dev/HuDK/master/docs/cc65.txt
+/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/link.txt	1534010572	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/link.txt
+/home/mooz/Dev/HuDK/master/include/ca65/vdc.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/vdc.inc
+/home/mooz/Dev/HuDK/master/include/ca65/psg.s	1518345728	0	/home/mooz/Dev/HuDK/master/include/ca65/psg.s
+/home/mooz/Dev/HuDK/master/include/byte.inc	1491308985	1	/home/mooz/Dev/HuDK/master/include/byte.inc
+/home/mooz/Dev/HuDK/master/include/ca65/vce.s	1518347910	0	/home/mooz/Dev/HuDK/master/include/ca65/vce.s
+/home/mooz/Dev/HuDK/master/CMakeLists.txt	1534022650	0	/home/mooz/Dev/HuDK/master/CMakeLists.txt
+/home/mooz/Dev/HuDK/master/example/pceas/dummy.s	1534022661	0	/home/mooz/Dev/HuDK/master/example/pceas/dummy.s
+/home/mooz/Dev/HuDK/master/build/CMakeFiles/feature_tests.c	1534010507	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/feature_tests.c
+/home/mooz/Dev/HuDK/master/example/pceas/text/main.s	1502635027	0	/home/mooz/Dev/HuDK/master/example/pceas/text/main.s
+/home/mooz/Dev/HuDK/master/include/ca65/memcpy.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/memcpy.inc
+/home/mooz/Dev/HuDK/master/include/ca65/irq.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/irq.inc
+/home/mooz/Dev/HuDK/master/include/ca65/vce.inc	1457811344	0	/home/mooz/Dev/HuDK/master/include/ca65/vce.inc
+/home/mooz/Dev/HuDK/master/build/CMakeFiles/3.5.1/CompilerIdC/CMakeCCompilerId.c	1534010506	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/3.5.1/CompilerIdC/CMakeCCompilerId.c
+/home/mooz/Dev/HuDK/master/include/system.inc	1513465651	1	System variables
+/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/flags.make	1534010509	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/flags.make
+/home/mooz/Dev/HuDK/master/include/ca65/joypad.inc	1514398909	0	/home/mooz/Dev/HuDK/master/include/ca65/joypad.inc
+/home/mooz/Dev/HuDK/master/include/irq_2.s	1514397741	0	/home/mooz/Dev/HuDK/master/include/irq_2.s
+/home/mooz/Dev/HuDK/master/docs/vce.txt	1456436291	1	HuC6260 - Video Color Encoder (VCE).
+/home/mooz/Dev/HuDK/master/include/pceas/vdc.inc	1518293958	0	/home/mooz/Dev/HuDK/master/include/pceas/vdc.inc
+/home/mooz/Dev/HuDK/master/include/pceas/sprite.inc	1464722688	0	/home/mooz/Dev/HuDK/master/include/pceas/sprite.inc
+/home/mooz/Dev/HuDK/master/docs/pachinko.txt	1534793401	1	Pachinko controller.
+/home/mooz/Dev/HuDK/master/include/ca65/start.s	1518346073	0	/home/mooz/Dev/HuDK/master/include/ca65/start.s
+/home/mooz/Dev/HuDK/master/include/pceas/byte.inc	1491308712	0	/home/mooz/Dev/HuDK/master/include/pceas/byte.inc
+/home/mooz/Dev/HuDK/master/include/font.inc	1513465651	1	8x8 monochrome 1bpp font.
+/home/mooz/Dev/HuDK/master/include/vdc.inc	1524401323	1	VDC I/O Ports and Registers.
+/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/progress.make	1534019085	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/progress.make
+/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/build.make	1534010572	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/build.make
+/home/mooz/Dev/HuDK/master/include/pceas/joypad.inc	1518293853	0	/home/mooz/Dev/HuDK/master/include/pceas/joypad.inc
+/home/mooz/Dev/HuDK/master/include/pceas/font.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/pceas/font.inc
+/home/mooz/Dev/HuDK/master/include/font.s	1518344496	1	Font routines.
+/home/mooz/Dev/HuDK/master/include/sprite.inc	1523305604	1	Sprite descprition and utilities
+/home/mooz/Dev/HuDK/master/include/pceas/memcpy.inc	1518293958	0	/home/mooz/Dev/HuDK/master/include/pceas/memcpy.inc
+/home/mooz/Dev/HuDK/master/tools/CMakeLists.txt	1534022650	0	/home/mooz/Dev/HuDK/master/tools/CMakeLists.txt
+/home/mooz/Dev/HuDK/master/include/sprite.s	1513462164	1	Sprite routines.
+/home/mooz/Dev/HuDK/master/example/pceas/joypad/joytest.s	1535484612	0	/home/mooz/Dev/HuDK/master/example/pceas/joypad/joytest.s
+/home/mooz/Dev/HuDK/master/include/random.s	1535057985	1	Random number generators.
+/home/mooz/Dev/HuDK/master/include/ca65/vdc.s	1518346285	0	/home/mooz/Dev/HuDK/master/include/ca65/vdc.s
+/home/mooz/Dev/HuDK/master/include/irq_1.s	1514397741	0	/home/mooz/Dev/HuDK/master/include/irq_1.s
+/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/build.make	1534010509	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/build.make
+/home/mooz/Dev/HuDK/master/include/ca65/font.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/font.inc
+/home/mooz/Dev/HuDK/master/include/pceas/macro.inc	1455744804	0	/home/mooz/Dev/HuDK/master/include/pceas/macro.inc
+/home/mooz/Dev/HuDK/master/example/cc65/main.c	1514397741	0	/home/mooz/Dev/HuDK/master/example/cc65/main.c
+/home/mooz/Dev/HuDK/master/include/fat32.s	1535315905	0	/home/mooz/Dev/HuDK/master/include/fat32.s
+/home/mooz/Dev/HuDK/master/include/crc.s	1535572574	1	CRC routines.
+/home/mooz/Dev/HuDK/master/build/CMakeFiles/TargetDirectories.txt	1534019085	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/TargetDirectories.txt
+/home/mooz/Dev/HuDK/master/include/ca65/mpr.s	1518346039	0	/home/mooz/Dev/HuDK/master/include/ca65/mpr.s
+/home/mooz/Dev/HuDK/master/include/psg.inc	1513465651	1	PSG registers.
+/home/mooz/Dev/HuDK/master/include/ca65/byte.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/byte.inc
+/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/depend.make	1534010509	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/depend.make
+/home/mooz/Dev/HuDK/master/include/word.inc	1535472310	1	/home/mooz/Dev/HuDK/master/include/word.inc
+/home/mooz/Dev/HuDK/master/docs/vdc.txt	1534022650	1	HuC6270 - Video Display Controller (VDC).
+/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/depend.make	1534021927	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/depend.make
+/home/mooz/Dev/HuDK/master/include/math.s	1535483322	1	Math routines.
+/home/mooz/Dev/HuDK/master/include/vdc.s	1518346329	1	VDC Functions.
+/home/mooz/Dev/HuDK/master/example/fat32.txt	1535461307	0	/home/mooz/Dev/HuDK/master/example/fat32.txt
+/home/mooz/Dev/HuDK/master/include/analog.s	1458666823	1	Analog joypag functions.
+/home/mooz/Dev/HuDK/master/include/mpr.s	1518345491	1	Memory mapping utility routines.
+/home/mooz/Dev/HuDK/master/include/memcpy.inc	1513465651	1	Memory copy.
+/home/mooz/Dev/HuDK/master/include/joypad.inc	1534022650	1	Joypad port.
+/home/mooz/Dev/HuDK/master/include/start.s	1518346098	0	/home/mooz/Dev/HuDK/master/include/start.s
+/home/mooz/Dev/HuDK/master/include/pceas/dword.inc	1535475811	0	/home/mooz/Dev/HuDK/master/include/pceas/dword.inc
+/home/mooz/Dev/HuDK/master/include/vce.s	1518347967	1	VCE Functions.
+/home/mooz/Dev/HuDK/master/include/bcd.s	1513466697	1	BCD conversion routines.
+/home/mooz/Dev/HuDK/master/include/irq_timer.s	1514397741	0	/home/mooz/Dev/HuDK/master/include/irq_timer.s
+/home/mooz/Dev/HuDK/master/include/ca65/irq_reset.s	1518345289	0	/home/mooz/Dev/HuDK/master/include/ca65/irq_reset.s
+/home/mooz/Dev/HuDK/master/HuDK.h	1514397741	0	/home/mooz/Dev/HuDK/master/HuDK.h
+/home/mooz/Dev/HuDK/master/include/irq.inc	1514403775	1	Interrupts management.
+/home/mooz/Dev/HuDK/master/include/ca65/map.s	1458236461	0	/home/mooz/Dev/HuDK/master/include/ca65/map.s
+/home/mooz/Dev/HuDK/master/include/joypad.s	1535051277	1	Joypad Functions.
+/home/mooz/Dev/HuDK/master/include/pceas/irq.inc	1514408098	0	/home/mooz/Dev/HuDK/master/include/pceas/irq.inc
+/home/mooz/Dev/HuDK/master/example/ca65/dummy.s	1514397741	0	/home/mooz/Dev/HuDK/master/example/ca65/dummy.s
+/home/mooz/Dev/HuDK/master/include/pceas/map.s	1513462601	0	/home/mooz/Dev/HuDK/master/include/pceas/map.s
+/home/mooz/Dev/HuDK/master/include/pceas/start.s	1534022650	0	/home/mooz/Dev/HuDK/master/include/pceas/start.s
+/home/mooz/Dev/HuDK/master/include/irq_reset.s	1518346817	0	/home/mooz/Dev/HuDK/master/include/irq_reset.s
+/home/mooz/Dev/HuDK/master/build/CMakeCache.txt	1534010509	0	/home/mooz/Dev/HuDK/master/build/CMakeCache.txt
+/home/mooz/Dev/HuDK/master/include/vce.inc	1534787516	1	VCE I/O Ports.
+/home/mooz/Dev/HuDK/master/include/ca65/word.inc	1457335443	0	/home/mooz/Dev/HuDK/master/include/ca65/word.inc
 /home/mooz/Dev/HuDK/master/example/pceas/bm_tools.s	1534022661	0	/home/mooz/Dev/HuDK/master/example/pceas/bm_tools.s
 /home/mooz/Dev/HuDK/master/include/bram.s	1513464095	1	Backup RAM.
-/home/mooz/Dev/HuDK/master/example/pceas/text/main.s	1502635027	0	/home/mooz/Dev/HuDK/master/example/pceas/text/main.s
-/home/mooz/Dev/HuDK/master/include/sprite.s	1513462164	1	Sprite routines.
-/home/mooz/Dev/HuDK/master/include/ca65/start.s	1518346073	0	/home/mooz/Dev/HuDK/master/include/ca65/start.s
-/home/mooz/Dev/HuDK/master/include/irq.inc	1514403775	1	Interrupts management.
-/home/mooz/Dev/HuDK/master/docs/vce.txt	1456436291	1	HuC6260 - Video Color Encoder (VCE).
-/home/mooz/Dev/HuDK/master/include/ca65/joypad.inc	1514398909	0	/home/mooz/Dev/HuDK/master/include/ca65/joypad.inc
-/home/mooz/Dev/HuDK/master/include/ca65/memcpy.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/memcpy.inc
-/home/mooz/Dev/HuDK/master/include/font.inc	1513465651	1	8x8 monochrome 1bpp font.
-/home/mooz/Dev/HuDK/master/include/ca65/vce.inc	1457811344	0	/home/mooz/Dev/HuDK/master/include/ca65/vce.inc
-/home/mooz/Dev/HuDK/master/include/bcd.s	1513466697	1	BCD conversion routines.
-/home/mooz/Dev/HuDK/master/include/vdc.inc	1524401323	1	VDC I/O Ports and Registers.
-/home/mooz/Dev/HuDK/master/include/pceas/irq.inc	1514408098	0	/home/mooz/Dev/HuDK/master/include/pceas/irq.inc
-/home/mooz/Dev/HuDK/master/example/pceas/joypad/todo.txt	1505922263	0	/home/mooz/Dev/HuDK/master/example/pceas/joypad/todo.txt
-/home/mooz/Dev/HuDK/master/include/mpr.s	1518345491	1	Memory mapping utility routines.
-/home/mooz/Dev/HuDK/master/include/byte.inc	1491308985	1	/home/mooz/Dev/HuDK/master/include/byte.inc
-/home/mooz/Dev/HuDK/master/include/ca65/irq.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/irq.inc
-/home/mooz/Dev/HuDK/master/example/data/datastorm.inc	1457816058	0	/home/mooz/Dev/HuDK/master/example/data/datastorm.inc
-/home/mooz/Dev/HuDK/master/CMakeLists.txt	1534022650	0	/home/mooz/Dev/HuDK/master/CMakeLists.txt
-/home/mooz/Dev/HuDK/master/example/ca65/dummy.s	1514397741	0	/home/mooz/Dev/HuDK/master/example/ca65/dummy.s
-/home/mooz/Dev/HuDK/master/include/font.s	1518344496	1	Font routines.
+/home/mooz/Dev/HuDK/master/include/pceas/word.inc	1535474320	0	/home/mooz/Dev/HuDK/master/include/pceas/word.inc
 /home/mooz/Dev/HuDK/master/include/irq_nmi.s	1514397741	0	/home/mooz/Dev/HuDK/master/include/irq_nmi.s
-/home/mooz/Dev/HuDK/master/include/pceas/map.s	1513462601	0	/home/mooz/Dev/HuDK/master/include/pceas/map.s
-/home/mooz/Dev/HuDK/master/include/pceas/joypad.inc	1518293853	0	/home/mooz/Dev/HuDK/master/include/pceas/joypad.inc
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/depend.make	1534010509	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/depend.make
-/home/mooz/Dev/HuDK/master/tools/CMakeLists.txt	1534022650	0	/home/mooz/Dev/HuDK/master/tools/CMakeLists.txt
-/home/mooz/Dev/HuDK/master/docs/vdc.txt	1534022650	1	HuC6270 - Video Display Controller (VDC).
-/home/mooz/Dev/HuDK/master/include/ca65/mpr.s	1518346039	0	/home/mooz/Dev/HuDK/master/include/ca65/mpr.s
-/home/mooz/Dev/HuDK/master/include/vgm.s	1517678297	1	VGM replay.
-/home/mooz/Dev/HuDK/master/include/word.inc	1513465651	1	/home/mooz/Dev/HuDK/master/include/word.inc
-/home/mooz/Dev/HuDK/master/build/CMakeFiles/TargetDirectories.txt	1534019085	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/TargetDirectories.txt
-/home/mooz/Dev/HuDK/master/build/CMakeFiles/3.5.1/CompilerIdCXX/CMakeCXXCompilerId.cpp	1534010506	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/3.5.1/CompilerIdCXX/CMakeCXXCompilerId.cpp
-/home/mooz/Dev/HuDK/master/include/pceas/macro.inc	1455744804	0	/home/mooz/Dev/HuDK/master/include/pceas/macro.inc
-/home/mooz/Dev/HuDK/master/include/math.s	1518293904	1	Math routines.
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/progress.make	1534010509	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/progress.make
-/home/mooz/Dev/HuDK/master/include/pceas/sprite.inc	1464722688	0	/home/mooz/Dev/HuDK/master/include/pceas/sprite.inc
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/build.make	1534010572	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/build.make
-/home/mooz/Dev/HuDK/master/include/print.s	1518345535	1	Text output routines.
-/home/mooz/Dev/HuDK/master/include/vdc.s	1518346329	1	VDC Functions.
-/home/mooz/Dev/HuDK/master/include/vce.inc	1534787516	1	VCE I/O Ports.
-/home/mooz/Dev/HuDK/master/docs/cc65.txt	1514397741	0	/home/mooz/Dev/HuDK/master/docs/cc65.txt
-/home/mooz/Dev/HuDK/master/include/ca65/irq_reset.s	1518345289	0	/home/mooz/Dev/HuDK/master/include/ca65/irq_reset.s
-/home/mooz/Dev/HuDK/master/tools/vgm_strip.c	1534022650	0	/home/mooz/Dev/HuDK/master/tools/vgm_strip.c
-/home/mooz/Dev/HuDK/master/HuDK.h	1514397741	0	/home/mooz/Dev/HuDK/master/HuDK.h
-/home/mooz/Dev/HuDK/master/example/pceas/joypad/joytest.s	1534782095	0	/home/mooz/Dev/HuDK/master/example/pceas/joypad/joytest.s
-/home/mooz/Dev/HuDK/master/build/CMakeFiles/3.5.1/CompilerIdC/CMakeCCompilerId.c	1534010506	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/3.5.1/CompilerIdC/CMakeCCompilerId.c
 /home/mooz/Dev/HuDK/master/include/psg.s	1518345738	1	PSG Functions.
-/home/mooz/Dev/HuDK/master/example/cc65/main.c	1514397741	0	/home/mooz/Dev/HuDK/master/example/cc65/main.c
-/home/mooz/Dev/HuDK/master/include/start.s	1518346098	0	/home/mooz/Dev/HuDK/master/include/start.s
-/home/mooz/Dev/HuDK/master/include/pceas/byte.inc	1491308712	0	/home/mooz/Dev/HuDK/master/include/pceas/byte.inc
-/home/mooz/Dev/HuDK/master/build/CMakeCache.txt	1534010509	0	/home/mooz/Dev/HuDK/master/build/CMakeCache.txt
-/home/mooz/Dev/HuDK/master/example/pceas/vgm/vgm_play.s	1534022650	0	/home/mooz/Dev/HuDK/master/example/pceas/vgm/vgm_play.s
-/home/mooz/Dev/HuDK/master/include/irq_reset.s	1518346817	0	/home/mooz/Dev/HuDK/master/include/irq_reset.s
-/home/mooz/Dev/HuDK/master/include/pceas/irq_reset.s	1518346408	0	/home/mooz/Dev/HuDK/master/include/pceas/irq_reset.s
-/home/mooz/Dev/HuDK/master/build/CMakeFiles/feature_tests.cxx	1534010508	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/feature_tests.cxx
-/home/mooz/Dev/HuDK/master/include/pceas/word.inc	1457080376	0	/home/mooz/Dev/HuDK/master/include/pceas/word.inc
-/home/mooz/Dev/HuDK/master/include/joypad.inc	1534022650	1	Joypad port.
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/link.txt	1534010572	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/link.txt
-/home/mooz/Dev/HuDK/master/include/ca65/word.inc	1457335443	0	/home/mooz/Dev/HuDK/master/include/ca65/word.inc
-/home/mooz/Dev/HuDK/master/include/pceas/font.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/pceas/font.inc
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/build.make	1534010509	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/build.make
-/home/mooz/Dev/HuDK/master/include/ca65/map.s	1458236461	0	/home/mooz/Dev/HuDK/master/include/ca65/map.s
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/progress.make	1534019085	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/progress.make
-/home/mooz/Dev/HuDK/master/include/random.s	1529170573	1	Random number generators.
-/home/mooz/Dev/HuDK/master/include/ca65/vce.s	1518347910	0	/home/mooz/Dev/HuDK/master/include/ca65/vce.s
-/home/mooz/Dev/HuDK/master/include/ca65/font.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/font.inc
-/home/mooz/Dev/HuDK/master/include/irq_1.s	1514397741	0	/home/mooz/Dev/HuDK/master/include/irq_1.s
-/home/mooz/Dev/HuDK/master/include/ca65/vdc.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/vdc.inc
 /home/mooz/Dev/HuDK/master/include/pceas/vce.inc	1514405539	0	/home/mooz/Dev/HuDK/master/include/pceas/vce.inc
-/home/mooz/Dev/HuDK/master/include/system.inc	1513465651	1	System variables
-/home/mooz/Dev/HuDK/master/include/vsplit.s	1464277949	0	/home/mooz/Dev/HuDK/master/include/vsplit.s
-/home/mooz/Dev/HuDK/master/include/psg.inc	1513465651	1	PSG registers.
-/home/mooz/Dev/HuDK/master/include/ca65/vdc.s	1518346285	0	/home/mooz/Dev/HuDK/master/include/ca65/vdc.s
-/home/mooz/Dev/HuDK/master/include/ca65/byte.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/byte.inc
-/home/mooz/Dev/HuDK/master/build/CMakeFiles/feature_tests.c	1534010507	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/feature_tests.c
-/home/mooz/Dev/HuDK/master/include/irq_timer.s	1514397741	0	/home/mooz/Dev/HuDK/master/include/irq_timer.s
-/home/mooz/Dev/HuDK/master/include/pceas/vdc.inc	1518293958	0	/home/mooz/Dev/HuDK/master/include/pceas/vdc.inc
-/home/mooz/Dev/HuDK/master/include/vce.s	1518347967	1	VCE Functions.
-/home/mooz/Dev/HuDK/master/include/map.s	1513464934	1	Tilemap functions.
-/home/mooz/Dev/HuDK/master/include/joypad.s	1518345369	1	Joypad Functions.
-/home/mooz/Dev/HuDK/master/include/sprite.inc	1523305604	1	Sprite descprition and utilities
-/home/mooz/Dev/HuDK/master/include/ca65/psg.s	1518345728	0	/home/mooz/Dev/HuDK/master/include/ca65/psg.s
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/flags.make	1534010509	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/flags.make
-/home/mooz/Dev/HuDK/master/example/pceas/dummy.s	1534022661	0	/home/mooz/Dev/HuDK/master/example/pceas/dummy.s
-/home/mooz/Dev/HuDK/master/include/pceas/start.s	1534022650	0	/home/mooz/Dev/HuDK/master/include/pceas/start.s
-/home/mooz/Dev/HuDK/master/include/pceas/memcpy.inc	1518293958	0	/home/mooz/Dev/HuDK/master/include/pceas/memcpy.inc
-/home/mooz/Dev/HuDK/master/include/memcpy.inc	1513465651	1	Memory copy.
-/home/mooz/Dev/HuDK/master/include/irq_2.s	1514397741	0	/home/mooz/Dev/HuDK/master/include/irq_2.s
-/home/mooz/Dev/HuDK/master/include/analog.s	1458666823	1	Analog joypag functions.
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/flags.make	1534019079	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/flags.make
-/home/mooz/Dev/HuDK/master/docs/pachinko.txt	1502742152	1	Pachinko controller.
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/depend.make	1534021927	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/depend.make
+/home/mooz/Dev/HuDK/master/build/CMakeFiles/feature_tests.cxx	1534010508	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/feature_tests.cxx

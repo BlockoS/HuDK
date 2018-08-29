@@ -50,10 +50,12 @@ Group: General  {
    File: Math routines  (no auto-title, include/math.s)
    File: Interrupts management  (no auto-title, include/irq.inc)
    File: Backup RAM  (no auto-title, include/bram.s)
-   File: BCD conversion routies.  (no auto-title, include/bcd.s)
+   File: BCD conversion routines  (no auto-title, include/bcd.s)
+   File: 8-bit macros  (no auto-title, include/byte.inc)
    File: 16-bit word macros  (no auto-title, include/word.inc)
-   File: Byte macros  (no auto-title, include/byte.inc)
-   File: Random  (no auto-title, include/random.s)
+   File: 32-bit word macros  (no auto-title, include/dword.inc)
+   File: Random number generator  (no auto-title, include/random.s)
+   File: CRC computation  (no auto-title, include/crc.s)
    }  # Group: General
 
 Group: Audio  {
