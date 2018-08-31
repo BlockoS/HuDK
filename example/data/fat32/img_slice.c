@@ -51,6 +51,7 @@ int slice_sectors(uint8_t *buffer, size_t size, const char *prefix) {
         FILE *out = fopen(filename, "wb");
         fwrite(bank, 1, k, out);
         fclose(out);
+        count++;
     }    
     
     j = 2;
@@ -59,7 +60,7 @@ int slice_sectors(uint8_t *buffer, size_t size, const char *prefix) {
         fprintf(info,
                 "    .bank $%02zx\n"
                 "    .org  $4000\n"
-                "%s:\n    .incbin \"%s\"\n\n"
+                "%s:\n    .incbin \"data/fat32/%s\"\n\n"
                 , i+j
                 , filename
                 , filename);

@@ -8,12 +8,17 @@ sectors:
     .bank $02
     .org  $4000
 bank_0000:
-    .incbin "bank_0000"
+    .incbin "data/fat32/bank_0000"
 
     .bank $03
     .org  $4000
 bank_0001:
-    .incbin "bank_0001"
+    .incbin "data/fat32/bank_0001"
+
+    .bank $04
+    .org  $4000
+bank_0002:
+    .incbin "data/fat32/bank_0002"
 
 sector_count = 81920
 sector_used = 35
