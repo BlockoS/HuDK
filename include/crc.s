@@ -2,7 +2,7 @@
 ;; Title: CRC routines.
 ;;
     .zp
-_crc .ds 2
+_crc .ds 4
 
     .code
 ;;
@@ -119,4 +119,110 @@ crc16:
     sty    <_crc
     ; and this is Greg Cook's CRC-16 code
     ; For a more "formal" explanation see http://www.6502.org/source/integers/crc-more.html
+    rts
+
+;;
+;; function: crc32_begin
+;; Resets CRC-32 value.
+;;
+;; Return:
+;;   _crc - Updated CRC-32 value
+;;
+crc32_begin:
+    lda    #$ff
+    sta    <_crc
+    sta    <_crc+1
+    sta    <_crc+2
+    sta    <_crc+3
+    rts
+
+;;
+;; function: crc32
+;; Computes CRC-32.	
+;;
+;; Description:
+;; This function updates the current CRC-32 with the value of the A register.
+;; The following implementation is based on Kevin Horton CRC32 checksum code.
+;;
+;; For more informations:
+;;  - https://en.wikipedia.org/wiki/Computation_of_cyclic_redundancy_checks
+;;  - https://wiki.nesdev.com/w/index.php/Calculate_CRC32
+;;
+;; Assembly call:
+;;   > ; reset CRC-32 value
+;;   > jsr    crc32_begin 
+;;   >
+;;   > ; _si contains the address of the input buffer
+;;   > ; X contains its size 
+;;   > cly
+;;   > loop:
+;;   >     phy
+;;   >     phx
+;;   >
+;;   >     lda    [_si], Y
+;;   >     jsr    crc32
+;;   >
+;;   >     plx
+;;   >     ply
+;;   >     iny
+;;   >     dex
+;;   >     bne    loop
+;;   >
+;;   > ; finalize CRC-32 computation
+;;   > jsr    crc32_end
+;;
+;; Parameters:
+;;   A - Input byte
+;;   _crc - Current CRC-32 value
+;;
+;; Return:
+;;   _crc - Updated CRC-32 value
+;;
+crc32:
+    ldx    #$08
+    eor    <_crc
+    sta    <_crc
+@loop:
+    lsr    <_crc+3
+    ror    <_crc+2
+    ror    <_crc+1
+    ror    <_crc
+    bcc    @next
+        lda    #$ed
+        eor    <_crc+3
+        sta    <_crc+3
+        lda    #$b8
+        eor    <_crc+2
+        sta    <_crc+2
+        lda    #$83
+        eor    <_crc+1
+        sta    <_crc+1
+        lda    #$20
+        eor    <_crc
+        sta    <_crc    
+@next:
+    dex
+    bne   @loop
+    rts
+
+;;
+;; function: crc32_end
+;; Finalizes CRC-32 value.
+;;
+;; Return:
+;;   _crc - Updated CRC-32 value
+;;
+crc32_end:
+    lda    #$ff
+    eor    <_crc
+    sta    <_crc
+    lda    #$ff
+    eor    <_crc+1
+    sta    <_crc+1    
+    lda    #$ff
+    eor    <_crc+2
+    sta    <_crc+2
+    lda    #$ff
+    eor    <_crc+3
+    sta    <_crc+3
     rts
