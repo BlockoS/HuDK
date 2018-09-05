@@ -35,11 +35,15 @@ If you generated the `fat32.img` as specified above you'll get the following fil
 The last file will contains the list of "used" sectors, bank files and the total number of sectors and "used" sectors.
 ```
 sectors:
-    .dw $0000,$0800,$0801,$0806,$0820,$0a87,$0cee,$0cef
-    .dw $0cf0,$0cf1,$0cf2,$0cf3,$0cf4,$0cf5,$0cf6,$0cf7
-    .dw $0cf8,$0cf9,$0cfa,$0cfb,$0cfc,$0cfd,$0cfe,$0cff
-    .dw $0d00,$0d01,$0d02,$0d03,$0d04,$0d05,$0d06,$0d07
-    .dw $0d08,$0d09,$0d0a
+    .db $00,$00,$00,$00,$00,$08,$00,$00,$01,$08,$00,$00,$06,$08,$00,$00
+    .db $20,$08,$00,$00,$87,$0a,$00,$00,$ee,$0c,$00,$00,$ef,$0c,$00,$00
+    .db $f0,$0c,$00,$00,$f1,$0c,$00,$00,$f2,$0c,$00,$00,$f3,$0c,$00,$00
+    .db $f4,$0c,$00,$00,$f5,$0c,$00,$00,$f6,$0c,$00,$00,$f7,$0c,$00,$00
+    .db $f8,$0c,$00,$00,$f9,$0c,$00,$00,$fa,$0c,$00,$00,$fb,$0c,$00,$00
+    .db $fc,$0c,$00,$00,$fd,$0c,$00,$00,$fe,$0c,$00,$00,$ff,$0c,$00,$00
+    .db $00,$0d,$00,$00,$01,$0d,$00,$00,$02,$0d,$00,$00,$03,$0d,$00,$00
+    .db $04,$0d,$00,$00,$05,$0d,$00,$00,$06,$0d,$00,$00,$07,$0d,$00,$00
+    .db $08,$0d,$00,$00,$09,$0d,$00,$00,$0a,$0d,$00,$00
 
     .bank $02
     .org  $4000

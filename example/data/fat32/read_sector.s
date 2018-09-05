@@ -5,25 +5,35 @@
 ; buffer.
 ;
 ; Parameters:
-;   _ax : sector id
+;   _ax : sector id bytes 0 and 1
+;   _bx : sector id bytes 2 and 3
 ;   _di : output buffer
 ;
-; Return 
+; Return:
 ;
 read_sector:
     clx
 @loop:    
     ; look if this sector is not empty
     txa
-    asl   A
-    tay
-    lda   sectors, Y
-    cmp   <_al
-    bne   @next
+    stz    <_si+1
+    asl    A
+    rol    <_si+1
+    asl    A
+    rol    <_si+1
+    sta    <_si
+    
+    addw   #sectors, <_si
+
+    cly
+@check:
+    lda    [_si], Y
+    cmp    _al, Y
+    bne    @next
     iny
-    lda   sectors, Y
-    cmp   <_ah
-    beq   @found
+    cpy    #$04
+    bne    @check    
+    bra    @found
 @next:
     inx
     cpx    #sector_used

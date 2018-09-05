@@ -27,7 +27,13 @@ int slice_sectors(uint8_t *buffer, size_t size, const char *prefix) {
         }
 
         if(j < sector_size) {
-            fprintf(info, "%s$%04zx", (used%8) ? "," : "\n    .dw ", i/512);
+            uint32_t sector_id = i / 512;
+            fprintf(info, "%s$%02x,$%02x,$%02x,$%02x"
+                        , (used%4) ? "," : "\n    .db "
+                        , (sector_id      ) & 0xff
+                        , (sector_id >>  8) & 0xff
+                        , (sector_id >> 16) & 0xff
+                        , (sector_id >> 24) & 0xff);
             
             memcpy(bank+k, buffer+i, sector_size);
             k += sector_size;
