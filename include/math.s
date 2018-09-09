@@ -10,7 +10,7 @@
 ;;   _al - first operand.
 ;;   _bl - second operand.
 ;;
-;; Return 
+;; Return:
 ;;   _cx - 16 bits unsigned result.
 ;;
 mulu8:
