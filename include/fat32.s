@@ -1,3 +1,5 @@
+FAT32_MAX_PATH = 260
+
 FAT32_MBR_SIGNATURE = $AA55
 FAT32_PARTITION = $0b
 FAT32_INT13_PARTITION = $0c
@@ -15,6 +17,10 @@ FAT32_VOLUME_ID = %0000_1000
 FAT32_DIRECTORY = %0001_0000
 FAT32_ARCHIVE   = %0010_0000
 FAT32_LONG_NAME = $0f
+
+FAT32_LONG_NAME_MASK = (FAT32_ARCHIVE | FAT32_DIRECTORY | FAT32_VOLUME_ID | FAT32_SYSTEM | FAT32_HIDDEN | FAT32_READ_ONLY)
+
+FAT32_LAST_LONG_ENTRY = $40
 
     .rsset $00
 fat32_mbr.boot_code   .rs 446
@@ -77,15 +83,19 @@ fat32_dir_entry.last_write_data    .rs 2
 fat32_dir_entry.first_cluster_lo   .rs 2
 fat32_dir_entry.file_size          .rs 4
 
+fat32_long_dir_entry.name_1.len = 10
+fat32_long_dir_entry.name_2.len = 12
+fat32_long_dir_entry.name_3.len = 4
+
     .rsset $00
 fat32_long_dir_entry.order      .rs 1
-fat32_long_dir_entry.name_1     .rs 10
+fat32_long_dir_entry.name_1     .rs fat32_long_dir_entry.name_1.len
 fat32_long_dir_entry.attributes .rs 1
 fat32_long_dir_entry.type       .rs 1
 fat32_long_dir_entry.checksum   .rs 1
-fat32_long_dir_entry.name_2     .rs 12
+fat32_long_dir_entry.name_2     .rs fat32_long_dir_entry.name_2.len
 fat32_long_dir_entry.zero       .rs 1
-fat32_long_dir_entry.name_3     .rs 4
+fat32_long_dir_entry.name_3     .rs fat32_long_dir_entry.name_3.len
 
     .rsset $00
 FAT32_OK                .rs 1
@@ -116,7 +126,7 @@ fat32.cluster_begin_lba .ds 4
 ;; [todo]
 ;;
 ;; Parameters:
-;,   _si : address of sector buffer
+;,   _si - address of sector buffer
 ;;
 ;; Return:
 ;;
@@ -198,7 +208,7 @@ fat32_read_partitions:
 ;; [todo]
 ;;
 ;; Parameters:
-;;   _si : address of sector buffer
+;;   _si - address of sector buffer
 ;;
 ;; Return:
 ;;
@@ -331,10 +341,10 @@ fat32_read_boot_sector:
 ;; [todo]
 ;;
 ;; Parameters:
-;;    _cx : cluster number
+;;    _cx - cluster number
 ;;
 ;; Return:
-;;    _ax : sector number
+;;    _ax - sector number
 ;;
 fat32_sector_address:
     ; sector = fat32.cluster_begin_lba + (cluster_number - 2) * fat32.sectors_per_cluster
@@ -380,5 +390,115 @@ fat32_sector_address:
     ; _ax += fat32.cluster_begin_lba
     addw   fat32.cluster_begin_lba, <_ax
     adcw   fat32.cluster_begin_lba+2, <_ax+2
+    
+    rts
+
+;;
+;; function: fat32_is_lfn
+;; Checks if the current directory entry is a long filename (LFN) entry.
+;;
+;; Parameters:
+;;    _si - directory entry address
+;;
+;; Return:
+;;    carry flag - 1 if the current directory entry is a LFN entry, 0 otherwise.
+;;
+fat32_is_lfn:
+    ldy    #fat32_long_dir_entry.attributes
+    lda    [_si], Y
+    and    #FAT32_LONG_NAME_MASK
+    cmp    #FAT32_LONG_NAME
+    bne    @nok
+        sec
+        rts
+@nok:
+    clc
+    rts
+
+;;
+;; function: fat32_checksum
+;; Computes the directory entry checksum.
+;;
+;; Parameters:
+;;    _si - directory entry address
+;;
+;; Return:
+;;    A - checksum
+;;
+fat32_checksum:
+    cla
+    cly
+@l0:
+    lsr    A
+    bcc    @l1
+        adc    #$7f
+@l1:
+    adc    [_si], Y
+    iny
+    cpy    #11
+    bne    @l0
+    rts
+    
+;;
+;; function: fat32_lfn_get
+;; Retrieves the directory entry long file name (if any).
+;;
+;; Parameters:
+;;    _si - short file name (SFN) directory entry address
+;;    _di - string buffer address
+;;
+;; Return:
+;;   _r0 - directory entry checksum
+;;   carry flag - 1 if there is a LFN associated with the directory entry, 0 otherwise.
+;;
+fat32_lfn_get:
+    jsr    fat32_checksum
+    sta    <_r0
+@l0:
+    subw   #$20, <_si
+
+    jsr    fat32_is_lfn
+    bcc    @err
+
+    ldy    #fat32_long_dir_entry.checksum
+    lda    [_si], Y
+    cmp    <_r0
+    bne    @err
+
+    ldy    #fat32_long_dir_entry.name_1
+    ldx    #(fat32_long_dir_entry.name_1.len/2)
+    jsr    @fat32_lfn_getch
+        
+    ldy    #fat32_long_dir_entry.name_2
+    ldx    #(fat32_long_dir_entry.name_2.len/2)
+    jsr    @fat32_lfn_getch
+    
+    ldy    #fat32_long_dir_entry.name_3
+    ldx    #(fat32_long_dir_entry.name_3.len/2)
+    jsr    @fat32_lfn_getch
+    
+    ldy    #fat32_long_dir_entry.order
+    lda    [_si], Y
+    bit    #FAT32_LAST_LONG_ENTRY
+    beq    @l0
+        
+    sec
+    rts
+    
+@err:
+    clc
+    rts
+
+@fat32_lfn_getch:
+    lda    [_si], Y
+    bmi    @skip
+        sta    [_di]
+        incw   <_di
+@skip:
+    iny
+    iny
+
+    dex
+    bne    @fat32_lfn_getch
     
     rts
