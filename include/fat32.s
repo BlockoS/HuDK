@@ -98,10 +98,11 @@ fat32_long_dir_entry.zero       .rs 1
 fat32_long_dir_entry.name_3     .rs fat32_long_dir_entry.name_3.len
 
     .rsset $00
-FAT32_OK                .rs 1
-FAT32_INVALID_MBR       .rs 1
-FAT32_NO_PARTITIONS     .rs 1
-FAT32_INVALID_VOLUME_ID .rs 1
+FAT32_OK                   .rs 1
+FAT32_INVALID_MBR          .rs 1
+FAT32_NO_PARTITIONS        .rs 1
+FAT32_INVALID_VOLUME_ID    .rs 1
+FAT32_INVALID_PARTITION_ID .rs 1
 
     .bss
 fat32.partition_count .ds 1
@@ -119,18 +120,29 @@ fat32.root_dir_1st_cluster .ds 4
 fat32.fat_begin_lba .ds 4
 fat32.cluster_begin_lba .ds 4
 
+; [todo] rename into fat32.data_cluster and fat32.data_sector ?
+fat32.current_cluster .ds 4
+fat32.current_sector  .ds 4
+fat32.data_ptr        .ds 2
+
+fat32.fat_sector .ds 4
+fat32.fat_entry  .ds 2
+fat32.fat_ptr    .ds 2
+
     .code
 
 ;;
 ;; function: fat32_read_partitions
-;; [todo]
+;; Reads partition table from sector.
 ;;
 ;; Parameters:
-;,   _si - address of sector buffer
+;,   _di - address of sector buffer
 ;;
 ;; Return:
 ;;
 fat32_read_partitions:
+    jsr    fat32_read_sector
+
     addw   <_si, #fat32_mbr.signature, <_ax
     lda    [_ax]
     cmp    #low(FAT32_MBR_SIGNATURE)
@@ -208,11 +220,13 @@ fat32_read_partitions:
 ;; [todo]
 ;;
 ;; Parameters:
-;;   _si - address of sector buffer
+;;   _di - address of sector buffer
 ;;
 ;; Return:
 ;;
 fat32_read_boot_sector:
+    jsr    fat32_read_sector
+    
     ; check if we have a valid fat32 volume
     ; 1. jump instruction (JMP XX NOP (x86))
     ldy    #fat32_boot_sector.jump
@@ -338,7 +352,7 @@ fat32_read_boot_sector:
 
 ;;
 ;; function: fat32_sector_address
-;; [todo]
+;; Computes the sector id of a cluster.
 ;;
 ;; Parameters:
 ;;    _cx - cluster number
@@ -391,6 +405,111 @@ fat32_sector_address:
     addw   fat32.cluster_begin_lba, <_ax
     adcw   fat32.cluster_begin_lba+2, <_ax+2
     
+    rts
+
+;;
+;; function: fat32_mount_partition
+;;
+;; Parameters:
+;;    A - partition number
+;;    fat32.data_ptr
+;;    fat32.fat_ptr
+;;
+;; Return:
+;;
+;;
+fat32_mount_partition:
+    cmp    fat32.partition_count
+    bcc    @mount
+        ldx    #FAT32_INVALID_PARTITION_ID
+        rts
+@mount:
+    asl    A
+    asl    A
+    tay
+    
+    lda    fat32.partition_lba_0, Y 
+    sta    fat32.current_partition
+    sta    <_ax
+    
+    lda    fat32.partition_lba_0+1, Y 
+    sta    fat32.current_partition+1
+    sta    <_ax+1
+    
+    lda    fat32.partition_lba_0+2, Y 
+    sta    fat32.current_partition+2
+    sta    <_bx
+    
+    lda    fat32.partition_lba_0+3, Y 
+    sta    fat32.current_partition+3
+    sta    <_bx+1
+    
+    stw    fat32.data_ptr, <_di
+
+    jsr    fat32_read_boot_sector
+    beq    @ok.1
+        rts
+@ok.1:
+
+    lda    fat32.root_dir_1st_cluster
+    sta    <_cx
+    sta    fat32.current_cluster
+    
+    lda    fat32.root_dir_1st_cluster+1
+    sta    <_cx+1
+    sta    fat32.current_cluster+1
+    
+    lda    fat32.root_dir_1st_cluster+2
+    sta    <_dx
+    sta    fat32.current_cluster+2
+    
+    lda    fat32.root_dir_1st_cluster+3
+    sta    <_dx+1
+    sta    fat32.current_cluster+3
+
+    jsr    fat32_sector_address
+ 
+    stw    <_ax, fat32.current_sector 
+    stw    <_bx, fat32.current_sector+2 
+
+    stw    fat32.data_ptr, <_di
+
+    jsr    fat32_read_sector
+    
+    lda    fat32.fat_begin_lba
+    sta    fat32.fat_sector
+    sta    <_ax
+
+    lda    fat32.fat_begin_lba+1
+    sta    fat32.fat_sector+1
+    sta    <_ax+1
+
+    lda    fat32.fat_begin_lba+2
+    sta    fat32.fat_sector+2
+    sta    <_bx
+    
+    lda    fat32.fat_begin_lba+3
+    sta    fat32.fat_sector+3
+    sta    <_bx+1
+
+    stw    fat32.fat_ptr, <_di
+    
+    jsr    fat32_read_sector
+
+    stw    #$02, fat32.fat_entry
+
+    ldx    #$00
+    rts
+
+;;
+;; function: fat32_read_dir
+;;
+;; Parameters:
+;;
+;; Return:
+;;
+fat32_read_dir:
+    ; [todo]
     rts
 
 ;;
@@ -467,15 +586,15 @@ fat32_lfn_get:
 
     ldy    #fat32_long_dir_entry.name_1
     ldx    #(fat32_long_dir_entry.name_1.len/2)
-    jsr    @fat32_lfn_getch
+    bsr    @fat32_lfn_getch
         
     ldy    #fat32_long_dir_entry.name_2
     ldx    #(fat32_long_dir_entry.name_2.len/2)
-    jsr    @fat32_lfn_getch
+    bsr    @fat32_lfn_getch
     
     ldy    #fat32_long_dir_entry.name_3
     ldx    #(fat32_long_dir_entry.name_3.len/2)
-    jsr    @fat32_lfn_getch
+    bsr    @fat32_lfn_getch
     
     ldy    #fat32_long_dir_entry.order
     lda    [_si], Y
@@ -488,7 +607,6 @@ fat32_lfn_get:
 @err:
     clc
     rts
-
 @fat32_lfn_getch:
     lda    [_si], Y
     bmi    @skip
@@ -502,3 +620,101 @@ fat32_lfn_get:
     bne    @fat32_lfn_getch
     
     rts
+
+;;
+;; function: fat32_next_cluster
+;; [todo]
+;;
+;; Parameters:
+;; [todo]
+;;
+;; Return:
+;; [todo]
+;;
+fat32_next_cluster:
+    ; Compute FAT sector to load.
+    lda    fat32.current_cluster
+    cmp    #$80
+    lda    fat32.current_cluster+1
+    rol    A
+    sta    <_ax
+    lda    fat32.current_cluster+2
+    rol    A
+    sta    <_ax+1
+    lda    fat32.current_cluster+3
+    rol    A
+    sta    <_bx
+    cla
+    rol    A
+    sta    <_bx+1
+
+    clc
+    lda    fat32.fat_begin_lba
+    adc    <_ax
+    sta    <_ax
+    
+    lda    fat32.fat_begin_lba+1
+    adc    <_ax+1
+    sta    <_ax+1
+    
+    lda    fat32.fat_begin_lba+2
+    adc    <_bx
+    sta    <_bx
+    
+    lda    fat32.fat_begin_lba+3
+    adc    <_bx+1
+    sta    <_bx+1
+    
+    ; Get FAT entry.
+    lda    fat32.current_cluster
+    asl    A
+    asl    A
+    sta    fat32.fat_entry
+    stz    fat32.fat_entry+1
+    rol    fat32.fat_entry+1
+
+    ; Check if we need to load a new FAT sector
+    lda    <_bx+1
+    cmp    fat32.fat_sector+3
+    bne    @load_needed
+
+    lda    <_bx
+    cmp    fat32.fat_sector+2
+    bne    @load_needed
+
+    lda    <_ax+1
+    cmp    fat32.fat_sector+1
+    beq    @get_sector
+  
+    lda    <_ax
+    cmp    fat32.fat_sector
+    beq    @get_sector
+       
+@load_needed:
+    stw    fat32.fat_ptr, <_di
+    jsr    fat32_read_sector
+@get_sector:
+ 
+    addw   fat32.fat_ptr, fat32.fat_entry, <_si
+    
+    lda    [_si]
+    sta    fat32.current_cluster
+    ldy    #$01
+    lda    [_si], Y
+    sta    fat32.current_cluster+1
+    iny
+    lda    [_si], Y
+    sta    fat32.current_cluster+2
+    iny
+    lda    [_si], Y
+    sta    fat32.current_cluster+3
+
+    rts
+    
+; [todo] open_cluster
+; [todo] next_sector
+    
+; [todo] enter directory
+; [todo] read file data
+; [todo] create dir entry
+; [todo] write file data
