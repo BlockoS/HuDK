@@ -505,11 +505,46 @@ fat32_mount_partition:
 ;; function: fat32_read_dir
 ;;
 ;; Parameters:
+;;     _si - Address of the current directory entry.
 ;;
 ;; Return:
-;;
+;;     _di - Address of the next valid directory entry (file or directory).
+;;     _si - Address of the next directory entry.
+;;     Carry flag - Set if a valid entry was found.
+;; 
 fat32_read_dir:
-    ; [todo]
+@l0:
+    lda    [_si]
+    beq    @end
+    
+    ldy    #fat32_dir_entry.attributes
+    lda    [_si], Y
+    cmp    #FAT32_LONG_NAME
+    bne    @l1
+    jmp    @next
+@l1:
+    bit    #(FAT32_READ_ONLY | FAT32_DIRECTORY | FAT32_ARCHIVE)
+    bne    @l2
+    jmp    @next
+@l2:
+        lda    <_si
+        sta    <_di
+        clc
+        adc    #$20
+        sta    <_si
+        lda    <_si+1
+        sta    <_di+1
+        adc    #$00
+        sta    <_si+1   
+        
+        sec
+        rts
+@next:    
+    addw    #$20, <_si
+    bra     @l0
+    
+@end:
+    clc
     rts
 
 ;;
@@ -568,7 +603,7 @@ fat32_checksum:
 ;;
 ;; Return:
 ;;   _r0 - directory entry checksum
-;;   carry flag - 1 if there is a LFN associated with the directory entry, 0 otherwise.
+;;   Carry flag - Set if there is a LFN associated with the directory entry.
 ;;
 fat32_lfn_get:
     jsr    fat32_checksum
