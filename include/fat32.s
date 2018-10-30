@@ -123,11 +123,18 @@ fat32.cluster_begin_lba .ds 4
 ; [todo] rename into fat32.data_cluster and fat32.data_sector ?
 fat32.current_cluster .ds 4
 fat32.current_sector  .ds 4
+fat32.sector_offset   .ds 1
+fat32.data_size       .ds 4
+fat32.data_pointer    .ds 4
+fat32.data_offset     .ds 2
 fat32.data_ptr        .ds 2
 
 fat32.fat_sector .ds 4
 fat32.fat_entry  .ds 2
 fat32.fat_ptr    .ds 2
+
+    .zp
+fat32.n_read .ds 2
 
     .code
 
@@ -745,9 +752,181 @@ fat32_next_cluster:
     sta    fat32.current_cluster+3
 
     rts
+
+;;
+;; function: fat32_open
+;; [todo]
+;;
+;; Parameters:
+;; [todo]
+;;
+;; Return:
+;; [todo]
+;;
+fat32_open:
+    ldy    #fat32_dir_entry.file_size+3
+    lda    [_di], Y
+    sta    fat32.data_size+3
+    ldy    #fat32_dir_entry.file_size+2
+    lda    [_di], Y
+    sta    fat32.data_size+2
+    ldy    #fat32_dir_entry.file_size+1
+    lda    [_di], Y
+    sta    fat32.data_size+1
+    ldy    #fat32_dir_entry.file_size
+    lda    [_di], Y
+    sta    fat32.data_size
+        
+    ldy    #fat32_dir_entry.first_cluster_hi+1
+    lda    [_di], Y
+    sta    fat32.current_cluster+3
+    sta    <_cx+3
+    ldy    #fat32_dir_entry.first_cluster_hi
+    lda    [_di], Y
+    sta    <_cx+2
+    sta    fat32.current_cluster+2
     
-; [todo] open_cluster
-; [todo] next_sector
+    ldy    #fat32_dir_entry.first_cluster_lo+1
+    lda    [_di], Y
+    sta    <_cx+1
+    sta    fat32.current_cluster+1
+    ldy    #fat32_dir_entry.first_cluster_lo
+    lda    [_di], Y
+    sta    <_cx
+    sta    fat32.current_cluster
+    
+    jsr    fat32_sector_address
+
+    stw    <_ax, fat32.current_sector
+    stw    <_bx, fat32.current_sector+2
+
+    stz    fat32.sector_offset
+    stwz   fat32.data_offset
+    stwz   fat32.data_pointer
+    stwz   fat32.data_pointer+2
+    
+    stw    fat32.data_ptr, <_di
+    jsr    fat32_read_sector
+
+    rts
+
+;;
+;; function: fat32_read
+;; [todo]
+;;
+;; Parameters:
+;;    _r0 - size
+;;    _r1 - destination
+;;
+;; Return:
+;;    _r0 - number read
+;;
+fat32_read:
+    lda    <_r0+1
+    pha
+    lda    <_r0
+    pha
+
+@l0:
+    lda    fat32.data_size+3
+    cmp    fat32.data_pointer+3
+    bne    @l1
+    lda    fat32.data_size+2
+    cmp    fat32.data_pointer+2
+    bne    @l1
+    lda    fat32.data_size+1
+    cmp    fat32.data_pointer+1
+    bne    @l1
+    lda    fat32.data_size
+    cmp    fat32.data_pointer
+    bne    @l1
+        jmp    @nread
+@l1:
+    lda    <_r0
+    ora    <_r0+1
+    bne    @l2
+        jmp    @nread
+@l2:
+    lda    fat32.data_offset+1
+    cmp    #$02
+    bne    @l3
+        inc    fat32.sector_offset  
+        lda    fat32.sector_offset
+        cmp    fat32.sectors_per_cluster
+        bne    @l3.1
+            jsr    fat32_next_cluster
+
+            stw    fat32.current_cluster, <_cx
+            stw    fat32.current_cluster+2, <_dx
+    
+            jsr    fat32_sector_address
+            
+            stw    <_ax, fat32.current_sector
+            stw    <_bx, fat32.current_sector+2
+
+            stz    fat32.sector_offset
+@l3.1:
+        stw    fat32.data_ptr, <_di
+        stw    fat32.current_sector, <_ax
+        stw    fat32.current_sector+2, <_bx
+        jsr    fat32_read_sector
+        stwz   fat32.data_offset
+@l3:
+        stwz   <_ax
+        lda    <_r0+1
+        cmp    #$02
+        bcc    @l4
+            stw    #$200, <_ax
+            bra    @l5
+@l4:
+            stw    <_r0, <_ax
+@l5:
+        lda    <_ax
+        clc
+        adc    fat32.data_offset
+        lda    <_ax+1
+        adc    fat32.data_offset+1
+        cmp    #$02
+        bcc    @l6
+            subw   fat32.data_offset, #$200, <_ax 
+@l6:
+
+        subw   fat32.data_pointer, fat32.data_size, <_cx
+        subw   fat32.data_pointer+2, fat32.data_size+2, <_dx
+        lda    <_dx
+        ora    <_dx+1
+        bne    @l7
+
+            lda    <_ax+1
+            cmp    <_cx+1
+            bcc    @l7
+            bne    @l8
+            lda    <_ax
+            cmp    <_cx
+            bcc    @l7
+@l8:
+                stw    <_cx, <_ax
+@l7:
+        memcpy_mode #SOURCE_INC_DEST_INC
+        addw   fat32.data_ptr, fat32.data_offset, <_si
+        memcpy_args <_si, <_r1, <_ax
+        jsr    memcpy
+
+        addw   <_ax, fat32.n_read
+        addw   <_ax, <_r1
+        addw   <_ax, fat32.data_offset
+        addw   <_ax, fat32.data_pointer
+        subw   <_ax, <_r0
+    jmp    @l0
+@nread:
+    pla
+    sec
+    sbc    <_r0
+    sta    <_r0
+    pla
+    sbc    <_r0+1
+    sta    <_r0+1
+    rts
     
 ; [todo] enter directory
 ; [todo] read file data
