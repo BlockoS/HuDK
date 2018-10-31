@@ -665,13 +665,15 @@ fat32_lfn_get:
 
 ;;
 ;; function: fat32_next_cluster
-;; [todo]
+;; Retrieves the next data cluster from the File Allocation Table.
 ;;
 ;; Parameters:
-;; [todo]
+;;    fat32.current_cluster - Current data cluster.
 ;;
 ;; Return:
-;; [todo]
+;;    fat32.current_cluster - Next data cluster upon success. It's left unchanged if
+;;                            the current cluster is the last one. 
+;;    Carry flag - Set if the current cluster is the last cluster, cleared otherwise. 
 ;;
 fat32_next_cluster:
     ; Compute FAT sector to load.
@@ -733,35 +735,56 @@ fat32_next_cluster:
     beq    @get_sector
        
 @load_needed:
+    stw    <_ax, fat32.fat_sector
+    stw    <_bx, fat32.fat_sector+2
     stw    fat32.fat_ptr, <_di
     jsr    fat32_read_sector
 @get_sector:
  
     addw   fat32.fat_ptr, fat32.fat_entry, <_si
-    
-    lda    [_si]
-    sta    fat32.current_cluster
+   
+    ; Check if the next cluster is == $xfffffff
+    ; We try to be smart.
     ldy    #$01
     lda    [_si], Y
+    sta    <_ax
+    cmp    #$ff             ; carry will be set if A >= #$ff
+    iny
+    lda    [_si], Y
+    tax
+    iny
+    lda    [_si], Y
+    and    #$0f
+    tay
+    lda    [_si]
+                            ; check if byte 1 >= #$ff
+    bcc    @l0              ; the carry flag was preserved
+    cmp    #$ff             ; byte 0
+    bne    @l0
+    cpx    #$ff             ; byte 2
+    bne    @l0
+    cpy    #$0f             ; byte 3
+    bne    @l0
+        ; We are already at the end of the cluster chain
+        sec
+        rts    
+@l0:
+    sta    fat32.current_cluster
+    lda    <_ax
     sta    fat32.current_cluster+1
-    iny
-    lda    [_si], Y
-    sta    fat32.current_cluster+2
-    iny
-    lda    [_si], Y
-    sta    fat32.current_cluster+3
-
+    stx    fat32.current_cluster+2
+    sty    fat32.current_cluster+3
+    clc
     rts
 
 ;;
 ;; function: fat32_open
-;; [todo]
+;; Opens the file whose directory entry is pointed by *_di* for reading.
 ;;
 ;; Parameters:
-;; [todo]
+;;    _di - Memory location of the file entry.
 ;;
 ;; Return:
-;; [todo]
 ;;
 fat32_open:
     ldy    #fat32_dir_entry.file_size+3
@@ -812,14 +835,15 @@ fat32_open:
 
 ;;
 ;; function: fat32_read
-;; [todo]
-;;
+;; Reads *_r0* bytes from the currently opened file and stores them at the memory 
+;; location given by *_r1*.
+;; 
 ;; Parameters:
-;;    _r0 - size
-;;    _r1 - destination
+;;    _r0 - number of bytes to read from the currently opened file.
+;;    _r1 - memory location where the read bytes will be stored.
 ;;
 ;; Return:
-;;    _r0 - number read
+;;    _r0 - number of bytes read.
 ;;
 fat32_read:
     lda    <_r0+1
