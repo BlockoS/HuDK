@@ -416,11 +416,10 @@ fat32_sector_address:
 
 ;;
 ;; function: fat32_mount_partition
+;; [todo]
 ;;
 ;; Parameters:
-;;    A - partition number
-;;    fat32.data_ptr
-;;    fat32.fat_ptr
+;; [todo]
 ;;
 ;; Return:
 ;;
@@ -458,6 +457,7 @@ fat32_mount_partition:
         rts
 @ok.1:
 
+    ; Read first root directory sector
     lda    fat32.root_dir_1st_cluster
     sta    <_cx
     sta    fat32.current_cluster
@@ -480,9 +480,16 @@ fat32_mount_partition:
     stw    <_bx, fat32.current_sector+2 
 
     stw    fat32.data_ptr, <_di
-
     jsr    fat32_read_sector
-    
+
+    stz    fat32.sector_offset
+    stwz   fat32.data_size
+    stwz   fat32.data_size+2
+    stwz   fat32.data_pointer
+    stwz   fat32.data_pointer+2
+    stwz   fat32.data_offset
+
+    ; Read first FAT sector    
     lda    fat32.fat_begin_lba
     sta    fat32.fat_sector
     sta    <_ax
@@ -500,58 +507,11 @@ fat32_mount_partition:
     sta    <_bx+1
 
     stw    fat32.fat_ptr, <_di
-    
     jsr    fat32_read_sector
 
     stw    #$02, fat32.fat_entry
 
     ldx    #$00
-    rts
-
-;;
-;; function: fat32_read_dir
-;;
-;; Parameters:
-;;     _si - Address of the current directory entry.
-;;
-;; Return:
-;;     _di - Address of the next valid directory entry (file or directory).
-;;     _si - Address of the next directory entry.
-;;     Carry flag - Set if a valid entry was found.
-;; 
-fat32_read_dir:
-@l0:
-    lda    [_si]
-    beq    @end
-    
-    ldy    #fat32_dir_entry.attributes
-    lda    [_si], Y
-    cmp    #FAT32_LONG_NAME
-    bne    @l1
-    jmp    @next
-@l1:
-    bit    #(FAT32_READ_ONLY | FAT32_DIRECTORY | FAT32_ARCHIVE)
-    bne    @l2
-    jmp    @next
-@l2:
-        lda    <_si
-        sta    <_di
-        clc
-        adc    #$20
-        sta    <_si
-        lda    <_si+1
-        sta    <_di+1
-        adc    #$00
-        sta    <_si+1   
-        
-        sec
-        rts
-@next:    
-    addw    #$20, <_si
-    bra     @l0
-    
-@end:
-    clc
     rts
 
 ;;
@@ -778,6 +738,43 @@ fat32_next_cluster:
     rts
 
 ;;
+;; function: fat32_next_sector
+;;    [todo]
+;;
+;; Parameters:
+;;    [todo]
+;;
+;; Return:
+;;    [todo]
+;;
+fat32_next_sector:
+; [todo]
+    inc    fat32.sector_offset  
+    lda    fat32.sector_offset
+    cmp    fat32.sectors_per_cluster
+    bne    @l3.1
+        stz    fat32.sector_offset
+
+        jsr    fat32_next_cluster
+        ; [todo] check return value
+
+        stw    fat32.current_cluster, <_cx
+        stw    fat32.current_cluster+2, <_dx
+
+        jsr    fat32_sector_address
+        
+        stw    <_ax, fat32.current_sector
+        stw    <_bx, fat32.current_sector+2
+
+@l3.1:
+    stw    fat32.data_ptr, <_di
+    stw    fat32.current_sector, <_ax
+    stw    fat32.current_sector+2, <_bx
+    jsr    fat32_read_sector
+    stwz   fat32.data_offset
+    rts
+
+;;
 ;; function: fat32_open
 ;; Opens the file whose directory entry is pointed by *_di* for reading.
 ;;
@@ -785,7 +782,7 @@ fat32_next_cluster:
 ;;    _di - Memory location of the file entry.
 ;;
 ;; Return:
-;;
+;;    [todo]
 fat32_open:
     ldy    #fat32_dir_entry.file_size+3
     lda    [_di], Y
@@ -852,49 +849,31 @@ fat32_read:
     pha
 
 @l0:
-    lda    fat32.data_size+3
-    cmp    fat32.data_pointer+3
-    bne    @l1
-    lda    fat32.data_size+2
-    cmp    fat32.data_pointer+2
-    bne    @l1
-    lda    fat32.data_size+1
-    cmp    fat32.data_pointer+1
-    bne    @l1
-    lda    fat32.data_size
-    cmp    fat32.data_pointer
-    bne    @l1
-        jmp    @nread
+        lda    fat32.data_size+3
+        cmp    fat32.data_pointer+3
+        bne    @l1
+        lda    fat32.data_size+2
+        cmp    fat32.data_pointer+2
+        bne    @l1
+        lda    fat32.data_size+1
+        cmp    fat32.data_pointer+1
+        bne    @l1
+        lda    fat32.data_size
+        cmp    fat32.data_pointer
+        bne    @l1
+            jmp    @nread
 @l1:
-    lda    <_r0
-    ora    <_r0+1
-    bne    @l2
-        jmp    @nread
+        lda    <_r0
+        ora    <_r0+1
+        bne    @l2
+            jmp    @nread
 @l2:
-    lda    fat32.data_offset+1
-    cmp    #$02
-    bne    @l3
-        inc    fat32.sector_offset  
-        lda    fat32.sector_offset
-        cmp    fat32.sectors_per_cluster
-        bne    @l3.1
-            jsr    fat32_next_cluster
+        lda    fat32.data_offset+1
+        cmp    #$02
+        bne    @l3
 
-            stw    fat32.current_cluster, <_cx
-            stw    fat32.current_cluster+2, <_dx
-    
-            jsr    fat32_sector_address
-            
-            stw    <_ax, fat32.current_sector
-            stw    <_bx, fat32.current_sector+2
-
-            stz    fat32.sector_offset
-@l3.1:
-        stw    fat32.data_ptr, <_di
-        stw    fat32.current_sector, <_ax
-        stw    fat32.current_sector+2, <_bx
-        jsr    fat32_read_sector
-        stwz   fat32.data_offset
+        jsr    fat32_next_sector
+        ; [todo] check return value
 @l3:
         stwz   <_ax
         lda    <_r0+1
@@ -914,13 +893,11 @@ fat32_read:
         bcc    @l6
             subw   fat32.data_offset, #$200, <_ax 
 @l6:
-
         subw   fat32.data_pointer, fat32.data_size, <_cx
         subw   fat32.data_pointer+2, fat32.data_size+2, <_dx
         lda    <_dx
         ora    <_dx+1
         bne    @l7
-
             lda    <_ax+1
             cmp    <_cx+1
             bcc    @l7
@@ -951,8 +928,59 @@ fat32_read:
     sbc    <_r0+1
     sta    <_r0+1
     rts
+
+;;
+;; function: fat32_read_dir
+;; [todo]
+;;
+;; Parameters:
+;;
+;; Return:
+;;     _di - Address of the next valid directory entry (file or directory).
+;;     Carry flag - Set if a valid entry was found.
+;; 
+fat32_read_dir:
+@l0:
+    lda    fat32.data_offset+1
+    cmp    #$02
+    bne    @l1
+        jsr    fat32_next_sector
+        ; [todo] check return value
+@l1:
+    addw   fat32.data_offset, fat32.data_ptr, <_si
     
+    lda    [_si]
+    beq    @end
+    
+    ldy    #fat32_dir_entry.attributes
+    lda    [_si], Y
+    cmp    #FAT32_LONG_NAME
+    bne    @l2
+    jmp    @next
+@l2:
+    bit    #(FAT32_READ_ONLY | FAT32_DIRECTORY | FAT32_ARCHIVE)
+    bne    @l3
+    jmp    @next
+@l3:
+        stw    <_si, <_di
+        addw   #$20, fat32.data_offset 
+
+        sec
+        rts
+@next:    
+    addw    #$20, fat32.data_offset
+    bra     @l0
+    
+@end:
+    clc
+    rts
+    
+; [todo] return values / errors
+; [todo] open root directory
 ; [todo] enter directory
-; [todo] read file data
+; [todo] find "filename/pathname" 
+
 ; [todo] create dir entry
+; [todo] create file
+; [todo] create directory
 ; [todo] write file data
