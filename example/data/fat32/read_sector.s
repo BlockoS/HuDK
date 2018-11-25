@@ -10,6 +10,7 @@
 ;   _di : output buffer
 ;
 ; Return:
+;   Carry flag - Set if the sector was successfully read.
 ;
 read_sector:
     clx
@@ -43,7 +44,8 @@ read_sector:
     ; clear sector    
     jsr    @clear
     inc    <_di+1
-    jsr    @clear    
+    jsr    @clear
+    sec
     rts
 @clear:
     cly
@@ -76,4 +78,5 @@ read_sector:
     ; copy data
     memcpy_ex <_si, <_di, #$0200, #SOURCE_INC_DEST_INC
     
+    sec
     rts

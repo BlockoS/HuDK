@@ -144,15 +144,15 @@ fat32.n_read .ds 2
 ;; Reads partition table from sector.
 ;;
 ;; Parameters:
-;;   _di - address of sector buffer
+;;   _di - address of sector buffer.
 ;;
 ;; Return:
-;;    fat32.partition_lba_0 - Sector address of the 1st partition
-;;    fat32.partition_lba_1 - Sector address of the 2nd partition
-;;    fat32.partition_lba_2 - Sector address of the 3rd partition
-;;    fat32.partition_lba_3 - Sector address of the 4th partition
-;;    fat32.partition_count - Number of active partitions
-;;    X - FAT32_OK on success
+;;    fat32.partition_lba_0 - Sector address of the 1st partition.
+;;    fat32.partition_lba_1 - Sector address of the 2nd partition.
+;;    fat32.partition_lba_2 - Sector address of the 3rd partition.
+;;    fat32.partition_lba_3 - Sector address of the 4th partition.
+;;    fat32.partition_count - Number of active partitions.
+;;    X - FAT32_OK on success.
 ;;
 fat32_read_partitions:
     jsr    fat32_read_sector
@@ -237,15 +237,15 @@ fat32_read_partitions:
 ;; Reads FAT32 boot sector.
 ;;
 ;; Parameters:
-;;   _di - address of sector buffer
+;;   _di - address of sector buffer.
 ;;
 ;; Return:
-;;   fat32.sectors_per_cluster - Number of sectors per cluster
-;;   fat32.sectors_per_fat - Number of sectors stored in FAT
-;;   fat32.root_dir_1st_cluster - 1st cluster of the root directory
-;;   fat32.fat_begin_lba - 1st FAT sector
-;;   fat32.cluster_begin_lba - 1st data cluster
-;;   X - FAT32_OK if a valid FAT32 boot sector was read
+;;   fat32.sectors_per_cluster - Number of sectors per cluster.
+;;   fat32.sectors_per_fat - Number of sectors stored in FAT.
+;;   fat32.root_dir_1st_cluster - 1st cluster of the root directory.
+;;   fat32.fat_begin_lba - 1st FAT sector.
+;;   fat32.cluster_begin_lba - 1st data cluster.
+;;   X - FAT32_OK if a valid FAT32 boot sector was read.
 ;;
 fat32_read_boot_sector:
     jsr    fat32_read_sector
@@ -382,10 +382,10 @@ fat32_read_boot_sector:
 ;; Computes the sector id of a cluster.
 ;;
 ;; Parameters:
-;;    _cx - cluster number
+;;    _cx - cluster number.
 ;;
 ;; Return:
-;;    _ax - sector number
+;;    _ax - sector number.
 ;;
 fat32_sector_address:
     ; sector = fat32.cluster_begin_lba + (cluster_number - 2) * fat32.sectors_per_cluster
@@ -443,8 +443,8 @@ fat32_sector_address:
 ;;   A - Id of the partition to mount.
 ;;
 ;; Return:
-;;   fat32.current_partition - Partition id
-;;   X - FAT32_OK if the partition was successfully mounted
+;;   fat32.current_partition - Partition id.
+;;   X - FAT32_OK if the partition was successfully mounted.
 ;;
 fat32_mount_partition:
     cmp    fat32.partition_count
@@ -484,16 +484,16 @@ fat32_mount_partition:
 ;; Opens root directory of current partition.
 ;;
 ;; Parameters:
-;;    fat32.root_dir_1st_cluster - 1st cluster of the root directory
-;;    fat32.fat_ptr - Address of the FAT RAM buffer
-;;    fat32.data_ptr - Address of the data RAM buffer
+;;    fat32.root_dir_1st_cluster - 1st cluster of the root directory.
+;;    fat32.fat_ptr - Address of the FAT RAM buffer.
+;;    fat32.data_ptr - Address of the data RAM buffer.
 ;;
 ;; Return:
-;;    fat32.current_cluster - 1st cluster of the root directory
-;;    fat32.current_sector - 1st sector of the root directory
-;;    fat32.fat_sector - Current FAT sector
-;;    fat32.fat_entry - Current FAT entry
-;;    X - FAT32_OK on success
+;;    fat32.current_cluster - 1st cluster of the root directory.
+;;    fat32.current_sector - 1st sector of the root directory.
+;;    fat32.fat_sector - Current FAT sector.
+;;    fat32.fat_entry - Current FAT entry.
+;;    X - FAT32_OK on success.
 ;;
 fat32_open_root_dir:
     ; Read first root directory sector
@@ -563,7 +563,7 @@ fat32_open_root_dir:
 ;; Checks if the current directory entry is a long filename (LFN) entry.
 ;;
 ;; Parameters:
-;;    _si - directory entry address
+;;    _si - directory entry address.
 ;;
 ;; Return:
 ;;    carry flag - 1 if the current directory entry is a LFN entry, 0 otherwise.
@@ -585,10 +585,10 @@ fat32_is_lfn:
 ;; Computes the directory entry checksum.
 ;;
 ;; Parameters:
-;;    _si - directory entry address
+;;    _si - directory entry address.
 ;;
 ;; Return:
-;;    A - checksum
+;;    A - checksum.
 ;;
 fat32_checksum:
     cla
@@ -609,11 +609,11 @@ fat32_checksum:
 ;; Retrieves the directory entry long file name (if any).
 ;;
 ;; Parameters:
-;;    _si - short file name (SFN) directory entry address
-;;    _di - string buffer address
+;;    _si - short file name (SFN) directory entry address.
+;;    _di - string buffer address.
 ;;
 ;; Return:
-;;   _r0 - directory entry checksum
+;;   _r0 - directory entry checksum.
 ;;   Carry flag - Set if there is a LFN associated with the directory entry.
 ;;
 fat32_lfn_get:
@@ -742,7 +742,8 @@ fat32_next_cluster:
     stw    <_ax, fat32.fat_sector
     stw    <_bx, fat32.fat_sector+2
     stw    fat32.fat_ptr, <_di
-    jsr    fat32_read_sector                                    ; [todo]
+    jsr    fat32_read_sector
+    bcc    @err
 @get_sector:
  
     addw   fat32.fat_ptr, fat32.fat_entry, <_si
@@ -779,20 +780,21 @@ fat32_next_cluster:
     stx    fat32.current_cluster+2
     sty    fat32.current_cluster+3
     clc
+@err:
     rts
 
 ;;
 ;; function: fat32_next_sector
-;;    [todo]
+;; Reads next data sector and stores the data at the memory location
+;; pointed by *fat32.data_ptr*.
 ;;
 ;; Parameters:
-;;    [todo]
+;;    fat32.sector_offset - Current cluster sector.
 ;;
 ;; Return:
-;;    [todo]
+;;    X - FAT32_OK on success.
 ;;
 fat32_next_sector:
-; [todo]
     inc    fat32.sector_offset  
     lda    fat32.sector_offset
     cmp    fat32.sectors_per_cluster
@@ -800,8 +802,9 @@ fat32_next_sector:
         stz    fat32.sector_offset
 
         jsr    fat32_next_cluster
-        ; [todo] check return value
-
+        cpx    #FAT32_OK
+        bne    @err
+        
         stw    fat32.current_cluster, <_cx
         stw    fat32.current_cluster+2, <_dx
 
@@ -815,9 +818,16 @@ fat32_next_sector:
     stw    fat32.current_sector, <_ax
     stw    fat32.current_sector+2, <_bx
     jsr    fat32_read_sector
+    bcc    @read_error
+    
     stwz   fat32.data_offset
+    ldx    #FAT32_OK
     rts
-
+@read_error:
+    ldx    #FAT32_READ_ERROR
+@err:
+    rts
+    
 ;;
 ;; function: fat32_open
 ;; Opens the file whose directory entry is pointed by *_di* for reading.
@@ -826,7 +836,8 @@ fat32_next_sector:
 ;;    _di - Memory location of the file entry.
 ;;
 ;; Return:
-;;    [todo]
+;;    X - FAT32_OK on success.
+;;
 fat32_open:
     ldy    #fat32_dir_entry.file_size+3
     lda    [_di], Y
@@ -871,7 +882,11 @@ fat32_open:
     
     stw    fat32.data_ptr, <_di
     jsr    fat32_read_sector
-
+    bcc    @read_error
+    ldx    #FAT32_OK
+    rts
+@read_error:
+    ldx    #FAT32_READ_ERROR
     rts
 
 ;;
@@ -917,7 +932,8 @@ fat32_read:
         bne    @l3
 
         jsr    fat32_next_sector
-        ; [todo] check return value
+        beq    @l3
+            rts
 @l3:
         stwz   <_ax
         lda    <_r0+1
@@ -975,13 +991,14 @@ fat32_read:
 
 ;;
 ;; function: fat32_read_entry
-;; [todo]
+;; Reads current directory entry and moves *_di* to the next valid entry.
 ;;
 ;; Parameters:
+;;    _di - Address of the current directory entry.
 ;;
 ;; Return:
-;;     _di - Address of the next valid directory entry (file or directory).
-;;     Carry flag - Set if a valid entry was found.
+;;    _di - Address of the next valid directory entry (file or directory).
+;;    Carry flag - Set if a valid entry was found.
 ;; 
 fat32_read_entry:
 @l0:
@@ -1019,7 +1036,6 @@ fat32_read_entry:
     clc
     rts
 
-; [todo] return values / errors
 ; [todo] find "filename/pathname" 
 
 ; [todo] create dir entry
