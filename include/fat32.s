@@ -140,6 +140,23 @@ fat32.n_read .ds 2
     .code
 
 ;;
+;; function: fat32_read_sector
+;; Copies 512 bytes from the specified sector to the destination
+;; buffer.
+;;
+;; Note:
+;; This is a user-defined routine.
+;;
+;; Parameters:
+;;   _ax : sector id bytes 0 and 1
+;;   _bx : sector id bytes 2 and 3
+;;   _di : output buffer
+;;
+;; Return:
+;;   Carry flag - Set if the sector was successfully read.
+;;
+
+;;
 ;; function: fat32_read_partitions
 ;; Reads partition table from sector.
 ;;

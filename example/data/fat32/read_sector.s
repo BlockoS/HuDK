@@ -1,17 +1,5 @@
     .code
-;
-; function: read_sector
-; Copies 512 bytes from the specified sector to the destination
-; buffer.
-;
-; Parameters:
-;   _ax : sector id bytes 0 and 1
-;   _bx : sector id bytes 2 and 3
-;   _di : output buffer
-;
-; Return:
-;   Carry flag - Set if the sector was successfully read.
-;
+
 read_sector:
     clx
 @loop:    
