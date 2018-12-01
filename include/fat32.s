@@ -104,6 +104,7 @@ FAT32_INVALID_MBR          .rs 1
 FAT32_NO_PARTITIONS        .rs 1
 FAT32_INVALID_VOLUME_ID    .rs 1
 FAT32_INVALID_PARTITION_ID .rs 1
+FAT32_NOT_FOUND            .rs 1
 
     .bss
 fat32.partition_count .ds 1
@@ -950,7 +951,7 @@ fat32_read:
 
         jsr    fat32_next_sector
         beq    @l3
-            rts
+            jmp    @nread
 @l3:
         stwz   <_ax
         lda    <_r0+1
@@ -1053,7 +1054,98 @@ fat32_read_entry:
     clc
     rts
 
-; [todo] find "filename/pathname" 
+;;
+;; function: fat32_open_file
+;; Opens the file whose name is the string pointed to by *_r1*.
+;;
+;; Parameters:
+;;    _r1 - File path address.
+;;    _dx - Temporary buffer address.
+;;
+;; Return:
+;;    X - FAT32_OK if the file was succesfully opened.
+;; 
+fat32_open_file:
+    lda    [_r1]
+    cmp    #'/'
+    bne    @relative
+        jsr    fat32_open_root_dir
+        cpx    #FAT32_OK
+        beq    @next
+            rts
+@next:
+        incw   <_r1
+@relative:
+    stw    fat32.data_ptr, <_si
+@loop:
+    jsr    fat32_read_entry
+    bcc    @not_found
+    
+    stw    <_di, <_bx
+    stw    <_di, <_si
+    stw    <_dx, <_di
+    jsr    fat32_lfn_get
+    
+    cly
+    stw    <_bx, <_di
+    bcc    @std_cmp
+    stz    <_r0
+    stz    <_r0+1
+    bra    @lfn_cmp
+@std_cmp:
+    stw    <_di, <_dx
+    lda    #11
+    sta    <_r0
+    lda    #' '
+    sta    <_r0+1
+@lfn_cmp:
+    lda    [_r1], Y
+    beq    @l0
+    cmp    #'/'
+    beq    @l0
+        cmp    [_dx], Y
+        bne    @loop
+         
+        iny
+        cpy    <_r0
+        bne    @lfn_cmp
+        bra    @loop            
+@l0:
+    lda    [_dx], Y
+    cmp    <_r0+1
+    beq    @found
+    
+    bra    @loop
+@not_found:
+    ldx    #FAT32_NOT_FOUND
+    rts
+
+@found:
+    tya
+    clc
+    adc    <_r1
+    sta    <_r1
+    cla
+    adc    <_r1+1
+    sta    <_r1+1
+
+    lda    [_r1]
+    beq    @end
+    
+    cmp    #'/'
+    bne    @open
+    
+    incw   <_r1
+    lda    [_r1]
+    bne    @open
+@end:
+    jsr    fat32_open
+    ldx    #FAT32_OK  
+    rts
+@open:
+    jsr    fat32_open
+    jmp    @loop
+    
 
 ; [todo] create dir entry
 ; [todo] create file
