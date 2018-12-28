@@ -250,6 +250,7 @@ fat32_read_partitions:
 @ok:
     ldx    #FAT32_OK
     rts
+    
 ;;
 ;; function: fat32_read_boot_sector
 ;; Reads FAT32 boot sector.
@@ -389,8 +390,8 @@ fat32_read_boot_sector:
     rol    A
     sta    fat32.cluster_begin_lba+3
  
-    adcw   fat32.fat_begin_lba, fat32.cluster_begin_lba
-    addw   fat32.fat_begin_lba+2, fat32.cluster_begin_lba+2
+    addw   fat32.fat_begin_lba, fat32.cluster_begin_lba
+    adcw   fat32.fat_begin_lba+2, fat32.cluster_begin_lba+2
 
     ldx    #FAT32_OK
     rts
@@ -547,7 +548,7 @@ fat32_open_root_dir:
     stwz   fat32.data_pointer+2
     stwz   fat32.data_offset
 
-    ; Read first FAT sector    
+    ; Read first FAT sector
     lda    fat32.fat_begin_lba
     sta    fat32.fat_sector
     sta    <_ax
@@ -568,7 +569,7 @@ fat32_open_root_dir:
     jsr    fat32_read_sector
     bcc    @read_error
     
-    stw    #$02, fat32.fat_entry
+    stw    #(02*4), fat32.fat_entry
 
     ldx    #FAT32_OK
     rts
@@ -686,6 +687,41 @@ fat32_lfn_get:
     rts
 
 ;;
+;; function: fat32_end_of_fat
+;; Checks if the last fat sector was reached.
+;;
+;; Parameters:
+;;   _ax : sector id bytes 0 and 1
+;;   _bx : sector id bytes 2 and 3
+;;
+;; Return:
+;;    Carry flag - Set if the last fat sector was reached. 
+;;
+fat32_end_of_fat:
+    clc
+    lda    fat32.sectors_per_fat
+    adc    fat32.fat_begin_lba
+    cmp    <_ax
+    bne    @l0
+    lda    fat32.sectors_per_fat+1
+    adc    fat32.fat_begin_lba+1
+    cmp    <_ax+1
+    bne    @l0
+    lda    fat32.sectors_per_fat+2
+    adc    fat32.fat_begin_lba+2
+    cmp    <_bx
+    bne    @l0
+    lda    fat32.sectors_per_fat+3
+    adc    fat32.fat_begin_lba+3
+    cmp    <_bx+1
+    bne    @l0
+        sec
+        rts
+@l0:
+    clc
+    rts
+    
+;;
 ;; function: fat32_next_cluster
 ;; Retrieves the next data cluster from the File Allocation Table.
 ;;
@@ -759,12 +795,20 @@ fat32_next_cluster:
 @load_needed:
     stw    <_ax, fat32.fat_sector
     stw    <_bx, fat32.fat_sector+2
+    jsr    fat32_end_of_fat
+    bcs    @err
     stw    fat32.fat_ptr, <_di
     jsr    fat32_read_sector
     bcc    @err
 @get_sector:
- 
-    addw   fat32.fat_ptr, fat32.fat_entry, <_si
+    lda    fat32.fat_entry
+    clc
+    adc    fat32.fat_ptr
+    sta    <_si
+    lda    fat32.fat_entry+1
+    and    #$01                     ; high(0x1ff)
+    adc    fat32.fat_ptr+1
+    sta    <_si+1
    
     ; Check if the next cluster is == $xfffffff
     ; We try to be smart.
@@ -801,6 +845,106 @@ fat32_next_cluster:
 @err:
     rts
 
+;;
+;; function: fat32_free_cluster
+;;
+;; Parameters:
+;;
+;; Return:
+;;
+fat32_free_cluster:
+    stz    <_r0
+    
+    ; Search from start
+    lda    fat32.fat_begin_lba+3
+    cmp    fat32.fat_sector+3
+    bne    @load
+    lda    fat32.fat_begin_lba+2
+    cmp    fat32.fat_sector+2
+    bne    @load
+    lda    fat32.fat_begin_lba+1
+    cmp    fat32.fat_sector+1
+    bne    @load
+    lda    fat32.fat_begin_lba
+    cmp    fat32.fat_sector
+    beq    @l0
+@load:
+        smb0   <_r0
+        stw    fat32.fat_begin_lba, <_ax
+        stw    fat32.fat_begin_lba+2, <_bx
+        stw    fat32.fat_ptr, <_di
+        jsr    fat32_read_sector
+        ; [todo] check error
+@l0:
+    stw    #(2*4), <_r1
+@loop:
+    lda    <_r1
+    clc
+    adc    fat32.fat_ptr
+    sta    <_si
+    lda    <_r1+1
+    and    #$01             ; high(0x1ff)
+    adc    fat32.fat_ptr+1
+    sta    <_si
+    
+    ldy    #$01
+    lda    [_si], Y
+    sta    <_ax
+    cmp    #$ff
+    iny
+    lda    [_si], Y
+    tax
+    iny
+    lda    [_si], Y
+    and    #$0f
+    tay
+    lda    [_si]
+    
+    bcc    @l1
+    cmp    #$ff
+    bne    @l1
+    cpx    #$ff
+    bne    @l1
+    cpy    #$0f
+    bne    @l1
+        ; empty fat entry found
+        ldx    #FAT32_OK
+        jmp    @end
+@l1:
+
+    addw   #$04, <_r1
+    
+    lda    <_r1+1
+    cmp    #$02
+    bne    @loop
+@load_needed:
+        incw   <_ax
+        bcc    @l2
+            incw   <_bx        
+@l2:
+        ; Did we reached the last fat sector?
+        jsr    fat32_end_of_fat
+        bcc    @l3
+            ; end of FAT reached
+            ldx    #FAT32_NOT_FOUND
+            bra    @end
+@l3:
+        smb0   <_r0
+        stw    fat32.fat_ptr, <_di
+        jsr    fat32_read_sector
+        ; [todo] check error
+    jmp    @loop
+    
+@end:
+    bbr0   <_r0, @end
+@restore: 
+        stw    fat32.fat_sector, <_ax
+        stw    fat32.fat_sector+2, <_bx 
+        stw    fat32.fat_ptr, <_di
+        jsr    fat32_read_sector
+        ; [todo] check error
+    rts
+    
 ;;
 ;; function: fat32_next_sector
 ;; Reads next data sector and stores the data at the memory location
@@ -1055,7 +1199,7 @@ fat32_read_entry:
     rts
 
 ;;
-;; function: fat32_open_file
+;; function: fat32_find_file
 ;; Opens the file whose name is the string pointed to by *_r1*.
 ;;
 ;; Parameters:
@@ -1065,7 +1209,7 @@ fat32_read_entry:
 ;; Return:
 ;;    X - FAT32_OK if the file was succesfully opened.
 ;; 
-fat32_open_file:
+fat32_find_file:
     lda    [_r1]
     cmp    #'/'
     bne    @relative
@@ -1139,7 +1283,6 @@ fat32_open_file:
     lda    [_r1]
     bne    @open
 @end:
-    jsr    fat32_open
     ldx    #FAT32_OK  
     rts
 @open:
@@ -1147,7 +1290,5 @@ fat32_open_file:
     jmp    @loop
     
 
-; [todo] create dir entry
 ; [todo] create file
-; [todo] create directory
 ; [todo] write file data
