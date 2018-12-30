@@ -874,7 +874,9 @@ fat32_free_cluster:
         stw    fat32.fat_begin_lba+2, <_bx
         stw    fat32.fat_ptr, <_di
         jsr    fat32_read_sector
-        ; [todo] check error
+        bcs    @l0
+            ldx    #FAT32_READ_ERROR
+            rts
 @l0:
     stw    #(2*4), <_r1
 @loop:
@@ -932,7 +934,7 @@ fat32_free_cluster:
         smb0   <_r0
         stw    fat32.fat_ptr, <_di
         jsr    fat32_read_sector
-        ; [todo] check error
+        bcc    @read_error
     jmp    @loop
     
 @end:
@@ -942,9 +944,11 @@ fat32_free_cluster:
         stw    fat32.fat_sector+2, <_bx 
         stw    fat32.fat_ptr, <_di
         jsr    fat32_read_sector
-        ; [todo] check error
+        bcc    @read_error
     rts
-    
+@read_error
+    ldx    #FAT32_READ_ERROR
+    rts
 ;;
 ;; function: fat32_next_sector
 ;; Reads next data sector and stores the data at the memory location
@@ -1168,7 +1172,7 @@ fat32_read_entry:
     cmp    #$02
     bne    @l1
         jsr    fat32_next_sector
-        ; [todo] check return value
+        bcc    @end
 @l1:
     addw   fat32.data_offset, fat32.data_ptr, <_si
     
@@ -1198,6 +1202,95 @@ fat32_read_entry:
     clc
     rts
 
+;;
+;; function: fat32_8.3_cmp
+;; Checks it the 8.3 filename stored in a directory entry matches current string.
+;;
+;; Parameters:
+;;    <_di - Directory entry filename.
+;;    <_r1 - Input string.
+;;
+;; Return:
+;;    Carry flag - Set if the entry filename matches.
+;;
+fat32_8.3_cmp:
+    cly
+@name:
+    lda    [_di], Y
+    cmp    #' '
+    beq    @l0
+    
+    cmp    [_r1], Y
+    bne    @neq
+    
+    iny
+    cpy    #8
+    bne    @name
+
+@l0:
+    lda    [_r1], Y
+    beq    @check_end
+
+    cmp    #'/'
+    beq    @check_end
+    
+    iny
+    cmp    #'.'
+    bne    @neq
+    
+@extension:
+    tya
+    tax
+@l1:
+    cpy    #8
+    beq    @l2
+
+    lda    [_di], Y
+    iny
+    cmp    #' '
+    beq    @l1
+    bra    @neq
+@l2:
+    sxy
+    lda    [_r1], Y
+    beq    @check_end.0    
+    sxy
+    cmp    [_di], Y
+    bne    @neq
+    
+    sxy
+    lda    [_r1], Y
+    beq    @check_end.0    
+    sxy
+    cmp    [_di], Y
+    bne    @neq
+
+    sxy
+    lda    [_r1], Y
+    beq    @check_end.0    
+    sxy
+    cmp    [_di], Y
+    bne    @neq
+
+    bra    @eq    
+    
+@check_end.0:
+    sxy
+@check_end:
+    lda    [_di], Y
+    cmp    #' '
+    bne    @neq
+    iny
+    cpy   #11
+    bne   @check_end
+    
+@eq:
+    sec
+    rts
+@neq:
+    clc
+    rts
+    
 ;;
 ;; function: fat32_find_file
 ;; Opens the file whose name is the string pointed to by *_r1*.
@@ -1232,7 +1325,7 @@ fat32_find_file:
     
     cly
     stw    <_bx, <_di
-    bcc    @std_cmp
+    bcc    @std_cmp             ; [todo] use fat32_8.3_cmp
     stz    <_r0
     stz    <_r0+1
     bra    @lfn_cmp
@@ -1288,7 +1381,13 @@ fat32_find_file:
 @open:
     jsr    fat32_open
     jmp    @loop
-    
 
-; [todo] create file
+; [todo] add new directory entry
+; [todo]   => name:
+; [todo]   =>   create_lfn
+; [todo]   =>   create_sfn
+; [todo]   => type (file, directory)
+; [todo]   => if directory : find free space and create empty directory (. .. etc...) / return sector dir entry
+; [todo]   => if file : find free space / return data sector
+
 ; [todo] write file data
