@@ -122,7 +122,6 @@ fat32.root_dir_1st_cluster .ds 4
 fat32.fat_begin_lba .ds 4
 fat32.cluster_begin_lba .ds 4
 
-; [todo] rename into fat32.data_cluster and fat32.data_sector ?
 fat32.current_cluster .ds 4
 fat32.current_sector  .ds 4
 fat32.sector_offset   .ds 1
@@ -1207,7 +1206,7 @@ fat32_read_entry:
 ;; Checks it the 8.3 filename stored in a directory entry matches current string.
 ;;
 ;; Parameters:
-;;    <_di - Directory entry filename.
+;;    <_dx - Directory entry filename.
 ;;    <_r1 - Input string.
 ;;
 ;; Return:
@@ -1216,7 +1215,7 @@ fat32_read_entry:
 fat32_8.3_cmp:
     cly
 @name:
-    lda    [_di], Y
+    lda    [_dx], Y
     cmp    #' '
     beq    @l0
     
@@ -1229,10 +1228,10 @@ fat32_8.3_cmp:
 
 @l0:
     lda    [_r1], Y
-    beq    @check_end
+    beq    @check_end.0
 
     cmp    #'/'
-    beq    @check_end
+    beq    @check_end.0
     
     iny
     cmp    #'.'
@@ -1245,7 +1244,7 @@ fat32_8.3_cmp:
     cpy    #8
     beq    @l2
 
-    lda    [_di], Y
+    lda    [_dx], Y
     iny
     cmp    #' '
     beq    @l1
@@ -1253,28 +1252,31 @@ fat32_8.3_cmp:
 @l2:
     sxy
     lda    [_r1], Y
-    beq    @check_end.0    
+    beq    @check_end.1
     sxy
-    cmp    [_di], Y
+    cmp    [_dx], Y
     bne    @neq
     
     sxy
     lda    [_r1], Y
-    beq    @check_end.0    
+    beq    @check_end.1    
     sxy
-    cmp    [_di], Y
+    cmp    [_dx], Y
     bne    @neq
 
     sxy
     lda    [_r1], Y
-    beq    @check_end.0    
+    beq    @check_end.1    
     sxy
-    cmp    [_di], Y
+    cmp    [_dx], Y
     bne    @neq
 
-    bra    @eq    
+    bra    @eq
     
 @check_end.0:
+    tya
+    tax
+@check_end.1:
     sxy
 @check_end:
     lda    [_di], Y
@@ -1322,20 +1324,20 @@ fat32_find_file:
     stw    <_di, <_si
     stw    <_dx, <_di
     jsr    fat32_lfn_get
-    
+
     cly
     stw    <_bx, <_di
-    bcc    @std_cmp             ; [todo] use fat32_8.3_cmp
-    stz    <_r0
-    stz    <_r0+1
-    bra    @lfn_cmp
-@std_cmp:
+    bcs    @lfn
+@sfn:
     stw    <_di, <_dx
-    lda    #11
-    sta    <_r0
-    lda    #' '
-    sta    <_r0+1
-@lfn_cmp:
+    jsr    fat32_8.3_cmp
+    bcc    @loop
+    sxy
+    bra    @found
+    
+@lfn:
+    stwz   <_r0
+@cmp:
     lda    [_r1], Y
     beq    @l0
     cmp    #'/'
@@ -1345,7 +1347,7 @@ fat32_find_file:
          
         iny
         cpy    <_r0
-        bne    @lfn_cmp
+        bne    @cmp
         bra    @loop            
 @l0:
     lda    [_dx], Y
