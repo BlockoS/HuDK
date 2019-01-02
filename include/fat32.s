@@ -1201,6 +1201,19 @@ fat32_read_entry:
     clc
     rts
 
+to_upper:
+    cmp    #'a'
+    bcc    @end
+ 
+    cmp    #'z'
+    beq    @l0
+    bcs    @end
+@l0:
+    sec
+    sbc    #$20             ; 'A' - 'a'
+@end:
+    rts
+
 ;;
 ;; function: fat32_8.3_cmp
 ;; Checks it the 8.3 filename stored in a directory entry matches current string.
@@ -1218,8 +1231,11 @@ fat32_8.3_cmp:
     lda    [_dx], Y
     cmp    #' '
     beq    @l0
-    
-    cmp    [_r1], Y
+
+    lda    [_r1], Y
+    bsr    to_upper
+        
+    cmp    [_dx], Y
     bne    @neq
     
     iny
@@ -1253,24 +1269,18 @@ fat32_8.3_cmp:
     sxy
     lda    [_r1], Y
     beq    @check_end.1
+    
+    bsr    to_upper
+    
     sxy
     cmp    [_dx], Y
     bne    @neq
     
-    sxy
-    lda    [_r1], Y
-    beq    @check_end.1    
-    sxy
-    cmp    [_dx], Y
-    bne    @neq
-
-    sxy
-    lda    [_r1], Y
-    beq    @check_end.1    
-    sxy
-    cmp    [_dx], Y
-    bne    @neq
-
+    inx
+    iny
+    cpy    #11
+    bne    @l2
+    
     bra    @eq
     
 @check_end.0:
@@ -1279,7 +1289,7 @@ fat32_8.3_cmp:
 @check_end.1:
     sxy
 @check_end:
-    lda    [_di], Y
+    lda    [_dx], Y
     cmp    #' '
     bne    @neq
     iny
