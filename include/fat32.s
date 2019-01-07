@@ -846,10 +846,13 @@ fat32_next_cluster:
 
 ;;
 ;; function: fat32_free_cluster
+;; Inspects the FAT in order to find the id of the first free cluster.
 ;;
 ;; Parameters:
 ;;
 ;; Return:
+;;  _cx - Id of the first free cluster.
+;;    X - FAT32_OK on success.
 ;;
 fat32_free_cluster:
     stz    <_r0
@@ -877,59 +880,58 @@ fat32_free_cluster:
             ldx    #FAT32_READ_ERROR
             rts
 @l0:
-    stw    #(2*4), <_r1
+    stw    #4, <_cx
+    stwz   <_dx
 @loop:
-    lda    <_r1
+    stz    <_ax
+    lda    <_cx
+    and    #$7f
+    asl    A
+    rol    <_ax
+    asl    A
+    rol    <_ax
+    
     clc
     adc    fat32.fat_ptr
     sta    <_si
-    lda    <_r1+1
+    lda    <_ax
     and    #$01             ; high(0x1ff)
     adc    fat32.fat_ptr+1
-    sta    <_si
+    sta    <_si+1
     
-    ldy    #$01
-    lda    [_si], Y
-    sta    <_ax
-    cmp    #$ff
-    iny
-    lda    [_si], Y
-    tax
-    iny
-    lda    [_si], Y
-    and    #$0f
-    tay
+    cly
     lda    [_si]
-    
-    bcc    @l1
-    cmp    #$ff
-    bne    @l1
-    cpx    #$ff
-    bne    @l1
-    cpy    #$0f
+    iny
+    ora    [_si], Y
+    iny
+    ora    [_si], Y
+    iny
+    ora    [_si], Y
     bne    @l1
         ; empty fat entry found
         ldx    #FAT32_OK
         jmp    @end
 @l1:
 
-    addw   #$04, <_r1
-    
-    lda    <_r1+1
-    cmp    #$02
+    incw   <_cx
+    bne    @l2
+        incw   <_dx
+@l2:
+    lda    <_cx
+    and    #$7f
     bne    @loop
 @load_needed:
         incw   <_ax
-        bcc    @l2
+        bne    @l3
             incw   <_bx        
-@l2:
+@l3:
         ; Did we reached the last fat sector?
         jsr    fat32_end_of_fat
-        bcc    @l3
+        bcc    @l4
             ; end of FAT reached
             ldx    #FAT32_NOT_FOUND
             bra    @end
-@l3:
+@l4:
         smb0   <_r0
         stw    fat32.fat_ptr, <_di
         jsr    fat32_read_sector
@@ -937,13 +939,14 @@ fat32_free_cluster:
     jmp    @loop
     
 @end:
-    bbr0   <_r0, @end
+    bbr0   <_r0, @exit
 @restore: 
         stw    fat32.fat_sector, <_ax
         stw    fat32.fat_sector+2, <_bx 
         stw    fat32.fat_ptr, <_di
         jsr    fat32_read_sector
         bcc    @read_error
+@exit:
     rts
 @read_error
     ldx    #FAT32_READ_ERROR
@@ -1394,12 +1397,7 @@ fat32_find_file:
     jsr    fat32_open
     jmp    @loop
 
-; [todo] add new directory entry
-; [todo]   => name:
-; [todo]   =>   create_lfn
-; [todo]   =>   create_sfn
-; [todo]   => type (file, directory)
-; [todo]   => if directory : find free space and create empty directory (. .. etc...) / return sector dir entry
-; [todo]   => if file : find free space / return data sector
-
+; [todo] fat32_write_sfn
+; [todo] fat32_write_lfn
+; [todo] fat32_alloc_cluster
 ; [todo] write file data
