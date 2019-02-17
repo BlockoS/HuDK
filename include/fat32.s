@@ -194,7 +194,6 @@ fat32.fat_sector .ds 4
 fat32.fat_entry  .ds 2
 
     .zp
-fat32.n_read      .ds 2
 fat32.fat_buffer  .ds 2
 fat32.data_buffer .ds 2
 
@@ -1082,21 +1081,20 @@ fat32_open:
     
 ;;
 ;; function: fat32_read
-;; Reads *_r0* bytes from the currently opened file and stores them at the memory 
-;; location given by *_r1*.
+;; Reads *_cx* bytes from the currently opened file and stores them at the memory 
+;; location given by *fat32.dst*.
 ;; 
 ;; Parameters:
-;;    _r0 - number of bytes to read from the currently opened file.
-;;    _r1 - memory location where the read bytes will be stored.
+;;    _cx - number of bytes to read from the currently opened file.
+;;    fat32.dst - memory location where the read bytes will be stored.
 ;;
 ;; Return:
-;;    _r0 - number of bytes read.
+;;    _cx - number of bytes read.
 ;;
 fat32_read:
-    stwz   <fat32.n_read
-    lda    <_r0+1
+    lda    <_cx+1
     pha
-    lda    <_r0
+    lda    <_cx
     pha
 @l0:
         lda    fat32.data_size+3
@@ -1113,8 +1111,8 @@ fat32_read:
         bne    @l1
             jmp    @nread
 @l1:
-        lda    <_r0
-        ora    <_r0+1
+        lda    <_cx
+        ora    <_cx+1
         bne    @l2
             jmp    @nread
 @l2:
@@ -1126,58 +1124,57 @@ fat32_read:
         beq    @l3
             jmp    @nread
 @l3:
-        stwz   <_ax
-        lda    <_r0+1
+        stwz   <fat32.r1
+        lda    <_cx+1
         cmp    #$02
         bcc    @l4
-            stw    #$200, <_ax
+            stw    #$200, <fat32.r1
             bra    @l5
 @l4:
-            stw    <_r0, <_ax
+            stw    <_cx, <fat32.r1
 @l5:
-        lda    <_ax
+        lda    <fat32.r1
         clc
         adc    fat32.data_offset
-        lda    <_ax+1
+        lda    <fat32.r1+1
         adc    fat32.data_offset+1
         cmp    #$02
         bcc    @l6
-            subw   fat32.data_offset, #$200, <_ax 
+            subw   fat32.data_offset, #$200, <fat32.r1
 @l6:
-        subw   fat32.data_pointer, fat32.data_size, <_cx
-        subw   fat32.data_pointer+2, fat32.data_size+2, <_dx
-        lda    <_dx
-        ora    <_dx+1
+        subw   fat32.data_pointer, fat32.data_size, <fat32.r2
+        subw   fat32.data_pointer+2, fat32.data_size+2, <fat32.r3
+        lda    <fat32.r3
+        ora    <fat32.r3+1
         bne    @l7
-            lda    <_ax+1
-            cmp    <_cx+1
+            lda    <fat32.r1+1
+            cmp    <fat32.r2+1
             bcc    @l7
             bne    @l8
-            lda    <_ax
-            cmp    <_cx
+            lda    <fat32.r1
+            cmp    <fat32.r2
             bcc    @l7
 @l8:
-                stw    <_cx, <_ax
+                stw    <fat32.r2, <fat32.r1
 @l7:
         memcpy_mode #SOURCE_INC_DEST_INC
-        addw   fat32.data_buffer, fat32.data_offset, <_si
-        memcpy_args <_si, <_r1, <_ax
+        addw   fat32.data_buffer, fat32.data_offset, <fat32.src
+        memcpy_args <fat32.src, <fat32.dst, <fat32.r1
         jsr    memcpy
 
-        addw   <_ax, fat32.n_read
-        addw   <_ax, <_r1
-        addw   <_ax, fat32.data_offset
-        addw   <_ax, fat32.data_pointer
-        subw   <_ax, <_r0
+        addw   <fat32.r1, <fat32.dst
+        addw   <fat32.r1, fat32.data_offset
+        addw   <fat32.r1, fat32.data_pointer
+        subw   <fat32.r1, <_cx
     jmp    @l0
 @nread:
     pla
     sec
-    sbc    <_r0
-    sta    <_r0
+    sbc    <_cx
+    sta    <_cx
     pla
-    sbc    <_r0+1
-    sta    <_r0+1
+    sbc    <_cx+1
+    sta    <_cx+1
     rts
 
 ; [todo] move to string utility functions
@@ -1482,6 +1479,7 @@ fat32_free_cluster:
     ldx    #FAT32_READ_ERROR
     rts
   
+; [todo] fat32_find_file, fat32_lfn_get use fat32 zp vars
 ; [todo] fat32_write_sfn
 ; [todo] fat32_write_lfn
 ; [todo] fat32_alloc_cluster

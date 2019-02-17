@@ -324,12 +324,12 @@ print_find_status:
     
 print_data:
 @l0:
-    stw    #data_buffer, <_r1
-    stw    #$10, <_r0
+    stw    #data_buffer, <fat32.dst
+    stw    #$10, <_cx
     jsr    fat32_read
     
-    lda    <_r0
-    ora    <_r0+1
+    lda    <_cx
+    ora    <_cx+1
     beq    @end
     
     jsr    newline
@@ -340,7 +340,7 @@ print_data:
     jsr    print_hex_u8
 
     iny
-    cpy    <_r0
+    cpy    <_cx
     bne    @l1
 
     bra    @l0
