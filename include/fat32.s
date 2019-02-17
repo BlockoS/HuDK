@@ -7,16 +7,47 @@
 ;; Maximum character length of a path.
 ;;
 FAT32_MAX_PATH = 260
-
+;;
+;; ubyte: FAT32_MAX_PARTITION_COUNT
+;; Maximum number of msdos partitions.
+;;
 FAT32_MAX_PARTITION_COUNT = 4
-
+;;
+;; ushort: FAT32_MBR_SIGNATURE
+;; Master Boot Record signature.
+;;
 FAT32_MBR_SIGNATURE = $AA55
+;;
+;; ubyte: FAT32_PARTITION
+;;
 FAT32_PARTITION = $0b
+;;
+;; ubyte: FAT32_INT13_PARTITION
+;;
 FAT32_INT13_PARTITION = $0c
+;;
+;; ubyte: FAT32_BOOT_JMP
+;; JMP opcode (x86).
+;;
 FAT32_BOOT_JMP = $EB
+;;
+;; ubyte: FAT32_BOOT_NOP
+;; NOP opcode (x86).
+;;
 FAT32_BOOT_NOP = $90
+;;
+;; ubyte: FAT32_MEDIA_TYPE
+;;
 FAT32_MEDIA_TYPE = $f8
+;;
+;; ubyte: FAT32_BYTES_PER_SECTOR
+;; Number of bytes per sector.
+;;
 FAT32_BYTES_PER_SECTOR = $200
+;;
+;; ubyte: FAT32_FAT_COUNT
+;; Maximum number of File Attribute Tables.
+;;
 FAT32_FAT_COUNT = $02
 
 ;;
@@ -178,6 +209,10 @@ fat32.tmp         .ds 2
     .code
 
 ;;
+;; Group: FAT32 routines
+;;
+
+;;
 ;; function: fat32_read_sector
 ;; Copies 512 bytes from the specified sector to the destination
 ;; buffer.
@@ -290,7 +325,6 @@ fat32_read_mbr:
 ;;
 ;; function: fat32_mount
 ;; Mount a FAT32 partition and opens its root directory.
-;; This routine calls <fat32_read_boot_sector> and <fat32_open_root_dir>.
 ;;
 ;; Parameters:
 ;;   A - Id of the partition to mount.
@@ -331,11 +365,11 @@ fat32_mount:
     lda    fat32.partition.sector+3, Y 
     sta    <_bx+1
     
-    jsr    fat32_read_boot_sector
-    beq    fat32_open_root_dir
+    jsr    _fat32_read_boot_sector
+    beq    _fat32_open_root_dir
         rts
 ;;
-;; function: fat32_open_root_dir
+;; function: _fat32_open_root_dir
 ;; Opens root directory of current partition.
 ;;
 ;; Parameters:
@@ -350,7 +384,7 @@ fat32_mount:
 ;;    fat32.fat_entry - Current FAT entry.
 ;;    X - FAT32_OK on success.
 ;;
-fat32_open_root_dir:
+_fat32_open_root_dir:
     ; Read first root directory sector
     lda    fat32.root_dir_cluster
     sta    <_cx
@@ -368,7 +402,7 @@ fat32_open_root_dir:
     sta    <_dx+1
     sta    fat32.current_cluster+3
 
-    jsr    fat32_sector_address
+    jsr    _fat32_sector_address
  
     stw    <_ax, fat32.current_sector 
     stw    <_bx, fat32.current_sector+2 
@@ -413,7 +447,7 @@ fat32_open_root_dir:
     ldx    #FAT32_READ_ERROR
     rts
 ;;
-;; function: fat32_read_boot_sector
+;; function: _fat32_read_boot_sector
 ;; Reads FAT32 boot sector.
 ;;
 ;; Parameters:
@@ -427,7 +461,7 @@ fat32_open_root_dir:
 ;;   fat32.cluster_begin_lba - 1st data cluster.
 ;;   X - FAT32_OK if a valid FAT32 boot sector was read.
 ;;
-fat32_read_boot_sector:
+_fat32_read_boot_sector:
     stw    <fat32.data_buffer, <_di
     jsr    fat32_read_sector
     bcc    @read_error.1
@@ -563,7 +597,7 @@ fat32_read_boot_sector:
     rts
 
 ;;
-;; function: fat32_sector_address
+;; function: _fat32_sector_address
 ;; Computes the sector id of a cluster.
 ;;
 ;; Parameters:
@@ -572,7 +606,7 @@ fat32_read_boot_sector:
 ;; Return:
 ;;    _ax - sector number.
 ;;
-fat32_sector_address:
+_fat32_sector_address:
     ; sector = fat32.cluster_begin_lba + (cluster_number - 2) * fat32.sectors_per_cluster
 
     ; _cx = cluster_number - 2
@@ -620,7 +654,7 @@ fat32_sector_address:
     rts
 
 ;;
-;; function: fat32_end_of_fat
+;; function: _fat32_end_of_fat
 ;; Checks if the last fat sector was reached.
 ;;
 ;; Parameters:
@@ -630,7 +664,7 @@ fat32_sector_address:
 ;; Return:
 ;;    Carry flag - Set if the last fat sector was reached. 
 ;;
-fat32_end_of_fat:
+_fat32_end_of_fat:
     clc
     lda    fat32.sectors_per_fat
     adc    fat32.fat_begin_lba
@@ -655,7 +689,7 @@ fat32_end_of_fat:
     rts
   
 ;;
-;; function: fat32_next_cluster
+;; function: _fat32_next_cluster
 ;; Retrieves the next data cluster from the File Allocation Table.
 ;;
 ;; Parameters:
@@ -666,7 +700,7 @@ fat32_end_of_fat:
 ;;                            the current cluster is the last one. 
 ;;    Carry flag - Set if the current cluster is the last cluster, cleared otherwise. 
 ;;
-fat32_next_cluster:
+_fat32_next_cluster:
     ; Compute FAT sector to load.
     lda    fat32.current_cluster
     cmp    #$80
@@ -728,7 +762,7 @@ fat32_next_cluster:
 @load_needed:
     stw    <_ax, fat32.fat_sector
     stw    <_bx, fat32.fat_sector+2
-    jsr    fat32_end_of_fat
+    jsr    _fat32_end_of_fat
     bcs    @err
     stw    <fat32.fat_buffer, <_di
     jsr    fat32_read_sector
@@ -779,7 +813,7 @@ fat32_next_cluster:
     rts
     
 ;;
-;; function: fat32_next_sector
+;; function: _fat32_next_sector
 ;; Reads next data sector and stores the data at the memory location
 ;; pointed by *fat32.data_buffer*.
 ;;
@@ -789,21 +823,21 @@ fat32_next_cluster:
 ;; Return:
 ;;    X - FAT32_OK on success.
 ;;
-fat32_next_sector:
+_fat32_next_sector:
     inc    fat32.sector_offset  
     lda    fat32.sector_offset
     cmp    fat32.sectors_per_cluster
     bne    @l3.1
         stz    fat32.sector_offset
 
-        jsr    fat32_next_cluster
+        jsr    _fat32_next_cluster
         cpx    #FAT32_OK
         bne    @err
         
         stw    fat32.current_cluster, <_cx
         stw    fat32.current_cluster+2, <_dx
 
-        jsr    fat32_sector_address
+        jsr    _fat32_sector_address
         
         stw    <_ax, fat32.current_sector
         stw    <_bx, fat32.current_sector+2
@@ -840,7 +874,7 @@ fat32_read_entry:
     lda    fat32.data_offset+1
     cmp    #$02
     bne    @l1
-        jsr    fat32_next_sector
+        jsr    _fat32_next_sector
         bcc    @end
 @l1:
     addw   fat32.data_offset, fat32.data_buffer, <_si
@@ -870,7 +904,7 @@ fat32_read_entry:
     rts
     
 ;;
-;; function: fat32_is_lfn
+;; function: _fat32_is_lfn
 ;; Checks if the current directory entry is a long filename (LFN) entry.
 ;;
 ;; Parameters:
@@ -879,7 +913,7 @@ fat32_read_entry:
 ;; Return:
 ;;    carry flag - 1 if the current directory entry is a LFN entry, 0 otherwise.
 ;;
-fat32_is_lfn:
+_fat32_is_lfn:
     ldy    #fat32_long_dir_entry.attributes
     lda    [_si], Y
     and    #FAT32_LONG_NAME_MASK
@@ -892,7 +926,7 @@ fat32_is_lfn:
     rts
 
 ;;
-;; function: fat32_checksum
+;; function: _fat32_checksum
 ;; Computes the directory entry checksum.
 ;;
 ;; Parameters:
@@ -900,7 +934,7 @@ fat32_is_lfn:
 ;; Return:
 ;;    A - checksum.
 ;;
-fat32_checksum:    
+_fat32_checksum:    
     cla
     cly
 @l0:
@@ -927,12 +961,12 @@ fat32_checksum:
 ;;   Carry flag - Set if there is a LFN associated with the directory entry.
 ;;
 fat32_lfn_get:
-    jsr    fat32_checksum
+    jsr    _fat32_checksum
     sta    <_r0
 @l0:
     subw   #$20, <_si
 
-    jsr    fat32_is_lfn
+    jsr    _fat32_is_lfn
     bcc    @err
 
     ldy    #fat32_long_dir_entry.checksum
@@ -1068,7 +1102,7 @@ fat32_open:
     sta    <_cx
     sta    fat32.current_cluster
     
-    jsr    fat32_sector_address
+    jsr    _fat32_sector_address
 
     stw    <_ax, fat32.current_sector
     stw    <_bx, fat32.current_sector+2
@@ -1100,11 +1134,11 @@ fat32_open:
 ;;    _r0 - number of bytes read.
 ;;
 fat32_read:
+    stwz   <fat32.n_read
     lda    <_r0+1
     pha
     lda    <_r0
     pha
-
 @l0:
         lda    fat32.data_size+3
         cmp    fat32.data_pointer+3
@@ -1129,7 +1163,7 @@ fat32_read:
         cmp    #$02
         bne    @l3
 
-        jsr    fat32_next_sector
+        jsr    _fat32_next_sector
         beq    @l3
             jmp    @nread
 @l3:
@@ -1187,6 +1221,7 @@ fat32_read:
     sta    <_r0+1
     rts
 
+; [todo] move to string utility functions
 to_upper:
     cmp    #'a'
     bcc    @end
@@ -1201,7 +1236,7 @@ to_upper:
     rts
 
 ;;
-;; function: fat32_8.3_cmp
+;; function: _fat32_8.3_cmp
 ;; Checks it the 8.3 filename stored in a directory entry matches current string.
 ;;
 ;; Parameters:
@@ -1211,7 +1246,7 @@ to_upper:
 ;; Return:
 ;;    Carry flag - Set if the entry filename matches.
 ;;
-fat32_8.3_cmp:
+_fat32_8.3_cmp:
     cly
 @name:
     lda    [_si], Y
@@ -1305,7 +1340,7 @@ fat32_find_file:
     lda    [_r1]
     cmp    #'/'
     bne    @relative
-        jsr    fat32_open_root_dir
+        jsr    _fat32_open_root_dir
         cpx    #FAT32_OK
         beq    @next
             rts
@@ -1325,7 +1360,7 @@ fat32_find_file:
     cly
     bcs    @lfn
 @sfn:
-    jsr    fat32_8.3_cmp
+    jsr    _fat32_8.3_cmp
     bcc    @loop
     
     sxy
@@ -1462,7 +1497,7 @@ fat32_free_cluster:
             incw   <_bx        
 @l3:
         ; Did we reached the last fat sector?
-        jsr    fat32_end_of_fat
+        jsr    _fat32_end_of_fat
         bcc    @l4
             ; end of FAT reached
             ldx    #FAT32_NOT_FOUND

@@ -4,11 +4,11 @@
     
     .bss
 string_buffer .ds FAT32_MAX_PATH
+data_buffer .ds 256
 
     .zp
 txt_x .ds 1
 txt_y .ds 1
-entry .ds 1
 
     .code
 _main:
@@ -16,22 +16,35 @@ _main:
     
     stz    <txt_x
     stz    <txt_y
-    
+    jsr    set_cursor
+
+    ; setup internal buffers address for data/directory entries and FAT    
     stw    #$3000, fat32.data_buffer
     stw    #$3200, fat32.fat_buffer
+
+    ; read MBR
     jsr    fat32_read_mbr
     phx
+    
     jsr    print_fat32_mbr_infos    
+    
     plx
+    cpx    #FAT32_OK
     bne    .loop
     
+    ; mount partition #0
     lda    #0
     jsr    fat32_mount
+    
     phx
+    
     jsr    print_fat32_partition_infos
+    
     plx
+    cpx    #FAT32_OK
     bne    .loop
     
+    ; print root directory entries
     jsr    newline
     
 	stw    #str.dir, <_si
@@ -40,6 +53,7 @@ _main:
     lda    #$4
     sta    <txt_x
 @l0:
+    ; get and print the current valid directory entry
     jsr    fat32_read_entry
     bcc    @end
 
@@ -55,6 +69,7 @@ _main:
     lda    #0
     sta    <txt_x
 
+    ; find the directory entry for "/0001/hudson.pal"
     stw    #filename, <_r1
     stw    #string_buffer, <_dx
     jsr    fat32_find_file
@@ -65,6 +80,7 @@ _main:
     cpx    #FAT32_OK
     bne    @end
 
+    ; open and print file data
     stw    <_dx, <_si
     jsr    fat32_open
     jsr    print_data
@@ -135,6 +151,7 @@ str.status_msg:
     .dw str.invalid_partition_id
     .dw str.not_found 
 
+; print a message describing the last error/status stored in X.
 print_fat32_status:
     txa
     asl    A
@@ -148,8 +165,10 @@ print_fat32_status:
     
     rts
 
+; move cursor to the next line
 newline:
     inc    <txt_y
+; set cursor to a given BAT coordinate
 set_cursor:
     ldx    <txt_x
     lda    <txt_y
@@ -157,11 +176,10 @@ set_cursor:
     jsr    vdc_set_write
     rts
 
+; print MBR infos
 print_fat32_mbr_infos:
     stx   <_bl
-
-    jsr    set_cursor
-
+    
 	stw    #str.mbr_status, <_si
     jsr    print_string_raw
         
@@ -170,7 +188,7 @@ print_fat32_mbr_infos:
     
     ldx    <_bl
     beq    @l0
-        rts   
+        rts
 @l0:
 
     clx    
@@ -207,6 +225,7 @@ print_fat32_mbr_infos:
     
     rts
 
+; print partition infos (mount status, fat sector, root dir sector)
 print_fat32_partition_infos:
     stx    <_bl
     
@@ -304,35 +323,27 @@ print_find_status:
     rts
     
 print_data:
-    
-    clx
 @l0:
-    phx   
-    jsr    newline
-    plx
+    stw    #data_buffer, <_r1
+    stw    #$10, <_r0
+    jsr    fat32_read
     
+    lda    <_r0
+    ora    <_r0+1
+    beq    @end
+    
+    jsr    newline
+
     cly
 @l1:
-        ; [todo] fat32_read
-        lda    [_si], Y
-        jsr    print_hex_u8
+    lda    data_buffer, Y
+    jsr    print_hex_u8
 
-        iny
-        cpy    #$10
-        bne    @l1
+    iny
+    cpy    <_r0
+    bne    @l1
 
-    tya
-    clc
-    adc    <_si
-    sta    <_si
-    lda    <_si+1
-    adc    #$00
-    sta    <_si+1
-    
-    inx
-    cpx    #$02
-    bne    @l0
-
+    bra    @l0
 @end:
     rts
 
