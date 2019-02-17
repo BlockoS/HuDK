@@ -198,13 +198,12 @@ fat32.n_read      .ds 2
 fat32.fat_buffer  .ds 2
 fat32.data_buffer .ds 2
 
-
-; [todo] work stuffs
-; [todo]    source
-; [todo]    dest
-; [todo]    r0...r3
-
-fat32.tmp         .ds 2
+fat32.src .ds 2
+fat32.dst .ds 2
+fat32.r0  .ds 2
+fat32.r1  .ds 2
+fat32.r2  .ds 2
+fat32.r3  .ds 2
 
     .code
 
@@ -250,13 +249,13 @@ fat32_read_mbr:
     bcc    @read_error
     
     ; check mbr signature
-    addw   <fat32.data_buffer, #fat32_mbr.signature, <_ax
-    lda    [_ax]
+    addw   <fat32.data_buffer, #fat32_mbr.signature, <fat32.src
+    lda    [fat32.src]
     cmp    #low(FAT32_MBR_SIGNATURE)
     bne    @invalid_mbr
     
     ldy    #$01
-    lda    [_ax], Y
+    lda    [fat32.src], Y
     cmp    #high(FAT32_MBR_SIGNATURE)
     beq    @find_partitions
 
@@ -265,13 +264,13 @@ fat32_read_mbr:
     rts
     
 @find_partitions:
-    addw   <fat32.data_buffer, #fat32_mbr.partition_0, <_ax
+    addw   <fat32.data_buffer, #fat32_mbr.partition_0, <fat32.src
     stz    fat32.partition.count
     
     clx
 @get_partition:
     ldy    #fat32_partition.type_code
-    lda    [_ax], Y
+    lda    [fat32.src], Y
     cmp    #FAT32_PARTITION
     beq    @add_partition
     cmp    #FAT32_INT13_PARTITION
@@ -285,19 +284,19 @@ fat32_read_mbr:
         tax
         
         ldy    #fat32_partition.lba_begin
-        lda    [_ax], Y
+        lda    [fat32.src], Y
         sta    fat32.partition.sector, X
         
         iny
-        lda    [_ax], Y
+        lda    [fat32.src], Y
         sta    fat32.partition.sector+1, X
         
         iny
-        lda    [_ax], Y
+        lda    [fat32.src], Y
         sta    fat32.partition.sector+2, X
         
         iny
-        lda    [_ax], Y
+        lda    [fat32.src], Y
         sta    fat32.partition.sector+3, X
         
         plx
@@ -305,7 +304,7 @@ fat32_read_mbr:
         inc    fat32.partition.count
 
 @next_partition:
-    addw   #16, <_ax
+    addw   #16, <fat32.src
     inx
     cpx    #FAT32_MAX_PARTITION_COUNT
     bne    @get_partition
@@ -386,28 +385,13 @@ fat32_mount:
 ;;
 _fat32_open_root_dir:
     ; Read first root directory sector
-    lda    fat32.root_dir_cluster
-    sta    <_cx
-    sta    fat32.current_cluster
-    
-    lda    fat32.root_dir_cluster+1
-    sta    <_cx+1
-    sta    fat32.current_cluster+1
-    
-    lda    fat32.root_dir_cluster+2
-    sta    <_dx
-    sta    fat32.current_cluster+2
-    
-    lda    fat32.root_dir_cluster+3
-    sta    <_dx+1
-    sta    fat32.current_cluster+3
-
+    stw    fat32.root_dir_cluster, fat32.current_cluster
+    stw    fat32.root_dir_cluster+2, fat32.current_cluster+2
     jsr    _fat32_sector_address
  
-    stw    <_ax, fat32.current_sector 
-    stw    <_bx, fat32.current_sector+2 
-
     stw    <fat32.data_buffer, <_di
+    stw    fat32.current_sector, <_ax
+    stw    fat32.current_sector+2, <_bx
     jsr    fat32_read_sector
     bcc    @read_error.0
     
@@ -501,13 +485,13 @@ _fat32_read_boot_sector:
     bne    @invalid_boot_sector
     
     ; 5. check signature
-    addw   <fat32.data_buffer, #fat32_boot_sector.signature, <_ax
-    lda    [_ax]
+    addw   <fat32.data_buffer, #fat32_boot_sector.signature, <fat32.src
+    lda    [fat32.src]
     cmp    #low(FAT32_MBR_SIGNATURE)
     bne    @invalid_boot_sector
     
     ldy    #$01
-    lda    [_ax], Y
+    lda    [fat32.src], Y
     cmp    #high(FAT32_MBR_SIGNATURE)
     beq    @get_root_directory
 
@@ -538,10 +522,10 @@ _fat32_read_boot_sector:
     
     ldy    #fat32_boot_sector.reserved_sectors
     lda    [fat32.data_buffer], Y
-    sta    <_ax
+    sta    <fat32.src
     iny
     lda    [fat32.data_buffer], Y
-    sta    <_ax+1
+    sta    <fat32.src+1
 
     ldy    #fat32_boot_sector.root_dir_1st_cluster
     lda    [fat32.data_buffer], Y
@@ -563,10 +547,10 @@ _fat32_read_boot_sector:
     tay
     clc
     lda    fat32.partition.sector,Y
-    adc    <_ax
+    adc    <fat32.src
     sta    fat32.fat_begin_lba
     lda    fat32.partition.sector+1,Y
-    adc    <_ax+1
+    adc    <fat32.src+1
     sta    fat32.fat_begin_lba+1
     lda    fat32.partition.sector+2,Y
     adc    #$00
@@ -601,55 +585,55 @@ _fat32_read_boot_sector:
 ;; Computes the sector id of a cluster.
 ;;
 ;; Parameters:
-;;    _cx - cluster number.
+;;    fat32.current_cluster - cluster number.
 ;;
 ;; Return:
-;;    _ax - sector number.
+;;    fat32.current_sector - sector number.
 ;;
 _fat32_sector_address:
     ; sector = fat32.cluster_begin_lba + (cluster_number - 2) * fat32.sectors_per_cluster
 
-    ; _cx = cluster_number - 2
-    subw   #$0002, <_cx
-    sbcw   #$0000, <_cx+2
+    ; fat32.r2 = cluster_number - 2
+    subw   #$0002, fat32.current_cluster, <fat32.r2
+    sbcw   #$0000, fat32.current_cluster+2, <fat32.r3
 
-    ; _ax = _cx * fat32.sectors_per_cluster
+    ; fat32.current_sector = _r2 * fat32.sectors_per_cluster
     lda    fat32.sectors_per_cluster
-    sta    <_ax+3
-    stz    <_ax+2
-    stz    <_ax+1
+    sta    fat32.current_sector+3
+    stz    fat32.current_sector+2
+    stz    fat32.current_sector+1
     
     cla
     ldy    #$08
 @loop:
     asl    A
-    rol    <_ax+1
-    rol    <_ax+2
-    rol    <_ax+3
+    rol    fat32.current_sector+1
+    rol    fat32.current_sector+2
+    rol    fat32.current_sector+3
     bcc    @next
         clc
-        adc    <_cx
+        adc    <fat32.r2
         pha
 
-        lda    <_ax+1
-        adc    <_cx+1
-        sta    <_ax+1
-        lda    <_ax+2
-        adc    <_cx+2
-        sta    <_ax+2
-        lda    <_ax+3
-        adc    <_cx+3
-        sta    <_ax+3
+        lda    fat32.current_sector+1
+        adc    <fat32.r2+1
+        sta    fat32.current_sector+1
+        lda    fat32.current_sector+2
+        adc    <fat32.r3
+        sta    fat32.current_sector+2
+        lda    fat32.current_sector+3
+        adc    <fat32.r3+1
+        sta    fat32.current_sector+3
         
         pla
 @next:
     dey
     bne    @loop
-    sta    <_ax
+    sta    fat32.current_sector
     
     ; _ax += fat32.cluster_begin_lba
-    addw   fat32.cluster_begin_lba, <_ax
-    adcw   fat32.cluster_begin_lba+2, <_ax+2
+    addw   fat32.cluster_begin_lba, fat32.current_sector
+    adcw   fat32.cluster_begin_lba+2, fat32.current_sector+2
     
     rts
 
@@ -706,33 +690,19 @@ _fat32_next_cluster:
     cmp    #$80
     lda    fat32.current_cluster+1
     rol    A
-    sta    <_ax
+    sta    <fat32.r2
     lda    fat32.current_cluster+2
     rol    A
-    sta    <_ax+1
+    sta    <fat32.r2+1
     lda    fat32.current_cluster+3
     rol    A
-    sta    <_bx
+    sta    <fat32.r3
     cla
     rol    A
-    sta    <_bx+1
+    sta    <fat32.r3+1
 
-    clc
-    lda    fat32.fat_begin_lba
-    adc    <_ax
-    sta    <_ax
-    
-    lda    fat32.fat_begin_lba+1
-    adc    <_ax+1
-    sta    <_ax+1
-    
-    lda    fat32.fat_begin_lba+2
-    adc    <_bx
-    sta    <_bx
-    
-    lda    fat32.fat_begin_lba+3
-    adc    <_bx+1
-    sta    <_bx+1
+    addw   fat32.fat_begin_lba, <fat32.r2
+    adcw   fat32.fat_begin_lba+2, <fat32.r3
     
     ; Get FAT entry.
     lda    fat32.current_cluster
@@ -743,25 +713,25 @@ _fat32_next_cluster:
     rol    fat32.fat_entry+1
 
     ; Check if we need to load a new FAT sector
-    lda    <_bx+1
+    lda    <fat32.r3+1
     cmp    fat32.fat_sector+3
     bne    @load_needed
 
-    lda    <_bx
+    lda    <fat32.r3
     cmp    fat32.fat_sector+2
     bne    @load_needed
 
-    lda    <_ax+1
+    lda    <fat32.r2+1
     cmp    fat32.fat_sector+1
     beq    @get_sector
   
-    lda    <_ax
+    lda    <fat32.r2
     cmp    fat32.fat_sector
     beq    @get_sector
        
 @load_needed:
-    stw    <_ax, fat32.fat_sector
-    stw    <_bx, fat32.fat_sector+2
+    stw    <fat32.r2, fat32.fat_sector
+    stw    <fat32.r3, fat32.fat_sector+2
     jsr    _fat32_end_of_fat
     bcs    @err
     stw    <fat32.fat_buffer, <_di
@@ -771,26 +741,26 @@ _fat32_next_cluster:
     lda    fat32.fat_entry
     clc
     adc    <fat32.fat_buffer
-    sta    <_si
+    sta    <fat32.src
     lda    fat32.fat_entry+1
     and    #$01                     ; high(0x1ff)
     adc    <fat32.fat_buffer+1
-    sta    <_si+1
+    sta    <fat32.src+1
    
     ; Check if the next cluster is == $xfffffff
     ; We try to be smart.
     ldy    #$01
-    lda    [_si], Y
-    sta    <_ax
+    lda    [fat32.src], Y
+    sta    fat32.r2
     cmp    #$ff             ; carry will be set if A >= #$ff
     iny
-    lda    [_si], Y
+    lda    [fat32.src], Y
     tax
     iny
-    lda    [_si], Y
+    lda    [fat32.src], Y
     and    #$0f
     tay
-    lda    [_si]
+    lda    [fat32.src]
                             ; check if byte 1 >= #$ff
     bcc    @l0              ; the carry flag was preserved
     cmp    #$ff             ; byte 0
@@ -804,7 +774,7 @@ _fat32_next_cluster:
         rts    
 @l0:
     sta    fat32.current_cluster
-    lda    <_ax
+    lda    <fat32.r2
     sta    fat32.current_cluster+1
     stx    fat32.current_cluster+2
     sty    fat32.current_cluster+3
@@ -834,18 +804,12 @@ _fat32_next_sector:
         cpx    #FAT32_OK
         bne    @err
         
-        stw    fat32.current_cluster, <_cx
-        stw    fat32.current_cluster+2, <_dx
-
         jsr    _fat32_sector_address
+        stw    fat32.current_sector, <_ax
+        stw    fat32.current_sector+2, <_bx
         
-        stw    <_ax, fat32.current_sector
-        stw    <_bx, fat32.current_sector+2
-
 @l3.1:
-    stw    fat32.data_buffer, <_di
-    stw    fat32.current_sector, <_ax
-    stw    fat32.current_sector+2, <_bx
+    stw    <fat32.data_buffer, <_di
     jsr    fat32_read_sector
     bcc    @read_error
     
@@ -1087,32 +1051,27 @@ fat32_open:
     ldy    #fat32_dir_entry.first_cluster_hi+1
     lda    [_si], Y
     sta    fat32.current_cluster+3
-    sta    <_cx+3
     ldy    #fat32_dir_entry.first_cluster_hi
     lda    [_si], Y
-    sta    <_cx+2
     sta    fat32.current_cluster+2
     
     ldy    #fat32_dir_entry.first_cluster_lo+1
     lda    [_si], Y
-    sta    <_cx+1
     sta    fat32.current_cluster+1
     ldy    #fat32_dir_entry.first_cluster_lo
     lda    [_si], Y
-    sta    <_cx
     sta    fat32.current_cluster
     
     jsr    _fat32_sector_address
-
-    stw    <_ax, fat32.current_sector
-    stw    <_bx, fat32.current_sector+2
 
     stz    fat32.sector_offset
     stwz   fat32.data_offset
     stwz   fat32.data_pointer
     stwz   fat32.data_pointer+2
     
-    stw    fat32.data_buffer, <_di
+    stw    <fat32.data_buffer, <_di
+    stw    fat32.current_sector, <_ax
+    stw    fat32.current_sector+2, <_bx
     jsr    fat32_read_sector
     bcc    @read_error
     ldx    #FAT32_OK
@@ -1336,7 +1295,7 @@ _fat32_8.3_cmp:
 ;;    X - FAT32_OK if the file was succesfully opened.
 ;; 
 fat32_find_file:
-    stw    <_dx, <fat32.tmp
+    stw    <_dx, <fat32.r0
     lda    [_r1]
     cmp    #'/'
     bne    @relative
@@ -1352,7 +1311,7 @@ fat32_find_file:
     jsr    fat32_read_entry
     bcc    @not_found
     
-    stw    <fat32.tmp, <_di
+    stw    <fat32.r0, <_di
     phw    <_si
     jsr    fat32_lfn_get
     plw    <_si
@@ -1373,7 +1332,7 @@ fat32_find_file:
     beq    @l0
     cmp    #'/'
     beq    @l0
-        cmp    [fat32.tmp], Y
+        cmp    [fat32.r0], Y
         bne    @loop
          
         iny
@@ -1381,7 +1340,7 @@ fat32_find_file:
         bne    @cmp
         bra    @loop            
 @l0:
-    lda    [fat32.tmp], Y
+    lda    [fat32.r0], Y
     cmp    <_r0+1
     beq    @found
     
