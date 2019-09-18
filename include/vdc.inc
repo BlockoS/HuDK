@@ -306,10 +306,10 @@ VDC_DMA_DST = $11
 ;;
 VDC_DMA_LEN = $12
 ;;
-;; ubyte: VDC_SATB_SRC
-;; VRAM-SATB Source Address Register
+;; ubyte: VDC_SAT_SRC
+;; VRAM-SAT Source Address Register
 ;;
-VDC_SATB_SRC = $13
+VDC_SAT_SRC = $13
 
 ;;
 ;; Group: Control Register Flags.
@@ -436,10 +436,10 @@ VDC_DMA_DST_INC     = %00000000
 ;;
 VDC_DMA_DST_DEC     = %00001000
 ;;
-;; bits: VDC_DMA_SATB_AUTO
-;; Enable SATB DMA auto-transfer.
+;; bits: VDC_DMA_SAT_AUTO
+;; Enable SAT DMA auto-transfer.
 ;;
-VDC_DMA_SATB_AUTO   = %00010000
+VDC_DMA_SAT_AUTO   = %00010000
 
 ;;
 ;; Group: VDC resgister copy in zero-page.
@@ -559,12 +559,12 @@ VDC_DEFAULT_BG_SIZE = VDC_BG_64x64
 VDC_DEFAULT_XRES = 256
   .endif
 
-  .ifndef VDC_DEFAULT_SATB_ADDR
+  .ifndef VDC_DEFAULT_SAT_ADDR
 ;;
-;; ushort: VDC_DEFAULT_SATB_ADDR
-;; Default SATB VRAM offset.
+;; ushort: VDC_DEFAULT_SAT_ADDR
+;; Default SAT VRAM offset.
 ;;
-VDC_DEFAULT_SATB_ADDR = $7F00
+VDC_DEFAULT_SAT_ADDR = $7F00
   .endif
 
   .ifdef MAGICKIT

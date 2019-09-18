@@ -324,9 +324,9 @@ vdc_init:
     .byte $0D, $DF, $00             ; VDW |
     .byte $0E, $0C, $00             ; VCR +
     .byte $0F, $10, $00             ; DCR DMA control register
-    .byte $13                       ; SATB adddress
-    .byte .lobyte(VDC_DEFAULT_SATB_ADDR)
-    .byte .hibyte(VDC_DEFAULT_SATB_ADDR)
+    .byte $13                       ; SAT adddress
+    .byte .lobyte(VDC_DEFAULT_SAT_ADDR)
+    .byte .hibyte(VDC_DEFAULT_SAT_ADDR)
 
 ; reset all hooks
 reset_hooks:
