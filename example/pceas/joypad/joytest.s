@@ -1,7 +1,3 @@
-; [todo] comments!
-; [todo] print joypad #id
-; [todo] trg stack
-
     .include "start.s"
     
 SATB_ADDR = $4000
