@@ -1,3 +1,10 @@
+;;
+;; This file is part of HuDK.
+;; ASM and C open source software development kit for the NEC PC Engine.
+;; Licensed under the MIT License
+;; (c) 2016-2019 MooZ
+;;
+
 ; Set current map pointers and infos.
   .macro map_set map, tile, colortab, w, h, m
     lda    #.bank(map)

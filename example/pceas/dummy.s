@@ -1,19 +1,24 @@
+;;
+;; This file is part of HuDK.
+;; ASM and C open source software development kit for the NEC PC Engine.
+;; Licensed under the MIT License
+;; (c) 2016-2019 MooZ
+;;
+
     .include "hudk.s"
     .include "vgm.s"
 
     .code
     .include "analog.s"
 main:
-    lda    #.bank(hudk.bitmap)
-    sta    <_bl
+    stb    #.bank(hudk.bitmap), <_bl
     stw    #$2200, <_di
     stw    #hudk.bitmap, <_si
     stw    #((hudk.bitmap.end - hudk.bitmap) >> 1), <_cx
     jsr    vdc_load_data
    
     stw    #$2e00, <_di 
-    lda    #.bank(font_8x8)
-    sta    <_bl
+    stb    #.bank(font_8x8), <_bl
     stw    #font_8x8, <_si
     stw    #(FONT_8x8_COUNT*8), <_cx
     jsr    font_load

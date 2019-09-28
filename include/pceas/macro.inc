@@ -1,3 +1,10 @@
+;;
+;; This file is part of HuDK.
+;; ASM and C open source software development kit for the NEC PC Engine.
+;; Licensed under the MIT License
+;; (c) 2016-2019 MooZ
+;;
+
 ; PCEas macro argument type
 ARG_NONE        .equ 0
 ARG_REG         .equ 1

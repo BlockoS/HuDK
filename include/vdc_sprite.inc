@@ -1,7 +1,18 @@
 ;;
+;; This file is part of HuDK.
+;; ASM and C open source software development kit for the NEC PC Engine.
+;; Licensed under the MIT License
+;; (c) 2016-2019 MooZ
+;;
+
+;;
 ;; Title: Sprite descprition and utilities
 ;;
 ;; [todo] description of the SAT sprite entry
+;; Sprite Y coordinate 0 1023 
+;; Sprite X coordinate 0 1023
+;; Pattern index + CG mode bit 
+;; Parameters (Horizontal or vertical flip, width, height, priority, palette index)
 ;; 
 
 ;;
