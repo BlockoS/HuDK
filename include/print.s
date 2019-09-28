@@ -188,6 +188,9 @@ print_hex_u16:
 ;;   _al - textarea width.
 ;;   _ah - textarea height.
 ;;
+;; Returns:
+;;   _si - pointer to the last displayed character or '\0'.
+;;
 print_string:
     jsr    vdc_calc_addr 
 
