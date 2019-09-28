@@ -220,6 +220,10 @@ print_string:
 @l0:
     bra    @print_loop
 @end:
+    tya
+    clc
+    adc    <_si
+    sta    <_si
     rts
 
 ;;
