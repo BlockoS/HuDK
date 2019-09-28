@@ -228,6 +228,34 @@ vdc_fill_bat_ex:
     rts
 
 ;;
+;; function: vdc_clear
+;; Set N words of VRAM to 0.
+;;
+;; Parameters:
+;;   _cl - word count.
+;;   _di - VRAM location.
+;;
+vdc_clear:
+    lda    <_cl
+    ora    <_ch
+    beq    @end
+    jsr    vdc_set_write
+@l1:
+        st1    #$00
+        st2    #$00
+        sec
+        lda    <_cl
+        sbc    #$01
+        sta    <_cl
+        lda    <_ch
+        sbc    #$00
+        sta    <_ch
+        ora    <_cl
+        bne    @l1
+@end:
+    rts
+
+;;
 ;; function: vdc_init
 ;; Initialize VDC.
 ;; 
@@ -454,4 +482,3 @@ vdc_xres_512:
     lda    #(VCE_BLUR_ON | VCE_DOT_CLOCK_10MHZ)
     sta    color_ctrl
     rts
-
