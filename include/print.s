@@ -19,6 +19,12 @@
 ;; >    jsr    print_char
 ;; >    lda    #'o'
 ;; >    jsr    print_char
+;;
+;; Note:
+;; The font must be 8x8 pixels wide and stored in VRAM as tiles.
+;; This means that the font routines modifies the BAT.
+;; Only standard ASCII (0-127 included) is supported at the moment.
+;;
   .code
 ;;
 ;; function: print_char
