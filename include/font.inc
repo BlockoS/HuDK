@@ -182,11 +182,3 @@ font_8x8:
     .byte $00,$00,$00,$32,$4c,$00,$00,$00    ;~
     .byte $81,$42,$24,$18,$18,$24,$42,$81    ;  
 
-  .ifdef MAGICKIT
-    .include "pceas/font.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/font.inc"
-    .endif
-  .endif
-

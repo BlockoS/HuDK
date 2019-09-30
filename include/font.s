@@ -5,6 +5,16 @@
 ;; (c) 2016-2019 MooZ
 ;;
 
+  .ifdef MAGICKIT
+    .zp
+font_base .ds 2
+  .else
+    .ifdef CA65
+    .zeropage
+font_base: .res 2
+    .endif
+  .endif
+
 ;;
 ;; Title: Font routines.
 ;;
