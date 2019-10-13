@@ -6,6 +6,8 @@
  */
 #include "output.h"
 
+#include "log.h"
+
 #include <errno.h>
 #include <string.h>
 
@@ -25,7 +27,7 @@ int output_raw(FILE *output, uint8_t* buffer, size_t sz) {
     size_t nwritten;    
     nwritten = fwrite(buffer, 1, sz, output);
     if(sz != nwritten) {
-        fprintf(stderr, "failed to write %zu bytes: %s\n", sz, strerror(errno));
+        log_error("failed to write %zu bytes: %s", sz, strerror(errno));
         return 0;
     }
     return 1;
