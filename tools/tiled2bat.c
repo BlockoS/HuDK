@@ -12,6 +12,8 @@
 
 #include <jansson.h>
 
+#include <argparse/argparse.h>
+
 #include "log.h"
 #include "image.h"
 #include "pce.h"
@@ -222,44 +224,48 @@ int tilemap_read(tilemap_t *map, const char *filename) {
     }
 
     if(!read_integer(root, "width", &width)) {
+        log_error("faile to get tilemap width");
         // [todo]
     }
     if(!read_integer(root, "height", &height)) {
+        log_error("faile to get tilemap height");
         // [todo]
     }
     if(!read_integer(root, "tilewidth", &tile_width)) {
+        log_error("faile to get tile width");
         // [todo]
     }
     if(!read_integer(root, "tileheight", &tile_height)) {
+        log_error("faile to get tile height");
         // [todo]
     }
     
     if(tile_width & 0x07) {
-        log_error("tile width (%d) must be a multiple of 8.\n", tile_width); 
+        log_error("tile width (%d) must be a multiple of 8", tile_width); 
         // [todo]
     }
     if(tile_height & 0x07) {
-        log_error("tile height (%d) must be a multiple of 8.\n", tile_height); 
+        log_error("tile height (%d) must be a multiple of 8", tile_height); 
         // [todo]
     }
 
     array = json_object_get(root, "layers");
     if(!json_is_array(array)) {
-        log_error("layers is not an array.\n");
+        log_error("layers is not an array");
         // [todo]
     }
     if(json_array_size(array) != 1) {
-        log_error("layers must contain only 1 element.\n");
+        log_error("layers must contain only 1 element");
         // [todo]
     }
     layer = json_array_get(array, 0);
     if(!layer) {
-        log_error("failed to get layer #0.\n");
+        log_error("failed to get layer #0");
         // [todo]
     }
 
     if(!read_string(layer, "name", &name)) {
-        log_error("failed to get layer name.\n");
+        log_error("failed to get layer name");
         // [todo]
     }
 
@@ -292,9 +298,8 @@ void usage() {
 
 int main(int argc, char* const argv[]) {
     int ret = EXIT_FAILURE;
-    tilemap_t map;
+    tilemap_t map = {0};
 
-    // [todo] cli options
     if(tilemap_read(&map, argv[1])) {
         ret = EXIT_SUCCESS;
     }

@@ -19,7 +19,7 @@ int pce_bitmap_to_tile(uint8_t *in, uint8_t *out, int stride) {
         for(x=7; x>=0; x--) {
             uint8_t byte = *src++;
             if(byte >= 16) {
-                fprintf(stderr, "Invalid input. The image must contain at most 16 colors\n");
+                fprintf(stderr, "invalid input. The image must contain at most 16 colors\n");
                 return 0;
             }
             out[ 0] |= ((byte   ) & 0x01) << x;
@@ -40,7 +40,7 @@ int pce_bitmap_to_sprite(uint8_t *in, uint8_t *out, int stride) {
         for(x=7; x>=0; x--) {
             uint8_t byte = *src++;
             if(byte >= 16) {
-                fprintf(stderr, "Invalid input. The image must contain at most 16 colors.\n");
+                fprintf(stderr, "invalid input. The image must contain at most 16 colors.\n");
                 return 0;
             }
             out[1 ] |= ((byte   ) & 0x01) << x;
@@ -51,7 +51,7 @@ int pce_bitmap_to_sprite(uint8_t *in, uint8_t *out, int stride) {
         for(x=7; x>=0; x--) {
             uint8_t byte = *src++;
             if(byte >= 16) {
-                fprintf(stderr, "Invalid input. The image must contain at most 16 colors.\n");
+                fprintf(stderr, "invalid input. The image must contain at most 16 colors.\n");
                 return 0;
             }
             out[0 ] |= ((byte   ) & 0x01) << x;
@@ -66,11 +66,11 @@ int pce_bitmap_to_sprite(uint8_t *in, uint8_t *out, int stride) {
 int pce_image_to_tiles(image_t *img, int bloc_width, int bloc_height, uint8_t *buffer, size_t *size) {
     *size = 0;
     if((img->height & 7) && (img->width & 7)) {
-        fprintf(stderr, "Input width and height should be a multiple of 8 (%d,%d)\n", img->width, img->height);
+        fprintf(stderr, "input width and height should be a multiple of 8 (%d,%d)\n", img->width, img->height);
         return 0;
     }
     if((bloc_width & 7) || (bloc_height & 7)) {
-        fprintf(stderr, "Bloc width and height must be a multiple of 8 (%d, %d)\n", bloc_width, bloc_height);
+        fprintf(stderr, "bloc width and height must be a multiple of 8 (%d, %d)\n", bloc_width, bloc_height);
         return 0;
     }
     
@@ -106,17 +106,17 @@ int pce_image_to_sprites(image_t *img, int sprite_width, int sprite_height, uint
     *size = 0;
     
     if((img->height & 15) && (img->width & 15)) {
-        fprintf(stderr, "Iinput width and height should be a multiple of 16 (%d,%d)\n", img->width, img->height);
+        fprintf(stderr, "input width and height should be a multiple of 16 (%d,%d)\n", img->width, img->height);
         return 0;
     }
     
     if((sprite_width & 15) || ((sprite_width != 16) && (sprite_width != 32))) {
-        fprintf(stderr, "Sprite width must be 16 or 32 (%d)\n", sprite_width);
+        fprintf(stderr, "sprite width must be 16 or 32 (%d)\n", sprite_width);
         return 0;
     }
     
     if((sprite_height & 15) || ((sprite_height != 16) && (sprite_height != 32) && (sprite_height != 64))) {
-        fprintf(stderr, "Sprite height must be 16, 32 or 64 (%d)\n", sprite_height);
+        fprintf(stderr, "sprite height must be 16, 32 or 64 (%d)\n", sprite_height);
         return 0;
     }
     

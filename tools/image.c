@@ -62,7 +62,7 @@ int image_load_png(image_t *dest, const char* filename) {
     
     ret = png_image_begin_read_from_file(&image, filename);
     if(!ret) {
-        log_error("Read error: %s", image.message);        
+        log_error("read error: %s", image.message);        
     }
 
     if(ret) {
@@ -71,7 +71,7 @@ int image_load_png(image_t *dest, const char* filename) {
         dest->bytes_per_pixel = PNG_IMAGE_PIXEL_COMPONENT_SIZE(image.format);
         dest->data = (uint8_t*)malloc(PNG_IMAGE_SIZE(image));
         if(dest->data == NULL) {
-            log_error("Unable to allocate buffer: %s", strerror(errno));
+            log_error("unable to allocate buffer: %s", strerror(errno));
             ret = 0;
         }
     }
@@ -80,7 +80,7 @@ int image_load_png(image_t *dest, const char* filename) {
         dest->color_count = image.colormap_entries;
         dest->palette = (uint8_t*)malloc(PNG_IMAGE_COLORMAP_SIZE(image));
         if(dest->palette == NULL) {
-            log_error("Unable to allocate buffer: %s", strerror(errno));
+            log_error("unable to allocate buffer: %s", strerror(errno));
             ret = 0;
         }
     }
@@ -88,7 +88,7 @@ int image_load_png(image_t *dest, const char* filename) {
     if(ret) {
         ret = png_image_finish_read(&image, NULL, dest->data, 0, dest->palette);
         if(ret == 0) {
-            log_error("Read error: %s", image.message);
+            log_error("read error: %s", image.message);
         }
     }
     
@@ -128,13 +128,13 @@ static int pcx_read_header(FILE* input, image_t* dest) {
     size_t nread;
     nread = fread(header.raw, 1, 128, input);
     if(nread != 128) {
-        log_error("Failed to read PCX header: %s", strerror(errno));    
+        log_error("failed to read PCX header: %s", strerror(errno));    
         return 0;
     }
     
     dest->bytes_per_pixel = header.info.nplanes;
     if((dest->bytes_per_pixel != 3) && (dest->bytes_per_pixel != 1)) {
-        log_error("Invalid bytes per pixel");
+        log_error("invalid bytes per pixel");
         return 0;
     }
 
@@ -157,7 +157,7 @@ static int pcx_read_data(FILE* input, image_t* dest) {
             for(x=0, out=row; x<dest->width; ) {
                 nread = fread(&byte, 1, 1, input);
                 if(nread != 1) {
-                    log_error("Read error: %s", strerror(errno));
+                    log_error("read error: %s", strerror(errno));
                     return 0;
                 }
                 
@@ -166,7 +166,7 @@ static int pcx_read_data(FILE* input, image_t* dest) {
                     uint8_t count, data;
                     nread = fread(&data, 1, 1, input);
                     if(nread != 1) {
-                        log_error("Read error: %s", strerror(errno));
+                        log_error("read error: %s", strerror(errno));
                         return 0;
                     }
 
@@ -177,7 +177,7 @@ static int pcx_read_data(FILE* input, image_t* dest) {
                     }
                    
                     if(count && (x >= dest->width)) {
-                        log_error("Read aborted: malformed PCX data!");
+                        log_error("read aborted: malformed PCX data!");
                         return 0;
                     }
                 }
@@ -200,7 +200,7 @@ static int pcx_read_palette(FILE* input, image_t* dest) {
     fseek(input, SEEK_END, -769);
     nread = fread(&dummy, 1, 1, input);
     if(nread != 1) {
-        log_error("Read error: %s", strerror(errno));
+        log_error("read error: %s", strerror(errno));
         return 0;
     }
     if(dummy != 0x0C) {
@@ -210,13 +210,13 @@ static int pcx_read_palette(FILE* input, image_t* dest) {
     dest->color_count = 256;
     dest->palette = (uint8_t*)malloc(dest->color_count*3*sizeof(uint8_t));
     if(dest->palette == NULL) {
-        log_error("Failed to allocate palette: %s", strerror(errno));
+        log_error("failed to allocate palette: %s", strerror(errno));
         return 0;
     }
     
     nread = fread(dest->palette, 1, 3*dest->color_count, input);
     if(nread != 3*dest->color_count) {
-        log_error("Read error: %s", strerror(errno));
+        log_error("read error: %s", strerror(errno));
         return 0;
     }
     return 1;
@@ -228,32 +228,32 @@ int image_load_pcx(image_t* dest, const char* filename) {
     
     input = fopen(filename, "rb");
     if(input == NULL) {
-        log_error("Unable to open file %s: %s", filename, strerror(errno));
+        log_error("unable to open file %s: %s", filename, strerror(errno));
         return 0;
     }
     
     if(!(ret = pcx_read_header(input, dest))) {
-        log_error("Failed to read pcx header from %s", filename);
+        log_error("failed to read pcx header from %s", filename);
     }
     
     if(ret) {
         dest->data = (uint8_t*)malloc(dest->width * dest->height * dest->bytes_per_pixel * sizeof(uint8_t));
         if(dest->data != NULL) {
-            log_error("Failed to allocate image buffer: %s", strerror(errno));
+            log_error("failed to allocate image buffer: %s", strerror(errno));
             ret = 0;
         }
     }
 
     if(ret) {
         if(!(ret = pcx_read_data(input, dest))) {
-            log_error("Failed to read pcx data from %s", filename);
+            log_error("failed to read pcx data from %s", filename);
         }
     }
 
     if(ret) {
         if(dest->bytes_per_pixel == 1) {
             if(!(ret = pcx_read_palette(input, dest))) {
-                log_error("Failed to read pcx palette from %s", filename);
+                log_error("failed to read pcx palette from %s", filename);
             }
         }
         else {
