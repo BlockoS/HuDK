@@ -27,12 +27,13 @@ int tileset_create(tileset_t *tileset, int tile_count, int tile_width, int tile_
 }
 
 int tileset_add(tileset_t *tileset, int tile_index, image_t *img, int x, int y) {
-    int i, j, k, l, t;
+    int i, j, stride;
     int palette_index;
-    
-    if((tile_index >= tileset->tile_count) || ((x+8) >= img->width) || ((y+8) >= img->height) ||
+    uint8_t *ptr;
+
+    if((tile_index >= tileset->tile_count) || ((x+tileset->tile_width) > img->width) || ((y+tileset->tile_height) > img->height) ||
        (x<0) || (y<0)){
-        log_error("invalid parameter.");
+        log_error("invalid parameter. %d %d %d %d %d %d", tile_index, tileset->tile_count, x, y, img->width, img->height);
         return 0;
     }
 
@@ -69,13 +70,11 @@ int tileset_add(tileset_t *tileset, int tile_index, image_t *img, int x, int y) 
     }
 
     // copy bitmaps.
-    for(j=0, t=0; j<tileset->tile_height; j+=8) {
-        for(i=0; i<tileset->tile_width; i+=8, t+=8) {
-            for(l=0; l<8; l++) {
-                for(k=0; k<8; k++) {
-                    tileset->tiles[k+t + l*tileset->tile_width*tileset->tile_height] = img->data[x+i+k + (y+j+l)*img->width];
-                }
-            }
+    stride = tileset->tile_width * tileset->tile_count;
+    ptr = tileset->tiles + tile_index * tileset->tile_width;
+    for(j=0; j<tileset->tile_height; j++) {
+        for(i=0; i<tileset->tile_width; i++) {
+            ptr[i + (j*stride)] = img->data[x+i + (y+j)*img->width] - (palette_index*16);
         }
     }
     return 1;

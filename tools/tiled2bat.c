@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <libgen.h> // [todo] posix :/
+
 #include <jansson.h>
 
 #include <argparse/argparse.h>
@@ -102,18 +104,18 @@ static int read_string(json_t* node, const char* name, char** value) {
     return 1;
 }
 
-int tilemap_read_tilesets(tilemap_t *map, json_t* node) {
+int tilemap_read_tilesets(tilemap_t *map, char *path, json_t* node) {
     size_t index;
     json_t *value;
 
     json_array_foreach(node, index, value) {
         int first_gid, tile_count, tile_width, tile_height, columns, margin, spacing;
-        char *name = NULL, *filename = NULL;
+        char *name = NULL, *image_filename = NULL;
         if(!read_string(value, "name", &name)) {
             log_error("failed to get tileset name");
             return 0;
         }
-        if(!read_string(value, "image", &filename)) {
+        if(!read_string(value, "image", &image_filename)) {
             log_error("failed to get tileset image");
             return 0;
         }
@@ -147,8 +149,20 @@ int tilemap_read_tilesets(tilemap_t *map, json_t* node) {
         }
 
         if(tileset_create(&map->tileset[index], tile_count, tile_width, tile_height)) {
+            int ret;
             image_t img;
-            if(image_load_png(&img, filename)) {
+
+            size_t path_len = strlen(path);
+            size_t filename_len = strlen(image_filename);
+            char *filename = (char*)malloc(path_len + filename_len + 2);
+
+            strncpy(filename, path, path_len);
+            filename[path_len] = '/';
+            strncpy(filename+path_len+1, image_filename, filename_len);
+
+            ret = image_load_png(&img, filename);
+            free(filename);
+            if(ret) {
                 int i = 0;
                 for(int y=margin; y<img.height; y+=spacing+tile_height) {
                     for(int x=margin, c=0; (x<img.width) && (c<columns); x+=spacing+tile_width, i++, c++) {
@@ -210,6 +224,8 @@ int tilemap_read(tilemap_t *map, const char *filename) {
     json_t *layer;
     json_t *tileset;
 
+    char *path;
+    char *source_path;
     char *name;
     int width;
     int height;
@@ -222,6 +238,14 @@ int tilemap_read(tilemap_t *map, const char *filename) {
         log_error("%s:%d:%d %s", filename, error.line, error.column, error.text);
         return 0;
     }
+
+    path = realpath(filename, NULL);
+    if(path == NULL) {
+        // [todo]
+        return 0;
+    }
+
+    source_path = dirname(path);
 
     if(!read_integer(root, "width", &width)) {
         log_error("faile to get tilemap width");
@@ -283,27 +307,75 @@ int tilemap_read(tilemap_t *map, const char *filename) {
         // [todo]
     }
 
-    if(!tilemap_read_tilesets(map, tileset)) {
+    if(!tilemap_read_tilesets(map, source_path, tileset)) {
         // [todo]
     }
     
+    free(path);
     json_decref(root);
 
     return 1;    
 }
 
-void usage() {
-    // [todo]
-}
+#if 0
+static int tileset_encode(tileset_t *tileset) {
+    int ret;
 
-int main(int argc, char* const argv[]) {
+    image_t img = {
+        tileset->tiles,
+        width,
+        height,
+        1,
+        NULL,
+        0
+    };
+    pce_image_to_tiles(&img, tileset->tile_width, tileset->tile_height, out, size);
+
+    return ret;
+}
+#endif
+int main(int argc, const char **argv) {
     int ret = EXIT_FAILURE;
+
+    static const char *const usages[] = {
+        "tiled2bat [options] <in>",
+        NULL
+    };
+
+    struct argparse_option options[] = {
+        OPT_HELP(),
+        // [todo]
+        OPT_END(),
+    };
+
+    struct argparse argparse;
+
+    argparse_init(&argparse, options, usages, 0);
+    argparse_describe(&argparse, "\nTiled2bat : Convert Tiled json to PC Engine", "  ");
+    argc = argparse_parse(&argparse, argc, argv);
+    if(!argc) {
+        argparse_usage(&argparse);
+        return 0;
+    }
+
     tilemap_t map = {0};
 
-    if(tilemap_read(&map, argv[1])) {
+    if(tilemap_read(&map, argv[0])) {
         ret = EXIT_SUCCESS;
     }
+    
     // [todo] convert
+#if 0
+    for(int i=0; i<map.tileset_count; i++) {
+        char filename[256];
+        FILE *out;
+        sprintf(filename, "%04d.pgm", i);
+        out = fopen(filename, "wb");
+        fprintf(out, "P5\n%d %d\n15\n", map.tileset[i].tile_count * map.tileset[i].tile_width, map.tileset[i].tile_height);
+        fwrite(map.tileset[i].tiles, 1, map.tileset[i].tile_count * map.tileset[i].tile_width * map.tileset[i].tile_height, out);
+        fclose(out);
+    }
+#endif
     tilemap_destroy(&map);
     return ret;
 }

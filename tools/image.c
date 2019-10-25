@@ -62,7 +62,7 @@ int image_load_png(image_t *dest, const char* filename) {
     
     ret = png_image_begin_read_from_file(&image, filename);
     if(!ret) {
-        log_error("read error: %s", image.message);        
+        log_error("read error: %s %s", filename, image.message);        
     }
 
     if(ret) {
