@@ -10,11 +10,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <libgen.h> // [todo] posix :/
-
 #include <jansson.h>
 
 #include <argparse/argparse.h>
+
+#include <cwalk.h>
 
 #include "log.h"
 #include "image.h"
@@ -151,15 +151,16 @@ int tilemap_read_tilesets(tilemap_t *map, char *path, json_t* node) {
         if(tileset_create(&map->tileset[index], tile_count, tile_width, tile_height)) {
             int ret;
             image_t img;
+            size_t filename_len = strlen(path) + strlen(image_filename) + 2;
+            char *filename = (char*)malloc(filename_len);
 
-            size_t path_len = strlen(path);
-            size_t filename_len = strlen(image_filename);
-            char *filename = (char*)malloc(path_len + filename_len + 2);
-
-            strncpy(filename, path, path_len);
-            filename[path_len] = '/';
-            strncpy(filename+path_len+1, image_filename, filename_len);
-
+            size_t len = cwk_path_join(path, image_filename, filename, filename_len);
+            if(len != filename_len) {
+                filename = (char*)realloc(filename, len+1);
+                if(cwk_path_join(path, image_filename, filename, len+1) != len) {
+                    // [todo]
+                }
+            }
             ret = image_load_png(&img, filename);
             free(filename);
             if(ret) {
@@ -225,13 +226,13 @@ int tilemap_read(tilemap_t *map, const char *filename) {
     json_t *tileset;
 
     char *path;
-    char *source_path;
     char *name;
     int width;
     int height;
     int tile_width;
     int tile_height;
     int tileset_count;
+    size_t len;
 
     root = json_load_file(filename, 0, &error);
     if(!root) {
@@ -239,13 +240,9 @@ int tilemap_read(tilemap_t *map, const char *filename) {
         return 0;
     }
 
-    path = realpath(filename, NULL);
-    if(path == NULL) {
-        // [todo]
-        return 0;
-    }
-
-    source_path = dirname(path);
+    path = strdup(filename);
+    cwk_path_get_dirname(path, &len);
+    path[len] = '\0';
 
     if(!read_integer(root, "width", &width)) {
         log_error("faile to get tilemap width");
@@ -307,7 +304,7 @@ int tilemap_read(tilemap_t *map, const char *filename) {
         // [todo]
     }
 
-    if(!tilemap_read_tilesets(map, source_path, tileset)) {
+    if(!tilemap_read_tilesets(map, path, tileset)) {
         // [todo]
     }
     

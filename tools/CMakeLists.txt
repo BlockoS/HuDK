@@ -15,5 +15,5 @@ target_include_directories(tiled2bat PRIVATE ${JANSSON_INCLUDE_DIRS} ${PNG_INCLU
 if(UNIX)
     target_compile_definitions(tiled2bat PRIVATE LOG_TERM_COLOR)
 endif(UNIX)
-target_link_libraries(tiled2bat ${JANSSON_LIBRARIES} ${PNG_LIBRARIES} argparse)
+target_link_libraries(tiled2bat ${JANSSON_LIBRARIES} ${PNG_LIBRARIES} argparse cwalk)
 target_compile_options(tiled2bat PRIVATE -Wall -Werror)
