@@ -12,14 +12,15 @@
 #include <stdio.h>
 #include <string.h>
 
-int tileset_create(tileset_t *tileset, int tile_count, int tile_width, int tile_height) {
+int tileset_create(tileset_t *tileset, const char *name, int tile_count, int tile_width, int tile_height) {
     memset(tileset, 0, sizeof(tileset_t));
     tileset->tile_count = tile_count;
     tileset->tile_width = tile_width;
     tileset->tile_height = tile_height;
     tileset->palette_index = (uint8_t*)malloc(tile_count * sizeof(uint8_t));
     tileset->tiles = (uint8_t*)malloc(tile_count * tile_width * tile_height * sizeof(uint8_t));
-    if(!(tileset->palette_index && tileset->tiles)) {
+    tileset->name = strdup(name);
+    if(!(tileset->palette_index && tileset->tiles && tileset->name)) {
         tileset_destroy(tileset);
         return 0;
     }
@@ -62,6 +63,7 @@ int tileset_add(tileset_t *tileset, int tile_index, image_t *img, int x, int y) 
             return 0;
         }
         tileset->palette = tmp;
+        tileset->palette_count = palette_index + 1;
     }
     for(i=palette_index*16, j=0; (j<16) && (i<img->color_count); j++, i++) {
         tileset->palette[3*i  ] = img->palette[3*i  ];
@@ -81,6 +83,9 @@ int tileset_add(tileset_t *tileset, int tile_index, image_t *img, int x, int y) 
 }
 
 void tileset_destroy(tileset_t *tileset) {
+    if(tileset->name) {
+        free(tileset->name);
+    }
     if(tileset->tiles) {
         free(tileset->tiles);
     }

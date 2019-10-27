@@ -148,7 +148,7 @@ int tilemap_read_tilesets(tilemap_t *map, char *path, json_t* node) {
             return 0;
         }
 
-        if(tileset_create(&map->tileset[index], tile_count, tile_width, tile_height)) {
+        if(tileset_create(&map->tileset[index], name, tile_count, tile_width, tile_height)) {
             int ret;
             image_t img;
             size_t filename_len = strlen(path) + strlen(image_filename) + 2;
@@ -162,21 +162,22 @@ int tilemap_read_tilesets(tilemap_t *map, char *path, json_t* node) {
                 }
             }
             ret = image_load_png(&img, filename);
-            free(filename);
             if(ret) {
                 int i = 0;
-                for(int y=margin; y<img.height; y+=spacing+tile_height) {
-                    for(int x=margin, c=0; (x<img.width) && (c<columns); x+=spacing+tile_width, i++, c++) {
+                for(int y=margin; ret && (y<img.height); y+=spacing+tile_height) {
+                    for(int x=margin, c=0; ret && (x<img.width) && (c<columns); x+=spacing+tile_width, i++, c++) {
                         if(!tileset_add(&map->tileset[index], i, &img, x, y)) {
-                            // [todo]
+                            log_error("failed to add tile %d", i);
+                            ret = 0;
                         }
                     }
                 }
             }
             else {
-                // [todo]
+                log_error("failed to load %s", filename);
             }
             image_destroy(&img);
+            free(filename);
         }
     }
     return 1;
@@ -234,9 +235,73 @@ int tilemap_read(tilemap_t *map, const char *filename) {
     int tileset_count;
     size_t len;
 
-    root = json_load_file(filename, 0, &error);
+    root = json_load_file(filename, 0, &error); // [todo] move out of tilemap_read
     if(!root) {
         log_error("%s:%d:%d %s", filename, error.line, error.column, error.text);
+        return 0;
+    }
+
+    if(!read_integer(root, "width", &width)) {
+        log_error("faile to get tilemap width");
+        return 0;
+    }
+    if(!read_integer(root, "height", &height)) {
+        log_error("faile to get tilemap height");
+        return 0;
+    }
+    if(!read_integer(root, "tilewidth", &tile_width)) {
+        log_error("faile to get tile width");
+        return 0;
+    }
+    if(!read_integer(root, "tileheight", &tile_height)) {
+        log_error("faile to get tile height");
+        return 0;
+    }
+    
+    if(tile_width & 0x07) {
+        log_error("tile width (%d) must be a multiple of 8", tile_width); 
+        return 0;
+    }
+    if(tile_height & 0x07) {
+        log_error("tile height (%d) must be a multiple of 8", tile_height); 
+        return 0;
+    }
+
+    array = json_object_get(root, "layers");
+    if(!json_is_array(array)) {
+        log_error("layers is not an array");
+        return 0;
+    }
+    if(json_array_size(array) != 1) {
+        log_error("layers must contain only 1 element");
+        return 0;
+    }
+    layer = json_array_get(array, 0);
+    if(!layer) {
+        log_error("failed to get layer #0");
+        return 0;
+    }
+
+    if(!read_string(layer, "name", &name)) {
+        log_error("failed to get layer name");
+        return 0;
+    }
+
+    tileset = json_object_get(root, "tilesets");
+    if(!json_is_array(tileset)) {
+        log_error("failed to get tilesets");
+        return 0;
+    }
+    tileset_count = json_array_size(tileset);
+
+    if(!tilemap_create(map, name, width, height, tile_width, tile_height, tileset_count)) {
+        log_error("failed to create tileset %s", name);
+        tilemap_destroy(map);
+        return 0;
+    }
+
+    if(!tilemap_read_data(map, layer)) {
+        log_error("failed read tilemap %s", name);
         return 0;
     }
 
@@ -244,93 +309,124 @@ int tilemap_read(tilemap_t *map, const char *filename) {
     cwk_path_get_dirname(path, &len);
     path[len] = '\0';
 
-    if(!read_integer(root, "width", &width)) {
-        log_error("faile to get tilemap width");
-        // [todo]
-    }
-    if(!read_integer(root, "height", &height)) {
-        log_error("faile to get tilemap height");
-        // [todo]
-    }
-    if(!read_integer(root, "tilewidth", &tile_width)) {
-        log_error("faile to get tile width");
-        // [todo]
-    }
-    if(!read_integer(root, "tileheight", &tile_height)) {
-        log_error("faile to get tile height");
-        // [todo]
-    }
-    
-    if(tile_width & 0x07) {
-        log_error("tile width (%d) must be a multiple of 8", tile_width); 
-        // [todo]
-    }
-    if(tile_height & 0x07) {
-        log_error("tile height (%d) must be a multiple of 8", tile_height); 
-        // [todo]
-    }
-
-    array = json_object_get(root, "layers");
-    if(!json_is_array(array)) {
-        log_error("layers is not an array");
-        // [todo]
-    }
-    if(json_array_size(array) != 1) {
-        log_error("layers must contain only 1 element");
-        // [todo]
-    }
-    layer = json_array_get(array, 0);
-    if(!layer) {
-        log_error("failed to get layer #0");
-        // [todo]
-    }
-
-    if(!read_string(layer, "name", &name)) {
-        log_error("failed to get layer name");
-        // [todo]
-    }
-
-    tileset = json_object_get(root, "tilesets");
-    if(!json_is_array(tileset)) {
-        // [todo]
-    }
-    tileset_count = json_array_size(tileset);
-
-    if(!tilemap_create(map, name, width, height, tile_width, tile_height, tileset_count)) {
-        // [todo]
-    }
-
-    if(!tilemap_read_data(map, layer)) {
-        // [todo]
-    }
-
+    int ret = 1;
     if(!tilemap_read_tilesets(map, path, tileset)) {
-        // [todo]
+        log_error("failed to read tileset %s", path);
+        ret = 0;
     }
     
     free(path);
     json_decref(root);
 
-    return 1;    
+    return ret; 
 }
 
-#if 0
+static int tileset_write_palette(tileset_t *tileset, uint8_t *palette, int count) {
+    int ret = 1;
+    FILE *out;
+    size_t nwritten;
+    size_t len = strlen(tileset->name) + 5;
+    char *filename = (char*)malloc(len);
+    if(filename == NULL) {
+        log_error("failed to allocate filename: %s", strerror(errno));
+        return 0;
+    }
+
+    snprintf(filename, len, "%s.pal", tileset->name);
+    out = fopen(filename, "wb");
+    if(out == NULL) {
+        log_error("failed to open %s: %s", filename, strerror(errno));
+        ret = 0;
+    }
+
+    len = count * 2 * 16;
+    nwritten = fwrite(palette, 1, len, out);
+    if(nwritten != len) {
+        log_error("failed to write %s: %s", filename, strerror(errno));
+        ret = 0;
+    }
+    fclose(out);
+
+    free(filename);
+    return ret;
+}
+
+static int tileset_write_bin(tileset_t *tileset, uint8_t *buffer, size_t size) {
+    int ret = 1;
+    FILE *out;
+    size_t nwritten;
+    size_t len = strlen(tileset->name) + 5;
+    char *filename = (char*)malloc(len);
+    if(filename == NULL) {
+        log_error("failed to allocate filename: %s", strerror(errno));
+        return 0;
+    }
+
+    snprintf(filename, len, "%s.bin", tileset->name);
+    out = fopen(filename, "wb");
+    if(out == NULL) {
+        log_error("failed to open %s: %s", filename, strerror(errno));
+        free(filename);
+        return 0;
+    }
+    free(filename);
+
+    nwritten = fwrite(buffer, 1, size, out);
+    if(nwritten != size) {
+        log_error("failed to write %s: %s", filename, strerror(errno));
+        ret = 0;
+    }
+    fclose(out);
+    return ret;
+}
+
 static int tileset_encode(tileset_t *tileset) {
     int ret;
+    size_t size;
+    uint8_t *buffer;
 
     image_t img = {
         tileset->tiles,
-        width,
-        height,
+        tileset->tile_width * tileset->tile_count,
+        tileset->tile_height,
         1,
         NULL,
         0
     };
-    pce_image_to_tiles(&img, tileset->tile_width, tileset->tile_height, out, size);
 
+    if(tileset->palette_count > 16) {
+        log_error("invalid palette count: %d (max: 16)", tileset->palette_count);
+        return 0;
+    }
+
+    size = (int)(img.width * img.height / 8) * 4;
+    buffer = (uint8_t*)malloc(size);
+    if(buffer == NULL) {
+        log_error("failed to allocate buffer: %s", strerror(errno));
+        return 0;
+    }
+
+    ret = pce_image_to_tiles(&img, tileset->tile_width, tileset->tile_height, buffer, &size);
+    if(ret) {
+        ret = tileset_write_bin(tileset, buffer, size);
+    }
+    free(buffer);
+
+    if(!ret) {
+        return 0;
+    }
+
+    buffer = (uint8_t*)malloc(tileset->palette_count * 16 * 2);
+    if(buffer == NULL) {
+        log_error("failed to allocate buffer: %s", strerror(errno));
+        return 0;
+    }
+    pce_color_convert(tileset->palette, buffer, tileset->palette_count);
+    ret = tileset_write_palette(tileset, buffer, tileset->palette_count);
+    free(buffer);
     return ret;
 }
-#endif
+
 int main(int argc, const char **argv) {
     int ret = EXIT_FAILURE;
 
@@ -352,27 +448,18 @@ int main(int argc, const char **argv) {
     argc = argparse_parse(&argparse, argc, argv);
     if(!argc) {
         argparse_usage(&argparse);
-        return 0;
+        return EXIT_FAILURE;
     }
 
     tilemap_t map = {0};
 
-    if(tilemap_read(&map, argv[0])) {
-        ret = EXIT_SUCCESS;
-    }
+    ret = tilemap_read(&map, argv[0]);
     
     // [todo] convert
-#if 0
-    for(int i=0; i<map.tileset_count; i++) {
-        char filename[256];
-        FILE *out;
-        sprintf(filename, "%04d.pgm", i);
-        out = fopen(filename, "wb");
-        fprintf(out, "P5\n%d %d\n15\n", map.tileset[i].tile_count * map.tileset[i].tile_width, map.tileset[i].tile_height);
-        fwrite(map.tileset[i].tiles, 1, map.tileset[i].tile_count * map.tileset[i].tile_width * map.tileset[i].tile_height, out);
-        fclose(out);
+    for(int i = 0; ret && (i < map.tileset_count); i++) {
+        ret = tileset_encode(&map.tileset[i]);
     }
-#endif
+
     tilemap_destroy(&map);
-    return ret;
+    return ret ? EXIT_SUCCESS : EXIT_FAILURE;
 }

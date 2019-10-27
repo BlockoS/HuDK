@@ -10,6 +10,7 @@
 #include "image.h"
 
 typedef struct {
+    char *name;
     uint8_t *tiles;
     int tile_count;
     int tile_width;
@@ -19,7 +20,7 @@ typedef struct {
     int palette_count;
 } tileset_t;
 
-int tileset_create(tileset_t *tileset, int tile_count, int tile_width, int tile_height);
+int tileset_create(tileset_t *tileset, const char *name, int tile_count, int tile_width, int tile_height);
 
 int tileset_add(tileset_t *tileset, int i, image_t *img, int x, int y);
 
