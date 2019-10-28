@@ -18,7 +18,7 @@ endif()
 
 add_subdirectory(externals)
 
-add_executable(tiled2bat tiled2bat.c tileset.c image.c output.c pce.c log.c)
+add_executable(tiled2bat tiled2bat.c tileset.c tilemap.c image.c output.c pce.c log.c json.c)
 target_include_directories(tiled2bat PRIVATE ${JANSSON_INCLUDE_DIRS} ${MXML_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/externals)
 if(UNIX)
     target_compile_definitions(tiled2bat PRIVATE LOG_TERM_COLOR)
