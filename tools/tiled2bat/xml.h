@@ -4,11 +4,11 @@
  * Licensed under the MIT License
  * (c) 2016-2019 MooZ
  */
-#ifndef HUDK_TOOLS_TILEMAP_JSON_H
-#define HUDK_TOOLS_TILEMAP_JSON_H
+#ifndef HUDK_TOOLS_TILEMAP_XML_H
+#define HUDK_TOOLS_TILEMAP_XML_H
 
 #include "tilemap.h"
 
-int json_read_tilemap(tilemap_t *map, const char *filename);
+int xml_read_tilemap(tilemap_t *map, const char *filename);
 
-#endif /* HUDK_TOOLS_TILEMAP_JSON_H */
+#endif /* HUDK_TOOLS_TILEMAP_XML_H */
