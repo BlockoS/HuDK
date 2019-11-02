@@ -135,14 +135,17 @@ static int tileset_encode(tileset_t *tileset) {
 int main(int argc, const char **argv) {
     int ret = EXIT_FAILURE;
 
+    // [todo] option : vram address of tiles
+
     static const char *const usages[] = {
         "tiled2bat [options] <in>",
         NULL
     };
 
+    int tile_vram_base = -1;
     struct argparse_option options[] = {
         OPT_HELP(),
-        // [todo]
+        OPT_INTEGER('b', "base", &tile_vram_base, "tiles VRAM address", NULL, 0, 0),
         OPT_END(),
     };
 
@@ -153,7 +156,7 @@ int main(int argc, const char **argv) {
     argparse_init(&argparse, options, usages, 0);
     argparse_describe(&argparse, "\nTiled2bat : Convert Tiled json to PC Engine", "  ");
     argc = argparse_parse(&argparse, argc, argv);
-    if(!argc) {
+    if((!argc) || (tile_vram_base < 0)) {
         argparse_usage(&argparse);
         return EXIT_FAILURE;
     }
