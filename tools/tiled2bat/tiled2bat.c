@@ -147,6 +147,8 @@ int main(int argc, const char **argv) {
     };
 
     struct argparse argparse;
+    const char *extension;
+    size_t len;
 
     argparse_init(&argparse, options, usages, 0);
     argparse_describe(&argparse, "\nTiled2bat : Convert Tiled json to PC Engine", "  ");
@@ -158,12 +160,28 @@ int main(int argc, const char **argv) {
 
     tilemap_t map = {0};
 
-    // [todo] test extension and/or cli option
-//    ret = json_read_tilemap(&map, argv[0]);
-    ret = xml_read_tilemap(&map, argv[0]);
+    ret = cwk_path_get_extension(argv[0], &extension, &len);
+    if(!ret) {
+        log_warn("failed to retrieve file extension %s", argv[0]);
+    }
     
-    for(int i = 0; ret && (i < map.tileset_count); i++) {
-        ret = tileset_encode(&map.tileset[i]);
+    if(ret) {
+        if(!strncmp(extension, ".json", len)) {
+            ret = json_read_tilemap(&map, argv[0]);
+        }
+        else if(!strncmp(extension, ".tmx", len)) {
+            ret = xml_read_tilemap(&map, argv[0]);
+        }
+        else {
+            ret = 0;
+            log_warn("unknown extension %s", extension);
+        }
+
+        for(int i = 0; ret && (i < map.tileset_count); i++) {
+            ret = tileset_encode(&map.tileset[i]);
+        }
+
+        // [todo] encode tilemap data
     }
 
     tilemap_destroy(&map);
