@@ -90,36 +90,8 @@ static int json_read_tilesets(tilemap_t *map, char *path, json_t* node) {
             return 0;
         }
 
-        if(tileset_create(&map->tileset[index], name, tile_count, tile_width, tile_height)) {
-            int ret;
-            image_t img;
-            size_t filename_len = strlen(path) + strlen(image_filename) + 2;
-            char *filename = (char*)malloc(filename_len);
-
-            size_t len = cwk_path_join(path, image_filename, filename, filename_len);
-            if(len != filename_len) {
-                filename = (char*)realloc(filename, len+1);
-                if(cwk_path_join(path, image_filename, filename, len+1) != len) {
-                    // [todo]
-                }
-            }
-            ret = image_load_png(&img, filename);
-            if(ret) {
-                int i = 0;
-                for(int y=margin; ret && (y<img.height); y+=spacing+tile_height) {
-                    for(int x=margin, c=0; ret && (x<img.width) && (c<columns); x+=spacing+tile_width, i++, c++) {
-                        if(!tileset_add(&map->tileset[index], i, &img, x, y)) {
-                            log_error("failed to add tile %d", i);
-                            ret = 0;
-                        }
-                    }
-                }
-            }
-            else {
-                log_error("failed to load %s", filename);
-            }
-            image_destroy(&img);
-            free(filename);
+        if(!tileset_load(&map->tileset[index], name, path, image_filename, tile_count, tile_width, tile_height, margin, spacing, columns)) {
+            return 0;
         }
     }
     return 1;

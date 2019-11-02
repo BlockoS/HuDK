@@ -21,7 +21,7 @@ typedef struct {
     tileset_t *tileset;
 } tilemap_t;
 
-int tilemap_create(tilemap_t *map, char *name, int width, int height, int tile_width, int tile_height, int tileset_count);
+int tilemap_create(tilemap_t *map, const char *name, int width, int height, int tile_width, int tile_height, int tileset_count);
 void tilemap_destroy(tilemap_t *map);
 
 #endif /* HUDK_TOOLS_TILEMAP_H */

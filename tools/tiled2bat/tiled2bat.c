@@ -21,6 +21,7 @@
 #include "tileset.h"
 #include "tilemap.h"
 #include "json.h"
+#include "xml.h"
 
 static int tileset_write_palette(tileset_t *tileset, uint8_t *palette, int count) {
     int ret = 1;
@@ -157,7 +158,9 @@ int main(int argc, const char **argv) {
 
     tilemap_t map = {0};
 
-    ret = json_read_tilemap(&map, argv[0]);
+    // [todo] test extension and/or cli option
+//    ret = json_read_tilemap(&map, argv[0]);
+    ret = xml_read_tilemap(&map, argv[0]);
     
     for(int i = 0; ret && (i < map.tileset_count); i++) {
         ret = tileset_encode(&map.tileset[i]);

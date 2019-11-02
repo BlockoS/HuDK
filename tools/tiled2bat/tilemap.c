@@ -26,7 +26,7 @@ void tilemap_destroy(tilemap_t *map) {
     memset(map, 0, sizeof(tilemap_t));
 }
 
-int tilemap_create(tilemap_t *map, char *name, int width, int height, int tile_width, int tile_height, int tileset_count) {
+int tilemap_create(tilemap_t *map, const char *name, int width, int height, int tile_width, int tile_height, int tileset_count) {
     memset(map, 0, sizeof(tilemap_t));
     map->name = strdup(name);
     if(map->name == NULL) {
