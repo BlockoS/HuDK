@@ -127,20 +127,69 @@ static int tileset_encode(tileset_t *tileset) {
     ret = tileset_write_palette(tileset, buffer, tileset->palette_count);
     free(buffer);
 
-    // [todo] encode BAT
-
     return ret;
+}
+
+static int tilemap_encode(tilemap_t *map, int vram_base) {
+    FILE *out;
+    size_t len = strlen(map->name) + 5;
+    char *filename = (char*)malloc(len);
+    if(filename == NULL) {
+        log_error("failed to allocate filename: %s", strerror(errno));
+        return 0;
+    }
+
+    snprintf(filename, len, "%s.bin", map->name);
+    out = fopen(filename, "wb");
+    if(out == NULL) {
+        log_error("failed to open %s: %s", filename, strerror(errno));
+        free(filename);
+        return 0;
+    }
+    free(filename);
+
+    len = map->width*map->height;
+    for(size_t i=0; i<len; i++) {
+        unsigned int tile_id;
+        size_t j;
+        size_t start, end;
+        uint8_t data[2];
+        uint16_t id = map->data[i];
+        uint8_t palette = 0; // [todo] palette start
+        uint16_t vram_addr = vram_base;
+        size_t stride = 0;
+        end = 0;
+        for(j=0; j<map->tileset_count; j++) {
+            start = end;
+            end += map->tileset[j].tile_count;
+            tile_id = id-start;
+            stride = map->tileset[j].tile_width * map->tileset[j].tile_height / 2;
+            palette = map->tileset[j].palette_index[tile_id];
+            if((id >= start) && (id < end)) {
+                vram_addr += (tile_id * stride);
+                break;
+            }
+            vram_addr += stride * map->tileset[j].tile_count;
+            palette += map->tileset[j].palette_count;
+        }
+
+        data[0] = (vram_addr >> 4) & 0xff;
+        data[1] = ((vram_addr >> 12) & 0x0f) | (palette << 4);
+        fwrite(data, 1, 2, out);    
+    }
+    fclose(out);
+    return 1;
 }
 
 int main(int argc, const char **argv) {
     int ret = EXIT_FAILURE;
 
-    // [todo] option : vram address of tiles
-
     static const char *const usages[] = {
         "tiled2bat [options] <in>",
         NULL
     };
+
+    // [todo] add palette start
 
     int tile_vram_base = -1;
     struct argparse_option options[] = {
@@ -180,11 +229,12 @@ int main(int argc, const char **argv) {
             log_warn("unknown extension %s", extension);
         }
 
+        // [todo] write tilesets and palette in a single file
         for(int i = 0; ret && (i < map.tileset_count); i++) {
             ret = tileset_encode(&map.tileset[i]);
         }
 
-        // [todo] encode tilemap data
+        tilemap_encode(&map, tile_vram_base);
     }
 
     tilemap_destroy(&map);
