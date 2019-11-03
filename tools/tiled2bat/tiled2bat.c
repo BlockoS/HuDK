@@ -130,7 +130,7 @@ static int tileset_encode(tileset_t *tileset) {
     return ret;
 }
 
-static int tilemap_encode(tilemap_t *map, int vram_base) {
+static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start) {
     FILE *out;
     size_t len = strlen(map->name) + 5;
     char *filename = (char*)malloc(len);
@@ -146,7 +146,6 @@ static int tilemap_encode(tilemap_t *map, int vram_base) {
         free(filename);
         return 0;
     }
-    free(filename);
 
     len = map->width*map->height;
     for(size_t i=0; i<len; i++) {
@@ -155,7 +154,7 @@ static int tilemap_encode(tilemap_t *map, int vram_base) {
         size_t start, end;
         uint8_t data[2];
         uint16_t id = map->data[i];
-        uint8_t palette = 0; // [todo] palette start
+        uint8_t palette = palette_start; 
         uint16_t vram_addr = vram_base;
         size_t stride = 0;
         end = 0;
@@ -178,6 +177,25 @@ static int tilemap_encode(tilemap_t *map, int vram_base) {
         fwrite(data, 1, 2, out);    
     }
     fclose(out);
+
+    snprintf(filename, len, "%s.inc", map->name);
+    out = fopen(filename, "wb");
+    if(out == NULL) {
+        log_error("failed to open %s: %s", filename, strerror(errno));
+        free(filename);
+        return 0;
+    }
+
+    fprintf(out, "%s_width = %d\n", map->name, map->width);
+    fprintf(out, "%s_height = %d\n", map->name, map->height);
+    fprintf(out, "%s_tile_width = %d\n", map->name, map->tile_width);
+    fprintf(out, "%s_tile_height = %d\n", map->name, map->tile_height);
+    fprintf(out, "%s_tile_vram = $%04x\n", map->name, vram_base);
+    fprintf(out, "%s_tile_pal = %d\n", map->name, palette_start);
+
+    fclose(out);
+    free(filename);
+
     return 1;
 }
 
@@ -192,9 +210,11 @@ int main(int argc, const char **argv) {
     // [todo] add palette start
 
     int tile_vram_base = -1;
+    int palette_start = -1;
     struct argparse_option options[] = {
         OPT_HELP(),
         OPT_INTEGER('b', "base", &tile_vram_base, "tiles VRAM address", NULL, 0, 0),
+        OPT_INTEGER('p', "pal", &palette_start, "first palette index", NULL, 0, 0),
         OPT_END(),
     };
 
@@ -205,7 +225,7 @@ int main(int argc, const char **argv) {
     argparse_init(&argparse, options, usages, 0);
     argparse_describe(&argparse, "\nTiled2bat : Convert Tiled json to PC Engine", "  ");
     argc = argparse_parse(&argparse, argc, argv);
-    if((!argc) || (tile_vram_base < 0)) {
+    if((!argc) || (tile_vram_base < 0) || (palette_start < 0)) {
         argparse_usage(&argparse);
         return EXIT_FAILURE;
     }
@@ -229,12 +249,11 @@ int main(int argc, const char **argv) {
             log_warn("unknown extension %s", extension);
         }
 
-        // [todo] write tilesets and palette in a single file
         for(int i = 0; ret && (i < map.tileset_count); i++) {
             ret = tileset_encode(&map.tileset[i]);
         }
 
-        tilemap_encode(&map, tile_vram_base);
+        tilemap_encode(&map, tile_vram_base, palette_start);
     }
 
     tilemap_destroy(&map);
