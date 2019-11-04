@@ -251,7 +251,9 @@ int main(int argc, const char **argv) {
             ret = tileset_encode(&map.tileset[i]);
         }
 
-        tilemap_encode(&map, tile_vram_base, palette_start);
+        if(ret) {
+            tilemap_encode(&map, tile_vram_base, palette_start);
+        }
     }
 
     tilemap_destroy(&map);
