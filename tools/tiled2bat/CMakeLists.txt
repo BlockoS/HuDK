@@ -9,7 +9,7 @@ else()
     find_package(MXML REQUIRED)
 endif()
 
-add_executable(tiled2bat tiled2bat.c tileset.c tilemap.c image.c output.c pce.c log.c json.c xml.c)
+add_executable(tiled2bat tiled2bat.c tileset.c tilemap.c image.c output.c pce.c log.c json.c xml.c base64.c)
 target_include_directories(tiled2bat PRIVATE ${JANSSON_INCLUDE_DIRS} ${MXML_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${HUDK_TOOLS_EXTERNALS_DIR})
 if(UNIX)
     target_compile_definitions(tiled2bat PRIVATE LOG_TERM_COLOR)

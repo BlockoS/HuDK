@@ -33,7 +33,7 @@ int tilemap_create(tilemap_t *map, const char *name, int width, int height, int 
         log_error("failed to set tilemap name: %s", strerror(errno));
         return 0;
     }
-    map->data = (uint8_t*)malloc(width * height * sizeof(uint8_t));
+    map->data = (uint32_t*)malloc(width * height * sizeof(uint32_t));
     if(map->data == NULL) {
         log_error("failed to allocate tilemap data: %s", strerror(errno));
         tilemap_destroy(map);

@@ -153,7 +153,7 @@ static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start) {
         size_t j;
         size_t start, end;
         uint8_t data[2];
-        uint16_t id = map->data[i];
+        uint32_t id = map->data[i];
         uint8_t palette = palette_start; 
         uint16_t vram_addr = vram_base;
         size_t stride = 0;
@@ -206,8 +206,6 @@ int main(int argc, const char **argv) {
         "tiled2bat [options] <in>",
         NULL
     };
-
-    // [todo] add palette start
 
     int tile_vram_base = -1;
     int palette_start = -1;

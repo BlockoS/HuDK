@@ -12,7 +12,7 @@
 
 typedef struct {
     char *name;
-    uint8_t *data;
+    uint32_t *data;
     int width;
     int height;
     int tile_width;

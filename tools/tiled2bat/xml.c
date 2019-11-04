@@ -14,6 +14,7 @@
 #include <mxml.h>
 #include <cwalk.h>
 
+#include "base64.h"
 #include "log.h"
 
 static int xml_read_attr_int(mxml_node_t *node, const char *attr, int *i) {
@@ -94,6 +95,7 @@ static int xml_read_tilemap_data(mxml_node_t *node, char *path, tilemap_t *map) 
     int tileset_count;
 
     const char *str;
+    const char *data;
 
     mxml_node_t *tileset_node, *layer_node;
 
@@ -151,26 +153,22 @@ static int xml_read_tilemap_data(mxml_node_t *node, char *path, tilemap_t *map) 
         log_error("failed to get tilemap data encoding");
         return 0;
     }
-    if(strcmp(str, "csv")) {
-        log_error("unsupported tilemap data encoding %s", str);
-        return 0;
-    }
 
-    str = mxmlGetOpaque(data_node);
-    if(str == NULL) {
+    data = mxmlGetOpaque(data_node);
+    if(data == NULL) {
         log_error("failed to get tilemap data");
         return 0;
     }
 
-    {
-        const char *end = str + strlen(str) + 1;
+    if(!strcmp(str, "csv")) {
+        const char *end = data + strlen(data) + 1;
         size_t last = (width*height) - 1;
-        for(size_t i=0; (i<=last) && (str < end); i++) {
-            for(;isspace(*str) && (str < end); str++) {
+        for(size_t i=0; (i<=last) && (data < end); i++) {
+            for(;isspace(*data) && (data < end); data++) {
             }
             errno = 0;
             char *next;
-            unsigned long int value = strtoul(str, &next, 10);
+            unsigned long int value = strtoul(data, &next, 10);
             if(errno) {
                 log_error("invalid tile value");
                 return 0;
@@ -180,9 +178,19 @@ static int xml_read_tilemap_data(mxml_node_t *node, char *path, tilemap_t *map) 
                 log_error("invalid separator (ascii: 0x%02x)", *next);
                 return 0;
             }
-            str = next+1;
+            data = next+1;
         }
     }
+    else if(!strcmp(str, "base64")) {
+        if(!base64_decode(data, (uint8_t*)map->data, 4 * map->width * map->height)) {
+            return 0;
+        }
+    }
+    else {
+        log_error("unsupported tilemap data encoding \"%s\"", str);
+        return 0;
+    }
+
     return 1;
 }
 
