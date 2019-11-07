@@ -16,6 +16,7 @@
 
 #include "base64.h"
 #include "log.h"
+#include "utils.h"
 
 static int xml_read_attr_int(mxml_node_t *node, const char *attr, int *i) {
     const char *name = mxmlGetElement(node);
@@ -80,7 +81,14 @@ static int xml_read_tilesets(tilemap_t *map, char *path, mxml_node_t* node) {
             log_error("failed to get image source");
             return 0;
         }
-        if(!tileset_load(&map->tileset[i], name, path, source, tile_count, tile_width, tile_height, margin, spacing, columns)) {
+        char *filepath = path_join(path, source);
+        if(filepath == NULL) {
+            return 0;
+        }
+        
+        int ret = tileset_load(&map->tileset[i], name, filepath, tile_count, tile_width, tile_height, margin, spacing, columns);
+        free(filepath);
+        if(!ret) {
             return 0;
         }
     }

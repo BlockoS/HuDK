@@ -18,7 +18,7 @@
 #include "log.h"
 #include "image.h"
 #include "pce.h"
-#include "output.h"
+#include "utils.h"
 #include "tilemap.h"
 #include "tileset.h"
 
@@ -90,7 +90,14 @@ static int json_read_tilesets(tilemap_t *map, char *path, json_t* node) {
             return 0;
         }
 
-        if(!tileset_load(&map->tileset[index], name, path, image_filename, tile_count, tile_width, tile_height, margin, spacing, columns)) {
+        char *filname = path_join(path, image_filename);
+        if(filename == NULL) {
+            return 0;
+        }
+        
+        int ret = tileset_load(&map->tileset[index], name, filename, tile_count, tile_width, tile_height, margin, spacing, columns);
+        free(filename);
+        if(!ret) {
             return 0;
         }
     }

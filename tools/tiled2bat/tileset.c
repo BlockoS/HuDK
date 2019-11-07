@@ -100,26 +100,14 @@ void tileset_destroy(tileset_t *tileset) {
     memset(&tileset, 0, sizeof(tileset_t));
 }
 
-int tileset_load(tileset_t *tileset, const char *name, const char *path, const char *image_filename, int tile_count, int tile_width, int tile_height, int margin, int spacing, int columns) {
+int tileset_load(tileset_t *tileset, const char *name, const char *image_filename, int tile_count, int tile_width, int tile_height, int margin, int spacing, int columns) {
     if(!tileset_create(tileset, name, tile_count, tile_width, tile_height)) {
         return 0;
     }
 
     int ret, i=0;
     image_t img;
-    size_t filename_len = strlen(path) + strlen(image_filename) + 2;
-    char *filename = (char*)malloc(filename_len);
-    size_t len = cwk_path_join(path, image_filename, filename, filename_len);
-    if(len != filename_len) {
-        filename = (char*)realloc(filename, len+1);
-        if(cwk_path_join(path, image_filename, filename, len+1) != len) {
-            log_error("failed to build tileset file path");
-            free(filename);
-            return 0;
-        }
-    }
-
-    ret = image_load_png(&img, filename);
+    ret = image_load_png(&img, image_filename);
     if(!ret) {
         log_error("failed to load image %s", filename);
     }
