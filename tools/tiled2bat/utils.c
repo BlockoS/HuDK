@@ -7,6 +7,8 @@
 #include "utils.h"
 
 #include <stdlib.h>
+#include <string.h>
+
 #include <cwalk.h>
 
 #include "log.h"

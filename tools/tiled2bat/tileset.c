@@ -100,14 +100,14 @@ void tileset_destroy(tileset_t *tileset) {
     memset(&tileset, 0, sizeof(tileset_t));
 }
 
-int tileset_load(tileset_t *tileset, const char *name, const char *image_filename, int tile_count, int tile_width, int tile_height, int margin, int spacing, int columns) {
+int tileset_load(tileset_t *tileset, const char *name, const char *filename, int tile_count, int tile_width, int tile_height, int margin, int spacing, int columns) {
     if(!tileset_create(tileset, name, tile_count, tile_width, tile_height)) {
         return 0;
     }
 
     int ret, i=0;
     image_t img;
-    ret = image_load_png(&img, image_filename);
+    ret = image_load_png(&img, filename);
     if(!ret) {
         log_error("failed to load image %s", filename);
     }
@@ -119,7 +119,6 @@ int tileset_load(tileset_t *tileset, const char *name, const char *image_filenam
             }
         }
     }
-    free(filename);
     image_destroy(&img);
     return ret;
 }

@@ -11,7 +11,7 @@
 
 typedef struct {
     char *name;
-    uint8_t *tiles; // [todo] use image?
+    uint8_t *tiles;
     int tile_count;
     int tile_width;
     int tile_height;
@@ -26,6 +26,6 @@ int tileset_add(tileset_t *tileset, int i, image_t *img, int x, int y);
 
 void tileset_destroy(tileset_t *tileset);
 
-int tileset_load(tileset_t *tileset, const char *name, const char *image_filename, int tile_count, int tile_width, int tile_height, int margin, int spacing, int columns);
+int tileset_load(tileset_t *tileset, const char *name, const char *filename, int tile_count, int tile_width, int tile_height, int margin, int spacing, int columns);
 
 #endif /* HUDK_TOOLS_TILESET_H */

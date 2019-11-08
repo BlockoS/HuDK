@@ -90,7 +90,7 @@ static int json_read_tilesets(tilemap_t *map, char *path, json_t* node) {
             return 0;
         }
 
-        char *filname = path_join(path, image_filename);
+        char *filename = path_join(path, image_filename);
         if(filename == NULL) {
             return 0;
         }
