@@ -12,6 +12,31 @@
 sprite_vram_base .ds 2
 
     .code
+  .ifdef MAGICKIT
+    .include "pceas/vdc_sprite.s"
+  .else
+    .ifdef CA65
+    .include "ca65/vdc_sprite.s"
+    .endif
+  .endif
+
+
+;;
+;; Macro: vdc_sat_set
+;; Set current SAT entry in VRAM.
+;;
+;; Assembly call:
+;;   > vdc_sat_set x0, y0, #$3100, #0, #(VDC_SPRITE_WIDTH_32 | VDC_SPRITE_HEIGHT_16)
+;;
+;; Parameters:
+;;   x - X position 
+;;   y - Y position
+;;   addr - Pattern address
+;;   pal - Palette index
+;;   size - Sprite size
+;;   flag - Sprite flag
+;;
+
 ;;
 ;; function: vdc_sat_addr
 ;; Set the VRAM address of the sprite attribute table.
