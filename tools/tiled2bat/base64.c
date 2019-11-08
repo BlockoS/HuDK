@@ -79,6 +79,7 @@ int base64_decode(const char *in, uint8_t *out, size_t len) {
             return 0;
         }
         *ptr++ = (buffer >> 4) & 0xff;
+        decoded++;
     }
 
     if(decoded < len) {
