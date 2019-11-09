@@ -25,7 +25,7 @@
 
 static int tileset_encode_palettes(tileset_t *tileset, FILE *out) {
     int ret = 1;
-    size_t len = tileset->palette_count * 2 * 16;
+    size_t len = (size_t)tileset->palette_count * 2 * 16;
     uint8_t *buffer = (uint8_t*)malloc(len);
     if(buffer == NULL) {
         log_error("failed to allocate buffer: %s", strerror(errno));
@@ -106,9 +106,9 @@ static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start) {
         return 0;
     }
 
-    len = map->width*map->height;
+    len = map->width * map->height;
     for(size_t i=0; i<len; i++) {
-        uint8_t id = map->data[i] - 1;
+        uint8_t id = (map->data[i] & 0xff) - 1;
         fwrite(&id, 1, 1, out);
     }
     fclose(out);
@@ -122,7 +122,7 @@ static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start) {
     }
     for(size_t i=0, n=0; i<map->tileset_count; i++) {
         for(size_t j=0; j<map->tileset[i].tile_count; j++) {
-            uint8_t id = (n + map->tileset[i].palette_index[j]) << 4;
+            uint8_t id = (uint8_t)(n + map->tileset[i].palette_index[j]) << 4;
             fwrite(&id, 1, 1, out);
         }
         n += map->tileset[i].palette_count;

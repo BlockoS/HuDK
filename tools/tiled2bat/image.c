@@ -245,14 +245,16 @@ int image_load_pcx(image_t* dest, const char* filename) {
     }
 
     if(ret) {
-        if(!(ret = pcx_read_data(input, dest))) {
+		ret = pcx_read_data(input, dest);
+        if(!ret) {
             log_error("failed to read pcx data from %s", filename);
         }
     }
 
     if(ret) {
         if(dest->bytes_per_pixel == 1) {
-            if(!(ret = pcx_read_palette(input, dest))) {
+			ret = pcx_read_palette(input, dest);
+            if(!ret) {
                 log_error("failed to read pcx palette from %s", filename);
             }
         }

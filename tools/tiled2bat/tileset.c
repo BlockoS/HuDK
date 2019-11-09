@@ -56,10 +56,10 @@ int tileset_add(tileset_t *tileset, int tile_index, image_t *img, int x, int y) 
             }
         }
     }
-    tileset->palette_index[tile_index] = palette_index;
+    tileset->palette_index[tile_index] = (uint8_t)palette_index;
     
     if(palette_index >= tileset->palette_count) {
-        uint8_t *tmp = (uint8_t*)realloc(tileset->palette, (palette_index+1)*3*16);
+        uint8_t *tmp = (uint8_t*)realloc(tileset->palette, ((int)palette_index+1)*3*16);
         if(tmp == NULL) {
             log_error("failed to resize palette.");
             return 0;
@@ -78,7 +78,7 @@ int tileset_add(tileset_t *tileset, int tile_index, image_t *img, int x, int y) 
     ptr = tileset->tiles + tile_index * tileset->tile_width;
     for(j=0; j<tileset->tile_height; j++) {
         for(i=0; i<tileset->tile_width; i++) {
-            ptr[i + (j*stride)] = img->data[x+i + (y+j)*img->width] - (palette_index*16);
+            ptr[i + (j*stride)] = (uint8_t)((int)img->data[x+i + (y+j)*img->width] - (palette_index*16));
         }
     }
     return 1;

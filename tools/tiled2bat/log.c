@@ -12,7 +12,7 @@ static void log_terminal_print(log_type_t type, const char* file, size_t line, c
     FILE *out = (type == LOG_ERROR) ? stderr: stdout;
     va_list args;
     
-    const char *prefix;
+    const char *prefix = "[...]";
 #if LOG_TERM_COLOR
     switch(type) {
         case LOG_INFO:

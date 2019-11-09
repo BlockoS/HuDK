@@ -12,7 +12,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <errno.h>
-#include <getopt.h>
+
+#include <argparse/argparse.h>
 
 #ifndef PATH_MAX
 #define PATH_MAX 1024
@@ -71,48 +72,41 @@ typedef struct
 /* VGM magic id */
 static const uint8_t vgm_id[] = { 0x56, 0x67, 0x6d, 0x20 };
 
-uint16_t read_u16(uint8_t *buffer)
-{
+inline uint16_t read_u16(uint8_t *buffer) {
     return (buffer[1] << 8) | buffer[0];
 }
 
-uint32_t read_u32(uint8_t *buffer)
-{
+inline uint32_t read_u32(uint8_t *buffer) {
     return   (buffer[3] << 24) | (buffer[2] << 16)
            | (buffer[1] <<  8) | (buffer[0]      );
 }
 
 /* Read vgm header and check it's a valid PC Engine tune. */
-int vgm_read_header(FILE *stream, vgm_header *header)
-{
+int vgm_read_header(FILE *stream, vgm_header *header) {
     uint8_t raw_header[VGM_HEADER_SIZE];
     size_t  count;
 
     memset(header, 0, sizeof(vgm_header));
 
     count = fread(raw_header, 1, VGM_HEADER_SIZE, stream);
-    if(VGM_HEADER_SIZE != count)
-    {
+    if(VGM_HEADER_SIZE != count) {
         fprintf(stderr, "failed to read vgm header : %s\n", strerror(errno));
         return -1;
     }
 
-    if(memcmp(raw_header, vgm_id, 4))
-    {
+    if(memcmp(raw_header, vgm_id, 4)) {
         fprintf(stderr, "invalid vgm id\n");
         return -1;
     }
     
     header->version_number = read_u32(raw_header+VGM_VERSION_NUMBER);
-    if(header->version_number < 0x161)
-    {
+    if(header->version_number < 0x161) {
         fprintf(stderr, "invalid version number : %3x\n", header->version_number);
         return -1;
     }
     
     header->huc6280_clock = raw_header[VGM_HUC6280_CLOCK];
-    if(0 == header->huc6280_clock)
-    {
+    if(0 == header->huc6280_clock) {
         fprintf(stderr, "not a PC Engine vgm!\n");
         return -1;
     }
@@ -131,8 +125,7 @@ int vgm_read_header(FILE *stream, vgm_header *header)
 }
 
 /* Read vgm data and strip unecessary data. */
-int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len)
-{
+int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len) {
     uint8_t  *src, *dst;
     size_t   count;
 
@@ -143,63 +136,53 @@ int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len)
     fseek(stream, header->data_offset+0x34, SEEK_SET);
 	
     *out = (uint8_t*)malloc(data_size);
-    if(NULL == *out)
-    {
+    if(*out == NULL) {
         fprintf(stderr, "alloc error : %s\n", strerror(errno));
         return -1;
     } 
 
     count = fread(*out, 1, data_size, stream);
-    if(count != data_size)
-    {
+    if(count != data_size) {
         fprintf(stderr, "failed to read data : %s\n", strerror(errno));
         return -1;
     }
 
     src = *out;
     dst = *out;
-    for(i=0; i<data_size;)
-    {
+    for(i=0; i<data_size;) {
         uint8_t command;
-        if(i == loop_offset)
-        {
+        if(i == loop_offset) {
             header->loop_offset = i;
         }
 
-        command  = src[i++];
-        if(VGM_HUC6280_CMD == command)
-        {
+        command = src[i++];
+        if(command == VGM_HUC6280_CMD) {
             *dst++ = src[i++]; 
             *dst++ = src[i++]; 
         }
-        else if(VGM_WAIT_CMD == command)
-        {
+        else if(command == VGM_WAIT_CMD) {
             /* determine the number of frames to wait */
             uint16_t samples = (src[i+1] << 8) | src[i];
             uint16_t frames = samples / SAMPLES_PER_FRAME;
-            for(; frames >= 0x11; frames-=0x11)
-            {
+            for(; frames >= 0x11; frames-=0x11) {
                 *dst++ = 0xef;
             }
-            if(1 == frames) {
+            if(frames == 1) {
                 *dst++ = 0xf0;
             }
             else if(frames) {
-                *dst++ = 0xe0 + (frames - 2);
+                *dst++ = 0xe0 + (uint8_t)(frames - 2);
            }
            i += 2;
         }
-        else if(VGM_FRAME_END == command)
-        {
+        else if(command == VGM_FRAME_END) {
             *dst++ = 0xf0; 
         }
-        else if(VGM_DATA_END == command)
-        {
+        else if(command == VGM_DATA_END) {
             *dst++ = 0xff;
             break;
         }
-        else
-        {
+        else {
             fprintf(stderr, "unsupported command %x\n", command);
             return -1;
         }
@@ -209,8 +192,7 @@ int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len)
 }
 
 /* Cut the vgm in slices of 8kB and writes assembly files containing data and bank infos. */
-int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint32_t org, const char *song_name, const char *output_directory)
-{
+int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint32_t org, const char *song_name, const char *output_directory) {
     FILE *stream;
     char filename[PATH_MAX];
 
@@ -221,12 +203,10 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
     uint32_t loop_org;
     uint32_t loop_bank;
 
-    for(out_count=8192, i=0; len>0; buffer+=out_count, len-=out_count, i++)
-    {
+    for(out_count=8192, i=0; len>0; buffer+=out_count, len-=out_count, i++) {
         snprintf(filename, PATH_MAX, "%s/%s%04x.bin", output_directory, song_name, i);
         stream = fopen(filename, "wb");
-        if(NULL == stream)
-        {
+        if(stream == NULL) {
             fprintf(stderr, "failed to open %s : %s\n", filename, strerror(errno));
             return -1;
         }
@@ -234,8 +214,7 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
         out_count = (len >= 8192) ? 8192 : len; 
         write_count = fwrite(buffer, 1, out_count, stream);
         fclose(stream);
-        if(write_count != out_count)
-        {
+        if(write_count != out_count) {
             fprintf(stderr, "write error %s : %s\n", filename, strerror(errno));
             return -1;
         }
@@ -243,8 +222,7 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
 
     snprintf(filename, PATH_MAX, "%s/%s.inc", output_directory, song_name);
     stream = fopen(filename, "wb");
-    if(NULL == stream)
-    {
+    if(stream == NULL) {
         fprintf(stderr, "failed to open %s : %s\n", filename, strerror(errno));
         return -1;
     }
@@ -261,8 +239,7 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
                     song_name, loop_bank,
                     song_name, loop_org);
 
-    for(j=0; j<i; j++)
-    {
+    for(j=0; j<i; j++) {
         fprintf(stream, "    .bank $%02x\n"
                         "    .org $%04x\n"
                         "    .incbin \"%s%04x.bin\"\n"
@@ -284,8 +261,7 @@ void usage()
 }
 
 /* main entry point. */
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     FILE *stream;
     int err;
     int ret;
@@ -297,83 +273,51 @@ int main(int argc, char **argv)
     const char *filename;
     const char *song_name;
     const char *output_directory;
+	
+	static const char* const usages[] = {
+		"vgmstrip [options] song_name input.vgm output_directory",
+		NULL
+	};
 
-    uint32_t opt_flag;
-    int opt_index;
-    struct option long_opt[] =
-    {
-       { "bank", required_argument, 0, 'b' },
-       {  "org", required_argument, 0, 'o' },
-       {      0,                 0, 0,  0  } 
-    };
+	struct argparse_option options[4] = {
+		OPT_HELP(),
+		OPT_INTEGER('b', "bank", &bank, "First ROM bank", NULL, 0, 0),
+		OPT_INTEGER('o', "org", &org, "Logical address", NULL, 0, 0),
+		OPT_END(),
+	};
+	struct argparse argparse;
+	
+	argparse_init(&argparse, options, usages, 0);
+	argparse_describe(&argparse, "\nTiled2bat : Convert Tiled json to PC Engine", "  ");
+	argc = argparse_parse(&argparse, argc, argv);
+	if (argc != 3) {
+		argparse_usage(&argparse);
+		return EXIT_FAILURE;
+	}
 
-    opt_flag = 0;
-    while(1)
-    {
-        ret = getopt_long(argc, argv, "b:o:", long_opt, &opt_index);
-        if(ret < 0)
-        {
-            break;
-        }
-        switch(ret)
-        {
-            case 'b':
-                bank = strtoul(optarg, NULL, 16);
-                if(errno)
-                {
-                    fprintf(stderr, "invalid bank value : %s\n", strerror(errno));
-                    return EXIT_FAILURE;
-                }
-                opt_flag |= 1;
-                break;
-            case 'o':
-                org = strtoul(optarg, NULL, 16);
-                if(errno)
-                {
-                    fprintf(stderr, "invalid offset value : %s\n", strerror(errno));
-                    return EXIT_FAILURE;
-                }
-                opt_flag |= 2;
-                break;
-            default:
-                usage();
-                return EXIT_FAILURE;
-        }
-    }
-    if((3 != opt_flag) || ((argc-optind) < 3))
-    {
-        usage();
-        return EXIT_FAILURE;
-    }
-
-    song_name = argv[optind]; 
-    filename = argv[optind+1];
-    output_directory = argv[optind+2];
+    song_name = argv[0]; 
+    filename = argv[1];
+    output_directory = argv[2];
     
     stream = fopen(filename, "rb");
-    if(NULL == stream)
-    {
+    if(stream == NULL) {
         fprintf(stderr, "Failed to open %s : %s\n", filename, strerror(errno));
         return EXIT_FAILURE;
     }
     
     ret = EXIT_FAILURE;
     err = vgm_read_header(stream, &header);
-    if(err >= 0)
-    {
+    if(err >= 0) {
         uint8_t *buffer = NULL;
         size_t len = 0;
         err = process(stream, &header, &buffer, &len);
-        if(err >= 0)
-        {
+        if(err >= 0) {
 		    err = output(&header, buffer, len, bank, org, song_name, output_directory);
-            if(err >= 0)
-            {
+            if(err >= 0) {
                 ret = EXIT_SUCCESS;
             }
         }
-        if(NULL != buffer)
-        {
+        if(buffer != NULL) {
             free(buffer);
         }
     }

@@ -1,5 +1,7 @@
-find_package(PNG)
-find_package(Jansson)
+
+find_package(PNG REQUIRED)
+find_package(Jansson REQUIRED)
+
 if(NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Windows"))
     find_package(PkgConfig)
 endif()
@@ -11,8 +13,9 @@ endif()
 
 add_executable(tiled2bat tiled2bat.c tileset.c tilemap.c image.c output.c pce.c log.c json.c xml.c base64.c utils.c)
 target_include_directories(tiled2bat PRIVATE ${JANSSON_INCLUDE_DIRS} ${MXML_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${HUDK_TOOLS_EXTERNALS_DIR})
-if(UNIX)
+if(NOT MSVC)
     target_compile_definitions(tiled2bat PRIVATE LOG_TERM_COLOR)
-endif(UNIX)
+	target_compile_options(tiled2bat PRIVATE -Wall -Werror)
+endif()
 target_link_libraries(tiled2bat ${JANSSON_LIBRARIES} ${MXML_LIBRARIES} ${PNG_LIBRARIES} argparse cwalk)
-target_compile_options(tiled2bat PRIVATE -Wall -Werror)
+

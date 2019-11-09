@@ -30,7 +30,7 @@ static int json_read_integer(json_t* node, const char* name, int* value) {
     if(!json_is_integer(object)) {
         return 0;
     }
-    *value = json_integer_value(object);
+    *value = (int)json_integer_value(object);
     return 1;
 }
 
@@ -134,7 +134,7 @@ static int json_read_tilemap_data(tilemap_t *map, json_t* layer) {
             log_error("invalid tile value at index %d", index);
             return 0;
         }
-        map->data[index] = json_integer_value(value);
+        map->data[index] = (uint32_t)json_integer_value(value);
     }
     return 1;
 }
