@@ -98,7 +98,7 @@ static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start) {
         return 0;
     }
 
-    snprintf(filename, len, "%s.bin", map->name);
+    snprintf(filename, len, "%s.map", map->name);
     out = fopen(filename, "wb");
     if(out == NULL) {
         log_error("failed to open %s: %s", filename, strerror(errno));
@@ -113,7 +113,7 @@ static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start) {
     }
     fclose(out);
 
-    snprintf(filename, len, "%s_tilepal.bin", map->name);
+    snprintf(filename, len, "%s.idx", map->name);
     out = fopen(filename, "wb");
     if(out == NULL) {
         log_error("failed to open %s: %s", filename, strerror(errno));
@@ -129,7 +129,7 @@ static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start) {
     }
     fclose(out);
 
-    snprintf(filename, len, "%s.tiles", map->name);
+    snprintf(filename, len, "%s.bin", map->name);
     out = fopen(filename, "wb");
     if(out == NULL) {
         log_error("failed to open %s: %s", filename, strerror(errno));
