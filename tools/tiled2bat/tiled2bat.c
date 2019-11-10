@@ -108,7 +108,7 @@ static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start) {
 
     len = map->width * map->height;
     for(size_t i=0; i<len; i++) {
-        uint8_t id = (map->data[i] & 0xff) - 1;
+        uint8_t id = (map->layer[0].data[i] & 0xff) - 1;
         fwrite(&id, 1, 1, out);
     }
     fclose(out);
@@ -211,7 +211,7 @@ int main(int argc, const char **argv) {
 
     ret = cwk_path_get_extension(argv[0], &extension, &len);
     if(!ret) {
-        log_warn("failed to retrieve file extension %s", argv[0]);
+        log_error("failed to retrieve file extension %s", argv[0]);
     }
     
     if(ret) {

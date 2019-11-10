@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="8" tileheight="8" infinite="0" nextlayerid="15" nextobjectid="5">
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="128" height="32" tilewidth="8" tileheight="8" infinite="0" nextlayerid="15" nextobjectid="5">
  <tileset firstgid="1" name="tilesest00" tilewidth="8" tileheight="8" tilecount="32" columns="16">
   <image source="tileset8x8.png" width="128" height="16"/>
  </tileset>

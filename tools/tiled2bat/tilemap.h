@@ -13,6 +13,12 @@
 typedef struct {
     char *name;
     uint32_t *data;
+} tilemap_layer_t;
+
+typedef struct {
+    char *name;
+    tilemap_layer_t *layer;
+    int layer_count;
     int width;
     int height;
     int tile_width;
@@ -22,6 +28,7 @@ typedef struct {
 } tilemap_t;
 
 int tilemap_create(tilemap_t *map, const char *name, int width, int height, int tile_width, int tile_height, int tileset_count);
+int tilemap_add_layer(tilemap_t *map, const char *name);
 void tilemap_destroy(tilemap_t *map);
 
 #endif /* HUDK_TOOLS_TILEMAP_H */

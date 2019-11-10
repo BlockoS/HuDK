@@ -95,7 +95,7 @@ static int xml_read_tilesets(tilemap_t *map, char *path, mxml_node_t* node) {
     return 1;
 }
 
-static int xml_read_tilemap_data(mxml_node_t *node, char *path, tilemap_t *map) {
+static int xml_read_tilemap_data(mxml_node_t *node, char *path, const char *name, tilemap_t *map) {
     int width;
     int height;
     int tile_width;
@@ -130,6 +130,11 @@ static int xml_read_tilemap_data(mxml_node_t *node, char *path, tilemap_t *map) 
         return 0;
     }
 
+    if(!tilemap_create(map, name, width, height, tile_width, tile_height, tileset_count)) {
+        log_error("failed to create tileset %s", name);
+        return 0;
+    }
+
     layer_node = mxmlFindElement(node, node, "layer", NULL, NULL, MXML_DESCEND);
     if(layer_node == NULL) {
         log_error("failed to get layer node");
@@ -138,12 +143,11 @@ static int xml_read_tilemap_data(mxml_node_t *node, char *path, tilemap_t *map) 
 
     str = mxmlElementGetAttr(layer_node, "name");
     if(str == NULL) {
-        log_error("failed to get tilemap name");
+        log_error("failed to get layer name");
         return 0;
     }
 
-    if(!tilemap_create(map, str, width, height, tile_width, tile_height, tileset_count)) {
-        log_error("failed to create tileset %s", str);
+    if(!tilemap_add_layer(map, str)) {
         return 0;
     }
 
@@ -181,7 +185,7 @@ static int xml_read_tilemap_data(mxml_node_t *node, char *path, tilemap_t *map) 
                 log_error("invalid tile value");
                 return 0;
             }
-            map->data[i] = value;
+            map->layer[0].data[i] = value;
             if((*next != ',') && ((i == last) && !isspace(*next))) {
                 log_error("invalid separator (ascii: 0x%02x)", *next);
                 return 0;
@@ -190,7 +194,7 @@ static int xml_read_tilemap_data(mxml_node_t *node, char *path, tilemap_t *map) 
         }
     }
     else if(!strcmp(str, "base64")) {
-        if(!base64_decode(data, (uint8_t*)map->data, 4 * map->width * map->height)) {
+        if(!base64_decode(data, (uint8_t*)map->layer[0].data, 4 * map->width * map->height)) {
             return 0;
         }
     }
@@ -206,7 +210,7 @@ int xml_read_tilemap(tilemap_t *map, const char *filename) {
     int ret = 0;
     FILE *in;
     mxml_node_t *tree;
-    char *path;
+    char *path, *name;
     size_t len;
 
     in = fopen(filename, "rb");
@@ -227,9 +231,11 @@ int xml_read_tilemap(tilemap_t *map, const char *filename) {
     cwk_path_get_dirname(path, &len);
     path[len] = '\0';
 
+    name = basename_no_ext(filename);
+
     mxml_node_t *map_node = mxmlFindElement(tree, tree, "map", NULL, NULL, MXML_DESCEND);
     if(map_node) {
-        if(xml_read_tilemap_data(map_node, path, map)) {
+        if(xml_read_tilemap_data(map_node, path, name, map)) {
             ret = 1;
         }
         else {
@@ -239,6 +245,8 @@ int xml_read_tilemap(tilemap_t *map, const char *filename) {
     else {
         log_error("failed to retrieve \"map\" node %s", filename);
     }
+
+    free(name);
     free(path);
     mxmlDelete(tree);
     return ret;

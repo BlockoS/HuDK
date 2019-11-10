@@ -8,5 +8,6 @@
 #define HUDK_TOOLS_UTILS_H
 
 char* path_join(const char* path, const char* filename);
+char* basename_no_ext(const char *path);
 
 #endif /* HUDK_TOOLS_OUTPUT_H */

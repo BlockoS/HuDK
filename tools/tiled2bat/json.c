@@ -34,7 +34,7 @@ static int json_read_integer(json_t* node, const char* name, int* value) {
     return 1;
 }
 
-static int json_read_string(json_t* node, const char* name, char** value) {
+static int json_read_string(json_t* node, const char* name, const char** value) {
     json_t *object = json_object_get(node, name);
     if(!object) {
         return 0;
@@ -42,7 +42,7 @@ static int json_read_string(json_t* node, const char* name, char** value) {
     if(!json_is_string(object)) {
         return 0;
     }
-    *value = strdup(json_string_value(object));
+    *value = json_string_value(object);
     return 1;
 }
 
@@ -52,7 +52,7 @@ static int json_read_tilesets(tilemap_t *map, char *path, json_t* node) {
 
     json_array_foreach(node, index, value) {
         int first_gid, tile_count, tile_width, tile_height, columns, margin, spacing;
-        char *name = NULL, *image_filename = NULL;
+        const char *name = NULL, *image_filename = NULL;
         if(!json_read_string(value, "name", &name)) {
             log_error("failed to get tileset name");
             return 0;
@@ -106,8 +106,18 @@ static int json_read_tilesets(tilemap_t *map, char *path, json_t* node) {
 
 static int json_read_tilemap_data(tilemap_t *map, json_t* layer) {
     int index, width, height;
+    const char *name = NULL;
     json_t *data;
     json_t *value;
+
+    if(!json_read_string(layer, "name", &name)) {
+            log_error("failed to get layer name");
+            return 0;
+    }
+
+    if(!tilemap_add_layer(map, name)) {
+        return 0;
+    }
 
     if(!json_read_integer(layer, "width", &width)) {
         log_error("failed to get layer width");
@@ -134,7 +144,7 @@ static int json_read_tilemap_data(tilemap_t *map, json_t* layer) {
             log_error("invalid tile value at index %d", index);
             return 0;
         }
-        map->data[index] = (uint32_t)json_integer_value(value);
+        map->layer[0].data[index] = (uint32_t)json_integer_value(value);
     }
     return 1;
 }
@@ -148,13 +158,14 @@ int json_read_tilemap(tilemap_t *map, const char *filename) {
     json_t *tileset;
 
     char *path;
-    char *name;
+    const char *name;
     int width;
     int height;
     int tile_width;
     int tile_height;
     int tileset_count;
     size_t len;
+    char *map_name;
 
     root = json_load_file(filename, 0, &error); // [todo] move out of tilemap_read
     if(!root) {
@@ -188,15 +199,28 @@ int json_read_tilemap(tilemap_t *map, const char *filename) {
         return 0;
     }
 
+    tileset = json_object_get(root, "tilesets");
+    if(!json_is_array(tileset)) {
+        log_error("failed to get tilesets");
+        return 0;
+    }
+    tileset_count = json_array_size(tileset);
+
+    map_name = basename_no_ext(filename);
+    if(!tilemap_create(map, map_name, width, height, tile_width, tile_height, tileset_count)) {
+        log_error("failed to create tileset %s", map_name);
+        free(map_name);
+        return 0;
+    }
+    free(map_name);
+
     array = json_object_get(root, "layers");
     if(!json_is_array(array)) {
         log_error("layers is not an array");
         return 0;
     }
-    if(json_array_size(array) != 1) {
-        log_error("layers must contain only 1 element");
-        return 0;
-    }
+
+    // [todo]
     layer = json_array_get(array, 0);
     if(!layer) {
         log_error("failed to get layer #0");
@@ -205,19 +229,6 @@ int json_read_tilemap(tilemap_t *map, const char *filename) {
 
     if(!json_read_string(layer, "name", &name)) {
         log_error("failed to get layer name");
-        return 0;
-    }
-
-    tileset = json_object_get(root, "tilesets");
-    if(!json_is_array(tileset)) {
-        log_error("failed to get tilesets");
-        return 0;
-    }
-    tileset_count = json_array_size(tileset);
-
-    if(!tilemap_create(map, name, width, height, tile_width, tile_height, tileset_count)) {
-        log_error("failed to create tileset %s", name);
-        tilemap_destroy(map);
         return 0;
     }
 

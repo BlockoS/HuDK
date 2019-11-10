@@ -37,3 +37,21 @@ char* path_join(const char* path, const char* filename) {
     }
     return out;
 }
+
+char* basename_no_ext(const char *path) {
+    char *out;
+    const char *basename, *extension;
+    size_t basename_len, extension_len, len;
+    
+    cwk_path_get_basename(path, &basename, &basename_len);
+    if(!cwk_path_get_extension(path, &extension, &extension_len)) {
+        extension = basename + basename_len;
+    }
+        
+    len = extension - basename;
+    out = (char*)malloc(len + 1);
+    strncpy(out, basename, len);
+    out[len] = '\0';
+    
+    return out;
+}
