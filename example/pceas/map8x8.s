@@ -132,7 +132,7 @@ map00_tile_vram = $2200
 map00_tile_pal = 0
 
 map00:
-    .incbin "data/map/map8x8.map"
+    .incbin "data/map/map00.map"
 gfx00:
     .incbin "data/map/map8x8.bin"
 gfx00.size = * - gfx00

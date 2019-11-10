@@ -98,20 +98,29 @@ static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start) {
         return 0;
     }
 
-    snprintf(filename, len, "%s.map", map->name);
-    out = fopen(filename, "wb");
-    if(out == NULL) {
-        log_error("failed to open %s: %s", filename, strerror(errno));
-        free(filename);
-        return 0;
-    }
+    for(int i=0; i<map->layer_count; i++) {
+        size_t map_filename_len = strlen(map->layer[i].name); 
+        char *map_filename = (char*)malloc(map_filename_len+5);
+        if(map_filename == NULL) {
+            log_error("failed to allocate filename for layer %s: %s", map->layer[i].name, strerror(errno));
+            return 0;
+        }
+        snprintf(map_filename, len, "%s.map", map->layer[i].name);
+        out = fopen(map_filename, "wb");
+        if(out == NULL) {
+            log_error("failed to open %s: %s", map_filename, strerror(errno));
+            free(map_filename);
+            return 0;
+        }
 
-    len = map->width * map->height;
-    for(size_t i=0; i<len; i++) {
-        uint8_t id = (map->layer[0].data[i] & 0xff) - 1;
-        fwrite(&id, 1, 1, out);
+        len = map->width * map->height;
+        for(size_t j=0; j<len; j++) {
+            uint8_t id = (map->layer[i].data[j] & 0xff) - 1;
+            fwrite(&id, 1, 1, out);
+        }
+        fclose(out);
+        free(map_filename);
     }
-    fclose(out);
 
     snprintf(filename, len, "%s.idx", map->name);
     out = fopen(filename, "wb");
