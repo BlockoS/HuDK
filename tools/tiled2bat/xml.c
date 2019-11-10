@@ -101,6 +101,7 @@ static int xml_read_tilemap_data(mxml_node_t *node, char *path, const char *name
     int tile_width;
     int tile_height;
     int tileset_count;
+    int i; 
 
     const char *str;
     const char *data;
@@ -135,74 +136,71 @@ static int xml_read_tilemap_data(mxml_node_t *node, char *path, const char *name
         return 0;
     }
 
-    layer_node = mxmlFindElement(node, node, "layer", NULL, NULL, MXML_DESCEND);
-    if(layer_node == NULL) {
-        log_error("failed to get layer node");
-        return 0;
-    }
-
-    str = mxmlElementGetAttr(layer_node, "name");
-    if(str == NULL) {
-        log_error("failed to get layer name");
-        return 0;
-    }
-
-    if(!tilemap_add_layer(map, str)) {
-        return 0;
-    }
-
     if(!xml_read_tilesets(map, path, node)) {
         return 0;
     }
 
-    mxml_node_t *data_node = mxmlFindElement(layer_node, layer_node, "data", NULL, NULL, MXML_DESCEND);
-    if(data_node == NULL) {
-        log_error("failed to get tilemap data node");
-        return 0;
-    }
-    str = mxmlElementGetAttr(data_node, "encoding");
-    if(str == NULL) {
-        log_error("failed to get tilemap data encoding");
-        return 0;
-    }
-
-    data = mxmlGetOpaque(data_node);
-    if(data == NULL) {
-        log_error("failed to get tilemap data");
-        return 0;
-    }
-
-    if(!strcmp(str, "csv")) {
-        const char *end = data + strlen(data) + 1;
-        size_t last = (width*height) - 1;
-        for(size_t i=0; (i<=last) && (data < end); i++) {
-            for(;isspace(*data) && (data < end); data++) {
-            }
-            errno = 0;
-            char *next;
-            unsigned long int value = strtoul(data, &next, 10);
-            if(errno) {
-                log_error("invalid tile value");
-                return 0;
-            }
-            map->layer[0].data[i] = value;
-            if((*next != ',') && ((i == last) && !isspace(*next))) {
-                log_error("invalid separator (ascii: 0x%02x)", *next);
-                return 0;
-            }
-            data = next+1;
+    for(i = 0, layer_node = mxmlFindElement(node, node, "layer", NULL, NULL, MXML_DESCEND);
+        layer_node;
+        i++, layer_node = mxmlFindElement(layer_node, node, "layer", NULL, NULL, MXML_NO_DESCEND)) {
+        str = mxmlElementGetAttr(layer_node, "name");
+        if(str == NULL) {
+            log_error("failed to get layer name");
+            return 0;
         }
-    }
-    else if(!strcmp(str, "base64")) {
-        if(!base64_decode(data, (uint8_t*)map->layer[0].data, 4 * map->width * map->height)) {
+
+        if(!tilemap_add_layer(map, str)) {
+            return 0;
+        }
+
+        mxml_node_t *data_node = mxmlFindElement(layer_node, layer_node, "data", NULL, NULL, MXML_DESCEND);
+        if(data_node == NULL) {
+            log_error("failed to get tilemap data node");
+            return 0;
+        }
+        str = mxmlElementGetAttr(data_node, "encoding");
+        if(str == NULL) {
+            log_error("failed to get tilemap data encoding");
+            return 0;
+        }
+
+        data = mxmlGetOpaque(data_node);
+        if(data == NULL) {
+            log_error("failed to get tilemap data");
+            return 0;
+        }
+
+        if(!strcmp(str, "csv")) {
+            const char *end = data + strlen(data) + 1;
+            size_t last = (width*height) - 1;
+            for(size_t j=0; (j<=last) && (data < end); j++) {
+                for(;isspace(*data) && (data < end); data++) {
+                }
+                errno = 0;
+                char *next;
+                unsigned long int value = strtoul(data, &next, 10);
+                if(errno) {
+                    log_error("invalid tile value");
+                    return 0;
+                }
+                map->layer[i].data[j] = value;
+                if((*next != ',') && ((j == last) && !isspace(*next))) {
+                    log_error("invalid separator (ascii: 0x%02x)", *next);
+                    return 0;
+                }
+                data = next+1;
+            }
+        }
+        else if(!strcmp(str, "base64")) {
+            if(!base64_decode(data, (uint8_t*)map->layer[0].data, 4 * map->width * map->height)) {
+                return 0;
+            }
+        }
+        else {
+            log_error("unsupported tilemap data encoding \"%s\"", str);
             return 0;
         }
     }
-    else {
-        log_error("unsupported tilemap data encoding \"%s\"", str);
-        return 0;
-    }
-
     return 1;
 }
 
