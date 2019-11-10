@@ -72,11 +72,11 @@ typedef struct
 /* VGM magic id */
 static const uint8_t vgm_id[] = { 0x56, 0x67, 0x6d, 0x20 };
 
-inline uint16_t read_u16(uint8_t *buffer) {
+uint16_t read_u16(uint8_t *buffer) {
     return (buffer[1] << 8) | buffer[0];
 }
 
-inline uint32_t read_u32(uint8_t *buffer) {
+uint32_t read_u32(uint8_t *buffer) {
     return   (buffer[3] << 24) | (buffer[2] << 16)
            | (buffer[1] <<  8) | (buffer[0]      );
 }
@@ -261,7 +261,7 @@ void usage()
 }
 
 /* main entry point. */
-int main(int argc, char **argv) {
+int main(int argc, const char **argv) {
     FILE *stream;
     int err;
     int ret;
