@@ -202,7 +202,7 @@ VDC_BXR = $07
 ;;   bit 15-9 - Unused
 ;;   bit 8-0  - Vertical scroll position.
 ;;
-VDC_BYR = $07
+VDC_BYR = $08
 ;;
 ;; ubyte: VDC_MWR
 ;; Memory Width Register (MWR)
