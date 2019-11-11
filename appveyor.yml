@@ -71,24 +71,24 @@ before_build:
 #    -DJANSSON_LIBRARY=%APPVEYOR_BUILD_FOLDER%/jansson/install/lib/jansson.lib
 #    ..
 
-build_script:
+#build_script:
 #  - cmake --build . --config Release
 #  - cmake --build . --config Release --target install
 
-after_build:
+#after_build:
 #   - cd ../install
 #   - 7z a ../hudk.zip * -tzip
    
-artifacts:
+#artifacts:
 #  - path: hudk.zip
 #    name: hudk-v${appveyor_build_version}-%MSVC_PLATFORM%.zip
 
-deploy:
+#deploy:
 #  release: hudk-v${appveyor_build_version}
 #  description: 'HuDK msvc15 %MSVC_PLATFORM% build'
 #  provider: GitHub
-  auth_token:
-    secure: xRIravp3mvMiAgogn6KGuK1yrolmSJUsum/wPXwu82bh97O7YkuQ3B178ac+WHml
+#  auth_token:
+#    secure: xRIravp3mvMiAgogn6KGuK1yrolmSJUsum/wPXwu82bh97O7YkuQ3B178ac+WHml
 #  artifact: /hudk.*\.zip/
 #  draft: false
 #  prerelease: false
