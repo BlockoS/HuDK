@@ -46,7 +46,7 @@ install:
   - cmake --build . --config Release --target install
   - cd ../..
   # libpng
-  - ps: Invoke-WebRequest "http://prdownloads.sourceforge.net/libpng/libpng-1.6.37.tar.gz?download" -OutFile "libpng.tar.xz"
+  - ps: Invoke-WebRequest "http://prdownloads.sourceforge.net/libpng/libpng-1.6.37.tar.xz?download" -OutFile "libpng.tar.xz"
   - 7z x libpng.tar.xz -so -txz | 7z x -si -ttar > nul
   - move libpng-1.6.37 libpng
   - cd libpng
@@ -54,6 +54,8 @@ install:
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
   - cd ../..
+  # mxml
+  # [todo]
   # HuDK
   - cd HuDK
   - git submodule update --init --recursive
