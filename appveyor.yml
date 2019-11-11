@@ -41,7 +41,7 @@ install:
   - cd zlib
   - md build
   - cd build
-  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ .
+  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ ..
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
   - cd ../..
@@ -50,7 +50,7 @@ install:
   - 7z x libpng.tar.xz -so -txz | 7z x -si -ttar > nul
   - move libpng-1.6.37 libpng
   - cd libpng
-  - cmake -G "%CMAKE_GENERATOR%" -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/zlib.lib -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include .
+  - cmake -G "%CMAKE_GENERATOR%" -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/zlib.lib -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include ..
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
   - cd ../..
