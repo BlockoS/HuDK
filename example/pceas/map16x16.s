@@ -22,7 +22,7 @@ _main:
     lda    #VDC_BG_64x32
     jsr    vdc_set_bat_size
 
-    ; [todo]
+    ; set map bounds
     ldx    #00
     lda    vdc_bat_height 
     jsr    map_set_bat_bounds
@@ -42,10 +42,11 @@ _main:
     stw    #(gfx00.size >> 1), <_cx
     jsr    vdc_load_data
 
-    ; [todo]
+    ; set map infos
     map_set map00, map00_tile_vram, tile_pal00, #map00_width, #map00_height, #00
 
-    ; [todo]
+    ; copy map from (0,0) to (17, map_height) to BAT
+    ; remember that this is a 16x16 map
     map_copy_16 #0, #0, #0, #0, #17, #map00_height
     
     ; clear irq config flag
@@ -55,6 +56,8 @@ _main:
 
     cli
 
+    ; everythins is similar to the 8x8 example
+    ; except that we'll use map_copy_16 to load the map column
     lda    #16
     sta    <map_col
     stwz   <scroll_x

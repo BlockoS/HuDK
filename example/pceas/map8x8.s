@@ -22,7 +22,7 @@ _main:
     lda    #VDC_BG_64x32
     jsr    vdc_set_bat_size
 
-    ; [todo]
+    ; set map bounds
     ldx    #00
     lda    vdc_bat_height 
     jsr    map_set_bat_bounds
@@ -42,10 +42,10 @@ _main:
     stw    #(gfx00.size >> 1), <_cx
     jsr    vdc_load_data
 
-    ; [todo]
+    ; set map pointer, tiles vram address, tiles palette id, map width and height, and wrap mode
     map_set map00, map00_tile_vram, tile_pal00, #map00_width, #map00_height, #00
 
-    ; [todo]
+    ; copy map from (0,0) to (32, map_height) to BAT
     map_copy #0, #0, #0, #0, #33, #map00_height
     
     ; clear irq config flag
@@ -55,20 +55,27 @@ _main:
 
     cli
 
+    ; the last map column
     lda    #32
     sta    <map_col
+    ; reset X scroll coordinate
     stwz   <scroll_x
+    ; reset index in the sine table
     stz    <sin_idx
 .loop:
     vdc_wait_vsync
 
+    ; set VDC X scroll register
     vdc_reg #VDC_BXR
     vdc_data <scroll_x
     incw   <scroll_x
 
+    ; this is the wavy scroll effect
+    ; the Y coordinate is computed like this :
+    ;    Y = (sin_table[sin_idx] / 2) + 64
     ldy    <sin_idx
     lda    sin_table, Y
-    cmp    #$80
+    cmp    #$80         ; sine values are signed, this will save its upon right shift
     ror    A
     clc
     adc    #64
@@ -77,11 +84,15 @@ _main:
     adc    #$00
     sta    <scroll_y+1
 
-    inc    <sin_idx
+    inc    <sin_idx     ; we move to the next sine value
 
+    ; set VDC Y scroll register
     vdc_reg #VDC_BYR
     vdc_data <scroll_y
  
+    ; check if we need to load a map column
+    ; note the only go from left to right
+    ; and we'll never need to load more that a single column
     lda    <scroll_x
     and    #7
     bne    .l1
