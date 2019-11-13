@@ -46,8 +46,8 @@ install:
   - cmake --build . --config Release --target install
   - cd ../..
   # libpng
-  - ps: Invoke-WebRequest "http://prdownloads.sourceforge.net/libpng/libpng-1.6.37.tar.gz" -OutFile "libpng.tar.gz"
-  - tar -zxvf libpng.tar.gz
+  - ps: Invoke-WebRequest "https://download.sourceforge.net/libpng/lpng1637.zip" -OutFile "libpng.zip"
+  - ps: Expand-Archive libpng.zip -DestinationPath .
   - move libpng-1.6.37 libpng
   - cd libpng
   - cmake -G "%CMAKE_GENERATOR%" -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/zlib.lib -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include ..
