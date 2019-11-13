@@ -91,6 +91,8 @@ before_build:
     -DPNG_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/libpng.lib
     -DJANSSON_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include
     -DJANSSON_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/jansson.lib
+    -DMXML_LIBRARIES=%APPVEYOR_BUILD_FOLDER%/deps/lib/jansson/mxml.lib
+    -DMXML_INCLUDE_DIRS=%APPVEYOR_BUILD_FOLDER%/deps/include
     ..
 
 build_script:
