@@ -50,7 +50,7 @@ install:
   - del zlib.zip
   # libpng
   - appveyor DownloadFile https://download.sourceforge.net/libpng/lpng1637.zip
-  - ps: Expand-Archive libpng1637.zip -DestinationPath .
+  - ps: Expand-Archive lpng1637.zip -DestinationPath .
   - move libpng-1.6.37 libpng
   - cd libpng
   - cmake -G "%CMAKE_GENERATOR%" -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/zlib.lib -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include ..
@@ -58,7 +58,7 @@ install:
   - cmake --build . --config Release --target install
   - cd ../..
   - rmdir libpng /s /q
-  - del libpng1637.zip
+  - del lpng1637.zip
   # mxml
   - ps: Invoke-WebRequest "https://github.com/BlockoS/mxml/archive/master.zip" -OutFile "mxml.zip"
   - ps: Expand-Archive mxml.zip -DestinationPath .
