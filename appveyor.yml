@@ -55,23 +55,32 @@ install:
   - cmake --build . --config Release --target install
   - cd ../..
   # mxml
-  # [todo]
+  - ps: Invoke-WebRequest "https://github.com/BlockoS/mxml/archive/master.zip" -OutFile "mxml.zip"
+  - ps: Expand-Archive mxml.zip -DestinationPath .
+  - move mxml-master mxml
+  - cd mxml
+  - md build
+  - cd build
+  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ ..
+  - cmake --build . --config Release
+  - cmake --build . --config Release --target install
+  - cd ../..
   # HuDK
   - cd HuDK
   - git submodule update --init --recursive
 
 before_build:
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars%BITS%.bat"
-  - mkdir install
-  - mkdir build
+  - md package
+  - md build
   - cd build 
-#  - cmake -G "%CMAKE_GENERATOR%" 
-#    -DCMAKE_INSTALL_PREFIX=../install
-#    -DPNG_INCLUDE_DIRS=%APPVEYOR_BUILD_FOLDER%/libpng/
-#    -DPNG_
-#    -DJANSSON_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/jansson/install/include
-#    -DJANSSON_LIBRARY=%APPVEYOR_BUILD_FOLDER%/jansson/install/lib/jansson.lib
-#    ..
+  - cmake -G "%CMAKE_GENERATOR%" 
+    -DCMAKE_INSTALL_PREFIX=../package
+    -DPNG_INCLUDE_DIRS=%APPVEYOR_BUILD_FOLDER%/deps/include
+    -DPNG_LIBRARIES=%APPVEYOR_BUILD_FOLDER%/deps/lib/libpng.lib
+    -DJANSSON_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include
+    -DJANSSON_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/jansson.lib
+    ..
 
 #build_script:
 #  - cmake --build . --config Release
