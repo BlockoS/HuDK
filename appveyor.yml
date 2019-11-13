@@ -49,7 +49,7 @@ install:
   - rmdir zlib /s /q
   - del zlib.zip
   # libpng
-  - ps: Invoke-WebRequest "http://prdownloads.sourceforge.net/libpng/lpng1637.zip?download" -OutFile "libpng.zip"
+  - appveyor DownloadFile https://download.sourceforge.net/libpng/lpng1637.zip
   - ps: Expand-Archive libpng.zip -DestinationPath .
   - move libpng-1.6.37 libpng
   - cd libpng
