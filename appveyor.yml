@@ -32,9 +32,10 @@ install:
   - cmake -DJANSSON_BUILD_DOCS=OFF -DJANSSON_WITHOUT_TESTS=ON -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ ..
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
-  - cd ..
-  # zlib
   - cd ../..
+  - rmdir jansson /s /q
+  - del jansson.zip
+  # zlib
   - ps: Invoke-WebRequest "https://github.com/madler/zlib/archive/v1.2.11.zip" -OutFile "zlib.zip"
   - ps: Expand-Archive zlib.zip -DestinationPath .
   - move zlib-1.2.11 zlib
@@ -45,8 +46,10 @@ install:
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
   - cd ../..
+  - rmdir zlib /s /q
+  - del zlib.zip
   # libpng
-  - ps: Invoke-WebRequest "https://download.sourceforge.net/libpng/lpng1637.zip" -OutFile "libpng.zip"
+  - ps: Invoke-WebRequest "http://prdownloads.sourceforge.net/libpng/lpng1637.zip?download" -OutFile "libpng.zip"
   - ps: Expand-Archive libpng.zip -DestinationPath .
   - move libpng-1.6.37 libpng
   - cd libpng
@@ -54,6 +57,8 @@ install:
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
   - cd ../..
+  - rmdir libpng /s /q
+  - del libpng.zip
   # mxml
   - ps: Invoke-WebRequest "https://github.com/BlockoS/mxml/archive/master.zip" -OutFile "mxml.zip"
   - ps: Expand-Archive mxml.zip -DestinationPath .
@@ -65,6 +70,8 @@ install:
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
   - cd ../..
+  - rmdir mxml /s /q
+  - del mxml.zip
   # HuDK
   - cd HuDK
   - git submodule update --init --recursive
