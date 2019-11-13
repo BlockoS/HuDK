@@ -51,7 +51,7 @@ install:
   # libpng
   - appveyor DownloadFile https://download.sourceforge.net/libpng/lpng1637.zip
   - ps: Expand-Archive lpng1637.zip -DestinationPath .
-  - move libpng-1.6.37 libpng
+  - move lpng1637 libpng
   - cd libpng
   - cmake -G "%CMAKE_GENERATOR%" -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/zlib.lib -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include ..
   - cmake --build . --config Release
