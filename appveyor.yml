@@ -91,7 +91,7 @@ before_build:
     -DPNG_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/libpng.lib
     -DJANSSON_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include
     -DJANSSON_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/jansson.lib
-    -DMXML_LIBRARIES=%APPVEYOR_BUILD_FOLDER%/deps/lib/jansson/mxml.lib
+    -DMXML_LIBRARIES=%APPVEYOR_BUILD_FOLDER%/deps/lib/mxml.lib
     -DMXML_INCLUDE_DIRS=%APPVEYOR_BUILD_FOLDER%/deps/include
     ..
 
@@ -99,24 +99,24 @@ build_script:
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
 
-#after_build:
-#   - cd ../install
-#   - 7z a ../hudk.zip * -tzip
+after_build:
+   - cd ../package
+   - 7z a ../hudk.zip * -tzip
    
-#artifacts:
-#  - path: hudk.zip
-#    name: hudk-v${appveyor_build_version}-%MSVC_PLATFORM%.zip
+artifacts:
+  - path: hudk.zip
+    name: hudk-v${appveyor_build_version}-%MSVC_PLATFORM%.zip
 
-#deploy:
-#  release: hudk-v${appveyor_build_version}
-#  description: 'HuDK msvc15 %MSVC_PLATFORM% build'
-#  provider: GitHub
-#  auth_token:
-#    secure: xRIravp3mvMiAgogn6KGuK1yrolmSJUsum/wPXwu82bh97O7YkuQ3B178ac+WHml
-#  artifact: /hudk.*\.zip/
-#  draft: false
-#  prerelease: false
-#  on:
-#    branch: master
-#    appveyor_repo_tag: true  
+deploy:
+  release: hudk-v${appveyor_build_version}
+  description: 'HuDK msvc15 %MSVC_PLATFORM% build'
+  provider: GitHub
+  auth_token:
+    secure: xRIravp3mvMiAgogn6KGuK1yrolmSJUsum/wPXwu82bh97O7YkuQ3B178ac+WHml
+  artifact: /hudk.*\.zip/
+  draft: false
+  prerelease: false
+  on:
+    branch: master
+    appveyor_repo_tag: true  
   
