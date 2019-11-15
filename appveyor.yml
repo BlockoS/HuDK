@@ -85,6 +85,7 @@ before_build:
   - cd build 
   - cmake -G "%CMAKE_GENERATOR%" 
     -DCMAKE_INSTALL_PREFIX=../package
+    -DBUILD_EXAMPLES=OFF
     -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/zlib.lib
     -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include
     -DPNG_PNG_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include
