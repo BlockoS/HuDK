@@ -19,3 +19,4 @@ if(NOT MSVC)
 endif()
 target_link_libraries(tiled2bat ${JANSSON_LIBRARIES} ${MXML_LIBRARIES} ${PNG_LIBRARIES} argparse cwalk)
 
+install(TARGETS tiled2bat RUNTIME DESTINATION bin)
