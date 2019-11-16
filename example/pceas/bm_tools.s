@@ -5,10 +5,8 @@
 ;; (c) 2016-2019 MooZ
 ;;
 
-    .include "hudk.s"
+    .include "start.s"
     .include "bram.s"
-    .include "bcd.s"
-    .include "joypad.s"
    
 ; [todo] 0. comments!
 ; [todo] 1. edit
@@ -46,10 +44,19 @@ current_menu     .ds 1
 bm_data          .ds 1024
 
     .code
-main:
+_main:
     ; switch resolution to 512x224
     jsr    vdc_xres_512
     jsr    vdc_yres_224
+    
+    ; clear palettes
+    stwz   color_reg
+    clx
+@clear_palettes:
+    stwz   color_data
+    stwz   color_data
+    inx
+    bne    @clear_palettes
     
     ; load default font
     stw    #$2000, <_di 
@@ -63,6 +70,8 @@ main:
     jsr    font_set_pal
 
     ; load palette
+    lda    #bank(palette)
+    sta    <_bl
     stw    #palette, <_si
     jsr    map_data
     cla
@@ -945,4 +954,3 @@ gradient_lo:
 gradient_hi:
     .db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
     
-    .include "font.inc"
