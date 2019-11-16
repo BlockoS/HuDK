@@ -76,7 +76,7 @@ install:
   - del mxml.zip
   # copy dlls to package directory
   - md package
-  - copy %APPVEYOR_BUILD_FOLDER%/deps/bin/*.dll package
+  - copy "%APPVEYOR_BUILD_FOLDER%\deps\bin\*.dll" package
   # HuDK
   - cd HuDK
   - git submodule update --init --recursive
