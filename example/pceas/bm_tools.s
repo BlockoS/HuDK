@@ -78,16 +78,7 @@ _main:
     ldy    #$03
     jsr    vce_load_palette
         
-    ; fill BAT with space character
-    lda    #' '
-    sta    <_bl
-    lda    vdc_bat_width
-    sta    <_al
-    lda    vdc_bat_height
-    sta    <_ah
-    ldx    #$00
-    lda    #$00
-    jsr    print_fill
+    jsr    clear_screen
 
     ; detect BRAM
     stw    #bm_info_txt, <_si
@@ -127,17 +118,25 @@ _main:
     ; enable background display
     vdc_reg  #VDC_CR
     vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
-    
-    stz    <irq_cnt
-    
+        
     cli 
 @loop:
-    lda    <irq_cnt
-    beq    @nop
-        stz    <irq_cnt
-        jsr    joypad_callback
-@nop:
+    vdc_wait_vsync
+    jsr    joypad_callback
     bra    @loop
+
+clear_screen:
+    ; fill BAT with space character
+    lda    #' '
+    sta    <_bl
+    lda    vdc_bat_width
+    sta    <_al
+    lda    vdc_bat_height
+    sta    <_ah
+    ldx    #$00
+    lda    #$00
+    jsr    print_fill
+    rts
 
 display_file_list:
     ldx    #bm_file_list_x0
@@ -259,6 +258,10 @@ do_nothing:
     rts
 
 main_menu_I:
+    lda    <entry_count
+    bne    @l0
+        rts
+@l0:
     lda    #$02
     sta    <_al
     jsr    main_menu_highlight
@@ -343,7 +346,7 @@ file_menu_I:
 @end:
     rts
 @jump_table:
-    .dw do_nothing
+    .dw edit_entry
     .dw bm_backup
     .dw confirm_restore
     .dw confirm_delete
@@ -476,16 +479,6 @@ highlight_id:
     ldy    #$02
     lda    <_ah
     jsr    highlight_span
-    rts
-
-editor_menu_I:
-editor_menu_II:
-editor_menu_SEL:
-editor_menu_RUN:
-editor_menu_up:
-editor_menu_right:
-editor_menu_down:
-editor_menu_left:
     rts
 
 set_cursor:
@@ -867,6 +860,50 @@ bm_restore.ext = *
 @err:
     jsr    print_error_msg
     rmb0   <navigation_state
+    rts
+
+; [todo]
+edit_entry:
+    jsr    bm_load
+    bcc    @ok
+@err_load:
+    ldx    #bm_err_load
+    jsr    print_error_msg
+    rts
+@ok:
+ 
+    jsr    clear_screen
+
+    ; [todo] display entry
+
+    lda    #EDITOR_MENU
+    jsr    menu_set
+
+    rts
+
+editor_menu_I:
+    ; [todo]
+    rts
+editor_menu_II:
+    ; [todo]
+    rts
+editor_menu_SEL:
+    ; [todo]
+    rts
+editor_menu_RUN:
+    ; [todo]
+    rts
+editor_menu_up:
+    ; [todo]
+    rts
+editor_menu_right:
+    ; [todo]
+    rts
+editor_menu_down:
+    ; [todo]
+    rts
+editor_menu_left:
+    ; [todo]
     rts
 
 bm_detect_msg_x = 11
