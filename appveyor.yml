@@ -32,9 +32,10 @@ install:
   - cmake -DJANSSON_BUILD_DOCS=OFF -DJANSSON_WITHOUT_TESTS=ON -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ ..
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
-  - cd ..
-  # zlib
   - cd ../..
+  - rmdir jansson /s /q
+  - del jansson.zip
+  # zlib
   - ps: Invoke-WebRequest "https://github.com/madler/zlib/archive/v1.2.11.zip" -OutFile "zlib.zip"
   - ps: Expand-Archive zlib.zip -DestinationPath .
   - move zlib-1.2.11 zlib
@@ -45,56 +46,79 @@ install:
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
   - cd ../..
+  - rmdir zlib /s /q
+  - del zlib.zip
   # libpng
-  - ps: Invoke-WebRequest "http://prdownloads.sourceforge.net/libpng/libpng-1.6.37.tar.xz?download" -OutFile "libpng.tar.xz"
-  - 7z x libpng.tar.xz -so -txz | 7z x -si -ttar > nul
-  - move libpng-1.6.37 libpng
+  - appveyor DownloadFile https://download.sourceforge.net/libpng/lpng1637.zip
+  - ps: Expand-Archive lpng1637.zip -DestinationPath .
+  - move lpng1637 libpng
   - cd libpng
-  - cmake -G "%CMAKE_GENERATOR%" -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/zlib.lib -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include ..
+  - md build
+  - cd build
+  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/zlib.lib -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include ..
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
   - cd ../..
+  - rmdir libpng /s /q
+  - del lpng1637.zip
   # mxml
-  # [todo]
+  - ps: Invoke-WebRequest "https://github.com/BlockoS/mxml/archive/master.zip" -OutFile "mxml.zip"
+  - ps: Expand-Archive mxml.zip -DestinationPath .
+  - move mxml-master mxml
+  - cd mxml
+  - md build
+  - cd build
+  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ ..
+  - cmake --build . --config Release
+  - cmake --build . --config Release --target install
+  - cd ../..
+  - rmdir mxml /s /q
+  - del mxml.zip
   # HuDK
   - cd HuDK
   - git submodule update --init --recursive
 
 before_build:
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars%BITS%.bat"
-  - mkdir install
-  - mkdir build
+  - md package
+  - md build
   - cd build 
-#  - cmake -G "%CMAKE_GENERATOR%" 
-#    -DCMAKE_INSTALL_PREFIX=../install
-#    -DPNG_INCLUDE_DIRS=%APPVEYOR_BUILD_FOLDER%/libpng/
-#    -DPNG_
-#    -DJANSSON_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/jansson/install/include
-#    -DJANSSON_LIBRARY=%APPVEYOR_BUILD_FOLDER%/jansson/install/lib/jansson.lib
-#    ..
+  - cmake -G "%CMAKE_GENERATOR%" 
+    -DCMAKE_INSTALL_PREFIX=../package
+    -DBUILD_EXAMPLES=OFF
+    -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/zlib.lib
+    -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include
+    -DPNG_PNG_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include
+    -DPNG_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/libpng16.lib
+    -DJANSSON_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include
+    -DJANSSON_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/jansson.lib
+    -DMXML_LIBRARIES=%APPVEYOR_BUILD_FOLDER%/deps/lib/mxml.lib
+    -DMXML_INCLUDE_DIRS=%APPVEYOR_BUILD_FOLDER%/deps/include
+    ..
 
-#build_script:
-#  - cmake --build . --config Release
-#  - cmake --build . --config Release --target install
+build_script:
+  - cmake --build . --config Release
+  - cmake --build . --config Release --target install
 
-#after_build:
-#   - cd ../install
-#   - 7z a ../hudk.zip * -tzip
+after_build:
+   - cd ../package
+   - copy "%APPVEYOR_BUILD_FOLDER%\deps\bin\*.dll" "bin\"
+   - 7z a ../hudk.zip * -tzip
    
-#artifacts:
-#  - path: hudk.zip
-#    name: hudk-v${appveyor_build_version}-%MSVC_PLATFORM%.zip
+artifacts:
+  - path: hudk.zip
+    name: hudk-v${appveyor_build_version}-%MSVC_PLATFORM%.zip
 
-#deploy:
-#  release: hudk-v${appveyor_build_version}
-#  description: 'HuDK msvc15 %MSVC_PLATFORM% build'
-#  provider: GitHub
-#  auth_token:
-#    secure: xRIravp3mvMiAgogn6KGuK1yrolmSJUsum/wPXwu82bh97O7YkuQ3B178ac+WHml
-#  artifact: /hudk.*\.zip/
-#  draft: false
-#  prerelease: false
-#  on:
-#    branch: master
-#    appveyor_repo_tag: true  
+deploy:
+  release: hudk-v${appveyor_build_version}
+  description: 'HuDK msvc15 %MSVC_PLATFORM% build'
+  provider: GitHub
+  auth_token:
+    secure: xRIravp3mvMiAgogn6KGuK1yrolmSJUsum/wPXwu82bh97O7YkuQ3B178ac+WHml
+  artifact: /hudk.*\.zip/
+  draft: false
+  prerelease: false
+  on:
+    branch: master
+    appveyor_repo_tag: true  
   

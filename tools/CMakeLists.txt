@@ -19,3 +19,5 @@ if(NOT MSVC)
 endif()
 
 add_subdirectory(tiled2bat)
+
+install(TARGETS vgm_strip RUNTIME DESTINATION bin)

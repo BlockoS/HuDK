@@ -8,25 +8,30 @@
 # Licensed under the MIT License
 #
 
-find_path(MXML_INCLUDE_DIR
-    NAMES
-        mxml.h
-    PATHS
-        ${MXML_INCLUDE_DIRS}
-)
+if (MXML_LIBRARIES AND MXML_INCLUDE_DIRS)
+    # in cache already
+    set(MXML_FOUND TRUE)
+else (MXML_LIBRARIES AND MXML_INCLUDE_DIRS)
 
-find_library(MXML_LIBRARY
-    NAMES
-        mxml
-    PATHS
-        ${MXML_LIBRARY_DIRS}
-)
+    find_path(MXML_INCLUDE_DIR
+        NAMES
+            mxml.h
+        PATHS
+            ${MXML_INCLUDE_DIRS}
+    )
 
-set(MXML_INCLUDE_DIRS ${MXML_INCLUDE_DIR})
-set(MXML_LIBRARIES ${MXML_LIBRARY})
+    find_library(MXML_LIBRARY
+        NAMES
+            mxml
+        PATHS
+            ${MXML_LIBRARY_DIRS}
+    )
 
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(MXML DEFAULT_MSG MXML_LIBRARIES MXML_INCLUDE_DIRS)
-mark_as_advanced(MXML_INCLUDE_DIRS MXML_LIBRARIES)
+    set(MXML_INCLUDE_DIRS ${MXML_INCLUDE_DIR})
+    set(MXML_LIBRARIES ${MXML_LIBRARY})
 
+    include(FindPackageHandleStandardArgs)
+    find_package_handle_standard_args(MXML DEFAULT_MSG MXML_LIBRARIES MXML_INCLUDE_DIRS)
+    mark_as_advanced(MXML_INCLUDE_DIRS MXML_LIBRARIES)
 
+endif (MXML_LIBRARIES AND MXML_INCLUDE_DIRS)
