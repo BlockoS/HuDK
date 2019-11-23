@@ -9,7 +9,6 @@
     .include "bram.s"
    
 ; [todo] 0. comments!
-; [todo] 1. edit
 ; [todo] 2. finalize GUI
 
 MAIN_MENU   = 0
@@ -38,10 +37,21 @@ callback       .ds 2
 
 color_index .ds 1
 
+bm_capacity      .ds 2
+bm_available     .ds 2
+bm_entry.size    .ds 2
+bm_entry.start   .ds 2
+bm_entry.offset  .ds 2
+bm_entry.edit    .ds 1
+bm_entry.backup  .ds 1
+bm_entry.value   .ds 1
+bm_entry.palette .ds 1
+
     .bss
 bm_namebuf       .ds 16
 current_menu     .ds 1
 bm_data          .ds 1024
+; [todo] bm_data_size
 
     .code
 _main:
@@ -78,36 +88,7 @@ _main:
     ldy    #$03
     jsr    vce_load_palette
         
-    jsr    clear_screen
-
-    ; detect BRAM
-    stw    #bm_info_txt, <_si
-    lda    #32              ; [todo]
-    sta    <_al
-    lda    #32              ; [todo]
-    sta    <_ah
-    ldx    #1               ; [todo]
-    lda    #1               ; [todo]
-    jsr    print_string
-    
-    jsr    bm_full_test     ; [todo] set carry flag on error
-
-    jsr    display_file_list
-    
-    jsr    draw_main_menu
-
-    stz    <action_id
-    stz    <navigation_state
-    
-    lda    #MAIN_MENU
-    jsr    menu_set
-    
-    stz    <_ah
-    jsr    highlight_id
-
-    lda    #$01
-    sta    <_al
-    jsr    main_menu_highlight
+    jsr    main_menu
 
     stz    <irq_m
     ; set vsync vec
@@ -153,9 +134,9 @@ display_file_list:
         ldx    #low(bm_namebuf)
         jsr    bm_getptr.2
         bcs    @end
-        sta    <_bp+1
+        sta    <_bp+1                       ; [todo] save entry infos
         stx    <_bp
-        
+
         jsr    print_entry_description
         inc    <entry_count
 
@@ -621,11 +602,45 @@ clear_msg_box:
 
 ; [todo]
 bm_full_test:
+    rts
+
+;
+; Main menu.
+;
+main_menu:
+    jsr    clear_screen
+    
+    stwz   <bm_capacity
+    stwz   <bm_available
+
+    ; detect backup ram.
+    jsr    bm_detect
+    ; compute backup ram capacity.
+    lda    bm_error
+    bne    @l0
+        jsr    bm_size
+        bcs    @l1
+            stw    <_cx, <bm_capacity
+@l1:
+    ; compute available memory size.
+    jsr    bm_free
+    bcs    @l0
+        stw    <_cx, <bm_available
+@l0:
+
+    ; Print status row description.
+    stw    #bm_info_txt, <_si
+    stb    #bm_status_w, <_al
+    stb    #bm_status_h, <_ah
+    ldx    #bm_status_x
+    lda    #bm_status_y
+    jsr    print_string
+    
+    ; Print bram status.
     ldx    #bm_detect_msg_x
     lda    #bm_detect_msg_y
     jsr    set_cursor
 
-    jsr    bm_detect
     ldx    bm_error
     lda    bm_detect_msg.lo, X
     sta    <_si
@@ -633,35 +648,41 @@ bm_full_test:
     sta    <_si+1
     jsr    print_string_raw
 
-    jsr    bm_size
-    bcc    @display_size
-        stwz    <_cx
-@display_size:
     jsr   next_line
-    ldx   <_cl
-    lda   <_ch
+    ldx   <bm_capacity
+    lda   <bm_capacity+1
     jsr   print_dec_u16
 
-    jsr    bm_free
-    bcc    @display_free
-        stwz    <_cx
-@display_free:
     jsr   next_line
-    ldx   <_cl
-    lda   <_ch
+    ldx   <bm_available
+    lda   <bm_available+1
     jsr   print_dec_u16
-    rts
 
-;
-; Draw main menu.
-;
-draw_main_menu:
+    ; Display file list.
+    jsr    display_file_list
+
+    ; Display menu and cursor.
     ldx    bm_main_menu_x
     lda    bm_main_menu_y
     jsr    set_cursor
 
     stw    #bm_main_menu, <_si
     jsr    print_string_raw
+    
+    ; Reset navigation
+    stz    <action_id
+    stz    <navigation_state
+    
+    lda    #MAIN_MENU
+    jsr    menu_set
+    
+    stz    <_ah
+    jsr    highlight_id
+
+    lda    #$01
+    sta    <_al
+    jsr    main_menu_highlight
+
     rts
     
 ;
@@ -692,8 +713,9 @@ bm_load:
     jsr    bm_check_header
     bcs    @end
 
+    stw    <_cx, bm_entry.size
     memcpy_mode #SOURCE_INC_DEST_INC
-    memcpy_args <file_ptr, #bm_data, <_cx
+    memcpy_args <file_ptr, #bm_data, <bm_entry.size
     jsr    memcpy
 
 @end:
@@ -872,38 +894,399 @@ edit_entry:
     rts
 @ok:
  
+    ; remove header size
+    subw   #16, <bm_entry.size
+
     jsr    clear_screen
 
-    ; [todo] display entry
+    ; print filename
+    ldx    #bm_status_x
+    lda    #bm_status_y
+    jsr    set_cursor
+    ; 1. entry number
+    lda    <file_id
+    jsr    print_hex_u8
+    ; 2. spacing
+    lda    #' '
+    jsr    print_char
+    ; 3. filename
+    stw    #bm_namebuf+2, <_si
+    jsr    print_string_raw
+    
+    ; display entry
+    stwz   <bm_entry.start
+    stwz   <bm_entry.offset
+    jsr    display_entry
+
+    ; highlight entry byte
+    stb    #01, <bm_entry.palette
+    jsr    highlight_entry_byte
 
     lda    #EDITOR_MENU
     jsr    menu_set
 
     rts
 
+; [todo]
+display_entry:
+    ldx    #bm_editor_data_x
+    lda    #bm_editor_data_y
+    jsr    set_cursor
+
+    addw   #(bm_data+16), <bm_entry.start, <_si ; skip header
+    stw    <bm_entry.size, <_cx
+    
+@line:
+
+    cly
+@hex:
+    lda    [_si], Y
+    jsr    print_hex_u8
+    lda    #' '
+    jsr    print_char
+
+    subw   #1, <_cx
+    lda    <_cl
+    ora    <_ch
+    beq    @hex_end
+
+    iny
+    cpy    #16
+    bne    @hex
+@hex_end:
+
+    ldx    #bm_editor_data_char_x
+    stx    <cursor_x
+    lda    <cursor_y
+    jsr    set_cursor
+
+    iny
+    sxy
+    cly
+@ascii:
+    lda    [_si], Y
+    jsr    print_char
+
+    dex
+    beq    @end
+
+    iny
+    cpy    #16
+    bne    @ascii
+
+    addw   #16, <_si
+
+    ldx    #0
+    inc    <cursor_y
+    lda    <cursor_y
+    cmp    #(bm_editor_data_y+bm_editor_data_h)
+    beq    @end
+    jsr    set_cursor
+
+    bra    @line
+
+@end:
+    rts
+
+; [todo]
+compute_entry_bat_pos:
+    lda    <bm_entry.offset
+    sec
+    sbc    <bm_entry.start
+    sta    <_dl
+    sta    <_bl
+    lda    <bm_entry.offset+1
+    sbc    <bm_entry.start+1
+    sta    <_dh
+
+    lda    <_bl
+    and    #15
+    sta    <_bl
+    asl    A
+    clc
+    adc    <_bl
+    tax
+
+    lsrw   <_dx
+    lsrw   <_dx
+    lsrw   <_dx
+    lsrw   <_dx
+
+    lda    <_dl
+    clc
+    adc    #bm_editor_data_y
+    sta    <_dl
+
+    rts
+
+; [todo]
+highlight_entry_byte:                   ; [todo] rename
+    jsr    compute_entry_bat_pos
+
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    jsr    vdc_set_read
+
+    ldy    #$02
+    lda    <bm_entry.palette
+    jsr    highlight_span
+
+    lda    <_bl
+    clc
+    adc    #bm_editor_data_char_x
+    tax
+    lda    <_dl
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    jsr    vdc_set_read
+
+    ldy    #$01
+    lda    <bm_entry.palette
+    jsr    highlight_span
+
+    rts
+
+update_entry_byte:
+    jsr    compute_entry_bat_pos
+
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+
+    lda    <bm_entry.value
+    jsr    print_hex_u8
+    
+    lda    <_bl
+    clc
+    adc    #bm_editor_data_char_x
+    tax
+    lda    <_dl
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+
+    lda    <bm_entry.value
+    jsr    print_char
+
+    jsr    highlight_entry_byte
+    
+    rts
+
 editor_menu_I:
-    ; [todo]
+    addw   #(bm_data+16), <bm_entry.offset, <_si
+    bbr0   <bm_entry.edit, @edit_start
+        rmb0   <bm_entry.edit
+        lda    <bm_entry.value
+        sta    [_si]
+        
+        stb    #1, <bm_entry.palette
+        bra    @exit
+@edit_start:
+    smb0   <bm_entry.edit
+    lda    [_si]
+    sta    <bm_entry.value
+    sta    <bm_entry.backup
+
+    stb    #2, <bm_entry.palette
+@exit:
+    jsr    highlight_entry_byte
     rts
+
 editor_menu_II:
-    ; [todo]
+    bbr0   <bm_entry.edit, @exit
+        rmb0   <bm_entry.edit
+        lda    <bm_entry.backup
+        sta    <bm_entry.value
+        stb    #1, <bm_entry.palette
+        jsr    update_entry_byte
+@exit:
     rts
+
 editor_menu_SEL:
-    ; [todo]
+    jsr    main_menu
     rts
+
 editor_menu_RUN:
-    ; [todo]
-    rts
+    stw    #(bm_data+16), <_di
+    stw    #(bm_data+4), <_bx
+    stw    bm_entry.size, <_ax
+    stwz    <_bp
+    jsr    bm_write
+    bcs    @err_write
+        jmp    main_menu
+@err_write:
+    ldx    #bm_err_write
+    jmp    print_error_msg
+
 editor_menu_up:
-    ; [todo]
+    bbr0   <bm_entry.edit, @move
+        dec    <bm_entry.value
+        
+        stb    #2, <bm_entry.palette
+        jsr    update_entry_byte
+        rts
+@move:
+    jsr    editor_menu_move_up
     rts
+
 editor_menu_right:
-    ; [todo]
+    bbr0   <bm_entry.edit, @move
+        lda    <bm_entry.value
+        clc
+        adc    #$10
+        sta    <bm_entry.value
+
+        stb    #2, <bm_entry.palette
+        jsr    update_entry_byte
+        rts
+@move:
+    jsr    editor_menu_move_right
     rts
-editor_menu_down:
-    ; [todo]
-    rts
+
 editor_menu_left:
-    ; [todo]
+    bbr0   <bm_entry.edit, @move
+        lda    <bm_entry.value
+        sec
+        sbc    #$10
+        sta    <bm_entry.value
+        
+        stb    #2, <bm_entry.palette
+        jsr    update_entry_byte
+        rts
+@move:
+    jsr    editor_menu_move_left
+    rts
+
+editor_menu_down:
+    bbr0   <bm_entry.edit, @move
+        inc    <bm_entry.value
+
+        stb    #2, <bm_entry.palette
+        jsr    update_entry_byte
+        rts
+@move:
+    jsr    editor_menu_move_down
+    rts
+
+editor_menu_move_up:
+    lda    <bm_entry.offset+1
+    bne    @ok
+        lda    <bm_entry.offset
+        cmp    #16
+        bcs    @ok
+            rts
+@ok:
+
+    stb    #0, <bm_entry.palette
+    jsr    highlight_entry_byte
+
+    subw   #16, <bm_entry.offset
+
+    jsr    editor_menu_scroll_up
+
+    stb    #1, <bm_entry.palette
+    jsr    highlight_entry_byte
+    
+    rts
+
+editor_menu_move_right:
+    lda    <bm_entry.size
+    sec
+    sbc    #01
+    tax
+    lda    <bm_entry.size+1
+    sbc    #00
+    cmp    <bm_entry.offset+1
+    bne    @ok
+        cpx    <bm_entry.offset
+        bne    @ok
+            rts
+@ok:
+    stb    #0, <bm_entry.palette
+    jsr    highlight_entry_byte
+    
+    incw   <bm_entry.offset
+
+    jsr    editor_menu_scroll_down
+
+    stb    #1, <bm_entry.palette
+    jsr    highlight_entry_byte
+    rts
+
+editor_menu_move_down:
+    lda    <bm_entry.offset
+    clc
+    adc    #16
+    tax
+    lda    <bm_entry.offset+1
+    adc    #0
+    cmp    <bm_entry.size+1
+    bcc    @ok
+    bne    @exit
+        cpx    <bm_entry.size
+        bcc    @ok
+@exit
+            rts
+@ok:
+
+    stb    #0, <bm_entry.palette
+    jsr    highlight_entry_byte
+
+    addw   #16, <bm_entry.offset
+
+    jsr    editor_menu_scroll_down
+
+    stb    #1, <bm_entry.palette
+    jsr    highlight_entry_byte
+    
+    rts
+
+editor_menu_move_left:
+    lda    <bm_entry.offset
+    ora    <bm_entry.offset+1
+    bne    @ok
+        rts
+@ok:
+    stb    #0, <bm_entry.palette
+    jsr    highlight_entry_byte
+
+    decw   <bm_entry.offset
+
+    jsr    editor_menu_scroll_up
+
+    stb    #1, <bm_entry.palette
+    jsr    highlight_entry_byte
+
+    rts
+
+editor_menu_scroll_up:
+    lda    <bm_entry.offset+1
+    cmp    <bm_entry.start+1
+    bcc    @scroll
+    bne    @no_scroll
+        lda    <bm_entry.offset
+        cmp    <bm_entry.start
+        bcs    @no_scroll
+@scroll:
+            subw  #16, <bm_entry.start
+            jsr   display_entry
+@no_scroll:
+    rts
+
+editor_menu_scroll_down:
+    lda    <bm_entry.offset
+    sec
+    sbc    <bm_entry.start
+    tax
+    lda    <bm_entry.offset+1
+    sbc    <bm_entry.start+1
+    cmp    #high(bm_editor_data_h*16)
+    bcc    @no_scroll
+    bne    @scroll
+        cpx    #low(bm_editor_data_h*16)
+        bcc    @no_scroll
+@scroll:
+            addw  #16, <bm_entry.start
+            jsr   display_entry
+@no_scroll:
     rts
 
 bm_detect_msg_x = 11
@@ -932,6 +1315,11 @@ bm_main_menu_y:
 bm_main_menu_w:
     .db 14, 14, 14, 14
 
+bm_status_x = 1
+bm_status_y = 1
+bm_status_w = 32
+bm_status_h = 3
+
 bm_file_list_x0 = 6
 bm_file_list_x1 = 34
 bm_file_list_y  = 8
@@ -940,6 +1328,12 @@ bm_msg_x = 1
 bm_msg_y = 5
 bm_msg_w = 62
 bm_msg_h = 2
+
+bm_editor_data_x = 0
+bm_editor_data_y = 6
+bm_editor_data_w = 64
+bm_editor_data_h = 20
+bm_editor_data_char_x = 48
 
     .rsset 0
 bm_err_write  .rs 1
