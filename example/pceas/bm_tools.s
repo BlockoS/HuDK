@@ -8,9 +8,6 @@
     .include "start.s"
     .include "bram.s"
    
-; [todo] 0. comments!
-; [todo] 2. finalize GUI
-
 MAIN_MENU   = 0
 FILE_MENU   = 1
 EDITOR_MENU = 2
@@ -51,7 +48,6 @@ bm_entry.palette .ds 1
 bm_namebuf       .ds 16
 current_menu     .ds 1
 bm_data          .ds 1024
-; [todo] bm_data_size
 
     .code
 _main:
@@ -106,6 +102,7 @@ _main:
     jsr    joypad_callback
     bra    @loop
 
+; Clear the screen with the space character.
 clear_screen:
     ; fill BAT with space character
     lda    #' '
@@ -119,6 +116,7 @@ clear_screen:
     jsr    print_fill
     rts
 
+; Display the list of BRAM entries.
 display_file_list:
     ldx    #bm_file_list_x0
     lda    #bm_file_list_y
@@ -134,7 +132,7 @@ display_file_list:
         ldx    #low(bm_namebuf)
         jsr    bm_getptr.2
         bcs    @end
-        sta    <_bp+1                       ; [todo] save entry infos
+        sta    <_bp+1
         stx    <_bp
 
         jsr    print_entry_description
@@ -204,8 +202,6 @@ joypad_callback:
 
 run_callback:
     jmp     [callback]
-    
-; I, II, SEL, RUN, up, right, down, left
 
 callback_table:
     .dw    main_menu_callbacks
@@ -224,6 +220,7 @@ editor_menu_callbacks:
     .dw editor_menu_I,  editor_menu_II,    editor_menu_SEL,  editor_menu_RUN
     .dw editor_menu_up, editor_menu_right, editor_menu_down, editor_menu_left
 
+; Swicth menu.
 menu_set:
     sta    <menu_id
     asl    A
@@ -494,9 +491,7 @@ highlight_span:
     bne    @loop
     rts
 
-;
 ; Print entry description (entry number, size, file id, name)
-;
 print_entry_description:
     ; entry number
     lda    <entry_count
@@ -588,7 +583,7 @@ print_confirmation_msg:
 
     rts
 
-; [todo]
+; Clear main menu message box.
 clear_msg_box:
     lda    #' '
     sta    <_bl
@@ -600,7 +595,7 @@ clear_msg_box:
     lda    #bm_msg_y
     jmp    print_fill
 
-; [todo]
+; This routine is supposed to test if the BRAM is fully functional.
 bm_full_test:
     rts
 
@@ -913,6 +908,14 @@ edit_entry:
     stw    #bm_namebuf+2, <_si
     jsr    print_string_raw
     
+    ; print message
+    stw    #bm_edit_msg, <_si
+    ldx    #0
+    lda    #4
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    jsr    print_string_raw
+
     ; display entry
     stwz   <bm_entry.start
     stwz   <bm_entry.offset
@@ -927,7 +930,7 @@ edit_entry:
 
     rts
 
-; [todo]
+; Display the content of the selected entry
 display_entry:
     ldx    #bm_editor_data_x
     lda    #bm_editor_data_y
@@ -988,7 +991,7 @@ display_entry:
 @end:
     rts
 
-; [todo]
+; Compute the BAT position of a given entry byte
 compute_entry_bat_pos:
     lda    <bm_entry.offset
     sec
@@ -1019,8 +1022,8 @@ compute_entry_bat_pos:
 
     rts
 
-; [todo]
-highlight_entry_byte:                   ; [todo] rename
+; Highlight the currently selected byte
+highlight_entry_byte:
     jsr    compute_entry_bat_pos
 
     jsr    vdc_calc_addr 
@@ -1046,6 +1049,7 @@ highlight_entry_byte:                   ; [todo] rename
 
     rts
 
+; Redraw the current entry byte
 update_entry_byte:
     jsr    compute_entry_bat_pos
 
@@ -1371,6 +1375,8 @@ bm_confirm_restore_msg:
     .db "Do you want to restore ", 0
 bm_confirmation_msg:
     .db "Press SELECT to CANCEL / RUN to CONFIRM.", 0
+bm_edit_msg:
+    .db "Press SELECT to CANCEL / RUN to save.", 0
 
 palette:
     .db $00,$00,$ff,$01,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
