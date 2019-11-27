@@ -61,7 +61,7 @@ collision_eval:
     lda    <collision_quad.ymax+3
     cmp    <collision_quad.ymin+1
     bcc    @nop
-    bne    @l2
+    bne    @l3
     lda    <collision_quad.ymax+2
     cmp    <collision_quad.ymin
     bcc    @nop
