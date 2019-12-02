@@ -112,18 +112,3 @@ mulu16:
 
     rts
 
-;;
-;; function: mulu32
-;; Multiply 2 unsigned double words.
-;;
-;; Parameters:
-;;   _ax - 
-;;   _bx -
-;;   _cx - 
-;;   _dx -
-;;
-;; Return 
-;;
-mulu32:
-    ; [todo]
-    rts
