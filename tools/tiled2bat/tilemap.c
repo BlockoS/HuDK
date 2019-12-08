@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "log.h"
+#include "../utils/log.h"
 
 void tilemap_destroy(tilemap_t *map) {
     if(map->layer) {

@@ -6,13 +6,13 @@
  */
 #include "tileset.h"
 
-#include "log.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 #include <cwalk.h>
+
+#include "../utils/log.h"
 
 int tileset_create(tileset_t *tileset, const char *name, int tile_count, int tile_width, int tile_height) {
     memset(tileset, 0, sizeof(tileset_t));

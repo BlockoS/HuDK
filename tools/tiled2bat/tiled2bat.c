@@ -14,10 +14,10 @@
 
 #include <cwalk.h>
 
-#include "log.h"
-#include "image.h"
-#include "pce.h"
-#include "output.h"
+#include "../utils/log.h"
+#include "../utils/image.h"
+#include "../utils/pce.h"
+#include "../utils/output.h"
 #include "tileset.h"
 #include "tilemap.h"
 #include "json.h"

@@ -15,10 +15,10 @@
 #include <jansson.h>
 #include <cwalk.h>
 
-#include "log.h"
-#include "image.h"
-#include "pce.h"
-#include "utils.h"
+#include "../utils/log.h"
+#include "../utils/image.h"
+#include "../utils/pce.h"
+#include "../utils/utils.h"
 #include "tilemap.h"
 #include "tileset.h"
 

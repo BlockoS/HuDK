@@ -7,7 +7,7 @@
 #ifndef HUDK_TOOLS_TILESET_H
 #define HUDK_TOOLS_TILESET_H
 
-#include "image.h"
+#include "../utils/image.h"
 
 typedef struct {
     char *name;

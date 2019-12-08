@@ -1,0 +1,207 @@
+/*
+ * This file is part of HuDK.
+ * ASM and C open source software development kit for the NEC PC Engine.
+ * Licensed under the MIT License
+ * (c) 2016-2019 MooZ
+ */
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
+#include <argparse/argparse.h>
+#include <jansson.h>
+#include <cwalk.h>
+
+#include "utils/log.h"
+
+typedef struct {
+    char *name;
+    int x, y;
+    int w, h;
+} object_t;
+
+typedef struct {
+    object_t *sprites;
+    int sprite_count;
+    object_t *tiles;
+    int tile_count;
+} asset_t;
+
+static void asset_reset(asset_t *out) {
+    out->sprites = out->tiles = NULL;
+    out->sprite_count = out->tile_count = 0;
+}
+
+static void asset_destroy(asset_t *out) {
+    int i;
+    if(!out->sprites) {
+        for(i=0; i<out->sprite_count; i++) {
+            free(out->sprites[i].name);
+        }
+        free(out->sprites);
+        out->sprites = NULL;
+        out->sprite_count = 0;
+    }
+    if(!out->tiles) {
+        for(i=0; i<out->tile_count; i++) {
+            free(out->tiles[i].name);
+        }
+        free(out->tiles);
+        out->tiles = NULL;
+        out->tile_count = 0;
+    }
+}
+
+static int json_read_integer(json_t* node, const char* name, int* value) {
+    json_t *object = json_object_get(node, name);
+    if(!object) {
+        return 0;
+    }
+    if(!json_is_integer(object)) {
+        return 0;
+    }
+    *value = (int)json_integer_value(object);
+    return 1;
+}
+
+static int json_read_string(json_t* node, const char* name, const char** value) {
+    json_t *object = json_object_get(node, name);
+    if(!object) {
+        return 0;
+    }
+    if(!json_is_string(object)) {
+        return 0;
+    }
+    *value = json_string_value(object);
+    return 1;
+}
+
+int read_object(json_t *object, object_t *out) {
+    const char *name;
+    if(!json_read_string(object, "name", &name)) {
+        log_error("failed to get object name");
+        return 0;
+    }
+    out->name = strdup(name);
+    if(!json_read_integer(object, "x", &out->x)) {
+        log_error("failed to get object x coordinate");
+        return 0;
+    }
+    if(!json_read_integer(object, "y", &out->y)) {
+        log_error("failed to get object y coordinate");
+        return 0;
+    }
+    if(!json_read_integer(object, "w", &out->w)) {
+        log_error("failed to get object width");
+        return 0;
+    }
+    if(!json_read_integer(object, "h", &out->h)) {
+        log_error("failed to get object height");
+        return 0;
+    }
+    return 1;
+}
+
+static int read_object_list(json_t *root, const char *name, object_t **objects, int *count) {
+    json_t *node;
+    json_t *value;
+    size_t index;
+
+    *objects = NULL;
+    *count = 0;
+
+    node = json_object_get(root, name);
+    if(!node) {
+        return 1;
+    }
+
+    *count = json_array_size(node);
+    if(!*count) {
+        return 1;
+    }
+
+    *objects = (object_t*)malloc(*count * sizeof(object_t));
+    if(*objects == NULL) {
+        log_error("failed to allocate objects: %s", strerror(errno));
+        *count = 0;
+        return 0;
+    }
+
+    json_array_foreach(node, index, value) {
+        if(!json_is_object(value)) {
+            log_error("invalid object at index %d", index);
+            return 0;
+        }
+        if(!read_object(value, *objects + index)) {
+            log_error("failed to read object at index %d", index);
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+static int parse_configuration(const char *filename, asset_t *out) {
+    json_error_t error;
+    json_t *root;
+    int ret = 1;
+
+    asset_reset(out);
+    root = json_load_file(filename, 0, &error);
+    if(!root) {
+        log_error("%s:%d:%d %s", filename, error.line, error.column, error.text);
+        return 0;
+    }
+    if(!read_object_list(root, "sprites", &(out->sprites), &(out->sprite_count))) {
+        ret = 0;
+    }
+    if(!read_object_list(root, "tiles", &(out->tiles), &(out->tile_count))) {
+        ret = 0;
+    }
+    if(!ret) {
+        asset_destroy(out);
+    }
+    json_decref(root);
+    return ret;
+}
+
+int main(int argc, const char** argv) {
+    static const char *const usages[] = {
+        "encode_gfx [options] <in> <out>",
+        NULL
+    };
+
+    struct argparse_option options[] = {
+        OPT_HELP(),
+        OPT_END(),
+    };
+
+    struct argparse argparse;
+
+    argparse_init(&argparse, options, usages, 0);
+    argparse_describe(&argparse, "\nencode_gfx : <configuration> <image> <out>", "  ");
+    argc = argparse_parse(&argparse, argc, argv);
+    if(!argc) {
+        argparse_usage(&argparse);
+        return EXIT_FAILURE;
+    }
+
+    // [todo] check argument count
+
+    asset_t assets;
+    if(!parse_configuration(argv[0], &assets)) {
+        return EXIT_FAILURE;
+    }
+
+    // [todo] read image
+
+    // [todo] extract sprites
+    // [todo] write sprites
+
+    // [todo] extract tiles
+    // [todo] write tiles
+    
+    asset_destroy(&assets);
+
+    return EXIT_SUCCESS;
+}

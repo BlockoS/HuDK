@@ -14,9 +14,9 @@
 #include <mxml.h>
 #include <cwalk.h>
 
-#include "base64.h"
-#include "log.h"
-#include "utils.h"
+#include "../utils/base64.h"
+#include "../utils/log.h"
+#include "../utils/utils.h"
 
 static int xml_read_attr_int(mxml_node_t *node, const char *attr, int *i) {
     const char *name = mxmlGetElement(node);
