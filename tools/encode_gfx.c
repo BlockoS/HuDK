@@ -13,6 +13,7 @@
 #include <cwalk.h>
 
 #include "utils/log.h"
+#include "utils/image.h"
 
 typedef struct {
     char *name;
@@ -26,6 +27,8 @@ typedef struct {
     object_t *tiles;
     int tile_count;
 } asset_t;
+
+// [todo] expandable buffer for sprites/tiles
 
 static void asset_reset(asset_t *out) {
     out->sprites = out->tiles = NULL;
@@ -164,6 +167,55 @@ static int parse_configuration(const char *filename, asset_t *out) {
     json_decref(root);
     return ret;
 }
+#if 0 // [todo::begin]
+// [todo] function to adjust width/height for tiles
+// [todo] function to adjust width/height for sprites
+static int extract(const image_t *source, const object_t *object /*, [todo] out */) {
+    int x, y, w, h;
+    x = object->x;
+    y = object->y;
+    w = object->w;
+    h = object->h;
+    if(x >= source->width) {
+        log_error("%s x (%d) coordinate out of image bound (%d)", object->name, x, source->width);
+        return 0;
+    }
+    if(x < 0) {
+        log_error("%s x (%d) coordinate clamped to 0", object->name, x);
+        x = 0; 
+    }
+    if(y >= source->height) {
+        log_error("%s y (%d) coordinate out of image bound (%d)", object->name, y, source->height);
+        return 0;
+    }
+    if(y < 0) {
+        log_error("%s y (%d) coordinate clamped to 0", object->name, y);
+        y = 0;
+    }
+    if((x+w) > source->width) {
+        log_warn("%s width (%d) clamped to %d", object->name, w, source->width - x);
+        w = source->width - x;
+    }
+    if(w <= 0) {
+        log_error("%s width (%d) is too small", object->name, w);
+        return 0;
+    }
+    if((y+h) > source->height) {
+        log_warn("%s height (%d) clamped to %d", object->name, h, source->height - y);
+        h = source->height - y;
+    }
+    if(h <= 0) {
+        log_error("%s height (%d) is too small", object->name, h);
+        return 0;
+    }
+
+    // [todo] adjust width and height to the highest multiple of 8 (tiles) or 16 (sprites).
+    // [todo] for sprites check that the size is in the allowed ranges (16x16, 32x16, 16x32, 32x32, 64x32).
+    // [todo] encode
+
+    return 1;
+}
+#endif // [todo::end]
 
 int main(int argc, const char** argv) {
     static const char *const usages[] = {
@@ -173,6 +225,7 @@ int main(int argc, const char** argv) {
 
     struct argparse_option options[] = {
         OPT_HELP(),
+        // [todo] assembly file output
         OPT_END(),
     };
 
@@ -188,20 +241,22 @@ int main(int argc, const char** argv) {
 
     // [todo] check argument count
 
-    asset_t assets;
-    if(!parse_configuration(argv[0], &assets)) {
-        return EXIT_FAILURE;
-    }
+    int ret = EXIT_FAILURE;
 
-    // [todo] read image
+    asset_t assets = {0};
+    if(parse_configuration(argv[0], &assets)) {
+        image_t img = {0};
+        if(image_load_png(&img, argv[1])) {
+            // [todo] extract sprites
+            // [todo] write sprites + info in asm file
 
-    // [todo] extract sprites
-    // [todo] write sprites
-
-    // [todo] extract tiles
-    // [todo] write tiles
-    
+            // [todo] extract tiles
+            // [todo] write tiles + info in asm file
+            ret = EXIT_SUCCESS;
+        }
+        image_destroy(&img);
+    }    
     asset_destroy(&assets);
 
-    return EXIT_SUCCESS;
+    return ret;
 }
