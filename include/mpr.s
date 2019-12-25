@@ -8,10 +8,6 @@
 ;;
 ;; Title: Memory mapping utility routines.
 ;;
-  .ifdef CA65
-    .include "ca65/mpr.s"
-  .endif 
-
   .code
 ;;
 ;; function: map_data

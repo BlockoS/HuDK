@@ -4,10 +4,10 @@
 ;; Licensed under the MIT License
 ;; (c) 2016-2019 MooZ
 ;;
+.setcpu "huc6280"
 
-  .include "system.inc"
-
-  .export unmap_data
-  .export remap_data
-  .export map_data
-  
+.define ds .res
+.define bank <.bank
+.macro declare_zp var, address
+    .exportzp var = <address
+.endmacro

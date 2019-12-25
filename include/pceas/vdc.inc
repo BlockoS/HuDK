@@ -5,6 +5,12 @@
 ;; (c) 2016-2019 MooZ
 ;;
 
+videoport = $0000
+video_reg = videoport
+video_data = videoport+2
+video_data_l = video_data
+video_data_h = video_data+1
+
   .bss
 vdc_bat_width  .ds 2
 vdc_bat_height .ds 1

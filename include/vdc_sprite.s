@@ -8,19 +8,18 @@
 ;;
 ;; Title: Sprite routines.
 ;;
-    .zp
-sprite_vram_base .ds 2
-
-    .code
   .ifdef MAGICKIT
-    .include "pceas/vdc_sprite.s"
+    .include "pceas/vdc_sprite.inc"
   .else
     .ifdef CA65
-    .include "ca65/vdc_sprite.s"
+    .include "ca65/vdc_sprite.inc"
     .endif
   .endif
 
+    .zeropage
+sprite_vram_base: ds 2
 
+    .code
 ;;
 ;; Macro: vdc_sat_set
 ;; Set current SAT entry in VRAM.
@@ -44,7 +43,7 @@ sprite_vram_base .ds 2
 ;; Parameters:
 ;;   _si - sprite table VRAM address.
 ;;
-vdc_sat_addr
+vdc_sat_addr:
     vdc_reg #VDC_SAT_SRC 
 
     lda    <_si

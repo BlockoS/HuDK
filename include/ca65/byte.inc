@@ -5,7 +5,16 @@
 ;; (c) 2016-2019 MooZ
 ;;
 
-;;
-;; TODO
+; Store a byte at stated memory location
+  .macro stb p0, p1
+      lda    p0
+      sta    p1
+  .endmacro
 
-.warning "byte.inc wasn't translated to ca65 yet"
+; Negate value.
+  .macro neg
+      lda    p0
+      eor    #$ff
+      inc    A
+      sta    p0
+  .endmacro

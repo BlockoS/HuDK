@@ -14,3 +14,7 @@ ARG_ABSOLUTE    .equ 3
 ARG_INDIRECT    .equ 4
 ARG_STRING      .equ 5
 ARG_LABEL       .equ 6
+
+  .macro declare_zp
+\1 = \2
+  .endmacro

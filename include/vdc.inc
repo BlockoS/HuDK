@@ -15,7 +15,6 @@
 ;; ushort: videoport
 ;; VDC port
 ;; 
-videoport = $0000
 
 ;;
 ;; ushort: video_reg
@@ -27,9 +26,6 @@ videoport = $0000
 ;;    $03, $04 or $14 to $1F and trying to access them has no effect (see <VDC registers>).
 ;;  - Reading video_reg $0000 returns a set of status flags (see <VDC status flags>). 
 ;; 
-video_reg   = videoport
-video_reg_l = video_reg
-video_reg_h = video_reg+1
 
 ;;
 ;; ushort: video_data
@@ -37,9 +33,6 @@ video_reg_h = video_reg+1
 ;;
 ;; Data to be read or written to the a VDC register.
 ;;
-video_data   = videoport+2
-video_data_l = video_data
-video_data_h = video_data+1
 
 ;;
 ;; Group: VDC status flags. 

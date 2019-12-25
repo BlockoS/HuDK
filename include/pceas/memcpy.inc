@@ -4,14 +4,6 @@
 ;; Licensed under the MIT License
 ;; (c) 2016-2019 MooZ
 ;;
-
-    .zp
-memcpy     .ds 1
-memcpy_src .ds 2
-memcpy_dst .ds 2
-memcpy_len .ds 2
-memcpy_rts .ds 1
-
 	.code
     
 ; Set memcpy mode.

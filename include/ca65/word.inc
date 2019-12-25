@@ -20,7 +20,7 @@
     .if (.match (.left (1, {arg}), #))
       opcode #>(.right (.tcount ({arg})-1, {arg}))
     .else
-      opcode 1+(arg)
+      opcode arg + 1
     .endif
   .endmacro
 
@@ -97,9 +97,9 @@
 ; Increment a word-sized value at stated memory location.
   .macro incw p0
     inc    p0
-    bne    @l
+    bne    :+
     inc    1+(p0)
-@l:
+:
   .endmacro
 
 ; Decrement a word-sized value at stated memory location.

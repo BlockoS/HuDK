@@ -5,15 +5,8 @@
 ;; (c) 2016-2019 MooZ
 ;;
 
-  .ifdef MAGICKIT
-    .zp
-font_base .ds 2
-  .else
-    .ifdef CA65
     .zeropage
-font_base: .res 2
-    .endif
-  .endif
+font_base: ds 2
 
 ;;
 ;; Title: Font routines.
@@ -61,9 +54,9 @@ font_load:
     cly
 @l0:
         lda    [_si], Y
-        vdc_data_l              ; bitplane #0
+        sta    video_data_l     ; bitplane #0
         eor    #$ff
-        vdc_data_h              ; bitplane #1
+        sta    video_data_h     ; bitplane #1
         iny
         cpy    #$08
         bne    @l2
@@ -143,4 +136,3 @@ font_set_pal:
     ora    <_al
     sta    <font_base+1
     rts
-

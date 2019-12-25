@@ -7,10 +7,6 @@
 
 ;;
 ;; Title: VDC Functions.
-  .ifdef CA65
-    .include "ca65/vdc.s"
-  .endif
-
   .code
 ;;
 ;; function: vdc_set_read
@@ -50,7 +46,8 @@ vdc_set_bat_size:
     pha
     vdc_reg #VDC_MWR
     pla
-    vdc_data_l
+    sta    video_data_l
+    st2    #$00
     ; compute BAT dimensions
     lsr    A
     lsr    A
@@ -161,10 +158,10 @@ vdc_load_data:
     cly
 @l0:
         lda    [_si], Y
-        vdc_data_l
+        sta    video_data_l
         iny
         lda    [_si], Y
-        vdc_data_h
+        sta    video_data_h
         iny
         bne    @l1
             inc    <_si+1
@@ -221,12 +218,12 @@ vdc_fill_bat_ex:
     addw   vdc_bat_width, <_di
 
     lda    <_si
-    vdc_data_l
+    sta    video_data_l
 
     ldx    <_al    
 @l1:
         lda    <_si+1
-        vdc_data_h
+        sta    video_data_h
 
         dex
         bne    @l1
@@ -276,13 +273,13 @@ vdc_init:
     cly
 @l0:
     lda    @vdc_init_table, Y
-    vdc_setreg
+    sta    video_reg
     iny
     lda    @vdc_init_table, Y
-    vdc_data_l
+    sta    video_data_l
     iny
     lda    @vdc_init_table, Y
-    vdc_data_h
+    sta    video_data_h
     iny
     cpy    #36
     bne    @l0

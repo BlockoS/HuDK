@@ -15,6 +15,12 @@
 ;;
 ;; Group: Copy Modes.
 ;;
+    .zeropage
+memcpy:     ds 1
+memcpy_src: ds 2
+memcpy_dst: ds 2
+memcpy_len: ds 2
+memcpy_rts: ds 1
 
 ;;
 ;; ubyte: SOURCE_ALT_DEST_INC

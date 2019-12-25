@@ -1,0 +1,8 @@
+Todo: turn this into a Makefile
+
+* ca65:
+ca65 -I ../../include/ --feature bracket_as_indirect --feature string_escapes -DCA65 -v text.s 
+ld65 -C text.cfg -o text.pce text.o 
+
+* pceas:
+pceas -I ../../include/ -raw ./text.s 

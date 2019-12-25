@@ -23,23 +23,23 @@
 ;; tile. For 16x16 tilemap, the palette index will be used for all 4 VRAM tile.
 ;;
 
-    .zp
+    .zeropage
 map_infos:
-map_width       .ds 2
-map_height      .ds 2
-map_wrap        .ds 1
+map_width:        ds 2
+map_height:       ds 2
+map_wrap:         ds 1
 
-map_bank        .ds 1
-map_address     .ds 2
+map_bank:         ds 1
+map_address:      ds 2
 
-map_pal_bank    .ds 1
-map_pal_address .ds 2
+map_pal_bank:     ds 1
+map_pal_address:  ds 2
 
-map_tile_base   .ds 2
+map_tile_base:    ds 2
 
-map_bat_top      .ds 1
-map_bat_bottom   .ds 1
-map_bat_top_base .ds 2
+map_bat_top:      ds 1
+map_bat_bottom:   ds 1
+map_bat_top_base: ds 2
 
   .ifdef MAGICKIT
     .include "pceas/map.s"

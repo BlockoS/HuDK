@@ -40,11 +40,11 @@
 ;;
 print_char:
     clc
-    adc     <font_base
-    vdc_data_l
+    adc    <font_base
+    sta    video_data_l
     cla
-    adc     <font_base+1
-    vdc_data_h
+    adc    <font_base+1
+    sta    video_data_h
     rts
 
 ;;
@@ -66,11 +66,11 @@ print_digit:
     clc
     adc    #FONT_DIGIT_INDEX
     clc
-    adc     <font_base
-    vdc_data_l
+    adc    <font_base
+    sta    video_data_l
     cla
-    adc     <font_base+1
-    vdc_data_h
+    adc    <font_base+1
+    sta    video_data_h
     rts
 
 ;;
@@ -100,11 +100,11 @@ print_hex:
     adc    #FONT_DIGIT_INDEX
 @print:
     clc
-    adc     <font_base
-    vdc_data_l
+    adc    <font_base
+    sta    video_data_l
     cla
-    adc     <font_base+1
-    vdc_data_h
+    adc    <font_base+1
+    sta    video_data_h
     rts
 
 ;;
@@ -116,20 +116,20 @@ print_hex:
 ;;   X - BCD array top element index
 ;;
 print_bcd:
-print_bcd.hi:
+print_bcd_hi:
     lda    <_ax, X
     lsr    A
     lsr    A
     lsr    A
     lsr    A
     jsr    print_digit
-print_bcd.lo:
+print_bcd_lo:
     lda    <_ax, X
     and    #$0f
     jsr    print_digit
     
     dex
-    bpl     print_bcd
+    bpl    print_bcd
     rts
 
 ;;
@@ -142,7 +142,7 @@ print_bcd.lo:
 print_dec_u8:
     jsr    binbcd8
     ldx    #$01
-    jmp    print_bcd.lo
+    jmp    print_bcd_lo
 
 ;;
 ;; function: print_dec_u16
@@ -155,7 +155,7 @@ print_dec_u8:
 print_dec_u16:
     jsr    binbcd16
     ldx    #$02
-    jmp    print_bcd.lo
+    jmp    print_bcd_lo
 
 ;;
 ;; function: print_hex_u8

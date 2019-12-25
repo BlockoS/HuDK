@@ -5,6 +5,12 @@
 ;; (c) 2016-2019 MooZ
 ;;
 
+.define videoport a:$0000
+.define video_reg a:$0000
+.define video_data a:$0002
+.define video_data_l a:$0002
+.define video_data_h a:$0003
+
     .bss
 vdc_bat_width:  .res 2
 vdc_bat_height: .res 1
@@ -54,7 +60,7 @@ vdc_bat_vmask:  .res 1
     .if (.match (.left (1, {reg}), #))
       st0    reg
     .else
-      sta    a:video_reg
+      sta    video_reg
     .endif
     sta    <vdc_ri
   .endmacro
@@ -68,25 +74,18 @@ vdc_bat_vmask:  .res 1
 ; Set VDC data.
   .macro vdc_data dl, dh
   .if .paramcount = 1
-    lda .lobyte(dl)
-    sta a:video_data_l
-    lda .hibyte(dl)
-    sta a:video_data_l
+    stw dl, video_data
   .else
     lda dl
-    sta a:video_data_l
+    sta video_data_l
     lda dh
-    sta a:video_data_l
+    sta video_data_l
   .endif
   .endmacro
 
-; Set VDC data LSB.
-  .macro vdc_data_l
-    sta    a:video_data_l
+; Wait for vsync to occur.
+  .macro vdc_wait_vsync
+    stz    <irq_cnt
+:   lda    <irq_cnt
+    beq    :-
   .endmacro
-
-; Set VDC data MSB.
-  .macro vdc_data_h
-    sta    a:video_data_h
-  .endmacro
-

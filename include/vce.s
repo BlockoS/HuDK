@@ -67,7 +67,7 @@ vce_load_palette:
     memcpy_args <_si, #color_data, #32
 @l0:
     jsr    memcpy
-    addw   #32, memcpy_src
+    addw   #32, <memcpy_src
     dey
     bne    @l0
 
