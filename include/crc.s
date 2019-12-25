@@ -8,8 +8,8 @@
 ;;
 ;; Title: CRC routines.
 ;;
-    .zp
-_crc .ds 4
+    .zeropage
+_crc: ds 4
 
     .code
 ;;

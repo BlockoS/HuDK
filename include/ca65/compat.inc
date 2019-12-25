@@ -8,6 +8,8 @@
 
 .define ds .res
 .define bank <.bank
+.define page(c) <((c)>>13)
+
 .macro declare_zp var, address
     .exportzp var = <address
 .endmacro

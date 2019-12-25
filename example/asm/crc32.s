@@ -12,7 +12,7 @@
 _main:
     ; load font
     stw    #$2000, <_di 
-    lda    #.bank(font_8x8)
+    lda    #bank(font_8x8)
     sta    <_bl
     stw    #font_8x8, <_si
     stw    #(FONT_8x8_COUNT*8), <_cx
@@ -35,11 +35,11 @@ _main:
     ; compute crc-32
     jsr    crc32_begin
 
-    lda    #bank(data)
-    tam    #page(data)
+    stb    #bank(data), <_bl
     stw    #data, <_si
-    stw    #data.size, <_ax
-@crc32.loop:
+    jsr    map_data
+    stw    #data_size, <_ax
+@crc32_loop:
         lda    [_si]
         jsr    crc32
 
@@ -47,7 +47,7 @@ _main:
         decw   <_ax
         lda    <_al
         ora    <_ah
-        bne    @crc32.loop
+        bne    @crc32_loop
     jsr    crc32_end
 
     ; display it
@@ -56,7 +56,7 @@ _main:
     jsr    vdc_calc_addr
     jsr    vdc_set_write
 
-    stw    #computed.txt, <_si
+    stw    #computed_txt, <_si
     jsr    print_string_raw
 
     lda    <_crc+3
@@ -74,7 +74,7 @@ _main:
     jsr    vdc_calc_addr
     jsr    vdc_set_write
     
-    stw    #expected.txt, <_si
+    stw    #expected_txt, <_si
     jsr    print_string_raw
 
     lda    expected+3
@@ -92,7 +92,7 @@ _main:
     jsr    vdc_calc_addr
     jsr    vdc_set_write
 
-    stw    #check.txt, <_si
+    stw    #check_txt, <_si
     jsr    print_string_raw
 
     ; check if the computed CRC-32 is correct 
@@ -106,36 +106,43 @@ _main:
     bne    @test
 @end:
 
-    stw    #success.txt, <_si
+    stw    #success_txt, <_si
     cpx    #4
     beq    @ok
-    stw    #failure.txt, <_si
+    stw    #failure_txt, <_si
 @ok:
     jsr    print_string_raw
 
-.loop:
-    bra    .loop    
+@loop:
+    bra    @loop
 
 palette:
-    .dw VCE_BLACK, VCE_WHITE, VCE_BLACK, $0000, $0000, $0000, $0000, $0000
-    .dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
+    .word VCE_BLACK, VCE_WHITE, VCE_BLACK, $0000, $0000, $0000, $0000, $0000
+    .word $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 
-computed.txt:
-    .db "computed: ", 0
-expected.txt:
-    .db "expected: ", 0
-check.txt:
-    .db "check: ", 0
-success.txt:
-    .db "success", 0
-failure.txt:
-    .db "failure", 0
+computed_txt:
+    .byte "computed: ", 0
+expected_txt:
+    .byte "expected: ", 0
+check_txt:
+    .byte "check: ", 0
+success_txt:
+    .byte "success", 0
+failure_txt:
+    .byte "failure", 0
 
 expected:
-    .db $01, $26, $17, $5c
+    .byte $01, $26, $17, $5c
 
+  .ifdef MAGICKIT
+    .data
     .bank 1
-    .org $4000
+    .org $6000
+  .else
+    .ifdef CA65
+    .segment "BANK01"
+    .endif
+  .endif
 data:
     .incbin "../data/hudson.dat"
-data.size = * - data
+data_size = * - data
