@@ -39,7 +39,7 @@ user_hook  .ds 14
     .if (\1 = 5)
      smb    #6, <irq_m
     .else
-     smb    \1, <irq_m
+     smb    #\1, <irq_m
     .endif
   .endmacro
 
@@ -50,7 +50,7 @@ user_hook  .ds 14
     .if (\1 = 5)
      rmb    #6, <irq_m
     .else
-     rmb    \1, <irq_m
+     rmb    #\1, <irq_m
     .endif
   .endmacro
 

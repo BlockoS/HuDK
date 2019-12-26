@@ -18,27 +18,27 @@ JOYPAD_BOX_HEIGHT = 4
 JOYPAD_BOX_X = 2
 JOYPAD_BOX_Y = 1
 
-    .zp
-_x .ds 1
-_y .ds 1
+    .zeropage
+_x: ds 1
+_y: ds 1
 
     .bss
-joypad_type .ds 5
+joypad_type: ds 5
 
     .code
 _main:
     ; we consider that we have 5 2 buttons joypads
     lda    #JOYPAD_2
     clx
-.reset:
+@reset:
     sta    joypad_type, X
     inx
     cpx    #5
-    bne    .reset
+    bne    @reset
 
     ; load font
     stw    #$2000, <_di 
-    lda    #.bank(font_8x8)
+    lda    #bank(font_8x8)
     sta    <_bl
     stw    #font_8x8, <_si
     stw    #(FONT_8x8_COUNT*8), <_cx
@@ -58,9 +58,9 @@ _main:
     ; clear irq config flag
     stz    <irq_m
     ; set vsync vec
-    irq_on #INT_IRQ1
-    irq_enable_vec #VSYNC
-    irq_set_vec #VSYNC, #vsync_proc
+    irq_on INT_IRQ1
+    irq_enable_vec VSYNC
+    irq_set_vec VSYNC, vsync_proc
     
     ; enable background display
     vdc_reg  #VDC_CR
@@ -68,7 +68,7 @@ _main:
 
     stb    #JOYPAD_BOX_Y, <_y
     stz    <_r0 
-.l0:
+@l0:
     stw    #text, <_si
     stb    #JOYPAD_BOX_WIDTH, <_al
     stb    #JOYPAD_BOX_HEIGHT, <_ah
@@ -94,17 +94,17 @@ _main:
     inc    <_r0
     lda    <_r0
     cmp    #5
-    bne    .l0
+    bne    @l0
 
 
     ; enable interrupts
     cli
-.loop:
+@loop:
     vdc_wait_vsync
     jsr    joypad_6_read
     jsr    joy_print_status
 
-    bra    .loop    
+    bra    @loop    
 
 ; VSYNC hook
 vsync_proc:
@@ -113,22 +113,22 @@ vsync_proc:
 joy_print_status:
     stb    #JOYPAD_BOX_Y, <_y
     cly
-.loop:
+@loop:
     ; Check if joypad type changed
     ldx    #JOYPAD_2
     lda    joypad_6, Y
     and    #$50
     cmp    #$50
-    bne    .no_6
+    bne    @no_6
         ldx    #JOYPAD_6
-.no_6:
+@no_6:
     txa
     cmp    joypad_type, Y
-    beq    .no_change
+    beq    @no_change
         ; It has changed!
         sta    joypad_type, Y
         jsr    print_extra_buttons_line
-.no_change:
+@no_change:
 
     stb    #JOYPAD_BOX_X, <_x
     lda    joypad, Y
@@ -138,14 +138,14 @@ joy_print_status:
     ; Display extra buttons status ?
     lda    joypad_type, Y
     cmp    #JOYPAD_6
-    bne    .no_display_6
+    bne    @no_display_6
         stb    #JOYPAD_BOX_X, <_x
         lda    joypad_6, Y
         ldx    #4
         inc    <_y
         jsr    print_buttons_status
         dec    <_y
-.no_display_6:
+@no_display_6:
 
     lda   <_y
     clc
@@ -154,7 +154,7 @@ joy_print_status:
     
     iny
     cpy    #5
-    bne    .loop
+    bne    @loop
 
     rts
 
@@ -164,8 +164,8 @@ print_extra_buttons_line:
     jmp    [print_tbl, X]
 
 print_tbl:
-    .dw    clear_extra_buttons_line
-    .dw    print_6_buttons_line
+    .word clear_extra_buttons_line
+    .word print_6_buttons_line
 
 clear_extra_buttons_line:
     phy
@@ -197,15 +197,15 @@ print_buttons_status:
     stx    <_r1
     sta    <_r0    
     clx
-.l0:
+@l0:
     lsr    <_r0
-    bcc    .off
-.on:
+    bcc    @off
+@on:
     lda    #$10
-    bra    .print
-.off:
+    bra    @print
+@off:
     lda    #$00
-.print:
+@print:
     sta    <_bl
     
     phx
@@ -224,7 +224,7 @@ print_buttons_status:
     jsr    vdc_set_read
     
     ldy    #6
-.l1:
+@l1:
     lda    video_data_l
     sta    video_data_l
     lda    video_data_h
@@ -232,49 +232,49 @@ print_buttons_status:
     ora    <_bl
     sta    video_data_h
     dey
-    bne    .l1
+    bne    @l1
     
     ply
     plx
     inx
     cpx    <_r1
-    bne    .l0
+    bne    @l0
     rts
 
 extra_buttons_bat_y:
-    .db 2, 6, 10, 14 
+    .byte 2, 6, 10, 14 
 
 button_x:
-    .db  1 ; JOYPAD_I
-    .db  8 ; JOYPAD_II
-    .db 15 ; JOYPAD_SEL
-    .db 22 ; JOYPAD_RUN
-    .db 1  ; JOYPAD_UP
-    .db 22 ; JOYPAD_RIGHT
-    .db  8 ; JOYPAD_DOWN
-    .db 15 ; JOYPAD_LEFT
+    .byte  1 ; JOYPAD_I
+    .byte  8 ; JOYPAD_II
+    .byte 15 ; JOYPAD_SEL
+    .byte 22 ; JOYPAD_RUN
+    .byte  1 ; JOYPAD_UP
+    .byte 22 ; JOYPAD_RIGHT
+    .byte  8 ; JOYPAD_DOWN
+    .byte 15 ; JOYPAD_LEFT
 
 button_y:
-    .db 1 ; JOYPAD_I
-    .db 1 ; JOYPAD_II
-    .db 1 ; JOYPAD_SEL
-    .db 1 ; JOYPAD_RUN
-    .db 0 ; JOYPAD_UP
-    .db 0 ; JOYPAD_RIGHT
-    .db 0 ; JOYPAD_DOWN
-    .db 0 ; JOYPAD_LEFT
+    .byte 1 ; JOYPAD_I
+    .byte 1 ; JOYPAD_II
+    .byte 1 ; JOYPAD_SEL
+    .byte 1 ; JOYPAD_RUN
+    .byte 0 ; JOYPAD_UP
+    .byte 0 ; JOYPAD_RIGHT
+    .byte 0 ; JOYPAD_DOWN
+    .byte 0 ; JOYPAD_LEFT
 
 palette:
-    .dw VCE_BLACK, VCE_GREY, VCE_BLACK, $0000, $0000, $0000, $0000, $0000
-    .dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
+    .word VCE_BLACK, VCE_GREY, VCE_BLACK, $0000, $0000, $0000, $0000, $0000
+    .word $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 
 palette_on:
-    .dw VCE_BLACK, VCE_WHITE, VCE_GREEN, $0000, $0000, $0000, $0000, $0000
-    .dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
+    .word VCE_BLACK, VCE_WHITE, VCE_GREEN, $0000, $0000, $0000, $0000, $0000
+    .word $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 
 ; text
 text:
-    .db "| UP   | DOWN | LEFT | RIGHT|\n"
-    .db "| I    | II   | SEL  | RUN  |", 0
+    .byte "| UP   | DOWN | LEFT | RIGHT|\n"
+    .byte "| I    | II   | SEL  | RUN  |", 0
 text_6:
-    .db "| III  | IV   | V    | VI   |", 0
+    .byte "| III  | IV   | V    | VI   |", 0
