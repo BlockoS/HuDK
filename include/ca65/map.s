@@ -36,3 +36,21 @@
     sta    <_dh
     jsr    map_load
   .endmacro
+
+  .macro map_copy_16 bx, by, mx, my, w, h
+    lda    bx
+    sta    <_al
+    lda    by
+    sta    <_ah
+    lda    mx
+    sta    <_cl
+    lda    my
+    sta    <_ch
+    lda    w
+    sta    <_dl
+    lda    h
+    sta    <_dh
+    jsr    map_load_16
+  .endmacro
+
+
