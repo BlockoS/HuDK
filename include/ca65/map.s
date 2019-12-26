@@ -7,11 +7,11 @@
 
 ; Set current map pointers and infos.
   .macro map_set map, tile, colortab, w, h, m
-    lda    #.bank(map)
+    lda    #bank(map)
     sta    <map_bank
     stw    #map, <map_address
     stw    #((tile)>>4), <map_tile_base
-    lda    #.bank(colortab)
+    lda    #bank(colortab)
     sta    <map_pal_bank
     stw    #colortab, <map_pal_address
     stw    w, <map_width
