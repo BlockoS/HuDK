@@ -1,8 +1,5 @@
-Todo: turn this into a Makefile
-
 * ca65:
-ca65 -I ../../include/ --feature bracket_as_indirect --feature string_escapes -DCA65 -v text.s 
-ld65 -C text.cfg -o text.pce text.o 
+cmake .. -DCC65_PATH=cc65/bin/ -DCMAKE_TOOLCHAIN_FILE=../cmake/cc65-toolchain.cmake -DHUDK_TOOLS_PATH=hudk/bin/
 
 * pceas:
-pceas -I ../../include/ -raw ./text.s 
+cmake .. -DPCEAS_PATH=pceas/bin/pceas -DCMAKE_TOOLCHAIN_FILE=../cmake/huc-toolchain.cmake -DHUDK_TOOLS_PATH=hudk/bin/
