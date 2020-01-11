@@ -18,10 +18,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/data/map/map16x16.inc
                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/data/map
                    COMMENT "convert 16x16 map")
 
-add_executable(hello_world asm/1_hello_world/hello_world.s)
-set_target_properties(hello_world PROPERTIES OUTPUT_NAME hello_world.pce)
-target_link_options(hello_world PRIVATE -C ${CMAKE_CURRENT_SOURCE_DIR}/asm/1_hello_world/hello_world.cfg)
-
+add_subdirectory(asm/1_hello_world)
 
 add_executable(crc32 asm/crc32.s)
 set_target_properties(crc32 PROPERTIES OUTPUT_NAME crc32.pce)
