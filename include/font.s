@@ -136,3 +136,36 @@ font_set_pal:
     ora    <_al
     sta    <font_base+1
     rts
+
+  .ifndef HUDK_USE_CUSTOM_FONT
+;;
+;; function: font_8x8_load
+;; Load default 1bpp 8x8 font.
+;; 
+;; Parameters:
+;;  _di - VRAM address for the bitmap font. 
+;;    A - Palette index.
+;;
+font_8x8_load:
+    pha
+    ; set font palette index
+    jsr    font_set_pal
+    
+    ; load bitmap font to VRAM
+    stb    #bank(font_8x8), <_bl
+    stw    #font_8x8, <_si
+    stw    #(FONT_8x8_COUNT*8), <_cx
+    jsr    font_load
+
+    ; load font palette
+    stb    #bank(font_8x8_palette), <_bl
+    stw    #font_8x8_palette, <_si
+    jsr    map_data
+    pla
+    ldy    #$01
+    jsr    vce_load_palette
+
+    rts
+
+    .include "font.inc"
+  .endif

@@ -18,6 +18,11 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/data/map/map16x16.inc
                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/data/map
                    COMMENT "convert 16x16 map")
 
+add_executable(hello_world asm/1_hello_world/hello_world.s)
+set_target_properties(hello_world PROPERTIES OUTPUT_NAME hello_world.pce)
+target_link_options(hello_world PRIVATE -C ${CMAKE_CURRENT_SOURCE_DIR}/asm/1_hello_world/hello_world.cfg)
+
+
 add_executable(crc32 asm/crc32.s)
 set_target_properties(crc32 PROPERTIES OUTPUT_NAME crc32.pce)
 target_link_options(crc32 PRIVATE -C ${CMAKE_CURRENT_SOURCE_DIR}/asm/text.cfg)
@@ -37,3 +42,7 @@ target_link_options(map8x8 PRIVATE -C ${CMAKE_CURRENT_SOURCE_DIR}/asm/text.cfg)
 add_executable(map16x16 asm/map16x16.s data/map/map16x16.inc)
 set_target_properties(map16x16 PROPERTIES OUTPUT_NAME map16x16.pce)
 target_link_options(map16x16 PRIVATE -C ${CMAKE_CURRENT_SOURCE_DIR}/asm/text.cfg)
+
+#add_executable(bm_tools asm/bm_tools.s)
+#set_target_properties(bm_tools PROPERTIES OUTPUT_NAME bm_tools.pce)
+#target_link_options(bm_tools PRIVATE -C ${CMAKE_CURRENT_SOURCE_DIR}/asm/text.cfg)

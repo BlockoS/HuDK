@@ -296,26 +296,13 @@ vdc_init:
     st1    #$00
     st2    #$00
 
-  .if (VDC_DEFAULT_BG_SIZE = VDC_BG_32x32)
-@tile_addr = (32*32*2)
-  .else
-    .if ((VDC_DEFAULT_BG_SIZE = VDC_BG_64x32) | (VDC_DEFAULT_BG_SIZE = VDC_BG_32x64))
-@tile_addr = (64*32*2)
-    .else
-      .if ((VDC_DEFAULT_BG_SIZE = VDC_BG_64x64) | (VDC_DEFAULT_BG_SIZE = VDC_BG_128x32))
-@tile_addr = (64*64*2)
-      .else
-@tile_addr = (128*128*2)
-      .endif
-    .endif
-  .endif
     st0    #VDC_DATA
-    ldy    #.hibyte(@tile_addr)
+    ldy    #.hibyte(VDC_DEFAULT_TILE_ADDR)
 @l1:
     clx
 @l2:
-        st1    #.lobyte(@tile_addr>>4)
-        st2    #.hibyte(@tile_addr>>4)
+        st1    #.lobyte(VDC_DEFAULT_TILE_ADDR>>4)
+        st2    #.hibyte(VDC_DEFAULT_TILE_ADDR>>4)
         inx
         bne    @l2
     dey
@@ -323,8 +310,8 @@ vdc_init:
 
     ; clear tile
     st0    #VDC_MAWR
-    st1    #.lobyte(@tile_addr)
-    st2    #.hibyte(@tile_addr)
+    st1    #.lobyte(VDC_DEFAULT_TILE_ADDR)
+    st2    #.hibyte(VDC_DEFAULT_TILE_ADDR)
 
     st0    #VDC_DATA
     st1    #$00

@@ -10,6 +10,14 @@
 ;;
 
 ;;
+;; ushort: sp
+;; 
+    declare_zp sp, $20e4
+;;
+;; ushort: sreg
+;; 
+    declare_zp sreg, $20e6
+;;
 ;; ushort: _r0
 ;; 
     declare_zp _r0, $20e8

@@ -551,6 +551,24 @@ vdc_ri = $20f7
 VDC_DEFAULT_BG_SIZE = VDC_BG_64x64
   .endif
 
+;; ushort: VDC_DEFAULT_TILE_ADDR
+;; Default tile address.
+  .if (VDC_DEFAULT_BG_SIZE = VDC_BG_32x32)
+VDC_DEFAULT_TILE_ADDR = (32*32*2)
+  .else
+    .if ((VDC_DEFAULT_BG_SIZE = VDC_BG_64x32) | (VDC_DEFAULT_BG_SIZE = VDC_BG_32x64))
+VDC_DEFAULT_TILE_ADDR = (64*32*2)
+    .else
+      .if ((VDC_DEFAULT_BG_SIZE = VDC_BG_64x64) | (VDC_DEFAULT_BG_SIZE = VDC_BG_128x32))
+VDC_DEFAULT_TILE_ADDR = (64*64*2)
+      .else
+VDC_DEFAULT_TILE_ADDR = (128*64*2)
+      .endif
+    .endif
+  .endif
+
+
+
   .ifndef VDC_DEFAULT_XRES
 ;;
 ;; ushort: VDC_DEFAULT_XRES
