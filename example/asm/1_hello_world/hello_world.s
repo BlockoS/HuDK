@@ -8,17 +8,18 @@
 
     .code
 _main:
-    ; [todo] comments
-    stw    #txt, <_si
-    stb    #32, <_al
-    stb    #20, <_ah
-    ldx    #10
-    lda    #8
+    ; Display "Hello world!" on screen.
+    ; The string will be placed at BAT coordinate [10,8] using the default font
+    stw    #txt, <_si       ; string address
+    stb    #32, <_al        ; text area width
+    stb    #20, <_ah        ; text area height
+    ldx    #10              ; BAT X coordinate
+    lda    #8               ; BAT Y coordinate
     jsr    print_string
 
 loop:
-    vdc_wait_vsync
-    bra    loop
+    vdc_wait_vsync          ; wait for screen refresh
+    bra    loop             ; and we'll loop indefinitely
 
-txt:
+txt:                        ; the string we'll print on screen
     .byte "Hello world!", 0
