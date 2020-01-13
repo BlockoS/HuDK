@@ -28,8 +28,6 @@ typedef struct {
     int tile_count;
 } asset_t;
 
-// [todo] expandable buffer for sprites/tiles
-
 static void asset_reset(asset_t *out) {
     out->sprites = out->tiles = NULL;
     out->sprite_count = out->tile_count = 0;
@@ -167,15 +165,66 @@ static int parse_configuration(const char *filename, asset_t *out) {
     json_decref(root);
     return ret;
 }
-#if 0 // [todo::begin]
-// [todo] function to adjust width/height for tiles
-// [todo] function to adjust width/height for sprites
-static int extract(const image_t *source, const object_t *object /*, [todo] out */) {
+
+static int find_closest_8(int in) {
+    return (in + 7) & ~7;
+}
+
+static int validate_tiles_size(int w_in, int h_in, int *w_out, int *h_out) {
+    *w_out = find_closest_8(w_in);
+    *h_out = find_closest_8(h_in);
+    if((w_in != *w_out) || (h_in != *h_out)) {
+        log_warn("Tile area dimensions were adjusted from (%d,%d) to (%d,%d).", w_in, h_in, *w_out, *h_out);
+    }
+    return 1;
+}
+
+static int validate_sprite_size(int w_in, int h_in, int *w_out, int *h_out) {
+    if(w_in <= 16) {
+        *w_out = 16;
+    }
+    else if(w_in <= 32) {
+        *w_out = 32;
+    }
+    else {
+        log_error("Invalid input width (%d, max: 32)!", w_in);
+        return 0;
+    }
+    if(h_in <= 16) {
+        *h_out = 16;
+    }
+    else if(h_in <= 32) {
+        *h_out = 32;
+    }
+    else if(h_in <= 64) {
+        *h_out = 64;
+    }
+    else {
+        log_error("Invalid input height (%d, max: 64)", h_in);
+        return 0;
+    }
+    if((w_in != *w_out) || (h_in != *h_out)) {
+        log_warn("Sprite dimensions were adjusted from (%d,%d) to (%d,%d).", w_in, h_in, *w_out, *h_out);
+    }
+    return 1;
+}
+
+struct {
+    int (*validate_size)(int w_in, int h_in, int *w_out, int *h_out);
+    int (*todo)();
+} encoders[2] = {
+    { validate_tiles_size, NULL },
+    { validate_sprite_size, NULL },
+};
+
+static int extract(const image_t *source, const object_t *object, int type) {
     int x, y, w, h;
     x = object->x;
     y = object->y;
-    w = object->w;
-    h = object->h;
+    
+    if(!encoders[type].validate_size(object->w, object->h, &w, &h)) {
+    }
+    
     if(x >= source->width) {
         log_error("%s x (%d) coordinate out of image bound (%d)", object->name, x, source->width);
         return 0;
@@ -209,17 +258,14 @@ static int extract(const image_t *source, const object_t *object /*, [todo] out 
         return 0;
     }
 
-    // [todo] adjust width and height to the highest multiple of 8 (tiles) or 16 (sprites).
-    // [todo] for sprites check that the size is in the allowed ranges (16x16, 32x16, 16x32, 32x32, 64x32).
     // [todo] encode
 
     return 1;
 }
-#endif // [todo::end]
 
 int main(int argc, const char** argv) {
     static const char *const usages[] = {
-        "encode_gfx [options] <in> <out>",
+        "encode_gfx",
         NULL
     };
 
@@ -244,14 +290,21 @@ int main(int argc, const char** argv) {
     int ret = EXIT_FAILURE;
 
     asset_t assets = {0};
-    if(parse_configuration(argv[0], &assets)) {
+    if(parse_configuration(argv[0], &assets)) { 
         image_t img = {0};
         if(image_load_png(&img, argv[1])) {
-            // [todo] extract sprites
-            // [todo] write sprites + info in asm file
-
-            // [todo] extract tiles
-            // [todo] write tiles + info in asm file
+            for(int i=0; i<assets.tile_count; i++) {
+                if(!extract(&img, &assets.tiles[i], 0)) {
+                    // [todo]
+                }
+                // [todo] write tiles + info in asm file
+            }
+            for(int i=0; i<assets.sprite_count; i++) {
+                if(!extract(&img, &assets.sprites[i], 1)) {
+                    // [todo]
+                }
+                // [todo] write sprites + info in asm file
+            }
             ret = EXIT_SUCCESS;
         }
         image_destroy(&img);
