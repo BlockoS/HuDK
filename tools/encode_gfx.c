@@ -14,6 +14,8 @@
 
 #include "utils/log.h"
 #include "utils/image.h"
+#include "utils/pce.h"
+#include "utils/buffer.h"
 
 typedef struct {
     char *name;
@@ -21,11 +23,15 @@ typedef struct {
     int w, h;
 } object_t;
 
+// [todo] enum for tiles/sprites
+
 typedef struct {
+    // [todo] make an array
     object_t *sprites;
     int sprite_count;
     object_t *tiles;
     int tile_count;
+    // [todo] palettes
 } asset_t;
 
 static void asset_reset(asset_t *out) {
@@ -166,65 +172,26 @@ static int parse_configuration(const char *filename, asset_t *out) {
     return ret;
 }
 
-static int find_closest_8(int in) {
-    return (in + 7) & ~7;
-}
-
-static int validate_tiles_size(int w_in, int h_in, int *w_out, int *h_out) {
-    *w_out = find_closest_8(w_in);
-    *h_out = find_closest_8(h_in);
-    if((w_in != *w_out) || (h_in != *h_out)) {
-        log_warn("Tile area dimensions were adjusted from (%d,%d) to (%d,%d).", w_in, h_in, *w_out, *h_out);
-    }
-    return 1;
-}
-
-static int validate_sprite_size(int w_in, int h_in, int *w_out, int *h_out) {
-    if(w_in <= 16) {
-        *w_out = 16;
-    }
-    else if(w_in <= 32) {
-        *w_out = 32;
-    }
-    else {
-        log_error("Invalid input width (%d, max: 32)!", w_in);
-        return 0;
-    }
-    if(h_in <= 16) {
-        *h_out = 16;
-    }
-    else if(h_in <= 32) {
-        *h_out = 32;
-    }
-    else if(h_in <= 64) {
-        *h_out = 64;
-    }
-    else {
-        log_error("Invalid input height (%d, max: 64)", h_in);
-        return 0;
-    }
-    if((w_in != *w_out) || (h_in != *h_out)) {
-        log_warn("Sprite dimensions were adjusted from (%d,%d) to (%d,%d).", w_in, h_in, *w_out, *h_out);
-    }
-    return 1;
-}
-
-struct {
-    int (*validate_size)(int w_in, int h_in, int *w_out, int *h_out);
-    int (*todo)();
-} encoders[2] = {
-    { validate_tiles_size, NULL },
-    { validate_sprite_size, NULL },
+static struct {
+    int bloc_size;
+    int stride;
+    int (*encode)(uint8_t*, uint8_t*, int);
+} g_encoder[] = {
+    { 8, 32, pce_bitmap_to_tile },
+    { 16, 128, pce_bitmap_to_sprite }
 };
 
-static int extract(const image_t *source, const object_t *object, int type) {
+static int extract(const image_t *source, const object_t *object, buffer_t *destination, int type) {
     int x, y, w, h;
+    int bloc_size;
+    
+    bloc_size = g_encoder[type].bloc_size;
+    
     x = object->x;
     y = object->y;
-    
-    if(!encoders[type].validate_size(object->w, object->h, &w, &h)) {
-    }
-    
+    w = object->w;
+    h = object->h;
+
     if(x >= source->width) {
         log_error("%s x (%d) coordinate out of image bound (%d)", object->name, x, source->width);
         return 0;
@@ -241,27 +208,43 @@ static int extract(const image_t *source, const object_t *object, int type) {
         log_error("%s y (%d) coordinate clamped to 0", object->name, y);
         y = 0;
     }
-    if((x+w) > source->width) {
-        log_warn("%s width (%d) clamped to %d", object->name, w, source->width - x);
-        w = source->width - x;
+    if((x+(w*bloc_size)) > source->width) {
+        log_warn("%s width (%d) out of image bound (%d)", object->name, w*bloc_size, source->width);
     }
     if(w <= 0) {
         log_error("%s width (%d) is too small", object->name, w);
         return 0;
     }
-    if((y+h) > source->height) {
-        log_warn("%s height (%d) clamped to %d", object->name, h, source->height - y);
-        h = source->height - y;
+    if((y+(h*bloc_size)) > source->height) {
+        log_warn("%s height (%d) out of image bound (%d)", object->name, h*bloc_size, source->height);
     }
     if(h <= 0) {
         log_error("%s height (%d) is too small", object->name, h);
         return 0;
     }
 
-    // [todo] encode
+    if(!buffer_resize(destination, w*h*g_encoder[type].stride)) {
+        log_error("failed to resize work buffer");
+        return 0;
+    }
+
+    uint8_t *out = destination->data;
+    for(int j=0; j<h; j++) {
+        int sy = y + (j*bloc_size);
+        for(int i=0; i<w; i++, out+=g_encoder[type].stride) {
+            int sx = x + (i*bloc_size);
+            uint8_t *in = &source->data[sx + (sy*source->width)];
+            if(!g_encoder[type].encode(in, out, source->width)) {
+                log_error("failed to encode block (%d,%d) of %s", i, j, object->name);
+                return 0;
+            }
+        }
+    }
 
     return 1;
 }
+
+// [todo] output functions (binary + asm declaration)
 
 int main(int argc, const char** argv) {
     static const char *const usages[] = {
@@ -293,18 +276,26 @@ int main(int argc, const char** argv) {
     if(parse_configuration(argv[0], &assets)) { 
         image_t img = {0};
         if(image_load_png(&img, argv[1])) {
+            buffer_t buf;
+            buffer_init(&buf);
+            // [todo] make a funky loop once the enum is done
             for(int i=0; i<assets.tile_count; i++) {
-                if(!extract(&img, &assets.tiles[i], 0)) {
+                if(extract(&img, &assets.tiles[i], &buf, 0)) {
                     // [todo]
+                    FILE *out = fopen(assets.tiles[i].name, "wb");
+                    fwrite(buf.data, 1, buf.size, out);
+                    fclose(out);
                 }
-                // [todo] write tiles + info in asm file
             }
             for(int i=0; i<assets.sprite_count; i++) {
-                if(!extract(&img, &assets.sprites[i], 1)) {
+                if(extract(&img, &assets.sprites[i], &buf, 1)) {
                     // [todo]
+                    FILE *out = fopen(assets.sprites[i].name, "wb");
+                    fwrite(buf.data, 1, buf.size, out);
+                    fclose(out);
                 }
-                // [todo] write sprites + info in asm file
             }
+            buffer_delete(&buf);
             ret = EXIT_SUCCESS;
         }
         image_destroy(&img);

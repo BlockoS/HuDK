@@ -18,10 +18,6 @@ int pce_bitmap_to_tile(uint8_t *in, uint8_t *out, int stride) {
         out[0] = out[1] = out[16] = out[17] = 0;
         for(x=7; x>=0; x--) {
             uint8_t byte = *src++;
-            if(byte >= 16) {
-                fprintf(stderr, "invalid input. The image must contain at most 16 colors\n");
-                return 0;
-            }
             out[ 0] |= ((byte   ) & 0x01) << x;
             out[ 1] |= ((byte>>1) & 0x01) << x;
             out[16] |= ((byte>>2) & 0x01) << x;
@@ -39,10 +35,6 @@ int pce_bitmap_to_sprite(uint8_t *in, uint8_t *out, int stride) {
         uint8_t *src = line;
         for(x=7; x>=0; x--) {
             uint8_t byte = *src++;
-            if(byte >= 16) {
-                fprintf(stderr, "invalid input. The image must contain at most 16 colors.\n");
-                return 0;
-            }
             out[1 ] |= ((byte   ) & 0x01) << x;
             out[33] |= ((byte>>1) & 0x01) << x;
             out[65] |= ((byte>>2) & 0x01) << x;
@@ -50,10 +42,6 @@ int pce_bitmap_to_sprite(uint8_t *in, uint8_t *out, int stride) {
         }
         for(x=7; x>=0; x--) {
             uint8_t byte = *src++;
-            if(byte >= 16) {
-                fprintf(stderr, "invalid input. The image must contain at most 16 colors.\n");
-                return 0;
-            }
             out[0 ] |= ((byte   ) & 0x01) << x;
             out[32] |= ((byte>>1) & 0x01) << x;
             out[64] |= ((byte>>2) & 0x01) << x;
