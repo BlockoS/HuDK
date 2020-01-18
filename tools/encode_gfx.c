@@ -23,39 +23,41 @@ typedef struct {
     int w, h;
 } object_t;
 
-// [todo] enum for tiles/sprites
+enum ObjectType {
+    Tiles = 0,
+    Sprites,
+    ObjectTypeCount
+};
+
+static const char* g_objectTypeName[ObjectTypeCount] = {
+    "tiles",
+    "sprites"
+};
 
 typedef struct {
-    // [todo] make an array
-    object_t *sprites;
-    int sprite_count;
-    object_t *tiles;
-    int tile_count;
+    object_t *objects[ObjectTypeCount];
+    int object_count[ObjectTypeCount];
+
     // [todo] palettes
 } asset_t;
 
 static void asset_reset(asset_t *out) {
-    out->sprites = out->tiles = NULL;
-    out->sprite_count = out->tile_count = 0;
+    for(int i=0; i<ObjectTypeCount; i++) {
+        out->objects[i] = NULL;
+        out->object_count[i] = 0;
+    }
 }
 
 static void asset_destroy(asset_t *out) {
-    int i;
-    if(!out->sprites) {
-        for(i=0; i<out->sprite_count; i++) {
-            free(out->sprites[i].name);
+    for(int j=0; j<ObjectTypeCount; j++) {
+        if(!out->objects[j]) {
+            for(int i=0; i<out->object_count[j]; i++) {
+                free(out->objects[j][i].name);
+            }
+            free(out->objects[j]);
+            out->objects[j] = NULL;
+            out->object_count[j] = 0;
         }
-        free(out->sprites);
-        out->sprites = NULL;
-        out->sprite_count = 0;
-    }
-    if(!out->tiles) {
-        for(i=0; i<out->tile_count; i++) {
-            free(out->tiles[i].name);
-        }
-        free(out->tiles);
-        out->tiles = NULL;
-        out->tile_count = 0;
     }
 }
 
@@ -159,11 +161,10 @@ static int parse_configuration(const char *filename, asset_t *out) {
         log_error("%s:%d:%d %s", filename, error.line, error.column, error.text);
         return 0;
     }
-    if(!read_object_list(root, "sprites", &(out->sprites), &(out->sprite_count))) {
-        ret = 0;
-    }
-    if(!read_object_list(root, "tiles", &(out->tiles), &(out->tile_count))) {
-        ret = 0;
+    for(int j=0; j<ObjectTypeCount; j++) {
+        if(!read_object_list(root, g_objectTypeName[j], &out->objects[j], &out->object_count[j])) {
+            ret = 0;
+        }
     }
     if(!ret) {
         asset_destroy(out);
@@ -181,7 +182,7 @@ static struct {
     { 16, 128, pce_bitmap_to_sprite }
 };
 
-static int extract(const image_t *source, const object_t *object, buffer_t *destination, int type) {
+static int extract(const image_t *source, const object_t *object, int type, buffer_t *destination) {
     int x, y, w, h;
     int bloc_size;
     
@@ -278,21 +279,14 @@ int main(int argc, const char** argv) {
         if(image_load_png(&img, argv[1])) {
             buffer_t buf;
             buffer_init(&buf);
-            // [todo] make a funky loop once the enum is done
-            for(int i=0; i<assets.tile_count; i++) {
-                if(extract(&img, &assets.tiles[i], &buf, 0)) {
-                    // [todo]
-                    FILE *out = fopen(assets.tiles[i].name, "wb");
-                    fwrite(buf.data, 1, buf.size, out);
-                    fclose(out);
-                }
-            }
-            for(int i=0; i<assets.sprite_count; i++) {
-                if(extract(&img, &assets.sprites[i], &buf, 1)) {
-                    // [todo]
-                    FILE *out = fopen(assets.sprites[i].name, "wb");
-                    fwrite(buf.data, 1, buf.size, out);
-                    fclose(out);
+
+            for(int j=0; j<ObjectTypeCount; j++) {
+                for(int i=0; i<assets.object_count[j]; i++) {
+                    if(extract(&img, &assets.objects[j][i], j, &buf)) {
+                        FILE *out = fopen(assets.objects[j][i].name, "wb");
+                        fwrite(buf.data, 1, buf.size, out);
+                        fclose(out);
+                    }
                 }
             }
             buffer_delete(&buf);
