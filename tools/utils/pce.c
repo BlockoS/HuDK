@@ -9,6 +9,8 @@
 
 #include "pce.h"
 
+#include "log.h"
+
 int pce_bitmap_to_tile(uint8_t *in, uint8_t *out, int stride) {
     int y;
     uint8_t *line = in;
@@ -51,14 +53,42 @@ int pce_bitmap_to_sprite(uint8_t *in, uint8_t *out, int stride) {
     return 1;
 }
 
+static inline int pce_bitmap_to_palette(uint8_t *out, uint8_t *in, int stride, int w, int h) {
+    int y;
+    uint8_t pal = in[0] >> 4;
+    uint8_t *line = in;
+    *out = 0xff;
+    for(y=0; y<h; y++, line+=stride) {
+        int x;
+        uint8_t *src = line;
+        for(x=0; x<w; x++) {
+            uint8_t p = (*src++) >> 4;
+            if(pal != p) {
+                log_error("invalid palette index %d (expected: %d) %d", p, pal, in[x]);
+                return 0;
+            }
+        }
+    }
+    *out = pal;
+    return 1;   
+}
+
+int pce_bitmap_to_tile_palette(uint8_t *out, uint8_t *in, int stride) {
+    return pce_bitmap_to_palette(out, in, stride, 8, 8);
+}
+
+int pce_bitmap_to_sprite_palette(uint8_t *out, uint8_t *in, int stride){
+    return pce_bitmap_to_palette(out, in, stride, 16, 16);
+}
+
 int pce_image_to_tiles(image_t *img, int bloc_width, int bloc_height, uint8_t *buffer, size_t *size) {
     *size = 0;
     if((img->height & 7) && (img->width & 7)) {
-        fprintf(stderr, "input width and height should be a multiple of 8 (%d,%d)\n", img->width, img->height);
+        log_error("input width and height should be a multiple of 8 (%d,%d)", img->width, img->height);
         return 0;
     }
     if((bloc_width & 7) || (bloc_height & 7)) {
-        fprintf(stderr, "bloc width and height must be a multiple of 8 (%d, %d)\n", bloc_width, bloc_height);
+        log_error("bloc width and height must be a multiple of 8 (%d, %d)", bloc_width, bloc_height);
         return 0;
     }
     
@@ -94,17 +124,17 @@ int pce_image_to_sprites(image_t *img, int sprite_width, int sprite_height, uint
     *size = 0;
     
     if((img->height & 15) && (img->width & 15)) {
-        fprintf(stderr, "input width and height should be a multiple of 16 (%d,%d)\n", img->width, img->height);
+        log_error("input width and height should be a multiple of 16 (%d,%d)", img->width, img->height);
         return 0;
     }
     
     if((sprite_width & 15) || ((sprite_width != 16) && (sprite_width != 32))) {
-        fprintf(stderr, "sprite width must be 16 or 32 (%d)\n", sprite_width);
+        log_error("sprite width must be 16 or 32 (%d)", sprite_width);
         return 0;
     }
     
     if((sprite_height & 15) || ((sprite_height != 16) && (sprite_height != 32) && (sprite_height != 64))) {
-        fprintf(stderr, "sprite height must be 16, 32 or 64 (%d)\n", sprite_height);
+        log_error("sprite height must be 16, 32 or 64 (%d)", sprite_height);
         return 0;
     }
     

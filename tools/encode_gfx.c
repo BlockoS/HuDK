@@ -26,19 +26,21 @@ typedef struct {
 enum ObjectType {
     Tiles = 0,
     Sprites,
+    TilePalettes,
+    SpritePalettes,
     ObjectTypeCount
 };
 
 static const char* g_objectTypeName[ObjectTypeCount] = {
-    "tiles",
-    "sprites"
+    "tile",
+    "sprite"
+    "tilepal",
+    "spritepal"
 };
 
 typedef struct {
     object_t *objects[ObjectTypeCount];
     int object_count[ObjectTypeCount];
-
-    // [todo] palettes
 } asset_t;
 
 static void asset_reset(asset_t *out) {
@@ -146,7 +148,6 @@ static int read_object_list(json_t *root, const char *name, object_t **objects, 
             return 0;
         }
     }
-
     return 1;
 }
 
@@ -179,7 +180,9 @@ static struct {
     int (*encode)(uint8_t*, uint8_t*, int);
 } g_encoder[] = {
     { 8, 32, pce_bitmap_to_tile },
-    { 16, 128, pce_bitmap_to_sprite }
+    { 16, 128, pce_bitmap_to_sprite },
+    { 8, 32, pce_bitmap_to_tile_palette },
+    { 16, 128, pce_bitmap_to_sprite_palette }
 };
 
 static int extract(const image_t *source, const object_t *object, int type, buffer_t *destination) {
@@ -241,7 +244,6 @@ static int extract(const image_t *source, const object_t *object, int type, buff
             }
         }
     }
-
     return 1;
 }
 

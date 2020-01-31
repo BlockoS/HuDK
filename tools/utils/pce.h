@@ -13,6 +13,9 @@
 int pce_bitmap_to_tile(uint8_t *out, uint8_t *in, int stride);
 int pce_bitmap_to_sprite(uint8_t *out, uint8_t *in, int stride);
 
+int pce_bitmap_to_tile_palette(uint8_t *out, uint8_t *in, int stride);
+int pce_bitmap_to_sprite_palette(uint8_t *out, uint8_t *in, int stride);
+
 int pce_image_to_tiles(image_t *img, int bloc_width, int bloc_height, uint8_t *buffer, size_t *size);
 int pce_image_to_sprites(image_t *img, int sprite_width, int sprite_height, uint8_t *buffer, size_t *size);
 
