@@ -17,6 +17,9 @@
 #include "utils/pce.h"
 #include "utils/buffer.h"
 
+// [todo] extract palettes
+// [todo] file and asm output
+
 typedef struct {
     char *name;
     int x, y;
@@ -39,8 +42,16 @@ static const char* g_objectTypeName[ObjectTypeCount] = {
 };
 
 typedef struct {
+    char *name;
+    int start;
+    int count;
+} palette_t;
+
+typedef struct {
     object_t *objects[ObjectTypeCount];
     int object_count[ObjectTypeCount];
+    palette_t *palettes;
+    int palette_count;
 } asset_t;
 
 static void asset_reset(asset_t *out) {
@@ -48,6 +59,8 @@ static void asset_reset(asset_t *out) {
         out->objects[i] = NULL;
         out->object_count[i] = 0;
     }
+    out->palettes = NULL;
+    out->palette_count = 0;
 }
 
 static void asset_destroy(asset_t *out) {
@@ -61,6 +74,14 @@ static void asset_destroy(asset_t *out) {
             out->object_count[j] = 0;
         }
     }
+    if(out->palettes) {
+        for(int i=0; i<out->palette_count; i++) {
+            free(out->palettes[i].name);
+        }
+        free(out->palettes);
+        out->palettes = NULL;
+    }
+    out->palette_count = 0;
 }
 
 static int json_read_integer(json_t* node, const char* name, int* value) {
@@ -151,6 +172,62 @@ static int read_object_list(json_t *root, const char *name, object_t **objects, 
     return 1;
 }
 
+int read_palette(json_t *object, palette_t *out) {
+    const char *name;
+    if(!json_read_string(object, "name", &name)) {
+        log_error("failed to get palette name");
+        return 0;
+    }
+    out->name = strdup(name);
+    if(!json_read_integer(object, "start", &out->start)) {
+        log_error("failed to get sub-palette index");
+        return 0;
+    }
+    if(!json_read_integer(object, "count", &out->count)) {
+        log_error("failed to get sub-palette count");
+        return 0;
+    }
+    return 1;
+}
+
+static int read_palette_list(json_t *root, const char *name, palette_t **palettes, int *count) {
+    json_t *node;
+    json_t *value;
+    size_t index;
+
+    *palettes = NULL;
+    *count = 0;
+
+    node = json_object_get(root, name);
+    if(!node) {
+        return 1;
+    }
+
+    *count = json_array_size(node);
+    if(!*count) {
+        return 1;
+    }
+
+    *palettes = (palette_t*)malloc(*count * sizeof(palette_t));
+    if(*palettes == NULL) {
+        log_error("failed to allocate palettes: %s", strerror(errno));
+        *count = 0;
+        return 0;
+    }
+
+    json_array_foreach(node, index, value) {
+        if(!json_is_object(value)) {
+            log_error("invalid palette at index %d", index);
+            return 0;
+        }
+        if(!read_palette(value, *palettes + index)) {
+            log_error("failed to read palette at index %d", index);
+            return 0;
+        }
+    }
+    return 1;
+}
+
 static int parse_configuration(const char *filename, asset_t *out) {
     json_error_t error;
     json_t *root;
@@ -166,6 +243,9 @@ static int parse_configuration(const char *filename, asset_t *out) {
         if(!read_object_list(root, g_objectTypeName[j], &out->objects[j], &out->object_count[j])) {
             ret = 0;
         }
+    }
+    if(ret) {
+        ret = read_palette_list(root, "palette", &out->palettes, &out->palette_count);
     }
     if(!ret) {
         asset_destroy(out);
@@ -246,6 +326,8 @@ static int extract(const image_t *source, const object_t *object, int type, buff
     }
     return 1;
 }
+
+// [todo] extract pal?
 
 // [todo] output functions (binary + asm declaration)
 
