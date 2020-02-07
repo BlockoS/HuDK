@@ -2,7 +2,7 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ; Word-sized value manipulation macros.
@@ -108,9 +108,9 @@
     lda    p0
     sbc    #1
     sta    p0
-    lda    1+(p0)
-    sbc    #0
-    sta    1+(p0)
+    bcs    :+
+        dec    1+(p0)
+:
   .endmacro
 
 ; Left rotate word-sized value.

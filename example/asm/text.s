@@ -2,7 +2,7 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
     .include "start.s"
 
@@ -126,7 +126,7 @@ palette:
   .endif
 
 txt:
-    .byte "Copyright (c) 2016-2019, XXXX\n"
+    .byte "Copyright (c) 2016-2020, XXXX\n"
     .byte "All rights reserved.\n"
     .byte "Redistribution and use in source and binary forms, with or without "
     .byte "modification, are permitted provided that the following conditions "

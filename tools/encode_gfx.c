@@ -2,7 +2,7 @@
  * This file is part of HuDK.
  * ASM and C open source software development kit for the NEC PC Engine.
  * Licensed under the MIT License
- * (c) 2016-2019 MooZ
+ * (c) 2016-2020 MooZ
  */
 #include <stdlib.h>
 #include <string.h>
@@ -16,9 +16,9 @@
 #include "utils/image.h"
 #include "utils/pce.h"
 #include "utils/buffer.h"
+#include "utils/output.h"
 
-// [todo] extract palettes
-// [todo] file and asm output
+// [todo] asm output
 
 typedef struct {
     char *name;
@@ -327,7 +327,25 @@ static int extract(const image_t *source, const object_t *object, int type, buff
     return 1;
 }
 
-// [todo] extract pal?
+static int extract_palette(const image_t *source, palette_t *palette, buffer_t *destination) {
+    if(!buffer_resize(destination, palette->count * 2)) {
+        log_error("failed to resize work buffer");
+        return 0;
+    }
+    int start = 16*palette->start;
+    memcpy(destination->data, 0, palette->count*2);
+    if(start >= palette->count) {
+        log_error("image palette only contains %d colors", source->color_count);
+        return 0;
+    }
+    int end = start + 16*palette->count;
+    int last = (end <= source->color_count) ? end : source->color_count;
+    if(end > source->color_count) {
+        log_warning("image palette only contains %d colors", source->color_count);
+    }
+    pce_color_convert(&source->palette[start], destination->data, last-start);
+    return 1;
+}
 
 // [todo] output functions (binary + asm declaration)
 
@@ -368,9 +386,17 @@ int main(int argc, const char** argv) {
                 for(int i=0; i<assets.object_count[j]; i++) {
                     if(extract(&img, &assets.objects[j][i], j, &buf)) {
                         FILE *out = fopen(assets.objects[j][i].name, "wb");
-                        fwrite(buf.data, 1, buf.size, out);
+                        output_raw(out, buf.data, buf.size);
                         fclose(out);
                     }
+                }
+            }
+
+            for(int i=0; i<assets.palette_count; i++) {
+                if(extract_palette(&img, &assets.palettes[i], &buf)) {
+                    FILE *out = fopen(assets.palettes[i].name, "wb");
+                    output_raw(out, buf.data, buf.size);
+                    fclose(out);
                 }
             }
             buffer_delete(&buf);
