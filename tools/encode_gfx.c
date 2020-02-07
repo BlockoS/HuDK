@@ -333,7 +333,7 @@ static int extract_palette(const image_t *source, palette_t *palette, buffer_t *
         return 0;
     }
     int start = 16*palette->start;
-    memcpy(destination->data, 0, palette->count*2);
+    memset(destination->data, 0, palette->count*2);
     if(start >= palette->count) {
         log_error("image palette only contains %d colors", source->color_count);
         return 0;
@@ -341,7 +341,7 @@ static int extract_palette(const image_t *source, palette_t *palette, buffer_t *
     int end = start + 16*palette->count;
     int last = (end <= source->color_count) ? end : source->color_count;
     if(end > source->color_count) {
-        log_warning("image palette only contains %d colors", source->color_count);
+        log_warn("image palette only contains %d colors", source->color_count);
     }
     pce_color_convert(&source->palette[start], destination->data, last-start);
     return 1;
