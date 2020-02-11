@@ -328,12 +328,12 @@ static int extract(const image_t *source, const object_t *object, int type, buff
 }
 
 static int extract_palette(const image_t *source, palette_t *palette, buffer_t *destination) {
-    if(!buffer_resize(destination, palette->count * 2)) {
+    if(!buffer_resize(destination, 16*palette->count*2)) {
         log_error("failed to resize work buffer");
         return 0;
     }
     int start = 16*palette->start;
-    memset(destination->data, 0, palette->count*2);
+    memset(destination->data, 0, 16*palette->count*2);
     if(start >= palette->count) {
         log_error("image palette only contains %d colors", source->color_count);
         return 0;

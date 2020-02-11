@@ -19,6 +19,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/data/map/map16x16.inc
                    COMMENT "convert 16x16 map")
 
 add_subdirectory(asm/1_hello_world)
+add_subdirectory(asm/2_custom_font)
 
 add_executable(crc32 asm/crc32.s)
 set_target_properties(crc32 PROPERTIES OUTPUT_NAME crc32.pce)

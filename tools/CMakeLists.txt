@@ -31,4 +31,4 @@ endif()
 
 add_subdirectory(tiled2bat)
 
-install(TARGETS vgm_strip RUNTIME DESTINATION bin)
+install(TARGETS vgm_strip encode_gfx RUNTIME DESTINATION bin)
