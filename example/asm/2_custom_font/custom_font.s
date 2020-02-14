@@ -6,7 +6,7 @@
 ;;
 HUDK_USE_CUSTOM_FONT = 1
 
-FONT_8x8_COUNT=$80
+FONT_8x8_COUNT=$1ff
 FONT_ASCII_FIRST=$00
 FONT_ASCII_LAST =$9e
 FONT_DIGIT_INDEX=$30
@@ -58,7 +58,7 @@ txt:                        ; the string we'll print on screen
     .byte "Hello world!", 0
 
 palette_bin:
-    .incbin "palette.bin"
+    .incbin "data/palette.bin"
 
   .ifdef MAGICKIT
     .data
@@ -70,4 +70,4 @@ palette_bin:
     .endif
   .endif
 font_bin:
-    .incbin "font.bin"
+    .incbin "data/font.bin"
