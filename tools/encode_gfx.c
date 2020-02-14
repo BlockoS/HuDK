@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 #include <argparse/argparse.h>
 #include <jansson.h>
@@ -19,6 +20,10 @@
 #include "utils/output.h"
 
 // [todo] asm output
+
+#ifndef PATH_MAX
+#define PATH_MAX 256
+#endif
 
 typedef struct {
     char *name;
@@ -334,8 +339,8 @@ static int extract_palette(const image_t *source, palette_t *palette, buffer_t *
     }
     int start = 16*palette->start;
     memset(destination->data, 0, 16*palette->count*2);
-    if(start >= palette->count) {
-        log_error("image palette only contains %d colors", source->color_count);
+    if(start >= source->color_count) {
+        log_error("image palette only contains %d colors (%d)", source->color_count);
         return 0;
     }
     int end = start + 16*palette->count;
@@ -348,6 +353,30 @@ static int extract_palette(const image_t *source, palette_t *palette, buffer_t *
 }
 
 // [todo] output functions (binary + asm declaration)
+static int output(const char *prefix_path, const char *filename, const buffer_t *buffer) {
+    char *path = (char*)calloc(PATH_MAX, 1);
+    size_t path_len = PATH_MAX;
+    size_t ret;
+
+    ret = cwk_path_join(prefix_path, filename, path, path_len);
+    if(ret >= path_len) {
+        path_len = ret+1;
+        path = (char*)realloc(path, ret+1);
+        cwk_path_join(prefix_path, filename, path, path_len);
+    }
+
+    ret = 0;
+    FILE *out = fopen(path, "wb");
+    if(out) {
+        ret = output_raw(out, buffer->data, buffer->size);
+        fclose(out);
+    }
+    else {
+        log_error("failed to open %s: %s", path, strerror(errno));
+    } 
+    free(path);
+    return ret;
+}
 
 int main(int argc, const char** argv) {
     static const char *const usages[] = {
@@ -355,9 +384,10 @@ int main(int argc, const char** argv) {
         NULL
     };
 
+    const char *output_directory = ".";
     struct argparse_option options[] = {
         OPT_HELP(),
-        // [todo] assembly file output
+        OPT_STRING('o', "output-directory", &output_directory, "output directory", NULL, 0, 0),
         OPT_END(),
     };
 
@@ -371,7 +401,11 @@ int main(int argc, const char** argv) {
         return EXIT_FAILURE;
     }
 
-    // [todo] check argument count
+    struct stat sb;
+    if (stat(output_directory, &sb) || !S_ISDIR(sb.st_mode)) {
+        log_error("Invalid output directory");
+        return EXIT_FAILURE;
+    }
 
     int ret = EXIT_FAILURE;
 
@@ -382,25 +416,22 @@ int main(int argc, const char** argv) {
             buffer_t buf;
             buffer_init(&buf);
 
-            for(int j=0; j<ObjectTypeCount; j++) {
-                for(int i=0; i<assets.object_count[j]; i++) {
+            int ok = 1;
+            for(int j=0; ok && (j<ObjectTypeCount); j++) {
+                for(int i=0; ok && (i<assets.object_count[j]); i++) {
                     if(extract(&img, &assets.objects[j][i], j, &buf)) {
-                        FILE *out = fopen(assets.objects[j][i].name, "wb");
-                        output_raw(out, buf.data, buf.size);
-                        fclose(out);
+                        ok = output(output_directory, assets.objects[j][i].name, &buf);
                     }
                 }
             }
 
-            for(int i=0; i<assets.palette_count; i++) {
+            for(int i=0; ok && (i<assets.palette_count); i++) {
                 if(extract_palette(&img, &assets.palettes[i], &buf)) {
-                    FILE *out = fopen(assets.palettes[i].name, "wb");
-                    output_raw(out, buf.data, buf.size);
-                    fclose(out);
+                    ok = output(output_directory, assets.palettes[i].name, &buf);
                 }
             }
             buffer_delete(&buf);
-            ret = EXIT_SUCCESS;
+            ret = ok ? EXIT_SUCCESS : EXIT_FAILURE;
         }
         image_destroy(&img);
     }    
