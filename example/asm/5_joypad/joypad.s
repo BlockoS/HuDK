@@ -21,6 +21,7 @@ _x: ds 1
 _y: ds 1
 
     .bss
+; type of each joypad (2 or 6 button)
 joypad_type: ds 5
 
     .code
@@ -62,6 +63,7 @@ _main:
     vdc_reg  #VDC_CR
     vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
 
+    ; display joypad status
     stb    #JOYPAD_BOX_Y, <_y
     stz    <_r0 
 @l0:
@@ -92,11 +94,10 @@ _main:
     cmp    #5
     bne    @l0
 
-
-    ; enable interrupts
-    cli
 @loop:
     vdc_wait_vsync
+
+    ; retrieve joypad status and print them
     jsr    joypad_6_read
     jsr    joy_print_status
 

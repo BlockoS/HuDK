@@ -20,7 +20,3 @@ target_link_options(crc32 PRIVATE -C ${CMAKE_CURRENT_SOURCE_DIR}/asm/text.cfg)
 add_executable(text asm/text.s)
 set_target_properties(text PROPERTIES OUTPUT_NAME text.pce)
 target_link_options(text PRIVATE -C ${CMAKE_CURRENT_SOURCE_DIR}/asm/text.cfg)
-
-#add_executable(bm_tools asm/bm_tools.s)
-#set_target_properties(bm_tools PROPERTIES OUTPUT_NAME bm_tools.pce)
-#target_link_options(bm_tools PRIVATE -C ${CMAKE_CURRENT_SOURCE_DIR}/asm/text.cfg)
