@@ -402,7 +402,7 @@ int main(int argc, const char** argv) {
     }
 
     struct stat sb;
-    if (stat(output_directory, &sb) || !S_ISDIR(sb.st_mode)) {
+    if (stat(output_directory, &sb) || ((sb.st_mode & S_IFMT) != S_IFDIR)) {
         log_error("Invalid output directory");
         return EXIT_FAILURE;
     }
