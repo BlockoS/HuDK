@@ -14,10 +14,6 @@ map_col:  ds 1
 
     .code
 _main: 
-    ; enable background display
-    vdc_reg  #VDC_CR
-    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
-
     ; set BAT size
     lda    #VDC_BG_64x32
     jsr    vdc_set_bat_size
@@ -28,27 +24,31 @@ _main:
     jsr    map_set_bat_bounds
 
     ; load tileset palette
-    stb    #bank(pal00), <_bl
-    stw    #pal00, <_si
+    stb    #bank(pal_00), <_bl
+    stw    #pal_00, <_si
     jsr    map_data
     cla
-    ldy    #(pal00_size/32)
+    ldy    #(pal_00_size/32)
     jsr    vce_load_palette
 
     ; load tileset gfx
-    stb    #bank(gfx00), <_bl
-    stw    #map00_tile_vram, <_di
-    stw    #gfx00, <_si
-    stw    #(gfx00_size >> 1), <_cx
+    stb    #bank(gfx_00), <_bl
+    stw    #map_16x16_tile_vram, <_di
+    stw    #gfx_00, <_si
+    stw    #(gfx_00_size >> 1), <_cx
     jsr    vdc_load_data
 
     ; set map infos
-    map_set map00, map00_tile_vram, tile_pal00, #map00_width, #map00_height, #00
+    map_set map_00, map_16x16_tile_vram, tile_pal_00, #map_16x16_width, #map_16x16_height, #00
 
     ; copy map from (0,0) to (17, map_height) to BAT
     ; remember that this is a 16x16 map
-    map_copy_16 #0, #0, #0, #0, #17, #map00_height
-    
+    map_copy_16 #0, #0, #0, #0, #17, #map_16x16_height
+
+    ; enable background display
+    vdc_reg  #VDC_CR
+    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
+
     ; clear irq config flag
     stz    <irq_m
     ; set vsync vec
@@ -90,12 +90,12 @@ _main:
     bne    @l1
         inc    <map_col
         lda    <map_col
-        cmp    #map00_width
+        cmp    #map_16x16_width
         bcc    @l0
             stz    <map_col
 @l0:
     ; copy the next map column to BAT
-    map_copy_16 <map_col, #0, <map_col, #0, #1, #map00_height
+    map_copy_16 <map_col, #0, <map_col, #0, #1, #map_16x16_height
 @l1:
     bra    @loop    
 
@@ -134,20 +134,15 @@ cos_table:
     .endif
   .endif
 
-map00_width = 32
-map00_height = 32
-map00_tile_width = 16
-map00_tile_height = 16
-map00_tile_vram = $2200
-map00_tile_pal = 0
+    .include "data/map_16x16.inc"
 
-map00:
-    .incbin "../data/map/map16.map"
-gfx00:
-    .incbin "../data/map/map16x16.bin"
-gfx00_size = * - gfx00
-tile_pal00:
-    .incbin "../data/map/map16x16.idx"
-pal00:
-    .incbin "../data/map/map16x16.pal"
-pal00_size = * - pal00
+map_00:
+    .incbin "data/map_16.map"
+gfx_00:
+    .incbin "data/map_16x16.bin"
+gfx_00_size = * - gfx_00
+tile_pal_00:
+    .incbin "data/map_16x16.idx"
+pal_00:
+    .incbin "data/map_16x16.pal"
+pal_00_size = * - pal_00
