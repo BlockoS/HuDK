@@ -14,10 +14,6 @@ map_col:  ds 1
 
     .code
 _main: 
-    ; enable background display
-    vdc_reg  #VDC_CR
-    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
-
     ; set BAT size
     lda    #VDC_BG_64x32
     jsr    vdc_set_bat_size
@@ -28,31 +24,36 @@ _main:
     jsr    map_set_bat_bounds
 
     ; load tileset palette
-    stb    #bank(pal00), <_bl
-    stw    #pal00, <_si
+    stb    #bank(pal_00), <_bl
+    stw    #pal_00, <_si
     jsr    map_data
     cla
-    ldy    #(pal00_size/32)
+    ldy    #(pal_00_size/32)
     jsr    vce_load_palette
 
     ; load tileset gfx
-    stb    #bank(gfx00), <_bl
-    stw    #map00_tile_vram, <_di
-    stw    #gfx00, <_si
-    stw    #(gfx00_size >> 1), <_cx
+    stb    #bank(gfx_00), <_bl
+    stw    #map_00_tile_vram, <_di
+    stw    #gfx_00, <_si
+    stw    #(gfx_00_size >> 1), <_cx
     jsr    vdc_load_data
 
     ; set map pointer, tiles vram address, tiles palette id, map width and height, and wrap mode
-    map_set map00, map00_tile_vram, tile_pal00, #map00_width, #map00_height, #00
+    map_set map_00, map_00_tile_vram, tile_pal_00, #map_00_width, #map_00_height, #00
 
     ; copy map from (0,0) to (32, map_height) to BAT
-    map_copy #0, #0, #0, #0, #33, #map00_height
+    map_copy #0, #0, #0, #0, #33, #map_00_height
     
+    ; enable background display
+    vdc_reg  #VDC_CR
+    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
+
     ; clear irq config flag
     stz    <irq_m
     ; set vsync vec
     irq_on INT_IRQ1
 
+    ; enable interrupts
     cli
 
     ; the last map column
@@ -63,6 +64,7 @@ _main:
     ; reset index in the sine table
     stz    <sin_idx
 @loop:
+    ; wait for vsync
     vdc_wait_vsync
 
     ; set VDC X scroll register
@@ -98,12 +100,12 @@ _main:
     bne    @l1
         inc    <map_col
         lda    <map_col
-        cmp    #map00_width
+        cmp    #map_00_width
         bcc    @l0
             stz    <map_col
 @l0:
     ; copy the next map column to BAT
-    map_copy <map_col, #0, <map_col, #0, #1, #map00_height
+    map_copy <map_col, #0, <map_col, #0, #1, #map_00_height
 @l1:
     bra    @loop    
 
@@ -141,20 +143,20 @@ cos_table:
     .segment "BANK01"
     .endif
   .endif
-map00_width = 128
-map00_height = 32
-map00_tile_width = 8
-map00_tile_height = 8
-map00_tile_vram = $2200
-map00_tile_pal = 0
+map_00_width = 128
+map_00_height = 32
+map_00_tile_width = 8
+map_00_tile_height = 8
+map_00_tile_vram = $2200
+map_00_tile_pal = 0
 
-map00:
-    .incbin "../data/map/map00.map"
-gfx00:
-    .incbin "../data/map/map8x8.bin"
-gfx00_size = * - gfx00
-tile_pal00:
-    .incbin "../data/map/map8x8.idx"
-pal00:
-    .incbin "../data/map/map8x8.pal"
-pal00_size = * - pal00
+map_00:
+    .incbin "data/map_00.map"
+gfx_00:
+    .incbin "data/map_8x8.bin"
+gfx_00_size = * - gfx_00
+tile_pal_00:
+    .incbin "data/map_8x8.idx"
+pal_00:
+    .incbin "data/map_8x8.pal"
+pal_00_size = * - pal_00
