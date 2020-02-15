@@ -33,16 +33,16 @@ _main:
 
     ; load tileset gfx
     stb    #bank(gfx_00), <_bl
-    stw    #map_00_tile_vram, <_di
+    stw    #map_8x8_tile_vram, <_di
     stw    #gfx_00, <_si
     stw    #(gfx_00_size >> 1), <_cx
     jsr    vdc_load_data
 
     ; set map pointer, tiles vram address, tiles palette id, map width and height, and wrap mode
-    map_set map_00, map_00_tile_vram, tile_pal_00, #map_00_width, #map_00_height, #00
+    map_set map_00, map_8x8_tile_vram, tile_pal_00, #map_8x8_width, #map_8x8_height, #00
 
     ; copy map from (0,0) to (32, map_height) to BAT
-    map_copy #0, #0, #0, #0, #33, #map_00_height
+    map_copy #0, #0, #0, #0, #33, #map_8x8_height
     
     ; enable background display
     vdc_reg  #VDC_CR
@@ -100,12 +100,12 @@ _main:
     bne    @l1
         inc    <map_col
         lda    <map_col
-        cmp    #map_00_width
+        cmp    #map_8x8_width
         bcc    @l0
             stz    <map_col
 @l0:
     ; copy the next map column to BAT
-    map_copy <map_col, #0, <map_col, #0, #1, #map_00_height
+    map_copy <map_col, #0, <map_col, #0, #1, #map_8x8_height
 @l1:
     bra    @loop    
 
@@ -143,12 +143,7 @@ cos_table:
     .segment "BANK01"
     .endif
   .endif
-map_00_width = 128
-map_00_height = 32
-map_00_tile_width = 8
-map_00_tile_height = 8
-map_00_tile_vram = $2200
-map_00_tile_pal = 0
+    .include "data/map_8x8.inc"
 
 map_00:
     .incbin "data/map_00.map"

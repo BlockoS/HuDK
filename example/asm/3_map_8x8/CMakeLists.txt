@@ -18,7 +18,8 @@ add_custom_command(OUTPUT ${DATA_DIR}/map_8x8.inc
 
 add_custom_target(map_8x8_data DEPENDS "${DATA_DIR}/map_8x8.inc")
 
-add_executable(map_8x8 map_8x8.s ${DATA_DIR}/map_8x8.inc)
+add_executable(map_8x8 map_8x8.s)
 add_dependencies(map_8x8 map_8x8_data)
+target_include_directories(map_8x8 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 set_target_properties(map_8x8 PROPERTIES OUTPUT_NAME map_8x8.pce)
 target_link_options(map_8x8 PRIVATE -C ${CMAKE_CURRENT_SOURCE_DIR}/map_8x8.cfg)
