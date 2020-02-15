@@ -6,9 +6,7 @@
 ;;
 
     .include "start.s"
-    
-SATB_ADDR = $4000
-
+   
 ; Joypad types
 JOYPAD_2 = 0
 JOYPAD_6 = 1
@@ -59,8 +57,6 @@ _main:
     stz    <irq_m
     ; set vsync vec
     irq_on INT_IRQ1
-    irq_enable_vec VSYNC
-    irq_set_vec VSYNC, vsync_proc
     
     ; enable background display
     vdc_reg  #VDC_CR
@@ -105,10 +101,6 @@ _main:
     jsr    joy_print_status
 
     bra    @loop    
-
-; VSYNC hook
-vsync_proc:
-    rts
 
 joy_print_status:
     stb    #JOYPAD_BOX_Y, <_y

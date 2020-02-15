@@ -53,9 +53,6 @@ _main:
     ; set vsync vec
     irq_on INT_IRQ1
 
-    ; enable interrupts
-    cli
-
     ; the last map column
     lda    #32
     sta    <map_col

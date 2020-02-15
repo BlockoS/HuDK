@@ -17,6 +17,11 @@ _main:
     lda    #8               ; BAT Y coordinate
     jsr    print_string
 
+    ; clear irq config flag
+    stz    <irq_m
+    ; set vsync vec
+    irq_on INT_IRQ1
+
 loop:
     vdc_wait_vsync          ; wait for screen refresh
     bra    loop             ; and we'll loop indefinitely

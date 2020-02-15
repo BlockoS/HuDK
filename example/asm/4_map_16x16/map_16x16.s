@@ -54,8 +54,6 @@ _main:
     ; set vsync vec
     irq_on INT_IRQ1
 
-    cli
-
     ; everythins is similar to the 8x8 example
     ; except that we'll use map_copy_16 to load the map column
     lda    #16
