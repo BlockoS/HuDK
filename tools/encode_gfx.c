@@ -41,7 +41,7 @@ enum ObjectType {
 
 static const char* g_objectTypeName[ObjectTypeCount] = {
     "tile",
-    "sprite"
+    "sprite",
     "tilepal",
     "spritepal"
 };

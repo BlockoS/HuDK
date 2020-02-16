@@ -57,6 +57,7 @@
     .include "psg.s"
     .include "vdc.s"
     .include "vdc_sprite.s"
+    .include "sprite.s"
     .include "vce.s"
     .include "font.s"
     .include "print.s"

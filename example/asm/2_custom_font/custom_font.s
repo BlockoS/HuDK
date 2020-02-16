@@ -33,8 +33,8 @@ _main:
     jsr    vdc_load_data
 
     ; set font VRAM address
-    ldx    #<VDC_DEFAULT_TILE_ADDR
-    lda    #>VDC_DEFAULT_TILE_ADDR
+    ldx    #.lobyte(VDC_DEFAULT_TILE_ADDR)
+    lda    #.hibyte(VDC_DEFAULT_TILE_ADDR)
     jsr    font_set_addr
 
     ; set font palette
