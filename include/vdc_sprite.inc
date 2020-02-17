@@ -34,22 +34,22 @@ VDC_SPRITE_PATTERN_MASK = $03fe
 ;; ubyte: VDC_SPRITE_VERTICAL_FLIP_MASK
 ;; Bitmask for sprite vertical flip flag.
 ;;
-VDC_SPRITE_VERTICAL_FLIP_MASK = $8000
+VDC_SPRITE_VERTICAL_FLIP_MASK = $80
 ;;
 ;; ubyte: VDC_SPRITE_HORIZONTAL_FLIP_MASK
 ;; Bitmask for sprite horizontal flip flag.
 ;;
-VDC_SPRITE_HORIZONTAL_FLIP_MASK = $0800
+VDC_SPRITE_HORIZONTAL_FLIP_MASK = $08
 ;;
 ;; ubyte: VDC_SPRITE_HEIGHT_MASK
 ;; Bitmask for sprite height.
 ;;
-VDC_SPRITE_HEIGHT_MASK = $3000
+VDC_SPRITE_HEIGHT_MASK = $30
 ;;
 ;; ubyte: VDC_SPRITE_WIDTH_MASK
 ;; Bitmask for sprite width.
 ;;
-VDC_SPRITE_WIDTH_MASK = $0100
+VDC_SPRITE_WIDTH_MASK = $01
 ;;
 ;; ubyte: VDC_SPRITE_PRIORITY_MASK
 ;; Bitmask for sprite priority.
@@ -91,27 +91,27 @@ VDC_SPRITE_CG_MODE_B23 = $01
 ;; ubyte: VDC_SPRITE_HEIGHT_16
 ;; 16 px sprite height.
 ;;
-VDC_SPRITE_HEIGHT_16 = $0000
+VDC_SPRITE_HEIGHT_16 = $00
 ;;
 ;; ubyte: VDC_SPRITE_HEIGHT_32
 ;; 32 px sprite height.
 ;;
-VDC_SPRITE_HEIGHT_32 = $1000
+VDC_SPRITE_HEIGHT_32 = $10
 ;;
 ;; ubyte: VDC_SPRITE_HEIGHT_64
 ;; 64 px sprite height.
 ;;
-VDC_SPRITE_HEIGHT_64 = $2000
+VDC_SPRITE_HEIGHT_64 = $20
 ;;
 ;; ubyte: VDC_SPRITE_WIDTH_16
 ;; 16 px sprite width.
 ;;
-VDC_SPRITE_WIDTH_16 = $0000
+VDC_SPRITE_WIDTH_16 = $00
 ;;
 ;; ubyte: VDC_SPRITE_HEIGHT_32
 ;; 32 px sprite width.
 ;;
-VDC_SPRITE_WIDTH_32 = $0100
+VDC_SPRITE_WIDTH_32 = $01
 
 ;; 
 ;; Group: Sprite control flags
@@ -121,22 +121,22 @@ VDC_SPRITE_WIDTH_32 = $0100
 ;; ubyte: VDC_SPRITE_PRIORITY_LOW
 ;; The sprite will be displayed in background.
 ;;
-VDC_SPRITE_PRIORITY_LOW = $0000
+VDC_SPRITE_PRIORITY_LOW = $00
 
 ;;
 ;; ubyte: VDC_SPRITE_PRIORITY_HIGH
 ;; The sprite will be displayed in foreground.
 ;;
-VDC_SPRITE_PRIORITY_HIGH = $0080
+VDC_SPRITE_PRIORITY_HIGH = $80
 
 ;;
 ;; ubyte: VDC_SPRITE_HORIZONTAL_FLIP
 ;; The sprite will be flipped horizontally.
 ;;
-VDC_SPRITE_HORIZONTAL_FLIP = $0800
+VDC_SPRITE_HORIZONTAL_FLIP = $08
 
 ;;
 ;; ubyte: VDC_SPRITE_VERTICAL_FLIP
 ;; The sprite will be flipped vertically.
 ;;
-VDC_SPRITE_VERTICAL_FLIP = $8000
+VDC_SPRITE_VERTICAL_FLIP = $80

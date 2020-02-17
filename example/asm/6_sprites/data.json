@@ -1,0 +1,15 @@
+{
+	"sprite": [
+		{ "name": "ball0.bin", "x":0, "y":0, "w":2, "h":2 },
+		{ "name": "ball1.bin", "x":32, "y":0, "w":2, "h":2 },
+		{ "name": "ball2.bin", "x":64, "y":0, "w":2, "h":2 },
+		{ "name": "ball3.bin", "x":96, "y":0, "w":2, "h":2 },
+		{ "name": "ball4.bin", "x":128, "y":0, "w":1, "h":1 },
+		{ "name": "ball5.bin", "x":144, "y":0, "w":1, "h":1 },
+		{ "name": "ball6.bin", "x":128, "y":16, "w":1, "h":1 },
+		{ "name": "ball7.bin", "x":144, "y":16, "w":1, "h":1 }
+	],
+    "palette": [
+        { "name": "palette.bin", "start": 0, "count": 1 }
+    ]
+}
