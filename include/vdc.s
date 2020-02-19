@@ -473,3 +473,99 @@ vdc_xres_512:
     lda    #(VCE_BLUR_ON | VCE_DOT_CLOCK_10MHZ)
     sta    color_ctrl
     rts
+
+    .bss
+_hsw    .ds 1
+_hds    .ds 1
+_hdw    .ds 1
+_hde    .ds 1
+
+    .code
+;;
+;; function: vdc_set_xres
+;; Set horizontal display resolution.
+;; The new resolution will be ajusted/clamped to 256, 268, 356 or 512. 
+;;
+;; Parameters:
+;;   _ax - New horizontal display resolution. 
+;;   _cl - 'blur bit' for control register.
+;;
+vdc_set_xres:
+    lda    #$20
+    tsb    <irq_m               ; disable vsync processing
+
+    cly
+
+    ldx    <_al
+    beq    @calc                ; < 256
+
+    lda    <_ah
+    cmp    #$02
+    bcs    @l1                  ; >= 512
+
+    cpx    #$0C
+    bcc    @calc                ; < 268
+
+    iny
+
+    cpx    #$64
+    bcc    @calc                ; < 356
+@l1:
+    ldy    #$2                  ; 356 <= x < 512
+@calc:
+    ; A:X / 8
+    lsr    A
+    sax
+    ror    A
+    sax
+    lsr    A
+    sax
+    ror    A
+    lsr    A
+    sta    <_bl
+
+    lda    @vce_clock, Y
+    ora    <_cl
+    sta    color_ctrl           ; dot-clock (x-resolution)
+
+    lda    @hsw, Y
+    sta    _hsw
+    lda    <_bl
+    sta    _hds                 ; hds = (x/8)
+    dec    A
+    sta    _hdw                 ; hdw = (x/8)-1
+    lsr    _hds                 ; hds = (x/16)
+
+    lda    @hds, Y
+    clc
+    sbc    _hds
+    sta    _hds                 ; hds = 18 - (x/16)
+
+    lda    @hde, Y
+    sec
+    sbc    _hds
+    sec
+    sbc    <_bl                 ; hde = (38 - ( (18-(x/16)) + (x/8) ))
+    sta    _hde
+
+    vdc_reg #VDC_HSR
+    lda    _hsw
+    sta    video_data_l
+    lda    _hds
+    sta    video_data_h
+
+    vdc_reg #VDC_HDR
+    lda    _hdw
+    sta    video_data_l
+    lda    _hde
+    sta    video_data_h
+
+@end:
+    lda    #$20
+    trb    <irq_m               ; re-enable VSYNC processing
+    rts
+
+@vce_clock: .byte 0, 1, 2
+@hsw: .db 2, 3, 5
+@hds: .db 18,25,42
+@hde: .db 38,51,82
