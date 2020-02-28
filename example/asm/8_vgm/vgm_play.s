@@ -39,6 +39,8 @@ vgm_setup:
 	sta    <vgm_ptr
 	
 	lda    #high(song_base_address)
+    and    #$1f
+    ora    #(vgm_mpr<<5)
 	sta    <vgm_base+1
 	sta    <vgm_ptr+1
 	
@@ -52,7 +54,12 @@ vgm_setup:
 	
 	lda    #song_loop_bank
 	sta    <vgm_loop_bank
-	stw    #song_loop, <vgm_loop_ptr
+	lda    #low(song_loop)
+    sta    <vgm_loop_ptr
+	lda    #high(song_loop)
+    and    #$1f
+    ora    #(vgm_mpr<<5)
+    sta    <vgm_loop_ptr+1
 	
 	stz    <vgm_wait
 	rts
@@ -61,5 +68,29 @@ vsync_proc:
 	jsr    vgm_update
     rts
 
+song_bank=$01
+song_base_address=$6000
+song_loop_bank=$01
+song_loop=$6fa8
+
+  .ifdef MAGICKIT
     .data
-    .include "song.inc"
+    .bank $01
+    .org $6000
+  .else
+    .ifdef CA65
+    .segment "BANK01"
+    .endif
+  .endif
+    .incbin "data/song0000.bin"
+
+  .ifdef MAGICKIT
+    .data
+    .bank $02
+    .org $6000
+  .else
+    .ifdef CA65
+    .segment "BANK02"
+    .endif
+  .endif
+    .incbin "data/song0001.bin"
