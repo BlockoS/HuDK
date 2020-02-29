@@ -26,43 +26,17 @@ _main:
 	vdc_reg  #VDC_CR
 	vdc_data #VDC_CR_VBLANK_ENABLE
 
+    stb    #song_bank, <_bl
+    stw    #song_loop, <_si
+    stb    #song_loop_bank, <_bh
+    lda    #.hibyte(song_base_address)
+    ldx    #.lobyte(song_base_address)
     jsr    vgm_setup
 
     cli    
 .loop:
     vdc_wait_vsync
     bra    .loop
-
-vgm_setup:
-	lda    #low(song_base_address)
-	sta    <vgm_base
-	sta    <vgm_ptr
-	
-	lda    #high(song_base_address)
-    and    #$1f
-    ora    #(vgm_mpr<<5)
-	sta    <vgm_base+1
-	sta    <vgm_ptr+1
-	
-	lda    #song_bank
-	sta    <vgm_bank
-	
-	lda    <vgm_base+1
-	clc
-	adc    #$20
-	sta    <vgm_end
-	
-	lda    #song_loop_bank
-	sta    <vgm_loop_bank
-	lda    #low(song_loop)
-    sta    <vgm_loop_ptr
-	lda    #high(song_loop)
-    and    #$1f
-    ora    #(vgm_mpr<<5)
-    sta    <vgm_loop_ptr+1
-	
-	stz    <vgm_wait
-	rts
 
 vsync_proc:
 	jsr    vgm_update

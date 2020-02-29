@@ -187,6 +187,47 @@ vgm_wait .ds 1
     tam6
   .endmacro
 
+
+;;
+;; Function: vgm_setup
+;; Setup VGM player
+;;
+;; Parameters:
+;;     A - Song address MSB
+;;     X - Song address LSB
+;;   _bl - Song bank
+;;   _si - Loop offset
+;;   _bh - Loop bank
+vgm_setup:
+	and    #$1f
+    ora    #(vgm_mpr<<5)
+	sta    <vgm_base+1
+	sta    <vgm_ptr+1
+
+	txa
+	sta    <vgm_base
+	sta    <vgm_ptr
+	
+	lda    <_bl
+	sta    <vgm_bank
+	
+	lda    <vgm_base+1
+	clc
+	adc    #$20
+	sta    <vgm_end
+	
+	lda    <_bh
+	sta    <vgm_loop_bank
+	lda    <_si
+    sta    <vgm_loop_ptr
+	lda    <_si+1
+    and    #$1f
+    ora    #(vgm_mpr<<5)
+    sta    <vgm_loop_ptr+1
+	
+	stz    <vgm_wait
+	rts
+
 ;;
 ;; Function: vgm_next_byte
 ;; Increment VGM data pointer.
