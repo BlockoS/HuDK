@@ -11,14 +11,6 @@
 .define video_data_l a:$0002
 .define video_data_h a:$0003
 
-    .bss
-vdc_bat_width:  .res 2
-vdc_bat_height: .res 1
-vdc_bat_hmask:  .res 1
-vdc_bat_vmask:  .res 1
-
-	.code
-
 ; Compute the value of the HSR register for a given horizontal screen
 ; resolution.
   .macro VDC_HSR_db xres

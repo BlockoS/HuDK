@@ -5,6 +5,13 @@
 ;; (c) 2016-2020 MooZ
 ;;
 
+    .bss
+vdc_bat_width  .ds 2
+vdc_bat_height .ds 1
+vdc_bat_hmask  .ds 1
+vdc_bat_vmask  .ds 1
+vdc_scr_height .ds 1
+
 ;;
 ;; Title: VDC Functions.
   .code
@@ -284,6 +291,9 @@ vdc_init:
     cpy    #36
     bne    @l0
 
+    lda    #224
+    sta    vdc_scr_height
+
 	jsr reset_hooks
    
     ; set BAT size
@@ -377,6 +387,9 @@ vdc_yres_224:
     ; vertical display width
     st1    #$df
     st2    #$00
+
+    lda    #224
+    sta    vdc_scr_height
     rts
 
 ;;
@@ -397,6 +410,9 @@ vdc_yres_240:
     ; vertical display width
     st1    #$ef
     st2    #$00
+
+    lda    #240
+    sta    vdc_scr_height
     rts
 
 ;;

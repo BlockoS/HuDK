@@ -11,12 +11,6 @@ video_data = videoport+2
 video_data_l = video_data
 video_data_h = video_data+1
 
-  .bss
-vdc_bat_width  .ds 2
-vdc_bat_height .ds 1
-vdc_bat_hmask  .ds 1
-vdc_bat_vmask  .ds 1
-
   .code
 
 ; Compute the value of the HSR register for a given horizontal screen
