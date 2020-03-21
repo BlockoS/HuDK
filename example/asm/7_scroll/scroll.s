@@ -61,17 +61,29 @@ _main:
     ; reset index in the sine table
     stz    <sin_idx
 
-    ; set scroll window
-    lda    #00
+    ; set scroll windows
+    lda    #$00
     sta    scroll_top
-    lda    #254
+    lda    #120
     sta    scroll_bottom
     stz    scroll_x_lo
     stz    scroll_x_hi
     stz    scroll_y_lo
     stz    scroll_y_hi
-    lda    #$89
+    lda    #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE | 0x01)
     sta    scroll_flag
+
+    lda    #120
+    sta    scroll_top+1
+    lda    #240
+    sta    scroll_bottom+1
+    stz    scroll_x_lo+1
+    stz    scroll_x_hi+1
+    lda    #128
+    sta    scroll_y_lo+1
+    stz    scroll_y_hi+1
+    lda    #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE | 0x01)
+    sta    scroll_flag+1
 
     cli
 @loop:
@@ -84,7 +96,6 @@ _main:
         inc    scroll_x_hi
 @skip0:
 
-
     ; this is the wavy scroll effect
     ; the Y coordinate is computed like this :
     ;    Y = (sin_table[sin_idx] / 2) + 64
@@ -92,12 +103,16 @@ _main:
     lda    sin_table, Y
     cmp    #$80         ; sine values are signed, this will save its upon right shift
     ror    A
+    cmp    #$80
+    ror    A
+    cmp    #$80
+    ror    A
     clc
-    adc    #64
-    sta    scroll_y_lo
+    adc    #128
+    sta    scroll_y_lo+1
     cla
     adc    #$00
-    sta    scroll_y_hi
+    sta    scroll_y_hi+1
 
     inc    <sin_idx     ; we move to the next sine value
 
@@ -115,8 +130,9 @@ _main:
             stz    <map_col
 @l0:
     ; copy the next map column to BAT
-    map_copy <map_col, #0, <map_col, #0, #1, #map_8x8_height
+    map_copy <map_col, #0, <map_col, #0, #1, #$0f
 @l1:
+
     bra    @loop    
 
 ; sine and cosine tables [-128,128[
@@ -142,7 +158,6 @@ cos_table:
     .byte $31,$33,$36,$39,$3c,$3f,$41,$44,$47,$49,$4c,$4e,$51,$53,$55,$58
     .byte $5a,$5c,$5e,$60,$62,$64,$66,$68,$6a,$6b,$6d,$6f,$70,$71,$73,$74
     .byte $75,$76,$78,$79,$7a,$7a,$7b,$7c,$7d,$7d,$7e,$7e,$7e,$7f,$7f,$7f
-
 
   .ifdef MAGICKIT
     .data

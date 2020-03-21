@@ -27,6 +27,9 @@ display_list_flag   .ds SCROLL_MAX_COUNT
 display_list_index  .ds SCROLL_MAX_COUNT+1
 display_list_tmp    .ds 3
     
+bg_x1 .ds 2
+bg_y1 .ds 2
+
     .code
 scroll_build_display_list:
     lda    scroll_flag                      ; quit if all flags are zero
@@ -146,4 +149,90 @@ scroll_build_display_list:
     clc
     rts
 
-; [todo] hsync/vsync update
+
+rcr_init:
+    jsr    scroll_build_display_list
+    bcs    @r3
+        rts
+@r3:
+    smb    #7, <vdc_crl
+    lda    #$FF
+    sta    display_list_last
+    ldx    display_list_index
+    ldy    display_list_top,X
+    cpy    #$FF
+    bne    rcr5
+        ldy   display_list_x_lo,X
+        sty   bg_x1
+        ldy   display_list_x_hi,X
+        sty   bg_x1+1
+        ldy   display_list_y_lo,X
+        sty   bg_y1
+        ldy   display_list_y_hi,X
+        sty   bg_y1+1
+        stz   display_list_last
+        bra   rcr5
+
+; ----
+; program scanline interrupt
+;
+rcr_set:
+    iny
+    sty    display_list_last
+    lda    display_list_index, Y
+    tay
+    lda    display_list_top, Y
+    cmp    vdc_scr_height
+    bcs    rcr6
+    cmp    display_list_bottom,X
+    bcc    rcr5
+
+    lda    display_list_bottom, X
+rcr4:
+    dec    A
+    pha
+    lda    #$F0
+    sta    display_list_bottom, X
+    stz    display_list_flag, X
+    dec    display_list_last
+    pla
+    ; --
+
+rcr5:
+    st0    #VDC_RCR          ; set scanline counter
+    clc
+    adc    #64
+    sta    video_data_l
+    cla
+    adc    #0
+    sta    video_data_h
+    bra   __rcr_on
+
+rcr6:
+    lda    display_list_bottom, X
+    cmp    vdc_scr_height
+    bcc    rcr4
+        bra    __rcr_off
+
+_rcr_on:
+    lda    #VDC_CR
+    sta    <vdc_ri
+__rcr_on:
+; [todo]    st0    #VDC_CR
+; [todo]    lda    <vdc_crl
+; [todo]    ora    #$04
+; [todo]    sta    <vdc_crl
+; [todo]    sta    video_data_l
+    rts
+
+_rcr_off:
+    lda    #VDC_CR
+    sta    <vdc_ri
+__rcr_off:
+    rts
+; [todo]    st0    #VDC_CR  
+; [todo]    lda    <vdc_crl
+; [todo]    and    #$FB
+; [todo]    sta    <vdc_crl
+; [todo]    sta    video_data_l
+; [todo]    rts

@@ -13,127 +13,106 @@
 ; - related to DMA
 
 _irq_1:
-    pha                     ; save registers
+    ; check if irq1 is totally handled by a custom handler
+    bbs1   <irq_m, @user_hook
+
+    pha
     phx
     phy
-	
-	; check if irq1 is totally handled by a custom handler
-    bbr1   <irq_m, @no_hook
-	jsr @user_hook
-	jmp @end
 
-@no_hook:
     lda    video_reg        ; get VDC status register (SR)
-    sta    <vdc_sr			; store SR to avoid to call it everytimes
-							; we wan't to check what occured
-
-;;;;;;;;;;;;;;;;
-;; HSync
-;; first, because time sensitive
-
+    sta    <vdc_sr          ; store SR to avoid to call it everytimes
+                            ; we wan't to check what occured
 @check_hsync:
-    bbr2   <vdc_sr, @no_hsync
-    
-    ; BIT 2 = Hsync
-    ; HSync occured
-    
-    ; TODO : stuff
-    ; vsplit ;)
-    
-    
-    ; call user hsync handler
-    ; we don't care about vsync, since it can't happen at the same time
-    ; TODO : do we also do'nt care about others ?
-    bbr6 <irq_m, @no_vsync
-    jsr  @user_hsync
-    
-    jmp @no_vsync
-
-
-@no_hsync:
-
-	; call user irq1_w/o_hsync handler (!) 
-    bbr7   <irq_m,  @check_vsync
-    jsr  @no_hsync_handler
-
-	; continue to @check_vsync
-
-;;;;;;;;;;;;;;;;
-;; VSYNC
-
+    bbr2   <vdc_sr, @check_vsync
+        bbr6   <irq_m, @default_hsync
+            bsr    @user_hsync
+            bra    @check_others
+@default_hsync:
+            bsr    @default_hsync_handler 
+            bra    @check_others
 @check_vsync:
-    bbr5   <vdc_sr, @no_vsync
+    bbr5   <vdc_sr, @check_others
+        inc    <irq_cnt         ; update irq counter (for wait_vsync)
+        
+;[todo]       st0   #VDC_CR       ; update display control (bg/sp)
+;[todo]        lda   <vdc_crl
+;[todo]        sta   video_data_l
 
-	; bit5 = VSync
-	; vsync occured
-	
-	;default vsync HuDK handler
-    inc    <irq_cnt         ; update irq counter (for wait_vsync)
-    ;todo : reset vsplit
-
-; [todo] default vsync HuDK handler
-; TODO 	see	HuC' clock ?
-
-;    st0    #$05             ; update display control (bg/sp)
-;    lda    <vdc_crl         ; vdc control register
-;    sta    video_data_l
-;    lda    <vdc_crh
-;    sta    video_data_h
-
-
-    bbr4   <irq_m, @check_others
-    jsr  @user_vsync 
-	jmp @check_others
-
-@no_vsync:
-	; call user irq1_wo_vsync handler
-	bbr5   <irq_m, @check_others
-	jsr  @no_vsync_handler
-	
-	; continue to @check_others
-		
-
+        bbr4   <irq_m, @default_vsync
+            bsr    @user_vsync 
+            bra    @check_others
+@default_vsync:
+            bsr    @default_vsync_handler
 @check_others:
-; TODO : check spriteoverflow ?
-; TODO : check collide ?
-; TODO : check dma ?
-
-
- ; See what BlockOS was trying to do (vdc_reg is a macro!)
- ; vdc_ri ?
- ;   lda    <vdc_reg         ; restore VDC register index
- ;   sta    video_reg
-
-
+    ; [todo] sprite overflow, dma transfer end, sprite 0 collision
 @end:
     ply                     ; restore registers
     plx
     pla
-    
     rti
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; note : jump's rts will jump back to jsr call to @user_xxx
-;		so see what AFTER jsr call to know what occurs after this jmp
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; all the IRQ1
 @user_hook:
     jmp    [irq1_hook]
     
-; only hsync
 @user_hsync:
     jmp    [hsync_hook]
 
-; only vsync
 @user_vsync:
     jmp    [vsync_hook]
 
-; irq1, no vsync, and perhaps hsync
-@no_vsync_handler:
-    ; [todo]
+@default_vsync_handler:
+    jsr    rcr_init
+    st0    #VDC_BXR             ; scrolling
+	stw    bg_x1, video_data
+	st0    #VDC_BYR
+	stw    bg_y1, video_data
+
+    ; [todo] clock
+    ; [todo] sound
+    ; [todo] joypad/mouse
+
     rts
 
-; irq1, no hsync and perhaps vsync
-@no_hsync_handler:
-    ; [todo]
+@default_hsync_handler:
+    ldy    display_list_last
+    bpl    .r1
+    ; --
+;[todo]    lda    <vdc_crl
+;[todo]    and    #$3F
+;[todo]    sta    <vdc_crl
+    stz    display_list_last
+    ldx    display_list_index
+    lda    display_list_top, X
+    jmp    rcr5
+    ; --
+.r1:
+    ldx    display_list_index, Y
+;    lda    <vdc_crl
+;    and    #$3F
+;    ora    display_list_flag, X
+;    sta    <vdc_crl
+    ; --
+    jsr    rcr_set
+    ; --
+    lda    display_list_top, X
+    cmp    #$FF
+    beq    .out
+    ; --
+    st0    #VDC_BXR
+    lda    display_list_x_lo, X
+    ldy    display_list_x_hi, X
+    sta    video_data_l
+    sty    video_data_h
+    st0    #VDC_BYR
+    lda    display_list_y_lo, X
+    ldy    display_list_x_hi, X
+    sec
+    sbc    #1
+    bcs    .r2
+    dey
+.r2:
+    sta    video_data_l
+    sty    video_data_h
+.out:
     rts
