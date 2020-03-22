@@ -17,7 +17,7 @@ _main:
     sei
 
     ; set BAT size
-    lda    #VDC_BG_64x32
+    lda    #VDC_BG_64x64
     jsr    vdc_set_bat_size
 
     ; set map bounds
@@ -75,17 +75,38 @@ _main:
     lda    #(VDC_CR_BG_ENABLE | 0x01)
     sta    scroll_flag
 
-    lda    #140
+    lda    #120
     sta    scroll_top+1
-    lda    #240
+    lda    #200
     sta    scroll_bottom+1
     stz    scroll_x_lo+1
     stz    scroll_x_hi+1
-    lda    #128
-    sta    scroll_y_lo+1
+    stz    scroll_y_lo+1
     stz    scroll_y_hi+1
     lda    #(VDC_CR_BG_ENABLE | 0x01)
     sta    scroll_flag+1
+
+    lda    #200
+    sta    scroll_top+2
+    lda    #240
+    sta    scroll_bottom+2
+    stz    scroll_x_lo+2
+    stz    scroll_x_hi+2
+    lda    #low(256)
+    sta    scroll_y_lo+2
+    lda    #high(256)
+    sta    scroll_y_hi+2
+    lda    #(VDC_CR_BG_ENABLE | 0x01)
+    sta    scroll_flag+2
+
+    ; Display a string in the area of the 3rd scroll area
+    stw    #txt, <_si       ; string address
+    stb    #32, <_al        ; text area width
+    stb    #20, <_ah        ; text area height
+    ldx    #1               ; BAT X coordinate
+    lda    #33              ; BAT Y coordinate
+    jsr    print_string
+
 
     cli
 @loop:
@@ -110,9 +131,7 @@ _main:
     clc
     adc    #140
     sta    scroll_y_lo+1
-    cla
-    adc    #$00
-    sta    scroll_y_hi+1
+    stz    scroll_y_hi+1
 
     inc    <sin_idx     ; we move to the next sine value
 
@@ -134,6 +153,9 @@ _main:
 @l1:
 
     bra    @loop    
+
+txt:
+    .byte "HuDK scroll demo", 0
 
 ; sine and cosine tables [-128,128[
 sin_table:

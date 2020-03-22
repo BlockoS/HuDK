@@ -250,7 +250,7 @@ scroll_hsync_callback:
         sty    video_data_h
         st0    #VDC_BYR
         lda    display_list_y_lo, X
-        ldy    display_list_x_hi, X
+        ldy    display_list_y_hi, X
         sec
         sbc    #1
         bcs    @r2
