@@ -49,7 +49,9 @@ _main:
     ; enable background display
     vdc_reg  #VDC_CR
     vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE)
-
+    lda   #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE)
+    sta   <vdc_crl
+    
     ; clear irq config flag
     stz    <irq_m
     ; set vsync vec
@@ -70,10 +72,10 @@ _main:
     stz    scroll_x_hi
     stz    scroll_y_lo
     stz    scroll_y_hi
-    lda    #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE | 0x01)
+    lda    #(VDC_CR_BG_ENABLE | 0x01)
     sta    scroll_flag
 
-    lda    #120
+    lda    #140
     sta    scroll_top+1
     lda    #240
     sta    scroll_bottom+1
@@ -82,7 +84,7 @@ _main:
     lda    #128
     sta    scroll_y_lo+1
     stz    scroll_y_hi+1
-    lda    #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE | 0x01)
+    lda    #(VDC_CR_BG_ENABLE | 0x01)
     sta    scroll_flag+1
 
     cli
@@ -105,10 +107,8 @@ _main:
     ror    A
     cmp    #$80
     ror    A
-    cmp    #$80
-    ror    A
     clc
-    adc    #128
+    adc    #140
     sta    scroll_y_lo+1
     cla
     adc    #$00
