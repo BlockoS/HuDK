@@ -14,6 +14,8 @@ map_col:  ds 1
 
     .code
 _main: 
+    sei
+
     ; set BAT size
     lda    #VDC_BG_64x32
     jsr    vdc_set_bat_size
@@ -46,8 +48,10 @@ _main:
     
     ; enable background display
     vdc_reg  #VDC_CR
-    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
-
+    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE)
+    lda   #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE)
+    sta   <vdc_crl
+    
     ; clear irq config flag
     stz    <irq_m
     ; set vsync vec
@@ -56,18 +60,32 @@ _main:
     ; the last map column
     lda    #32
     sta    <map_col
-    ; reset X scroll coordinate
-    stwz   <scroll_x
     ; reset index in the sine table
     stz    <sin_idx
+
+    ; set scroll window
+    lda    #00
+    sta    scroll_top
+    lda    #254
+    sta    scroll_bottom
+    stz    scroll_x_lo
+    stz    scroll_x_hi
+    stz    scroll_y_lo
+    stz    scroll_y_hi
+    lda    #$89
+    sta    scroll_flag
+
+    cli
 @loop:
     ; wait for vsync
     vdc_wait_vsync
 
-    ; set VDC X scroll register
-    vdc_reg #VDC_BXR
-    vdc_data <scroll_x
-    incw   <scroll_x
+    ; set X scroll
+    inc    scroll_x_lo
+    bne    @skip0
+        inc    scroll_x_hi
+@skip0:
+
 
     ; this is the wavy scroll effect
     ; the Y coordinate is computed like this :
@@ -78,21 +96,18 @@ _main:
     ror    A
     clc
     adc    #64
-    sta    <scroll_y
+    sta    scroll_y_lo
     cla
     adc    #$00
-    sta    <scroll_y+1
+    sta    scroll_y_hi
 
     inc    <sin_idx     ; we move to the next sine value
 
-    ; set VDC Y scroll register
-    vdc_reg #VDC_BYR
-    vdc_data <scroll_y
- 
     ; check if we need to load a map column
     ; note the only go from left to right
     ; and we'll never need to load more that a single column
-    lda    <scroll_x
+    ;lda    <scroll_x
+    lda    scroll_x_lo
     and    #7
     bne    @l1
         inc    <map_col

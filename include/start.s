@@ -64,3 +64,4 @@
     .include "map.s"
     .include "math.s"
     .include "bcd.s"
+    .include "scroll.s"

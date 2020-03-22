@@ -36,6 +36,8 @@ _main:
     ; enable background display
     vdc_reg  #VDC_CR
     vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_SPR_ENABLE | VDC_CR_VBLANK_ENABLE)
+    lda   #(VDC_CR_BG_ENABLE | VDC_CR_SPR_ENABLE | VDC_CR_VBLANK_ENABLE)
+    sta   <vdc_crl
 
     vdc_reg  #VDC_DMA_CR
     vdc_data #(VDC_DMA_SAT_AUTO | VDC_DMA_SATB_ENABLE)

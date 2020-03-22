@@ -14,8 +14,10 @@ map_col:  ds 1
 
     .code
 _main: 
+    sei
+
     ; set BAT size
-    lda    #VDC_BG_64x32
+    lda    #VDC_BG_64x64
     jsr    vdc_set_bat_size
 
     ; set map bounds
@@ -33,21 +35,20 @@ _main:
 
     ; load tileset gfx
     stb    #bank(gfx_00), <_bl
-    stw    #map_16x16_tile_vram, <_di
+    stw    #map_8x8_tile_vram, <_di
     stw    #gfx_00, <_si
     stw    #(gfx_00_size >> 1), <_cx
     jsr    vdc_load_data
 
-    ; set map infos
-    map_set map_00, map_16x16_tile_vram, tile_pal_00, #map_16x16_width, #map_16x16_height, #00
+    ; set map pointer, tiles vram address, tiles palette id, map width and height, and wrap mode
+    map_set map_00, map_8x8_tile_vram, tile_pal_00, #map_8x8_width, #map_8x8_height, #00
 
-    ; copy map from (0,0) to (17, map_height) to BAT
-    ; remember that this is a 16x16 map
-    map_copy_16 #0, #0, #0, #0, #17, #map_16x16_height
-
+    ; copy map from (0,0) to (32, map_height) to BAT
+    map_copy #0, #0, #0, #0, #33, #map_8x8_height
+    
     ; enable background display
     vdc_reg  #VDC_CR
-    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
+    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE)
     lda   #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE)
     sta   <vdc_crl
     
@@ -56,48 +57,105 @@ _main:
     ; set vsync vec
     irq_on INT_IRQ1
 
-    ; everythins is similar to the 8x8 example
-    ; except that we'll use map_copy_16 to load the map column
-    lda    #16
+    ; the last map column
+    lda    #32
     sta    <map_col
-    stwz   <scroll_x
+    ; reset index in the sine table
     stz    <sin_idx
+
+    ; set scroll windows
+    lda    #$00
+    sta    scroll_top
+    lda    #120
+    sta    scroll_bottom
+    stz    scroll_x_lo
+    stz    scroll_x_hi
+    stz    scroll_y_lo
+    stz    scroll_y_hi
+    lda    #(VDC_CR_BG_ENABLE | 0x01)
+    sta    scroll_flag
+
+    lda    #120
+    sta    scroll_top+1
+    lda    #200
+    sta    scroll_bottom+1
+    stz    scroll_x_lo+1
+    stz    scroll_x_hi+1
+    stz    scroll_y_lo+1
+    stz    scroll_y_hi+1
+    lda    #(VDC_CR_BG_ENABLE | 0x01)
+    sta    scroll_flag+1
+
+    lda    #200
+    sta    scroll_top+2
+    lda    #240
+    sta    scroll_bottom+2
+    stz    scroll_x_lo+2
+    stz    scroll_x_hi+2
+    lda    #low(256)
+    sta    scroll_y_lo+2
+    lda    #high(256)
+    sta    scroll_y_hi+2
+    lda    #(VDC_CR_BG_ENABLE | 0x01)
+    sta    scroll_flag+2
+
+    ; Display a string in the area of the 3rd scroll area
+    stw    #txt, <_si       ; string address
+    stb    #32, <_al        ; text area width
+    stb    #20, <_ah        ; text area height
+    ldx    #1               ; BAT X coordinate
+    lda    #33              ; BAT Y coordinate
+    jsr    print_string
+
+
+    cli
 @loop:
+    ; wait for vsync
     vdc_wait_vsync
 
-    vdc_reg #VDC_BXR
-    vdc_data <scroll_x
-    incw   <scroll_x
+    ; set X scroll
+    inc    scroll_x_lo
+    bne    @skip0
+        inc    scroll_x_hi
+@skip0:
 
+    ; this is the wavy scroll effect
+    ; the Y coordinate is computed like this :
+    ;    Y = (sin_table[sin_idx] / 2) + 64
     ldy    <sin_idx
     lda    sin_table, Y
+    cmp    #$80         ; sine values are signed, this will save its upon right shift
+    ror    A
     cmp    #$80
     ror    A
     clc
-    adc    #64
-    sta    <scroll_y
-    cla
-    adc    #$00
-    sta    <scroll_y+1
+    adc    #140
+    sta    scroll_y_lo+1
+    stz    scroll_y_hi+1
 
-    inc    <sin_idx
+    inc    <sin_idx     ; we move to the next sine value
 
-    vdc_reg #VDC_BYR
-    vdc_data <scroll_y
- 
-    lda    <scroll_x
-    and    #15
+    ; check if we need to load a map column
+    ; note the only go from left to right
+    ; and we'll never need to load more that a single column
+    ;lda    <scroll_x
+    lda    scroll_x_lo
+    and    #7
     bne    @l1
         inc    <map_col
         lda    <map_col
-        cmp    #map_16x16_width
+        cmp    #map_8x8_width
         bcc    @l0
             stz    <map_col
 @l0:
     ; copy the next map column to BAT
-    map_copy_16 <map_col, #0, <map_col, #0, #1, #map_16x16_height
+    map_copy <map_col, #0, <map_col, #0, #1, #$0f
 @l1:
+
     bra    @loop    
+
+txt:
+    .byte "HuDK scroll demo", 0
 
 ; sine and cosine tables [-128,128[
 sin_table:
@@ -123,7 +181,6 @@ cos_table:
     .byte $5a,$5c,$5e,$60,$62,$64,$66,$68,$6a,$6b,$6d,$6f,$70,$71,$73,$74
     .byte $75,$76,$78,$79,$7a,$7a,$7b,$7c,$7d,$7d,$7e,$7e,$7e,$7f,$7f,$7f
 
-
   .ifdef MAGICKIT
     .data
     .bank 1
@@ -133,16 +190,15 @@ cos_table:
     .segment "BANK01"
     .endif
   .endif
-
-    .include "data/map_16x16.inc"
+    .include "data/map_8x8.inc"
 
 map_00:
-    .incbin "data/map_16.map"
+    .incbin "data/map_00.map"
 gfx_00:
-    .incbin "data/map_16x16.bin"
+    .incbin "data/map_8x8.bin"
 gfx_00_size = * - gfx_00
 tile_pal_00:
-    .incbin "data/map_16x16.idx"
+    .incbin "data/map_8x8.idx"
 pal_00:
-    .incbin "data/map_16x16.pal"
+    .incbin "data/map_8x8.pal"
 pal_00_size = * - pal_00
