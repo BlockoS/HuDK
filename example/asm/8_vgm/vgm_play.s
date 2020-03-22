@@ -25,22 +25,24 @@ _main:
 	; enable background and sprite display
 	vdc_reg  #VDC_CR
 	vdc_data #VDC_CR_VBLANK_ENABLE
+	lda    #VDC_CR_VBLANK_ENABLE
+	sta    <vdc_crl
 
-    stb    #song_bank, <_bl
-    stw    #song_loop, <_si
-    stb    #song_loop_bank, <_bh
-    lda    #.hibyte(song_base_address)
-    ldx    #.lobyte(song_base_address)
-    jsr    vgm_setup
+	stb    #song_bank, <_bl
+	stw    #song_loop, <_si
+	stb    #song_loop_bank, <_bh
+	lda    #.hibyte(song_base_address)
+	ldx    #.lobyte(song_base_address)
+	jsr    vgm_setup
 
-    cli    
+	cli    
 .loop:
-    vdc_wait_vsync
-    bra    .loop
+	vdc_wait_vsync
+	bra    .loop
 
 vsync_proc:
 	jsr    vgm_update
-    rts
+	rts
 
 song_bank=$01
 song_base_address=$6000

@@ -49,7 +49,9 @@ _main:
     ; enable background display
     vdc_reg  #VDC_CR
     vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE)
-
+    lda   #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE)
+    sta   <vdc_crl
+    
     ; clear irq config flag
     stz    <irq_m
     ; set vsync vec
