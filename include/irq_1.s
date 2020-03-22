@@ -35,9 +35,9 @@ _irq_1:
     bbr5   <vdc_sr, @check_others
         inc    <irq_cnt         ; update irq counter (for wait_vsync)
         
-;[todo]       st0   #VDC_CR       ; update display control (bg/sp)
-;[todo]        lda   <vdc_crl
-;[todo]        sta   video_data_l
+        st0   #VDC_CR       ; update display control (bg/sp)
+        lda   <vdc_crl
+        sta   video_data_l
 
         bbr4   <irq_m, @default_vsync
             bsr    @user_vsync 
@@ -62,7 +62,7 @@ _irq_1:
     jmp    [vsync_hook]
 
 @default_vsync_handler:
-    jsr    rcr_init
+    jsr    scroll_build_display_list
     st0    #VDC_BXR             ; scrolling
 	stw    bg_x1, video_data
 	st0    #VDC_BYR
@@ -74,45 +74,5 @@ _irq_1:
 
     rts
 
-@default_hsync_handler:
-    ldy    display_list_last
-    bpl    .r1
-    ; --
-;[todo]    lda    <vdc_crl
-;[todo]    and    #$3F
-;[todo]    sta    <vdc_crl
-    stz    display_list_last
-    ldx    display_list_index
-    lda    display_list_top, X
-    jmp    rcr5
-    ; --
-.r1:
-    ldx    display_list_index, Y
-;    lda    <vdc_crl
-;    and    #$3F
-;    ora    display_list_flag, X
-;    sta    <vdc_crl
-    ; --
-    jsr    rcr_set
-    ; --
-    lda    display_list_top, X
-    cmp    #$FF
-    beq    .out
-    ; --
-    st0    #VDC_BXR
-    lda    display_list_x_lo, X
-    ldy    display_list_x_hi, X
-    sta    video_data_l
-    sty    video_data_h
-    st0    #VDC_BYR
-    lda    display_list_y_lo, X
-    ldy    display_list_x_hi, X
-    sec
-    sbc    #1
-    bcs    .r2
-    dey
-.r2:
-    sta    video_data_l
-    sty    video_data_h
-.out:
-    rts
+@default_hsync_handler          ; [todo]
+    jmp scroll_hsync_callback

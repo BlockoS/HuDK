@@ -31,6 +31,11 @@ bg_x1 .ds 2
 bg_y1 .ds 2
 
     .code
+
+;;
+;; function:
+;; Computes the hsync scroll display list.
+;; The scroll areas will be sorted by ascending raster coordinate.
 scroll_build_display_list:
     lda    scroll_flag                      ; quit if all flags are zero
     ora    scroll_flag+1
@@ -38,7 +43,6 @@ scroll_build_display_list:
     ora    scroll_flag+3
     and    #$01
     bne    @go
-        clc
         rts
 @go:
     clx                                     ; output index
@@ -100,7 +104,7 @@ scroll_build_display_list:
 @l1:
     stz    display_list_tmp+1
     ldy    #1
-@l2:                                    ; sort display_list (bubble sort)
+@l2:                                        ; sort display_list (bubble sort)
     ldx    display_list_index-1, Y
     lda    display_list_top, X
     inc    A
@@ -131,8 +135,25 @@ scroll_build_display_list:
     lda    display_list_last
     clc
     adc    #$fe
-    rts
-
+    ; The display list now contains the list of raster area and scroll coordinates sorted by the top raster coordinate<
+@r3:
+    smb    #7, <vdc_crl                     ; enable background (tiles) display
+    lda    #$FF                             
+    sta    display_list_last
+    ldx    display_list_index
+    ldy    display_list_top,X
+    cpy    #$FF
+    bne    __rcr5
+        ldy   display_list_x_lo,X
+        sty   bg_x1
+        ldy   display_list_x_hi,X
+        sty   bg_x1+1
+        ldy   display_list_y_lo,X
+        sty   bg_y1
+        ldy   display_list_y_hi,X
+        sty   bg_y1+1
+        stz   display_list_last
+        bra   __rcr5
 @check_list:                                ; check if there is already a scroll area starting at the scanline
     phx
 @check_loop:
@@ -148,91 +169,94 @@ scroll_build_display_list:
     plx
     clc
     rts
-
-
-rcr_init:
-    jsr    scroll_build_display_list
-    bcs    @r3
-        rts
-@r3:
-    smb    #7, <vdc_crl
-    lda    #$FF
-    sta    display_list_last
-    ldx    display_list_index
-    ldy    display_list_top,X
-    cpy    #$FF
-    bne    rcr5
-        ldy   display_list_x_lo,X
-        sty   bg_x1
-        ldy   display_list_x_hi,X
-        sty   bg_x1+1
-        ldy   display_list_y_lo,X
-        sty   bg_y1
-        ldy   display_list_y_hi,X
-        sty   bg_y1+1
-        stz   display_list_last
-        bra   rcr5
-
-; ----
-; program scanline interrupt
-;
-rcr_set:
+__rcr_set:                                  ; set scanline counter
     iny
-    sty    display_list_last
+    sty    display_list_last                ; process next scroll area
     lda    display_list_index, Y
     tay
-    lda    display_list_top, Y
+    lda    display_list_top, Y              ; 
     cmp    vdc_scr_height
-    bcs    rcr6
-    cmp    display_list_bottom,X
-    bcc    rcr5
+    bcs    __rcr6
+    cmp    display_list_bottom,X            ; 
+    bcc    __rcr5
 
     lda    display_list_bottom, X
-rcr4:
+__rcr4:
     dec    A
-    pha
-    lda    #$F0
+    pha                                     ; save current raster bottom coordinate
+    lda    #$F0                             ; disable display list entry
     sta    display_list_bottom, X
     stz    display_list_flag, X
     dec    display_list_last
     pla
     ; --
-
-rcr5:
-    st0    #VDC_RCR          ; set scanline counter
+__rcr5:
+    st0    #VDC_RCR                         ; set the next rcr to the next top coordinate
     clc
     adc    #64
     sta    video_data_l
     cla
     adc    #0
     sta    video_data_h
-    bra   __rcr_on
-
-rcr6:
+    st0    #VDC_CR
+    lda    <vdc_crl
+    ora    #low(VDC_CR_HBLANK_ENABLE)       ; enable hsync
+    sta    <vdc_crl
+    sta    video_data_l
+    rts
+__rcr6:
     lda    display_list_bottom, X
     cmp    vdc_scr_height
-    bcc    rcr4
-        bra    __rcr_off
-
-_rcr_on:
-    lda    #VDC_CR
-    sta    <vdc_ri
-__rcr_on:
-; [todo]    st0    #VDC_CR
-; [todo]    lda    <vdc_crl
-; [todo]    ora    #$04
-; [todo]    sta    <vdc_crl
-; [todo]    sta    video_data_l
+    bcc    __rcr4
+    st0    #VDC_CR                          ; the bottom of the scroll area is not out of the screen height
+    lda    <vdc_crl
+    and    #low(~VDC_CR_HBLANK_ENABLE)      ; disable hsync
+    sta    <vdc_crl
+    sta    video_data_l
     rts
 
-_rcr_off:
-    lda    #VDC_CR
-    sta    <vdc_ri
-__rcr_off:
+;; 
+;; function: scroll_hsync_callback
+;; Set scroll coordinates with the current scroll display list entry, and program the next hsync callback.
+;; 
+scroll_hsync_callback:
+    ldy    display_list_last
+    bpl    @r1
+    
+    lda    <vdc_crl
+    and    #$3F                                 ; disable background and sprite display
+    sta    <vdc_crl
+    stz    display_list_last
+    ldx    display_list_index
+    lda    display_list_top, X
+    bra    __rcr5
+    
+@r1:
+    ldx    display_list_index, Y
+    lda    <vdc_crl
+    and    #$3F
+    ora    display_list_flag, X                 ; use the bg/sp enable flags from the scroll area flag
+    sta    <vdc_crl
+    
+    jsr    __rcr_set                            ; program next hsync
+    
+    lda    display_list_top, X
+    cmp    #$FF
+    beq    @out
+        st0    #VDC_BXR                         ; set scroll coordinates
+        lda    display_list_x_lo, X
+        ldy    display_list_x_hi, X
+        sta    video_data_l
+        sty    video_data_h
+        st0    #VDC_BYR
+        lda    display_list_y_lo, X
+        ldy    display_list_x_hi, X
+        sec
+        sbc    #1
+        bcs    @r2
+            dey
+@r2:
+        sta    video_data_l
+        sty    video_data_h
+@out:
     rts
-; [todo]    st0    #VDC_CR  
-; [todo]    lda    <vdc_crl
-; [todo]    and    #$FB
-; [todo]    sta    <vdc_crl
-; [todo]    sta    video_data_l
-; [todo]    rts
