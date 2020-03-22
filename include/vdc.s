@@ -294,7 +294,7 @@ vdc_init:
     lda    #224
     sta    vdc_scr_height
 
-	jsr reset_hooks
+    jsr    reset_hooks
    
     ; set BAT size
     lda    #VDC_DEFAULT_BG_SIZE

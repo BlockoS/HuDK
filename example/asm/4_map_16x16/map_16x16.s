@@ -44,12 +44,6 @@ _main:
     ; copy map from (0,0) to (17, map_height) to BAT
     ; remember that this is a 16x16 map
     map_copy_16 #0, #0, #0, #0, #17, #map_16x16_height
-
-    ; enable background display
-    vdc_reg  #VDC_CR
-    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
-    lda   #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE)
-    sta   <vdc_crl
     
     ; clear irq config flag
     stz    <irq_m

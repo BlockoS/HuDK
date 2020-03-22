@@ -21,12 +21,6 @@ _main:
 	irq_on #INT_IRQ1
 	irq_enable_vec #VSYNC
 	irq_set_vec #VSYNC, #vsync_proc
-	
-	; enable background and sprite display
-	vdc_reg  #VDC_CR
-	vdc_data #VDC_CR_VBLANK_ENABLE
-	lda    #VDC_CR_VBLANK_ENABLE
-	sta    <vdc_crl
 
 	stb    #song_bank, <_bl
 	stw    #song_loop, <_si

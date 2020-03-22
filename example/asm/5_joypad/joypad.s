@@ -58,13 +58,7 @@ _main:
     stz    <irq_m
     ; set vsync vec
     irq_on INT_IRQ1
-    
-    ; enable background display
-    vdc_reg  #VDC_CR
-    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
-    lda   #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE)
-    sta   <vdc_crl
-    
+
     ; display joypad status
     stb    #JOYPAD_BOX_Y, <_y
     stz    <_r0 

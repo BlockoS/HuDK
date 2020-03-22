@@ -101,3 +101,14 @@ video_data_h = video_data+1
     lda    <irq_cnt
     beq    @wait_vsync\@
   .endm
+
+; Set VDC control registers 
+  .macro vdc_set_cr
+    vdc_reg #VDC_CR
+    lda    LOW_BYTE \1
+    sta    <vdc_crl
+    sta    video_data_l
+    lda    HIGH_BYTE \1
+    sta    <vdc_crl+1
+    sta    video_data_h 
+  .endmacro

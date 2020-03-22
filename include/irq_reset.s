@@ -20,7 +20,7 @@ _reset:
     tam0					        ; 0000-1FFF
     
     lda    #$f8                     ; and the RAM bank to the second page
-    tam1					        ; 2000-3FFF = Work RAM
+    tam1                            ; 2000-3FFF = Work RAM
 
     stz    <$00                     ; clear RAM
     tii    $2000, $2001, $1fff
@@ -28,8 +28,6 @@ _reset:
     timer_disable                   ; disable timer
     irq_off INT_ALL                 ; disable interrupts
     timer_ack                       ; reset timer
-
-    cli							    ; enable interrup
 
 _init:
     memcpy_init                     ; initialize memcpy ramcode
@@ -46,10 +44,10 @@ _init:
     jsr    font_8x8_load 
   .endif
 
-    vdc_reg  #VDC_CR                ; enable background display
-    vdc_data #VDC_CR_BG_ENABLE
-
-    ; [todo] set default/dummy interrupts hooks if needed
+    vdc_set_cr #(VDC_CR_BG_ENABLE | VDC_CR_SPR_ENABLE | VDC_CR_VBLANK_ENABLE)
+    vdc_enable_display
+    
+    cli
     jsr  _main
     
 	jmp	_reset

@@ -46,12 +46,6 @@ _main:
     ; copy map from (0,0) to (32, map_height) to BAT
     map_copy #0, #0, #0, #0, #33, #map_8x8_height
     
-    ; enable background display
-    vdc_reg  #VDC_CR
-    vdc_data #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE)
-    lda   #(VDC_CR_BG_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE)
-    sta   <vdc_crl
-    
     ; clear irq config flag
     stz    <irq_m
     ; set vsync vec
@@ -106,7 +100,6 @@ _main:
     ldx    #1               ; BAT X coordinate
     lda    #33              ; BAT Y coordinate
     jsr    print_string
-
 
     cli
 @loop:

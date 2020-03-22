@@ -62,7 +62,14 @@ _irq_1:
     jmp    [vsync_hook]
 
 @default_vsync_handler:
+    ldx    <vdc_disp
+    bne    @l0
+        and    #$3f             ; disable display
+        sta    video_data_l
+        bra    @l1
+@l0:
     jsr    scroll_build_display_list
+@l1:
     st0    #VDC_BXR             ; scrolling
 	stw    bg_x1, video_data
 	st0    #VDC_BYR

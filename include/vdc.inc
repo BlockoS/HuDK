@@ -445,6 +445,11 @@ VDC_DMA_SAT_AUTO   = %00010000
 ;; Group: VDC resgister copy in zero-page.
 ;;
 
+;; ubyte: vdc_disp
+;; VDC display flag.
+;;
+vdc_disp = $20f2
+
 ;;
 ;; ubyte: vdc_crl
 ;; Copy of the VDC control register LSB.
@@ -543,6 +548,40 @@ vdc_ri = $20f7
 ;;
 
 ;;
+;; Macro: vdc_enable_display
+;; Enable background tiles and sprites display.
+;;
+;; Assembly call:
+;;   > vdc_enable_display
+;;
+  .macro vdc_enable_display
+    lda    #1
+    sta    <vdc_disp
+  .endmacro
+
+;;
+;; Macro: vdc_disable_display
+;; Disable background tiles and sprites display.
+;;
+;; Assembly call:
+;;   > vdc_disable_display
+;;
+  .macro vdc_disable_display
+    stz    <vdc_disp
+  .endmacro
+
+;;
+;; Macro: vdc_set_cr
+;; Set VDC control registers 
+;;
+;; Assembly call:
+;;   > vdc_set_cr flags
+;;
+;; Parameters:
+;;   flags - control register flags.
+;;
+
+;;
 ;; Group: Default VDC values.
 ;;
   .ifndef VDC_DEFAULT_BG_SIZE
@@ -566,8 +605,6 @@ VDC_DEFAULT_TILE_ADDR = (128*64)
       .endif
     .endif
   .endif
-
-
 
   .ifndef VDC_DEFAULT_XRES
 ;;

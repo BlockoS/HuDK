@@ -81,3 +81,14 @@
 :   lda    <irq_cnt
     beq    :-
   .endmacro
+
+; Set VDC control registers 
+  .macro vdc_set_cr flags
+    vdc_reg #VDC_CR
+    __low  lda, flags
+    sta    <vdc_crl
+    sta    video_data_l
+    __high lda, flags
+    sta    <vdc_crl+1
+    sta    video_data_h 
+  .endmacro
