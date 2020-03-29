@@ -86,9 +86,9 @@ _main:
     sta    scroll_bottom+2
     stz    scroll_x_lo+2
     stz    scroll_x_hi+2
-    lda    #low(256)
+    lda    #.lobyte(256)
     sta    scroll_y_lo+2
-    lda    #high(256)
+    lda    #.hibyte(256)
     sta    scroll_y_hi+2
     lda    #(VDC_CR_BG_ENABLE | $01)
     sta    scroll_flag+2

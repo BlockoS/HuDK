@@ -45,7 +45,7 @@ user_hook:  .res 14, 0
     .elseif (i = 3)
      smb3   <irq_m
     .elseif (i = 4)
-     smb3   <irq_m
+     smb4   <irq_m
     .elseif (i = 5)
      smb6   <irq_m
     .elseif (i = 6)
@@ -68,7 +68,7 @@ user_hook:  .res 14, 0
     .elseif (i = 3)
      rmb3   <irq_m
     .elseif (i = 4)
-     rmb3   <irq_m
+     rmb4   <irq_m
     .elseif (i = 5)
      rmb6   <irq_m
     .elseif (i = 6)
@@ -84,7 +84,7 @@ user_hook:  .res 14, 0
   .macro irq_set_vec i, vec
     sei                     ; disable interrupts
 
-    lda    #i
+    lda    i
     asl    A                ; compute offset in user function table
     tax
     __low  lda, vec         ; store routine address

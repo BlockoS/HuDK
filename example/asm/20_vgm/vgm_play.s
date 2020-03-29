@@ -18,8 +18,8 @@ _main:
 	stz    <irq_m
 	
 	; set vsync vec
-	irq_on #INT_IRQ1
-	irq_enable_vec #VSYNC
+	irq_on INT_IRQ1
+	irq_enable_vec VSYNC
 	irq_set_vec #VSYNC, #vsync_proc
 
 	stb    #song_bank, <_bl
