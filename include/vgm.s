@@ -129,42 +129,42 @@
 ;;
 vgm_mpr = 6
 
-    .zp
+    .zeropage
 ;;
 ;; uword: vgm_base
 ;; VGM data base pointer.
 ;;
-vgm_base .ds 2
+vgm_base: ds 2
 ;;
 ;; ubyte: vgm_bank
 ;; First ROM bank of the VGM data.
 ;; 
-vgm_bank .ds 1
+vgm_bank: ds 1
 ;;
 ;; uword: vgm_ptr
 ;; Current VGM data pointer.
 ;;
-vgm_ptr  .ds 2
+vgm_ptr:  ds 2
 ;;
 ;; ubyte: vgm_end
 ;; VGM data upper bound. 
 ;;
-vgm_end  .ds 1
+vgm_end:  ds 1
 ;;
 ;; ubyte: vgm_loop_bank
 ;; Bank of the VGM loop address.
 ;;
-vgm_loop_bank .ds 1
+vgm_loop_bank: ds 1
 ;;
 ;; ubyte: vgm_loop_ptr
 ;; VGM loop address.
 ;;
-vgm_loop_ptr  .ds 2
+vgm_loop_ptr: ds 2
 ;;
 ;; ubyte: vgm_wait
 ;; Frame delay.
 ;;
-vgm_wait .ds 1
+vgm_wait: ds 1
 
     .code
 ;;
@@ -239,16 +239,16 @@ vgm_setup:
 ;;
 vgm_next_byte:
     inc    <vgm_ptr
-    bne    .l0
+    bne    @l0
         inc    <vgm_ptr+1
         lda    <vgm_ptr+1
         cmp    <vgm_end
-        bcc    .l0
+        bcc    @l0
             stw    <vgm_base, <vgm_ptr
             inc    <vgm_bank
             lda    <vgm_bank
             tam6
-.l0:
+@l0:
     rts
 
 ;;
@@ -257,15 +257,15 @@ vgm_next_byte:
 ;;
 vgm_update:
     lda    <vgm_wait
-    beq    .play
+    beq    @play
         dec    <vgm_wait
         rts
-.play
+@play:
     vgm_map
-.loop
+@loop:
     lda    [vgm_ptr]
     cmp    #$e0
-    bcs    .check_end
+    bcs    @check_end
         tax
         jsr    vgm_next_byte
 
@@ -274,22 +274,22 @@ vgm_update:
 
         jsr    vgm_next_byte
 
-        bra    .loop    
-.check_end:
+        bra    @loop
+@check_end:
     cmp    #$ff
-    bne    .wait
+    bne    @wait
         vgm_unmap
         lda    <vgm_loop_bank
         sta    <vgm_bank
         stw    <vgm_loop_ptr, <vgm_ptr
         rts
-.wait:
+@wait:
     cmp    #$f0
-    beq    .frame_end
+    beq    @frame_end
     sec
     sbc    #$df
     sta    <vgm_wait
-.frame_end:
+@frame_end:
     jsr    vgm_next_byte
     vgm_unmap
     rts

@@ -30,9 +30,9 @@ _main:
 	jsr    vgm_setup
 
 	cli    
-.loop:
+@loop:
 	vdc_wait_vsync
-	bra    .loop
+	bra    @loop
 
 vsync_proc:
 	jsr    vgm_update

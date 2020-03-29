@@ -66,7 +66,7 @@ _main:
     stz    scroll_x_hi
     stz    scroll_y_lo
     stz    scroll_y_hi
-    lda    #(VDC_CR_BG_ENABLE | 0x01)
+    lda    #(VDC_CR_BG_ENABLE | $01)
     sta    scroll_flag
 
     lda    #120
@@ -77,7 +77,7 @@ _main:
     stz    scroll_x_hi+1
     stz    scroll_y_lo+1
     stz    scroll_y_hi+1
-    lda    #(VDC_CR_BG_ENABLE | 0x01)
+    lda    #(VDC_CR_BG_ENABLE | $01)
     sta    scroll_flag+1
 
     lda    #200
@@ -90,7 +90,7 @@ _main:
     sta    scroll_y_lo+2
     lda    #high(256)
     sta    scroll_y_hi+2
-    lda    #(VDC_CR_BG_ENABLE | 0x01)
+    lda    #(VDC_CR_BG_ENABLE | $01)
     sta    scroll_flag+2
 
     ; Display a string in the area of the 3rd scroll area

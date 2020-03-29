@@ -6,11 +6,11 @@
 ;;
 
     .bss
-vdc_bat_width  .ds 2
-vdc_bat_height .ds 1
-vdc_bat_hmask  .ds 1
-vdc_bat_vmask  .ds 1
-vdc_scr_height .ds 1
+vdc_bat_width:  ds 2
+vdc_bat_height: ds 1
+vdc_bat_hmask:  ds 1
+vdc_bat_vmask:  ds 1
+vdc_scr_height: ds 1
 
 ;;
 ;; Title: VDC Functions.
@@ -491,10 +491,10 @@ vdc_xres_512:
     rts
 
     .bss
-_hsw    .ds 1
-_hds    .ds 1
-_hdw    .ds 1
-_hde    .ds 1
+_hsw:    ds 1
+_hds:    ds 1
+_hdw:    ds 1
+_hde:    ds 1
 
     .code
 ;;
@@ -582,6 +582,6 @@ vdc_set_xres:
     rts
 
 @vce_clock: .byte 0, 1, 2
-@hsw: .db 2, 3, 5
-@hds: .db 18,25,42
-@hde: .db 38,51,82
+@hsw: .byte 2, 3, 5
+@hds: .byte 18,25,42
+@hde: .byte 38,51,82

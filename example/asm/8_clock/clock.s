@@ -6,10 +6,11 @@
 ;;
     .include "start.s"
 
-    .zp
-index .ds 1
-txt_x .ds 1
-txt_y .ds 1
+    .zeropage
+index: ds 1
+txt_x: ds 1
+txt_y: ds 1
+
     .code
 _main:
     ; Display the current system clock on screen.

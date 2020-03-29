@@ -7,28 +7,28 @@
 SCROLL_MAX_COUNT = 4
 
     .bss
-scroll_top    .ds SCROLL_MAX_COUNT
-scroll_bottom .ds SCROLL_MAX_COUNT
-scroll_x_lo   .ds SCROLL_MAX_COUNT
-scroll_x_hi   .ds SCROLL_MAX_COUNT
-scroll_y_lo   .ds SCROLL_MAX_COUNT
-scroll_y_hi   .ds SCROLL_MAX_COUNT
-scroll_flag   .ds SCROLL_MAX_COUNT
+scroll_top:    ds SCROLL_MAX_COUNT
+scroll_bottom: ds SCROLL_MAX_COUNT
+scroll_x_lo:   ds SCROLL_MAX_COUNT
+scroll_x_hi:   ds SCROLL_MAX_COUNT
+scroll_y_lo:   ds SCROLL_MAX_COUNT
+scroll_y_hi:   ds SCROLL_MAX_COUNT
+scroll_flag:   ds SCROLL_MAX_COUNT
 
 
-display_list_last   .ds 1
-display_list_top    .ds SCROLL_MAX_COUNT+1
-display_list_bottom .ds SCROLL_MAX_COUNT+1
-display_list_x_lo   .ds SCROLL_MAX_COUNT
-display_list_x_hi   .ds SCROLL_MAX_COUNT
-display_list_y_lo   .ds SCROLL_MAX_COUNT
-display_list_y_hi   .ds SCROLL_MAX_COUNT
-display_list_flag   .ds SCROLL_MAX_COUNT
-display_list_index  .ds SCROLL_MAX_COUNT+1
-display_list_tmp    .ds 3
+display_list_last:   ds 1
+display_list_top:    ds SCROLL_MAX_COUNT+1
+display_list_bottom: ds SCROLL_MAX_COUNT+1
+display_list_x_lo:   ds SCROLL_MAX_COUNT
+display_list_x_hi:   ds SCROLL_MAX_COUNT
+display_list_y_lo:   ds SCROLL_MAX_COUNT
+display_list_y_hi:   ds SCROLL_MAX_COUNT
+display_list_flag:   ds SCROLL_MAX_COUNT
+display_list_index:  ds SCROLL_MAX_COUNT+1
+display_list_tmp:    ds 3
     
-bg_x1 .ds 2
-bg_y1 .ds 2
+bg_x1: ds 2
+bg_y1: ds 2
 
     .code
 
@@ -137,7 +137,7 @@ scroll_build_display_list:
     adc    #$fe
     ; The display list now contains the list of raster area and scroll coordinates sorted by the top raster coordinate<
 @r3:
-    smb    #7, <vdc_crl                     ; enable background (tiles) display
+    smb7   <vdc_crl                     ; enable background (tiles) display
     lda    #$FF                             
     sta    display_list_last
     ldx    display_list_index
@@ -200,7 +200,7 @@ __rcr5:
     sta    video_data_h
     st0    #VDC_CR
     lda    <vdc_crl
-    ora    #low(VDC_CR_HBLANK_ENABLE)       ; enable hsync
+    ora    #(VDC_CR_HBLANK_ENABLE & $00ff) ; enable hsync
     sta    <vdc_crl
     sta    video_data_l
     rts
@@ -208,9 +208,9 @@ __rcr6:
     lda    display_list_bottom, X
     cmp    vdc_scr_height
     bcc    __rcr4
-    st0    #VDC_CR                          ; the bottom of the scroll area is not out of the screen height
+    st0    #VDC_CR                              ; the bottom of the scroll area is not out of the screen height
     lda    <vdc_crl
-    and    #low(~VDC_CR_HBLANK_ENABLE)      ; disable hsync
+    and    #((~VDC_CR_HBLANK_ENABLE) & $00ff)  ; disable hsync
     sta    <vdc_crl
     sta    video_data_l
     rts

@@ -82,5 +82,5 @@ _irq_1:
 
     rts
 
-@default_hsync_handler          ; [todo]
+@default_hsync_handler:          ; [todo]
     jmp scroll_hsync_callback

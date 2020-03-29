@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.5)
 project(asm-examples ASM)
 
 set(HUDK_TOOLS_PATH "" CACHE PATH "Path to HuDK tools")
-set(HUDK_TOOLS_PATH ${CMAKE_CURRENT_BINARY_DIR}/${HUDK_TOOLS_PATH})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_CURRENT_SOURCE_DIR})
 
