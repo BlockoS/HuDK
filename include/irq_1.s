@@ -75,7 +75,8 @@ _irq_1:
 	st0    #VDC_BYR
 	stw    bg_y1, video_data
 
-    ; [todo] clock
+    clock_update
+    
     ; [todo] sound
     ; [todo] joypad/mouse
 

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(8_vgm ASM)
+project(20_vgm ASM)
 
 set(HUDK_TOOLS_PATH "" CACHE PATH "Path to HuDK tools")
 set(HUDK_INCLUDE_PATH "" CACHE PATH "Path to HuDK include files")

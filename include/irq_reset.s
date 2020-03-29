@@ -29,6 +29,8 @@ _reset:
     irq_off INT_ALL                 ; disable interrupts
     timer_ack                       ; reset timer
 
+    clock_reset                     ; reset system clock
+
 _init:
     memcpy_init                     ; initialize memcpy ramcode
 
@@ -46,7 +48,7 @@ _init:
 
     vdc_set_cr #(VDC_CR_BG_ENABLE | VDC_CR_SPR_ENABLE | VDC_CR_VBLANK_ENABLE)
     vdc_enable_display
-    
+
     cli
     jsr  _main
     

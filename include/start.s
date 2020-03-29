@@ -45,7 +45,8 @@
     .include "vce.inc"
     .include "psg.inc"
     .include "irq.inc"
-
+    .include "clock.inc"
+    
     .include "irq_reset.s"
     .include "irq_nmi.s"
     .include "irq_timer.s"
