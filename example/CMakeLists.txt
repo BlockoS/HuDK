@@ -14,6 +14,7 @@ add_subdirectory(asm/5_joypad)
 add_subdirectory(asm/6_sprites)
 add_subdirectory(asm/7_scroll)
 add_subdirectory(asm/8_clock)
+add_subdirectory(asm/9_pong)
 add_subdirectory(asm/20_vgm)
 
 add_executable(crc32 asm/crc32.s)

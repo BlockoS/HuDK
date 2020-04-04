@@ -349,9 +349,9 @@ vdc_init:
      VDC_HSR_db VDC_DEFAULT_XRES    ;     |
     .byte $0B                       ; HDR |
      VDC_HDR_db VDC_DEFAULT_XRES    ;     | display size and synchro
-    .byte $0C, $02, $17             ; VPR |
-    .byte $0D, $DF, $00             ; VDW |
-    .byte $0E, $0C, $00             ; VCR +
+    .byte $0C, $02, $0F             ; VPR |
+    .byte $0D, $EF, $00             ; VDW |
+    .byte $0E, $04, $00             ; VCR +
     .byte $0F, $10, $00             ; DCR DMA control register
     .byte $13                       ; SAT adddress
     .byte .lobyte(VDC_DEFAULT_SAT_ADDR)

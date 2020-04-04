@@ -79,7 +79,8 @@ _irq_1:
     
     ; [todo] sound
     ; [todo] joypad/mouse
-
+    jsr    joypad_read
+    
     rts
 
 @default_hsync_handler:          ; [todo]
