@@ -7,13 +7,15 @@
     .include "start.s"
     .include "vdc_sprite.inc"
 
+; [todo] pad 0 & 1
+
 BALL_DIAMETER = 8
 BALL_SPRITE_SIZE = 16
 
 BALL_X_MIN = 8 - (BALL_SPRITE_SIZE - BALL_DIAMETER) / 2
 BALL_X_MAX = 248 - BALL_SPRITE_SIZE + (BALL_DIAMETER) / 2
 
-BALL_Y_MIN = 16 - (BALL_DIAMETER / 2)
+BALL_Y_MIN = 16 + (BALL_DIAMETER / 2)
 BALL_Y_MAX = 224 - (BALL_DIAMETER / 2)
 
 PAD_SPRITE_WIDTH = 16
@@ -39,8 +41,8 @@ ball_prev_pos_y .ds 1
 ball_pos_x .ds 2
 ball_pos_y .ds 2
 
-ball_dir_x .ds 2 ; [todo] no fixed point math, use a table of cos/sin, dir will be the index to those tables 
-ball_dir_y .ds 2 ; [todo] add integer speed
+ball_dir .ds 1
+ball_speed .ds 1
 
 pad_pos_x .ds 2
 pad_pos_y .ds 2
@@ -121,8 +123,7 @@ _main:
     sta    <ball_pos_x+1
     sta    <ball_pos_y+1
 
-    stw    #-256, ball_dir_x
-    stw    #256, ball_dir_y
+    stb    #32+64, <ball_dir
 
 @loop:
     vdc_wait_vsync
@@ -258,14 +259,98 @@ player_update:
 @end:
     rts
 
+ball_reflect_floor:
+    lda    <ball_dir
+    cmp    #64
+    bcs    @quad1
+@quad0:
+        adc    #192
+        sta    <ball_dir
+        rts
+@quad1:
+    cmp    #128
+    bcs    @quad2
+        adc    #64
+        sta    <ball_dir
+        rts
+@quad2:
+    cmp    #192
+    bcs    @quad3
+        adc    #192
+        sta    <ball_dir
+        rts
+@quad3:
+        clc
+        adc    #64
+        sta    <ball_dir
+    rts
+
+; [todo add perturbation]
+ball_reflect_pad:
+    lda    <ball_dir
+    cmp    #64
+    bcs    @quad1
+@quad0:
+        adc    #64
+        sta    <ball_dir
+        rts
+@quad1:
+    cmp    #128
+    bcs    @quad2
+        adc    #192
+        sta    <ball_dir
+        rts
+@quad2:
+    cmp    #192
+    bcs    @quad3
+        adc    #64
+        sta    <ball_dir
+        rts
+@quad3:
+        clc
+        adc    #192
+        sta    <ball_dir
+    rts
+
+ball_move_x:
+    cly
+    ldx    <ball_dir
+    lda    cos, X
+    bpl    @l0
+        dey
+@l0:
+    clc
+    adc    <ball_pos_x
+    sta    <ball_pos_x
+    tya
+    adc    <ball_pos_x+1
+    sta    <ball_pos_x+1
+    rts
+
+ball_move_y:
+    cly
+    ldx    <ball_dir
+    lda    sin, X
+    bpl    @l0
+        dey
+@l0:
+    clc
+    adc    <ball_pos_y
+    sta    <ball_pos_y
+    tya
+    adc    <ball_pos_y+1
+    sta    <ball_pos_y+1
+    rts
+
 ; [todo] integrate ball/padd collision
+; [todo] for(i=0; i<speed; i++)
 ball_update:
     stb    <ball_pos_x+1, <ball_prev_pos_x
     stb    <ball_pos_y+1, <ball_prev_pos_y
 
-    addw   <ball_dir_x, <ball_pos_x
-    addw   <ball_dir_y, <ball_pos_y
-
+    jsr    ball_move_x
+    jsr    ball_move_y
+    
     lda    <ball_pos_x+1
     sec
     sbc    #128
@@ -301,15 +386,7 @@ ball_update:
             cmp    #(PAD_HEIGHT/2)
             bcs    @no_collision
                 ; reflect
-                clc
-                lda    <ball_dir_x
-                eor    #$ff
-                adc    #$01
-                sta    <ball_dir_x
-                lda    <ball_dir_x+1
-                eor    #$ff
-                adc    #$00
-                sta    <ball_dir_x+1
+                jsr    ball_reflect_pad
             rts
 @no_collision:
     lda    #BALL_Y_MIN
@@ -324,18 +401,12 @@ ball_update:
         sec
         sbc    <ball_pos_y+1
         sta    <ball_pos_y+1
-        
-        clc
-        lda    <ball_dir_y
-        eor    #$ff
-        adc    #$01
-        sta    <ball_dir_y
-        lda    <ball_dir_y+1
-        eor    #$ff
-        adc    #$00
-        sta    <ball_dir_y+1
+
+        jsr    ball_reflect_floor
 @y2:
     rts
+
+  .include "sin.inc"
 
   .ifdef MAGICKIT
     .data
