@@ -123,7 +123,8 @@ _main:
     sta    <ball_pos_x+1
     sta    <ball_pos_y+1
 
-    stb    #32+64, <ball_dir
+    stb    #2, <ball_speed
+    stb    #32, <ball_dir
 
 @loop:
     vdc_wait_vsync
@@ -342,9 +343,12 @@ ball_move_y:
     sta    <ball_pos_y+1
     rts
 
-; [todo] integrate ball/padd collision
-; [todo] for(i=0; i<speed; i++)
+
 ball_update:
+    lda    <ball_speed
+@integrate:
+    pha
+
     stb    <ball_pos_x+1, <ball_prev_pos_x
     stb    <ball_pos_y+1, <ball_prev_pos_y
 
@@ -387,7 +391,7 @@ ball_update:
             bcs    @no_collision
                 ; reflect
                 jsr    ball_reflect_pad
-            rts
+                bra    @end
 @no_collision:
     lda    #BALL_Y_MIN
     cmp    <ball_pos_y+1
@@ -404,6 +408,11 @@ ball_update:
 
         jsr    ball_reflect_floor
 @y2:
+@end:
+    pla
+    dec    A
+    bne    @integrate
+
     rts
 
   .include "sin.inc"
