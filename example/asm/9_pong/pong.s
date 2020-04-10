@@ -124,7 +124,7 @@ _main:
     sta    <ball_pos_y+1
 
     stb    #2, <ball_speed
-    stb    #32, <ball_dir
+    stb    #10, <ball_dir
 
 @loop:
     vdc_wait_vsync
@@ -262,55 +262,16 @@ player_update:
 
 ball_reflect_floor:
     lda    <ball_dir
-    cmp    #64
-    bcs    @quad1
-@quad0:
-        adc    #192
-        sta    <ball_dir
-        rts
-@quad1:
-    cmp    #128
-    bcs    @quad2
-        adc    #64
-        sta    <ball_dir
-        rts
-@quad2:
-    cmp    #192
-    bcs    @quad3
-        adc    #192
-        sta    <ball_dir
-        rts
-@quad3:
-        clc
-        adc    #64
-        sta    <ball_dir
+    eor    #$ff
+    inc    A
+    sta    <ball_dir
     rts
 
-; [todo add perturbation]
 ball_reflect_pad:
-    lda    <ball_dir
-    cmp    #64
-    bcs    @quad1
-@quad0:
-        adc    #64
-        sta    <ball_dir
-        rts
-@quad1:
-    cmp    #128
-    bcs    @quad2
-        adc    #192
-        sta    <ball_dir
-        rts
-@quad2:
-    cmp    #192
-    bcs    @quad3
-        adc    #64
-        sta    <ball_dir
-        rts
-@quad3:
-        clc
-        adc    #192
-        sta    <ball_dir
+    lda    #128
+    sec
+    sbc    <ball_dir
+    sta    <ball_dir    
     rts
 
 ball_move_x:
