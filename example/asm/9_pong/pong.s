@@ -129,7 +129,11 @@ _main:
 @loop:
     vdc_wait_vsync
 
+    clx
     jsr    player_update
+    inx
+    jsr    player_update
+
     jsr    ball_update
     jsr    spr_update
 ; [todo] check if the ball is past the pad
@@ -137,7 +141,6 @@ _main:
     bra    @loop 
 
 spr_update:
-    ; [todo] loop for pads
     ; pad
     ldy    #$00
 
@@ -228,35 +231,30 @@ spr_update:
     rts
 
 player_update:
-
-    ; [todo] param for player id
-
-    lda    joypad
+    lda    joypad, X
     bit    #JOYPAD_UP
     beq    @down
-        lda    <pad_pos_y
+        lda    <pad_pos_y, X
         sec
-        sbc    <pad_speed
+        sbc    <pad_speed, X
         cmp    #PAD_Y_MIN
         bcs    @l0
             lda    #PAD_Y_MIN
 @l0:
-        sta    <pad_pos_y
-        sta    <pad_pos_y+1
+        sta    <pad_pos_y, X
         rts
 @down:
-    lda    joypad
+    lda    joypad, X
     bit    #JOYPAD_DOWN
     beq    @end
-        lda    <pad_pos_y
+        lda    <pad_pos_y, X
         clc
-        adc    <pad_speed
+        adc    <pad_speed, X
         cmp    #PAD_Y_MAX
         bcc    @l1
             lda    #PAD_Y_MAX
 @l1:
-        sta    <pad_pos_y
-        sta    <pad_pos_y+1
+        sta    <pad_pos_y, X
 @end:
     rts
 
