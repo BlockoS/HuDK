@@ -14,10 +14,13 @@ sprite_y: ds 128
     .code
 ;;
 ;; function: spr_show
+;; Show sprite.  
 ;;
 ;; Parameters:
+;;  Y - sprite index
 ;;
 spr_show:
+    ; move sprite to the visible area.
     lda    sprite_x+64, Y
     and    #$01
     sta    sprite_x+64, Y
@@ -25,10 +28,13 @@ spr_show:
 
 ;;
 ;; function: spr_hide
+;; Hide sprite.
 ;;
 ;; Parameters:
+;;  Y - sprite index
 ;;
 spr_hide:
+    ; move sprite out of the visible area.
     lda    sprite_x+64, Y
     ora    #$02
     sta    sprite_x+64, Y
@@ -36,8 +42,11 @@ spr_hide:
 
 ;;
 ;; function: spr_x
+;; Update sprite X coordinate.
 ;;
 ;; Parameters:
+;;  Y - sprite index
+;;  A - X coordinate
 ;;
 spr_x:
     clc
@@ -50,8 +59,11 @@ spr_x:
 
 ;;
 ;; function: spr_y
+;; Update sprite Y coordinate.
 ;;
 ;; Parameters:
+;;  Y - sprite index
+;;  A - Y coordinate
 ;;
 spr_y:
     clc
@@ -63,10 +75,13 @@ spr_y:
     rts
 
 ;;
-;; function: spr_patter
+;; function: spr_pattern
+;; Set sprite pattern address in VRAM.
 ;;
 ;; Parameters:
-;;
+;;  Y - sprite index
+;;  X - MSB of the sprite pattern address in VRAM
+;;  A - LSB of the sprite pattern address in VRAM
 spr_pattern:
     stx    <_ah
     asl    A
@@ -84,8 +99,11 @@ spr_pattern:
 
 ;;
 ;; function: spr_pal
+;; Set sprite palette index.
 ;;
 ;; Parameters:
+;;  Y - sprite index
+;;  A - palette index
 ;;
 spr_pal:
     and    #$0f
@@ -94,8 +112,13 @@ spr_pal:
 
 ;;
 ;; function: spr_pri
+;; Set sprite priority.
+;;   - 1 foreground
+;;   - 0 background
 ;;
 ;; Parameters:
+;;  Y - sprite index
+;;  A - sprite priority
 ;;
 spr_pri:
     tax
@@ -110,9 +133,12 @@ spr_pri:
 
 ;;
 ;; function: spr_ctrl
-;;
+;; Set sprite control flag.
+;; 
 ;; Parameters:
-;;
+;;    Y - sprite index
+;;  _al - Mask of the bits to change (eg VDC_SPRITE_VERTICAL_FLIP_MASK, VDC_SPRITE_HORIZONTAL_FLIP_MASK, VDC_SPRITE_WIDTH_MASK, VDC_SPRITE_HEIGHT_MASK, VDC_SPRITE_PRIORITY_MASK, VDC_SPRITE_PALETTE_MASK)
+;;    A - New bits values. 
 spr_ctrl:
     and    <_al
 	sta    <_ah
@@ -125,8 +151,7 @@ spr_ctrl:
 
 ;;
 ;; function: spr_update_satb
-;;
-;; Parameters:
+;; Copy the local sprite attribute table to VRAM.
 ;;
 spr_update_satb:
     vdc_reg #VDC_MAWR
