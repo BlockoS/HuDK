@@ -47,6 +47,9 @@ _irq_1:
 @check_others:
     ; [todo] sprite overflow, dma transfer end, sprite 0 collision
 @end:
+    lda    <vdc_reg         ; restore VDC register index
+    sta    video_reg
+
     ply                     ; restore registers
     plx
     pla
@@ -76,7 +79,7 @@ _irq_1:
 	stw    bg_y1, video_data
 
     clock_update
-    
+        
     ; [todo] sound
     ; [todo] joypad/mouse
     jsr    joypad_read

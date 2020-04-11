@@ -35,6 +35,9 @@ VDC_DMA_FLAGS = VDC_DMA_SAT_AUTO | VDC_DMA_SATB_ENABLE
 PAD_SPRITE_PATTERN = $1800
 BALL_SPRITE_PATTERN = $1840
 
+SPEED_INC_DELAY = 5
+SPEED_MAX = 10
+
     .zeropage
 ball_prev_pos_x .ds 1
 ball_prev_pos_y .ds 1
@@ -51,6 +54,9 @@ pad_pos_y .ds 2
 pad_speed .ds 2
 
 player_score .ds 2
+
+bounce_count .ds 1
+speed_inc_delay .ds 1
 
     .code
 _main: 
@@ -132,6 +138,16 @@ _main:
     
     ldx    #1
     jsr    print_score
+
+    ; setup prng
+    lda    #$c7
+    ldx    #$ea
+    jsr    rand8_seed
+
+    ; setup speed increment delay and bounce countdown
+    lda    #SPEED_INC_DELAY
+    sta    <speed_inc_delay
+    sta    <bounce_count
 
     jsr    game_reset
 
@@ -340,6 +356,19 @@ ball_move_y:
     sta    <ball_pos_y+1
     rts
 
+ball_update_speed:
+    dec    <bounce_count
+    bne    @l0
+        lda    <ball_speed
+        cmp    #SPEED_MAX
+        bcs    @l0
+            lda    <speed_inc_delay
+            asl    A
+            sta    <speed_inc_delay
+            sta    <bounce_count
+            inc    <ball_speed
+@l0:
+    rts
 
 ball_update:
     lda    <ball_speed
@@ -388,6 +417,7 @@ ball_update:
             bcs    @no_collision
                 ; reflect
                 jsr    ball_reflect_pad
+                jsr    ball_update_speed
                 bra    @end
 @no_collision:
     lda    #BALL_Y_MIN
@@ -429,7 +459,23 @@ game_reset:
     sta    <ball_pos_y+1
 
     stb    #3, <ball_speed
-    stb    #0, <ball_dir           ; [todo] random
+
+    ; The ball is randomly thrown between [-PI/4,PI/4] or [3PI/4,5PI/4].
+    ; We use the clock_tt as our random variable. It's not the best one, but it'll do the trick.
+    jsr    rand8
+    and    #63          ; We clamp A so that it's between 0 and 63 eg [0,PI/2[
+    clc
+    adc    #224         ; It's not between [-PI/4,PI/4[
+    sta    ball_dir
+    ; Flip a coin to flip the direction.
+    jsr    rand8
+    bit    #1
+    beq    @no_flip
+        lda    #128
+        sec
+        sbc    <ball_dir
+        sta    <ball_dir
+@no_flip:
     rts
 
 player_score_pos:

@@ -65,4 +65,5 @@
     .include "map.s"
     .include "math.s"
     .include "bcd.s"
+    .include "random.s"
     .include "scroll.s"
