@@ -7,16 +7,16 @@
     .include "start.s"
     .include "vdc_sprite.inc"
 
-; [todo] pad 0 & 1
-
 BALL_DIAMETER = 8
 BALL_SPRITE_SIZE = 16
+
+SCROLL_Y = 0
 
 BALL_X_MIN = 8 - (BALL_SPRITE_SIZE - BALL_DIAMETER) / 2
 BALL_X_MAX = 248 - BALL_SPRITE_SIZE + (BALL_DIAMETER) / 2
 
-BALL_Y_MIN = 16 + (BALL_DIAMETER / 2)
-BALL_Y_MAX = 224 - (BALL_DIAMETER / 2)
+BALL_Y_MIN = 16 + (BALL_DIAMETER / 2) - SCROLL_Y
+BALL_Y_MAX = 224 - (BALL_DIAMETER / 2) - SCROLL_Y
 
 PAD_SPRITE_WIDTH = 16
 PAD_SPRITE_HEIGHT = 32
@@ -26,10 +26,11 @@ PAD_HEIGHT = 32
 
 PAD_X = 20
 
-PAD_Y_MIN = 16 + (PAD_HEIGHT/2)
-PAD_Y_MAX = 224 - (PAD_HEIGHT/2)
+PAD_Y_MIN = 16 + (PAD_HEIGHT/2) - SCROLL_Y
+PAD_Y_MAX = 224 - (PAD_HEIGHT/2) - SCROLL_Y
 
-VDC_CR_FLAGS = VDC_CR_BG_ENABLE | VDC_CR_SPR_ENABLE | VDC_DMA_SAT_AUTO | VDC_DMA_SATB_ENABLE | VDC_CR_VBLANK_ENABLE
+VDC_CR_FLAGS = VDC_CR_BG_ENABLE | VDC_CR_SPR_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE
+VDC_DMA_FLAGS = VDC_DMA_SAT_AUTO | VDC_DMA_SATB_ENABLE
 
 PAD_SPRITE_PATTERN = $1800
 BALL_SPRITE_PATTERN = $1840
@@ -48,6 +49,8 @@ pad_pos_x .ds 2
 pad_pos_y .ds 2
 
 pad_speed .ds 2
+
+player_score .ds 2
 
     .code
 _main: 
@@ -97,8 +100,21 @@ _main:
     ; remember that this is a 16x16 map
     map_copy_16 #0, #0, #0, #0, #pong_map_width, #pong_map_height
 
+    ; set scroll windows
+    lda    #$00
+    sta    scroll_top
+    lda    #254
+    sta    scroll_bottom
+    stz    scroll_x_lo
+    stz    scroll_x_hi
+    lda    #SCROLL_Y
+    sta    scroll_y_lo
+    stz    scroll_y_hi
+    lda    #(VDC_CR_FLAGS | $01)
+    sta    scroll_flag
+
     vdc_reg  #VDC_DMA_CR
-    vdc_data #(VDC_CR_FLAGS)
+    vdc_data #VDC_DMA_FLAGS
 
     stw    #$7000, <_si
     jsr    vdc_sat_addr
@@ -108,23 +124,16 @@ _main:
     ; set vsync vec
     irq_on INT_IRQ1
 
-    stb    #PAD_X, <pad_pos_x
-    stb    #128, <pad_pos_y
-    stb    #3, <pad_speed
+    stz    <player_score
+    stz    <player_score+1
+    
+    ldx    #0
+    jsr    print_score
+    
+    ldx    #1
+    jsr    print_score
 
-    stb    #(256-PAD_X), <pad_pos_x+1
-    stb    #128, <pad_pos_y+1
-    stb    #3, <pad_speed+1
-
-
-    stz    <ball_pos_x
-    stz    <ball_pos_y
-    lda    #(128-BALL_DIAMETER/2)
-    sta    <ball_pos_x+1
-    sta    <ball_pos_y+1
-
-    stb    #2, <ball_speed
-    stb    #10, <ball_dir
+    jsr    game_reset
 
 @loop:
     vdc_wait_vsync
@@ -136,10 +145,11 @@ _main:
 
     jsr    ball_update
     jsr    spr_update
-; [todo] check if the ball is past the pad
+
+    jsr    game_update
 
     bra    @loop 
-
+  
 spr_update:
     ; pad
     ldy    #$00
@@ -266,9 +276,37 @@ ball_reflect_floor:
     rts
 
 ball_reflect_pad:
-    lda    #128
+    ; We don't compute a real reflexion (PI - angle).
+    ; The bounce angle is computed w/r the difference between the ball and pad y coordinates.
+    ; right pad: out_angle = -PI/4 + (ball_y - pad_y + pad_h/2)/pad_h * PI/2
+    ; left pad : out_angle = 5PI/4 - (ball_y - pad_y + pad_h/2)/pad_h * PI/2
+    ; with PI=256, pad_h=32
+    ; right_pad: out_angle = 224 + (ball_y - pad_y + 16) * 2
+    ; left_pad : out_angle = 160 - (ball_y - pad_y + 16) * 2
+    
+    lda    <ball_pos_x+1
+    bpl    @right
+@left:
+        lda    <ball_pos_y+1
+        sec
+        sbc    <pad_pos_y+1
+        adc    #16
+        asl    A
+        eor    #$ff
+        inc    A
+        clc
+        adc    #160
+        sta    <ball_dir
+        rts
+@right:
+    lda    <ball_pos_y+1
     sec
-    sbc    <ball_dir
+    sbc    <pad_pos_y
+    clc
+    adc    #16
+    asl    A
+    clc
+    adc    #224
     sta    <ball_dir
     rts
 
@@ -350,7 +388,6 @@ ball_update:
             bcs    @no_collision
                 ; reflect
                 jsr    ball_reflect_pad
-                ; [todo] add perturbation
                 bra    @end
 @no_collision:
     lda    #BALL_Y_MIN
@@ -373,6 +410,65 @@ ball_update:
     dec    A
     bne    @integrate
 
+    rts
+
+game_reset:
+    stb    #PAD_X, <pad_pos_x
+    stb    #128, <pad_pos_y
+    stb    #3, <pad_speed
+
+    stb    #(256-PAD_X), <pad_pos_x+1
+    stb    #128, <pad_pos_y+1
+    stb    #3, <pad_speed+1
+
+
+    stz    <ball_pos_x
+    stz    <ball_pos_y
+    lda    #(128-BALL_DIAMETER/2)
+    sta    <ball_pos_x+1
+    sta    <ball_pos_y+1
+
+    stb    #3, <ball_speed
+    stb    #0, <ball_dir           ; [todo] random
+    rts
+
+player_score_pos:
+    .byte 16-3-1
+    .byte 16+1
+
+update_score:
+    inc   <player_score,X
+
+print_score:
+    phx
+    lda    player_score_pos, X
+    tax
+    lda    #1
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    
+    plx
+    lda    <player_score, X
+    jsr    print_dec_u8
+
+    rts
+
+game_update: 
+    lda    <ball_pos_x+1
+    cmp    #BALL_DIAMETER
+    bcs    @l0
+        ldx   #1
+        jsr   update_score
+        jsr   game_reset
+@l0:
+
+    lda    <ball_pos_x+1
+    cmp    #(256-BALL_DIAMETER)
+    bcc    @l1
+        ldx   #0
+        jsr   update_score
+        jsr   game_reset
+@l1:
     rts
 
   .include "sin.inc"
