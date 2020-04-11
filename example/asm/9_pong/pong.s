@@ -269,7 +269,7 @@ ball_reflect_pad:
     lda    #128
     sec
     sbc    <ball_dir
-    sta    <ball_dir    
+    sta    <ball_dir
     rts
 
 ball_move_x:
@@ -346,10 +346,11 @@ ball_update:
                 eor    #$ff
                 inc    A
 @l2:
-            cmp    #(PAD_HEIGHT/2)
+            cmp    #((BALL_DIAMETER + PAD_HEIGHT)/2)
             bcs    @no_collision
                 ; reflect
                 jsr    ball_reflect_pad
+                ; [todo] add perturbation
                 bra    @end
 @no_collision:
     lda    #BALL_Y_MIN
