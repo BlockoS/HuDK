@@ -60,16 +60,16 @@ speed_inc_delay .ds 1
 
     .code
 _main: 
-    ; set BAT size
+    ; Set BAT size.
     lda    #VDC_BG_32x32
     jsr    vdc_set_bat_size
 
-    ; set map bounds
+    ; Set map bounds.
     ldx    #00
     lda    vdc_bat_height 
     jsr    map_set_bat_bounds
 
-    ; load tileset palette
+    ; Load tileset palette.
     stb    #bank(pal_00), <_bl
     stw    #pal_00, <_si
     jsr    map_data
@@ -77,14 +77,14 @@ _main:
     ldy    #(pal_00_size/32)
     jsr    vce_load_palette
 
-    ; load tileset gfx
+    ; Load tileset gfx.
     stb    #bank(gfx_00), <_bl
     stw    #pong_map_tile_vram, <_di
     stw    #gfx_00, <_si
     stw    #(gfx_00_size >> 1), <_cx
     jsr    vdc_load_data
 
-    ; load sprite palette
+    ; Load sprite palette.
     stb    #bank(sprites_pal), <_bl
     stw    #sprites_pal, <_si
     jsr    map_data
@@ -92,21 +92,21 @@ _main:
     ldy    #1
     jsr    vce_load_palette
 
-    ; load sprite data
+    ; Load sprite data.
     stb    #bank(sprites_data), <_bl
     stw    #PAD_SPRITE_PATTERN, <_di
     stw    #sprites_data, <_si
     stw    #(sprites_data_size >> 1), <_cx
     jsr    vdc_load_data
 
-    ; set map infos
+    ; Set map infos.
     map_set map_00, pong_map_tile_vram, tile_pal_00, #pong_map_width, #pong_map_height, #00
 
-    ; copy map from (0,0) to (16, map_height) to BAT
-    ; remember that this is a 16x16 map
+    ; Copy map from (0,0) to (16, map_height) to BAT.
+    ; Remember that this is a 16x16 map.
     map_copy_16 #0, #0, #0, #0, #pong_map_width, #pong_map_height
 
-    ; set scroll windows
+    ; Set scroll window.
     lda    #$00
     sta    scroll_top
     lda    #254
@@ -119,49 +119,59 @@ _main:
     lda    #(VDC_CR_FLAGS | $01)
     sta    scroll_flag
 
+    ; Set VDC DMA for VRAM/SATB DMA transfer.
     vdc_reg  #VDC_DMA_CR
     vdc_data #VDC_DMA_FLAGS
 
+    ; Set VRAM SATB source address.
     stw    #$7000, <_si
     jsr    vdc_sat_addr
 
-    ; clear irq config flag
+    ; Clear irq config flag.
     stz    <irq_m
-    ; set vsync vec
+    ; Set vsync vec.
     irq_on INT_IRQ1
 
+    ; Reset players score.
     stz    <player_score
     stz    <player_score+1
     
+    ; and Print them.
     ldx    #0
     jsr    print_score
-    
     ldx    #1
     jsr    print_score
 
-    ; setup prng
+    ; Initialize random numger generator.
     lda    #$c7
     ldx    #$ea
     jsr    rand8_seed
 
-    ; setup speed increment delay and bounce countdown
+    ; Setup speed increment delay and bounce countdown.
     lda    #SPEED_INC_DELAY
     sta    <speed_inc_delay
     sta    <bounce_count
 
+    ; Reset game states.
     jsr    game_reset
 
+    ; Here comes the main loop.
 @loop:
     vdc_wait_vsync
 
+    ; Move players pad.
     clx
     jsr    player_update
     inx
     jsr    player_update
 
+    ; Update ball position and compute collisions.
     jsr    ball_update
+    
+    ; Update sprite attribute table.
     jsr    spr_update
 
+    ; Update scrore if needed.
     jsr    game_update
 
     bra    @loop 
@@ -442,7 +452,9 @@ ball_update:
 
     rts
 
+; Reset game states.
 game_reset:
+    ; Reset pads position and speed.
     stb    #PAD_X, <pad_pos_x
     stb    #128, <pad_pos_y
     stb    #3, <pad_speed
@@ -451,13 +463,14 @@ game_reset:
     stb    #128, <pad_pos_y+1
     stb    #3, <pad_speed+1
 
-
+    ; Move the ball to the center of the screen.
     stz    <ball_pos_x
     stz    <ball_pos_y
     lda    #(128-BALL_DIAMETER/2)
     sta    <ball_pos_x+1
     sta    <ball_pos_y+1
 
+    ; Reset ball speed.
     stb    #3, <ball_speed
 
     ; The ball is randomly thrown between [-PI/4,PI/4] or [3PI/4,5PI/4].
@@ -467,38 +480,45 @@ game_reset:
     clc
     adc    #224         ; It's not between [-PI/4,PI/4[
     sta    ball_dir
-    ; Flip a coin to flip the direction.
+    ; Flip a coin to mirror the direction.
     jsr    rand8
     bit    #1
     beq    @no_flip
-        lda    #128
+        lda    #128     ; angle = PI - angle
         sec
         sbc    <ball_dir
         sta    <ball_dir
 @no_flip:
     rts
 
+; This array contains the BAT X position for players score.
 player_score_pos:
     .byte 16-3-1
     .byte 16+1
 
+; Increment and print player score.
+; X contains the player id.
 update_score:
     inc   <player_score,X
 
+; Print player score.
 print_score:
     phx
-    lda    player_score_pos, X
+    lda    player_score_pos, X      ; Set VRAM Write address
     tax
     lda    #1
     jsr    vdc_calc_addr 
     jsr    vdc_set_write
     
     plx
-    lda    <player_score, X
+    lda    <player_score, X         ; Print player score
     jsr    print_dec_u8
 
     rts
 
+; This routine is a little bit misnamed.
+; It checks if the ball went past one of the pads. If that's the case,
+; the score of the other player is incremented, and the ball/pad position reseted.
 game_update: 
     lda    <ball_pos_x+1
     cmp    #BALL_DIAMETER
@@ -517,8 +537,10 @@ game_update:
 @l1:
     rts
 
+; the sine and cosine tables generated by table.c
   .include "sin.inc"
 
+; bank 1 contains the sprites, the tiles, the palettes and the map.
   .ifdef MAGICKIT
     .data
     .bank 1
