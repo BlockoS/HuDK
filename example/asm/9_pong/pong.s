@@ -176,10 +176,13 @@ _main:
 
     bra    @loop 
   
+; Update sprite table.
 spr_update:
-    ; pad
+    ; Player #0 pad.
     ldy    #$00
 
+    ; The player coordinate is at the center of the pad.
+    ; Sprite origin is in the upper left corner.
     lda    <pad_pos_x
     sec
     sbc    #(PAD_SPRITE_WIDTH/2)
@@ -208,6 +211,7 @@ spr_update:
 
     ldy    #$01
 
+    ; Player #1 pad.
     lda    <pad_pos_x+1
     sec
     sbc    #(PAD_SPRITE_WIDTH/2)
@@ -234,7 +238,7 @@ spr_update:
     lda    #(VDC_SPRITE_WIDTH_16 | VDC_SPRITE_HEIGHT_32)
     jsr    spr_ctrl
 
-    ; ball
+    ; Ball.
     ldy    #$02
 
     lda    <ball_pos_x+1
@@ -266,14 +270,17 @@ spr_update:
     jsr    spr_update_satb
     rts
 
+; Move player pad according to joypad state.
+; The pad only moves vertically. We just have to check if eigher UP or DOWN were pressed.
+; X gives the player id. 
 player_update:
     lda    joypad, X
     bit    #JOYPAD_UP
     beq    @down
-        lda    <pad_pos_y, X
+        lda    <pad_pos_y, X            ; The pad moves up.
         sec
         sbc    <pad_speed, X
-        cmp    #PAD_Y_MIN
+        cmp    #PAD_Y_MIN               ; It can't go further than PAD_Y_MIN.
         bcs    @l0
             lda    #PAD_Y_MIN
 @l0:
@@ -283,10 +290,10 @@ player_update:
     lda    joypad, X
     bit    #JOYPAD_DOWN
     beq    @end
-        lda    <pad_pos_y, X
+        lda    <pad_pos_y, X            ; The pad moves down.
         clc
         adc    <pad_speed, X
-        cmp    #PAD_Y_MAX
+        cmp    #PAD_Y_MAX               ; Clamp the Y coordinate to PAD_Y_MAX.
         bcc    @l1
             lda    #PAD_Y_MAX
 @l1:
@@ -294,6 +301,9 @@ player_update:
 @end:
     rts
 
+; When the ball hits the upper or lower floor, the direction angle is simply refleced.
+; This means that we negates the Y coordinate. As y = sin(dir), y' = -y = -sin(ball_dir).
+; As sin(-t) = -t, we just have to negate ball_dir.
 ball_reflect_floor:
     lda    <ball_dir
     eor    #$ff
@@ -301,41 +311,43 @@ ball_reflect_floor:
     sta    <ball_dir
     rts
 
+; Compute the ball direction angle when it hits a pad.
 ball_reflect_pad:
     ; We don't compute a real reflexion (PI - angle).
     ; The bounce angle is computed w/r the difference between the ball and pad y coordinates.
-    ; right pad: out_angle = -PI/4 + (ball_y - pad_y + pad_h/2)/pad_h * PI/2
-    ; left pad : out_angle = 5PI/4 - (ball_y - pad_y + pad_h/2)/pad_h * PI/2
-    ; with PI=256, pad_h=32
-    ; right_pad: out_angle = 224 + (ball_y - pad_y + 16) * 2
-    ; left_pad : out_angle = 160 - (ball_y - pad_y + 16) * 2
+    ; right pad: out_angle = -PI/4 + (ball_pos_y - pad_pos_y + pad_height/2)/pad_height * PI/2
+    ; left pad : out_angle = 5PI/4 - (ball_pos_y - pad_pos_y + pad_height/2)/pad_height * PI/2
+    ; with PI=256, pad_height=32
+    ; right_pad: out_angle = 224 + (ball_pos_y - pad_pos_y + 16) * 2
+    ; left_pad : out_angle = 160 - (ball_pos_y - pad_pos_y + 16) * 2
     
     lda    <ball_pos_x+1
     bpl    @right
 @left:
-        lda    <ball_pos_y+1
-        sec
-        sbc    <pad_pos_y+1
+        lda    <ball_pos_y+1    ; Compute a = (ball_pos_y - pad_pos_y + 16) * 2
+        sec                     ; Remember that ball_pos_y is a 8:8 fixed point math value.
+        sbc    <pad_pos_y+1     ; And this is the left pad.
         adc    #16
         asl    A
-        eor    #$ff
+        eor    #$ff             ; Negate a.
         inc    A
         clc
-        adc    #160
+        adc    #160             ; Finally add 160 to get the reflected ball angle on the left pad.
         sta    <ball_dir
         rts
 @right:
-    lda    <ball_pos_y+1
+    lda    <ball_pos_y+1        ; Same as above.
     sec
-    sbc    <pad_pos_y
+    sbc    <pad_pos_y           ; But for the right player.
     clc
     adc    #16
     asl    A
     clc
-    adc    #224
+    adc    #224                 ; and we are done.
     sta    <ball_dir
     rts
 
+; [todo] comments : add a 8 bit signed value to a 16 bits value.
 ball_move_x:
     cly
     ldx    <ball_dir
@@ -366,6 +378,7 @@ ball_move_y:
     sta    <ball_pos_y+1
     rts
 
+; [todo] comment
 ball_update_speed:
     dec    <bounce_count
     bne    @l0
@@ -380,6 +393,7 @@ ball_update_speed:
 @l0:
     rts
 
+; [todo] comment
 ball_update:
     lda    <ball_speed
 @integrate:
