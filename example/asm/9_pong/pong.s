@@ -347,29 +347,34 @@ ball_reflect_pad:
     sta    <ball_dir
     rts
 
-; [todo] comments : add a 8 bit signed value to a 16 bits value.
-ball_move_x:
-    cly
+
+; Move the ball along the direction vector.
+ball_move:
+    ; The direction vector is given by (cos(ball_dir), sin(ball_dir)).
+    ; cos and sin tables are 8 bits signed values. Some special care
+    ; must be taken here. It can't be simply added because the ball position
+    ; is a 16 bits. More precisely a 8:8 fixed point math value. The MSB
+    ; contains the integer part and the LSB the decimal part. So if the 
+    ; cosine/sine is negative, $ff must be added to the MSB.
+    cly                         ; Direction vector MSB (0).
     ldx    <ball_dir
     lda    cos, X
     bpl    @l0
-        dey
+        dey                     ; The cosine is negative. The MSB is set to $ff.
 @l0:
-    clc
+    clc                         ; ball_pos_x += ball_dir
     adc    <ball_pos_x
     sta    <ball_pos_x
     tya
     adc    <ball_pos_x+1
     sta    <ball_pos_x+1
-    rts
 
-ball_move_y:
-    cly
+    cly                         ; Do the same for sine.
     ldx    <ball_dir
     lda    sin, X
-    bpl    @l0
+    bpl    @l1
         dey
-@l0:
+@l1:
     clc
     adc    <ball_pos_y
     sta    <ball_pos_y
@@ -393,28 +398,28 @@ ball_update_speed:
 @l0:
     rts
 
-; [todo] comment
+; Move ball and compute the collision against the field and pads.
 ball_update:
+    ; Integratte along the direction vector so that we didn't miss any collision.
     lda    <ball_speed
 @integrate:
     pha
 
-    stb    <ball_pos_x+1, <ball_prev_pos_x
+    stb    <ball_pos_x+1, <ball_prev_pos_x      ; Save the current position (only the integer part).
     stb    <ball_pos_y+1, <ball_prev_pos_y
 
-    jsr    ball_move_x
-    jsr    ball_move_y
+    jsr    ball_move                            ; Move the ball one step along the direction vector.
     
-    lda    <ball_pos_x+1
-    sec
-    sbc    #128
-    bcs    @l0
+    lda    <ball_pos_x+1                        ; Check if the ball X position is close to the pad.
+    sec                                         ; We perform a coordinate change so that the pad is located on the left. 
+    sbc    #128                                 ; The pad X coordinate is fixed, but the ball needs to be
+    bcs    @l0                                  ;    x' = abs(screen_width/2 - ball_pos_x)
         eor    #$ff
         inc    A
-@l0:
+@l0:                                            ; There might be a collision if (x'+ ball_radius) >= (128-pad_x-pad_width/2)
     cmp    #(128 - PAD_X - PAD_WIDTH/2 - BALL_DIAMETER/2)
     bcc    @no_collision
-        lda    <ball_prev_pos_x
+        lda    <ball_prev_pos_x                 ; Check if this is the first time. 
         sec
         sbc    #128
         bcs    @l1
@@ -424,40 +429,38 @@ ball_update:
         cmp    #(128 - PAD_X - PAD_WIDTH/2 - BALL_DIAMETER/2)
         bcs    @no_collision
 
-            clx
-            lda    <ball_pos_x+1
-            cmp    #128
+            clx                                 ; We will now test the Y axis.
+            lda    <ball_pos_x+1                ; First, we need determine which pad is closest to the ball.
+            cmp    #128                         ; The pad index will be stored in X.
             bcc    @pad_0
                 inx
 @pad_0:
-            lda    <ball_pos_y+1
-            sec
+            lda    <ball_pos_y+1                ; The ball intersects the pad if the distance between the ball and pad position
+            sec                                 ; is less or equal to sum of the ball radius and half the pad height.
             sbc    <pad_pos_y, X
-            bcs    @l2
+            bcs    @l2                          ; We are taking the absolute value here.
                 eor    #$ff
                 inc    A
 @l2:
             cmp    #((BALL_DIAMETER + PAD_HEIGHT)/2)
             bcs    @no_collision
-                ; reflect
-                jsr    ball_reflect_pad
-                jsr    ball_update_speed
+                jsr    ball_reflect_pad         ; The ball hit a pad, so we compute the new ball direction.
+                jsr    ball_update_speed        ; We update the ball speed after a given number of bounces.
                 bra    @end
 @no_collision:
-    lda    #BALL_Y_MIN
+    lda    #BALL_Y_MIN                          ; We check here if the ball hits the floor.
     cmp    <ball_pos_y+1
     bcs    @y1
     lda    #BALL_Y_MAX
     cmp    <ball_pos_y+1
     bcs    @y2
 @y1:
-        ; reflect 
-        asl    A
+        asl    A                                ; The ball position is reflected : ball_pos_y = 2*floor_position - ball_pos_y
         sec
         sbc    <ball_pos_y+1
         sta    <ball_pos_y+1
 
-        jsr    ball_reflect_floor
+        jsr    ball_reflect_floor               ; Compute new ball direction.
 @y2:
 @end:
     pla
