@@ -1,12 +1,13 @@
 # HuDK examples
 
 ## Build instructions
-
- * must have built tools first -> commands to build them
+The examples are using CMake. This is not mandatory. You can use whatever build system you want.
+Toolchain files for HuC/PCEas and cc65/ca65 are provided in the [cmake](./cmake/) directory.
 
 ### HuC/PCEas toolchain
- * use pceas fork
+⚠️ You must use this [PCEas fork](https://github.com/BlockoS/pceas) in order to build the examples.
 
+Open your prefered terminal and create a `build` directory. Go to that directory and type the following command to generate Makefile. 
 ```bash
 cmake .. \
     -DCMAKE_TOOLCHAIN_FILE=../cmake/huc-toolchain.cmake \ 
@@ -14,12 +15,19 @@ cmake .. \
     -DHUC_PATH=<path to huc/pceas binaries directory>
 ```
 
+You can then build the examples by either typing
 ```bash
 cmake --build .
 ```
+or
+```bash
+make
+```
+The roms will be located in the `asm` directory.
 
 ### cc64/ca65 toolchain
 
+Just like the HuC/PCEas toolchain, create a build directory, go into it and type:
 ```bash
 cmake .. \ 
     -DCMAKE_TOOLCHAIN_FILE=../cmake/cc65-toolchain.cmake \
@@ -28,9 +36,7 @@ cmake .. \
     -DCC65_PATH=<path to cc65/ca65 binaries directory> 
 ```
 
-```bash
-cmake --build .
-```
+Invoke `cmake --build .` or `make` to generate the ROMs.
 
 ## Assembly 
 
