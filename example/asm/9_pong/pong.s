@@ -400,7 +400,7 @@ ball_update_speed:
 
 ; Move ball and compute the collision against the field and pads.
 ball_update:
-    ; Integratte along the direction vector so that we didn't miss any collision.
+    ; Integrate along the direction vector so that we didn't miss any collision.
     lda    <ball_speed
 @integrate:
     pha

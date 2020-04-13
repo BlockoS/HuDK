@@ -33,6 +33,18 @@ _main:
     stw    #(sprites_data_size >> 1), <_cx
     jsr    vdc_load_data
 
+    ; Set scroll window.
+    lda    #$00
+    sta    scroll_top
+    lda    #254
+    sta    scroll_bottom
+    stz    scroll_x_lo
+    stz    scroll_x_hi
+    stz    scroll_y_lo
+    stz    scroll_y_hi
+    lda    #(VDC_CR_BG_ENABLE | VDC_CR_SPR_ENABLE | VDC_CR_VBLANK_ENABLE | VDC_CR_HBLANK_ENABLE | $01)
+    sta    scroll_flag
+
     vdc_reg  #VDC_DMA_CR
     vdc_data #(VDC_DMA_SAT_AUTO | VDC_DMA_SATB_ENABLE)
 
