@@ -25,19 +25,6 @@ make
 ```
 The roms will be located in the `asm` directory.
 
-### cc64/ca65 toolchain
-
-Just like the HuC/PCEas toolchain, create a build directory, go into it and type:
-```bash
-cmake .. \ 
-    -DCMAKE_TOOLCHAIN_FILE=../cmake/cc65-toolchain.cmake \
-    -DHUDK_TOOLS_PATH=../../.build/install/bin/ \
-    -DHUDK_INCLUDE_PATH=../../include/ \
-    -DCC65_PATH=<path to cc65/ca65 binaries directory> 
-```
-
-Invoke `cmake --build .` or `make` to generate the ROMs.
-
 ## Assembly 
 
 1. [Hello world](asm/1_hello_world/README.md)
