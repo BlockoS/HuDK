@@ -220,41 +220,80 @@ JOYPAD_LEFT = (IO_JOYPAD_LEFT << 4)
   .endmacro
 
 ;;
+;; macro: joypad_reset_multitap
+;; Reset multitap to the first joypad.
+;; 
+  .macro joypad_reset_multitap
+    lda    #$01         ; reset multitap to joypad #1
+    sta    joyport
+    lda    #$03
+    sta    joyport
+    joypad_delay
+  .endmacro
+
+;;
+;; macro: joypad_poll
+;; Read joypad state.
+;; 
+  .macro joypad_poll
+    lda    #$01         ; read directions (SEL=1)
+    sta    joyport
+    joypad_delay
+
+    lda    \1, X
+    sta    \2, X
+    lda    joyport
+    asl    A
+    asl    A
+    asl    A
+    asl    A
+    sta    \1, X
+
+    stz    joyport      ; read buttons (SEL=0)
+    joypad_delay
+
+    lda    joyport
+    and    #$0f
+    ora    \1, X
+    eor    #$ff
+    sta    \1, X
+  .endmacro
+
+    .bss
+;;
 ;; ubyte: joypad
 ;; This array holds the values for 5 2-buttons joypads.
 ;;
+joypad .ds 5
 
 ;;
 ;; ubyte: joytrg 
 ;; Delta joypad values for 5 2-buttons joypads.
 ;;
+joytrg .ds 5
 
 ;;
 ;; ubyte: joyold 
 ;; Previous 5 joypads values.
 ;;
-
+joyold .ds 5
 
 ;;
 ;; ubyte: joypad_6
 ;; This array contains the values for buttons III, IV, V and VI of 5 6-buttons
 ;; joypads.
 ;;
+joypad_6 .ds 5
 
 ;;
 ;; ubyte: joytrg 
 ;; Delta joypad values of 5 6-buttons joypads.
 ;;
+joytrg_6 .ds 5
 
 ;;
 ;; ubyte: joyold 
 ;; Previous 5 6-buttons joypad values.
 ;;
+joyold_6 .ds 5
 
-  .ifdef MAGICKIT
-    .include "pceas/joypad.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/joypad.inc"
-    .endif
-  .endif

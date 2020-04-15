@@ -4,25 +4,12 @@
 ;; Licensed under the MIT License
 ;; (c) 2016-2020 MooZ
 ;;
-  .ifdef MAGICKIT
-    .include "pceas/compat.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/compat.inc"
-    .endif
-  .endif
 
 ; [todo] CDROM
 
-  .ifdef MAGICKIT
     .code
     .bank 0
     .org $fff6
-  .else
-    .ifdef CA65
-    .segment "VECTORS" 
-    .endif
-  .endif
     
     ; IRQ vectors (HuCard only) at $fff6-$ffff 
     .word _irq_2  ;see irq_2.s 
@@ -32,11 +19,10 @@
     .word _reset  ;see irq_reset
 
     .code
-  .ifdef MAGICKIT
     .bank 0
     .org $e000
-  .endif
 
+    .include "macro.inc"
     .include "byte.inc"
     .include "word.inc"
     .include "system.inc"

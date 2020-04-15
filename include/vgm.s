@@ -129,42 +129,42 @@
 ;;
 vgm_mpr = 6
 
-    .zeropage
+    .zp
 ;;
 ;; uword: vgm_base
 ;; VGM data base pointer.
 ;;
-vgm_base: ds 2
+vgm_base .ds 2
 ;;
 ;; ubyte: vgm_bank
 ;; First ROM bank of the VGM data.
 ;; 
-vgm_bank: ds 1
+vgm_bank .ds 1
 ;;
 ;; uword: vgm_ptr
 ;; Current VGM data pointer.
 ;;
-vgm_ptr:  ds 2
+vgm_ptr .ds 2
 ;;
 ;; ubyte: vgm_end
 ;; VGM data upper bound. 
 ;;
-vgm_end:  ds 1
+vgm_end .ds 1
 ;;
 ;; ubyte: vgm_loop_bank
 ;; Bank of the VGM loop address.
 ;;
-vgm_loop_bank: ds 1
+vgm_loop_bank .ds 1
 ;;
 ;; ubyte: vgm_loop_ptr
 ;; VGM loop address.
 ;;
-vgm_loop_ptr: ds 2
+vgm_loop_ptr .ds 2
 ;;
 ;; ubyte: vgm_wait
 ;; Frame delay.
 ;;
-vgm_wait: ds 1
+vgm_wait .ds 1
 
     .code
 ;;

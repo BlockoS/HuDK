@@ -23,6 +23,12 @@
 ;; Restrictions:
 ;;   op - Addressing modes must be either *Zero Page* or *Absolute*.
 ;;
+  .macro stdwz
+    stz    \1
+    stz    \1+1
+    stz    \1+2
+    stz    \1+3
+  .endmacro
 
 ;;
 ;; Macro: stdw
@@ -39,6 +45,16 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page*, *Absolute* or *Immediate*.
 ;;   p1 - *Zero Page* or *Absolute*.
+  .macro stdw
+    lda    \1
+    sta    \2
+    lda    \1+1
+    sta    \2+1
+    lda    \1+2
+    sta    \2+2    
+    lda    \1+3
+    sta    \2+3
+  .endmacro
 
 ;;
 ;; Macro: adcdw
@@ -73,6 +89,40 @@
 ;; The corresponding pseudo-code is:
 ;; > <_out = #200524 + #16300
 ;;
+  .macro adcdw
+    lda    \2
+    adc    \1
+  .if (\# = 3)
+    sta    \3
+  .else
+    sta    \2
+  .endif
+
+    lda    \2+1
+    adc    \1+1
+  .if (\# = 3)
+    sta    \3+1
+  .else
+    sta    \2+1
+  .endif
+
+    lda    \2+2
+    adc    \1+2
+  .if (\# = 3)
+    sta    \3+2
+  .else
+    sta    \2+2
+  .endif
+
+    lda    \2+3
+    adc    \1+3
+  .if (\# = 3)
+    sta    \3+3
+  .else
+    sta    \2+3
+  .endif
+
+  .endmacro
 
 ;;
 ;; Macro: adddw
@@ -85,6 +135,14 @@
 ;; See Also:
 ;;   <adcdw>
 ;;
+  .macro adddw
+    clc
+  .if (\# = 3)
+    adcdw  \1, \2, \3
+  .else
+    adcdw  \1, \2
+  .endif
+  .endmacro
 
 ;;
 ;; Macro: sbcdw
@@ -120,6 +178,39 @@
 ;; Which givec in C pseudo-code:
 ;; > <_out = #200524 - #16300
 ;;
+  .macro sbcdw
+    lda    \2
+    sbc    \1
+  .if (\# = 3)
+    sta    \3
+  .else
+    sta    \2
+  .endif
+
+    lda    \2+1
+    sbc    \1+1
+  .if (\# = 3)
+    sta    \3+1
+  .else
+    sta    \2+1
+  .endif
+
+    lda    \2+2
+    sbc    \1+2
+  .if (\# = 3)
+    sta    \3+2
+  .else
+    sta    \2+2
+  .endif
+
+    lda    \2+3
+    sbc    \1+3
+  .if (\# = 3)
+    sta    \3+3
+  .else
+    sta    \2+3
+  .endif
+  .endmacro
 
 ;;
 ;; Macro: subdw
@@ -129,6 +220,14 @@
 ;; See Also:
 ;;   <sbcdw>
 ;;
+  .macro subdw
+    sec
+  .if (\# = 3)
+    sbcdw  \1, \2, \3
+  .else
+    sbcdw  \1, \2
+  .endif
+  .endmacro
 
 ;;
 ;; Macro: incdw
@@ -144,6 +243,16 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*
 ;;
+  .macro incdw
+    inc    \1
+    bne    @x_\@
+    inc    \1+1
+    bne    @x_\@
+    inc    \1+2
+    bne    @x_\@
+    inc    \1+3
+@x_\@:
+  .endmacro
 
 ;;
 ;; Macro: decdw
@@ -159,6 +268,21 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro decdw
+    sec
+    lda    \1
+    sbc    #1
+    sta    \1
+    lda    \1+1
+    sbc    #0
+    sta    \1+1
+    lda    \1+2
+    sbc    #0
+    sta    \1+2
+    lda    \1+3
+    sbc    #0
+    sta    \1+3
+  .endmacro
 
 ;;
 ;; Macro: roldw
@@ -174,6 +298,12 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro roldw
+    rol    \1
+    rol    \1+1
+    rol    \1+2
+    rol    \1+3
+  .endmacro
 
 ;;
 ;; Macro: asldw
@@ -189,6 +319,13 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro aslw
+    asl    \1
+    rol    \1+1
+    rol    \1+2
+    rol    \1+3
+  .endmacro
+
 
 ;;
 ;; Macro: rordw
@@ -204,6 +341,12 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro rorw
+    ror    \1+3
+    ror    \1+2
+    ror    \1+1
+    ror    \1
+  .endmacro
 
 ;;
 ;; Macro: lsrdw
@@ -219,6 +362,12 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro lsrdw
+    lsr    \1+3
+    ror    \1+2
+    ror    \1+1
+    ror    \1
+  .endmacro
 
 ;;
 ;; Macro: negdw
@@ -234,6 +383,21 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro negdw
+    cla
+    sec
+    sbc    \1
+    sta    \1
+    cla
+    sbc    \1+1
+    sta    \1+1
+    cla
+    sbc    \1+2
+    sta    \1+2
+    cla
+    sbc    \1+3
+    sta    \1+3
+  .endmacro
 
 ;;
 ;; Macro: phdw
@@ -249,6 +413,16 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page*, *Absolute* or *Immediate*.
 ;;
+  .macro phdw
+    lda    \1+3
+    pha
+    lda    \1+2
+    pha
+    lda    \1+1
+    pha
+    lda    \1
+    pha
+  .endmacro
 
 ;;
 ;; Macro: pldw
@@ -264,11 +438,14 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro plw
+    pla
+    sta    \1
+    pla
+    sta    \1+1
+    pla
+    sta    \1+2
+    pla
+    sta    \1+3
+  .endmacro
 
-  .ifdef MAGICKIT
-    .include "pceas/dword.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/dword.inc"
-    .endif
-  .endif

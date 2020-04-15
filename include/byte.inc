@@ -24,6 +24,10 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page*, *Absolute* or *Immediate*.
 ;;   p1 - *Zero Page* or *Absolute*.
+  .macro stb
+      lda    \1
+      sta    \2
+  .endmacro
 
 ;;
 ;; Macro: neg
@@ -39,11 +43,9 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
-
-  .ifdef MAGICKIT
-    .include "pceas/byte.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/byte.inc"
-    .endif
-  .endif
+  .macro neg
+      lda    \1
+      eor    #$ff
+      inc    A
+      sta    \1
+  .endmacro

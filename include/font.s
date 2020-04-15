@@ -5,8 +5,8 @@
 ;; (c) 2016-2020 MooZ
 ;;
 
-    .zeropage
-font_base: ds 2
+    .zp
+font_base .ds 2
 
 ;;
 ;; Title: Font routines.

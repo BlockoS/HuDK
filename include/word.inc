@@ -23,6 +23,10 @@
 ;; Restrictions:
 ;;   op - Addressing modes must be either *Zero Page* or *Absolute*.
 ;;
+  .macro stwz
+    stz    LOW_BYTE \1
+    stz    HIGH_BYTE \1
+  .endmacro
 
 ;;
 ;; Macro: stw
@@ -39,6 +43,12 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page*, *Absolute* or *Immediate*.
 ;;   p1 - *Zero Page* or *Absolute*.
+  .macro stw
+    lda    LOW_BYTE \1
+    sta    LOW_BYTE \2
+    lda    HIGH_BYTE \1
+    sta    HIGH_BYTE \2
+  .endmacro
 
 ;;
 ;; Macro: adcw
@@ -73,6 +83,22 @@
 ;; The corresponding pseudo-code is:
 ;; > <_out = #5678 + #1234
 ;;
+  .macro adcw
+    lda    LOW_BYTE \2
+    adc    LOW_BYTE \1
+  .if (\# = 3)
+    sta    LOW_BYTE \3
+  .else
+    sta    LOW_BYTE \2
+  .endif
+    lda    HIGH_BYTE \2
+    adc    HIGH_BYTE \1
+  .if (\# = 3)
+    sta    HIGH_BYTE \3
+  .else
+    sta    HIGH_BYTE \2
+  .endif
+  .endmacro
 
 ;;
 ;; Macro: addw
@@ -85,6 +111,14 @@
 ;; See Also:
 ;;   <adcw>
 ;;
+  .macro addw
+    clc
+  .if (\# = 3)
+    adcw   \1, \2, \3
+  .else
+    adcw   \1, \2
+  .endif
+  .endmacro
 
 ;;
 ;; Macro: sbcw
@@ -120,6 +154,22 @@
 ;; Which givec in C pseudo-code:
 ;; > <_out = #5678 - #1234
 ;;
+  .macro sbcw
+    lda    LOW_BYTE \2
+    sbc    LOW_BYTE \1
+  .if (\# = 3)
+    sta    LOW_BYTE \3
+  .else
+    sta    LOW_BYTE \2
+  .endif
+    lda    HIGH_BYTE \2
+    sbc    HIGH_BYTE \1
+  .if (\# = 3)
+    sta    HIGH_BYTE \3
+  .else
+    sta HIGH_BYTE \2
+  .endif
+  .endmacro
 
 ;;
 ;; Macro: subw
@@ -129,6 +179,14 @@
 ;; See Also:
 ;;   <sbcw>
 ;;
+  .macro subw
+    sec
+  .if (\# = 3)
+    sbcw   \1, \2, \3
+  .else
+    sbcw   \1, \2
+  .endif
+  .endmacro
 
 ;;
 ;; Macro: incw
@@ -144,6 +202,12 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*
 ;;
+  .macro incw
+    inc    \1
+    bne    @x_\@
+    inc    \1+1
+@x_\@:
+  .endmacro
 
 ;;
 ;; Macro: decw
@@ -159,6 +223,15 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro decw
+    sec
+    lda    \1
+    sbc    #1
+    sta    \1
+    bne    @decw_\@
+        dec    \1+1
+@decw_\@:
+  .endmacro
 
 ;;
 ;; Macro: rolw
@@ -174,6 +247,10 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro rolw
+    rol    \1
+    rol    \1+1
+  .endmacro
 
 ;;
 ;; Macro: aslw
@@ -189,6 +266,10 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro aslw
+    asl    \1
+    rol    \1+1
+  .endmacro
 
 ;;
 ;; Macro: rorw
@@ -204,6 +285,10 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro rorw
+    ror    \1+1
+    ror    \1
+  .endmacro
 
 ;;
 ;; Macro: lsrw
@@ -219,6 +304,10 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro lsrw
+    lsr    \1+1
+    ror    \1
+  .endmacro
 
 ;;
 ;; Macro: negw
@@ -234,6 +323,15 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro negw
+    cla
+    sec
+    sbc    \1
+    sta    \1
+    cla
+    sbc    \1+1
+    sta    \1+1
+  .endmacro
 
 ;;
 ;; Macro: phw
@@ -249,6 +347,12 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page*, *Absolute* or *Immediate*.
 ;;
+  .macro phw
+    lda    HIGH_BYTE \1
+    pha
+    lda    LOW_BYTE \1
+    pha
+  .endmacro
 
 ;;
 ;; Macro: plw
@@ -264,11 +368,9 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
-
-  .ifdef MAGICKIT
-    .include "pceas/word.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/word.inc"
-    .endif
-  .endif
+  .macro plw
+    pla
+    sta    LOW_BYTE \1
+    pla
+    sta    HIGH_BYTE \1
+  .endmacro

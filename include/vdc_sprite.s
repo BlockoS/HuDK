@@ -8,16 +8,9 @@
 ;;
 ;; Title: Sprite routines.
 ;;
-  .ifdef MAGICKIT
-    .include "pceas/vdc_sprite.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/vdc_sprite.inc"
-    .endif
-  .endif
 
-    .zeropage
-sprite_vram_base: ds 2
+    .zp
+sprite_vram_base .ds 2
 
     .code
 ;;
@@ -35,6 +28,16 @@ sprite_vram_base: ds 2
 ;;   size - Sprite size
 ;;   flag - Sprite flag
 ;;
+  .macro vdc_sat_set
+    vdc_data \1
+    vdc_data \2
+    vdc_data \3
+    lda    \4
+    ora    LOW_BYTE \5
+    sta    video_data_l
+    lda    HIGH_BYTE \5
+    sta    video_data_h
+  .endmacro
 
 ;;
 ;; function: vdc_sat_addr

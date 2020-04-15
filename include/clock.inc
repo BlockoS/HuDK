@@ -10,22 +10,22 @@
 ;; ubyte: clock_hh
 ;; System clock, hours since startup (0-255)
 ;;
-clock_hh: ds 1
+clock_hh .ds 1
 ;;
 ;; ubyte: clock_mm
 ;; System clock, minutes since startup (0-59)
 ;;
-clock_mm: ds 1
+clock_mm .ds 1
 ;;
 ;; ubyte: clock_ss
 ;; system clock, seconds since startup (0-59)
 ;;
-clock_ss: ds 1
+clock_ss .ds 1
 ;;
 ;; ubyte: clock_tt
 ;; System clock, ticks (1/60th sec) since startup (0-59)
 ;;
-clock_tt: ds 1
+clock_tt .ds 1
 
     .code
 ;;

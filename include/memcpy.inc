@@ -15,12 +15,12 @@
 ;;
 ;; Group: Copy Modes.
 ;;
-    .zeropage
-memcpy:     ds 1
-memcpy_src: ds 2
-memcpy_dst: ds 2
-memcpy_len: ds 2
-memcpy_rts: ds 1
+    .zp
+memcpy     .ds 1
+memcpy_src .ds 2
+memcpy_dst .ds 2
+memcpy_len .ds 2
+memcpy_rts .ds 1
 
 ;;
 ;; ubyte: SOURCE_ALT_DEST_INC
@@ -73,6 +73,10 @@ SOURCE_INC_DEST_INC = $73
 ;; Parameters:
 ;;   mode - memory copy mode.
 ;;
+  .macro  memcpy_mode
+    lda    \1
+    sta    <memcpy
+  .endmacro
 
 ;;
 ;; macro: memcpy_args
@@ -83,6 +87,11 @@ SOURCE_INC_DEST_INC = $73
 ;;   dst - destination.
 ;;   len - number of bytes to copy.
 ;;
+  .macro memcpy_args
+    stw    \1, <memcpy_src
+    stw    \2, <memcpy_dst
+    stw    \3, <memcpy_len
+  .endmacro
 
 ;;
 ;; macro: memcpy_ex
@@ -102,11 +111,15 @@ SOURCE_INC_DEST_INC = $73
 ;;   mode - memory copy mode (see <Copy Modes>).
 ;;          *optinal* (default: SOURCE_INC_DEST_ALT). 
 ;;
-
-  .ifdef MAGICKIT
-    .include "pceas/memcpy.inc"
+  .macro memcpy_ex
+    stw    \1, <memcpy_src
+    stw    \2, <memcpy_dst
+    stw    \3, <memcpy_len
+  .if (\# = 4)
+    lda    \4
   .else
-    .ifdef CA65
-    .include "ca65/memcpy.inc"
-    .endif
-  .endif 
+    lda    #SOURCE_INC_DEST_ALT
+  .endif
+    sta    <memcpy
+    jsr    memcpy
+  .endmacro

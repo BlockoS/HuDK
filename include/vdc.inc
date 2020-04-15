@@ -15,6 +15,7 @@
 ;; ushort: videoport
 ;; VDC port
 ;; 
+videoport = $0000
 
 ;;
 ;; ushort: video_reg
@@ -26,6 +27,7 @@
 ;;    $03, $04 or $14 to $1F and trying to access them has no effect (see <VDC registers>).
 ;;  - Reading video_reg $0000 returns a set of status flags (see <VDC status flags>). 
 ;; 
+video_reg = videoport
 
 ;;
 ;; ushort: video_data
@@ -33,6 +35,9 @@
 ;;
 ;; Data to be read or written to the a VDC register.
 ;;
+video_data = videoport+2
+video_data_l = video_data
+video_data_h = video_data+1
 
 ;;
 ;; Group: VDC status flags. 
@@ -487,6 +492,23 @@ vdc_ri = $20f7
 ;; Parameters:
 ;;   xres - Horizontal screen resolution.
 ;;
+  .macro VDC_HSR_db
+    .if (\1 < 268)
+      ; low resolution (standard)
+      .db $02                   ; Horizontal Display Start (HDS)
+      .db (18 - (\1 / 16))      ; Horizontal Sync Width (HWS)
+    .else
+      .if (\1 < 356)
+        ; high resolution
+        .db $03
+        .db (25 - (\1 / 16))
+      .else
+        ; very high resolution
+        .db $05
+        .db (42 - (\1 / 16))
+      .endif
+    .endif
+  .endmacro
 
 ;; 
 ;; macro: VDC_HDR_db
@@ -500,6 +522,21 @@ vdc_ri = $20f7
 ;; Parameters:
 ;;   xres - Horizontal screen resolution.
 ;;
+  .macro VDC_HDR_db
+      .db ((\1 / 8) - 1)                        ; Horizontal Display Width (HDW)
+    .if (\1 < 268)
+      ; low resolution (standard)
+      .db (38 - ((18 - (\1 / 16)) + (\1 / 8)))  ; Horizontal Display End (HDE)
+    .else
+      .if (\1 < 356)
+        ; high resolution
+        .db (51 - ((25 - (\1 / 16)) + (\1 / 8)))
+      .else
+        ; very high resolution
+        .db (82 - ((42 - (\1 / 16)) + (\1 / 8)))
+      .endif
+    .endif
+  .endmacro
 
 ;;
 ;; macro: vdc_reg
@@ -511,6 +548,16 @@ vdc_ri = $20f7
 ;; Parameters:
 ;;   reg - VDC register.
 ;;
+  .macro vdc_reg
+    lda    \1
+    ; [todo] zeropage copy of the vdc register
+    .if (\?1 = ARG_IMMEDIATE)
+      st0    \1
+    .else
+      sta    video_reg
+    .endif
+    sta    <vdc_ri
+  .endmacro
 
 ;;
 ;; macro: vdc_setreg
@@ -519,6 +566,10 @@ vdc_ri = $20f7
 ;; Assembly call:
 ;;   > vdc_setreg
 ;;
+  .macro vdc_setreg
+    sta    video_reg
+    sta    <vdc_ri
+  .endmacro
 
 ;
 ;; macro: vdc_data
@@ -528,24 +579,19 @@ vdc_ri = $20f7
 ;;   > vdc_data    <_si
 ;;   > vdc_data    $2210, $3200
 ;;
-
-;;
-;; macro: vdc_data_l
-;; Set VDC data LSB.
-;;
-;; Assembly call:
-;;   > lda    something
-;;   > vdc_data_l
-;;
-
-;;
-;; macro: vdc_data_h
-;; Set VDC data MSB.
-;;
-;; Assembly call:
-;;   > lda    some_data
-;;   > vdc_data_h
-;;
+  .macro vdc_data
+  .if (\# = 1)
+    lda    LOW_BYTE \1
+    sta    video_data_l
+    lda    HIGH_BYTE \1
+    sta    video_data_h
+  .else
+    lda    \1
+    sta    video_data_l
+    lda    \2
+    sta    video_data_h
+  .endif
+  .endmacro
 
 ;;
 ;; Macro: vdc_enable_display
@@ -580,6 +626,26 @@ vdc_ri = $20f7
 ;; Parameters:
 ;;   flags - control register flags.
 ;;
+  .macro vdc_set_cr
+    vdc_reg #VDC_CR
+    lda    LOW_BYTE \1
+    sta    <vdc_crl
+    sta    video_data_l
+    lda    HIGH_BYTE \1
+    sta    <vdc_crl+1
+    sta    video_data_h 
+  .endmacro
+
+;;
+;; Macro: vdc_wait_vsync
+;; Wait for VSYNC.
+;;
+  .macro vdc_wait_vsync
+    stz    <irq_cnt
+@wait_vsync\@:
+    lda    <irq_cnt
+    beq    @wait_vsync\@
+  .endm
 
 ;;
 ;; Group: Default VDC values.
@@ -620,12 +686,4 @@ VDC_DEFAULT_XRES = 256
 ;; Default SAT VRAM offset.
 ;;
 VDC_DEFAULT_SAT_ADDR = $7F00
-  .endif
-
-  .ifdef MAGICKIT
-    .include "pceas/vdc.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/vdc.inc"
-    .endif
   .endif

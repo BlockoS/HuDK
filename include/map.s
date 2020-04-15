@@ -23,31 +23,23 @@
 ;; tile. For 16x16 tilemap, the palette index will be used for all 4 VRAM tile.
 ;;
 
-    .zeropage
+    .zp
 map_infos:
-map_width:        ds 2
-map_height:       ds 2
-map_wrap:         ds 1
+map_width        .ds 2
+map_height       .ds 2
+map_wrap         .ds 1
 
-map_bank:         ds 1
-map_address:      ds 2
+map_bank         .ds 1
+map_address      .ds 2
 
-map_pal_bank:     ds 1
-map_pal_address:  ds 2
+map_pal_bank     .ds 1
+map_pal_address  .ds 2
 
-map_tile_base:    ds 2
+map_tile_base    .ds 2
 
-map_bat_top:      ds 1
-map_bat_bottom:   ds 1
-map_bat_top_base: ds 2
-
-  .ifdef MAGICKIT
-    .include "pceas/map.s"
-  .else
-    .ifdef CA65
-    .include "ca65/map.s"
-    .endif
-  .endif
+map_bat_top      .ds 1
+map_bat_bottom   .ds 1
+map_bat_top_base .ds 2
 
     .code
 ;;
@@ -65,6 +57,19 @@ map_bat_top_base: ds 2
 ;;   h - Map height
 ;;   m - Map coordinate wrapping mode
 ;;
+  .macro map_set
+    lda    #bank(\1)
+    sta    <map_bank
+    stw    #\1, <map_address
+    stw    #((\2)>>4), <map_tile_base
+    lda    #bank(\3)
+    sta    <map_pal_bank
+    stw    #\3, <map_pal_address
+    stw    \4, <map_width
+    stw    \5, <map_height
+    lda    \6
+    sta    <map_wrap
+  .endmacro
 
 ;;
 ;; Macro: map_copy
@@ -81,6 +86,21 @@ map_bat_top_base: ds 2
 ;;   w  - Number of column to copy.
 ;;   h  - Number of line to copy.
 ;;
+  .macro map_copy
+    lda    \1
+    sta    <_al
+    lda    \2
+    sta    <_ah
+    lda    \3
+    sta    <_cl
+    lda    \4
+    sta    <_ch
+    lda    \5
+    sta    <_dl
+    lda    \6
+    sta    <_dh
+    jsr    map_load
+  .endmacro
 
 ;;
 ;; Macro: map_copy_16
@@ -97,6 +117,21 @@ map_bat_top_base: ds 2
 ;;   w  - Number of column to copy.
 ;;   h  - Number of line to copy.
 ;;
+  .macro map_copy_16
+    lda    \1
+    sta    <_al
+    lda    \2
+    sta    <_ah
+    lda    \3
+    sta    <_cl
+    lda    \4
+    sta    <_ch
+    lda    \5
+    sta    <_dl
+    lda    \6
+    sta    <_dh
+    jsr    map_load_16
+  .endmacro
 
 ;;
 ;; Function: map_set_bat_bounds

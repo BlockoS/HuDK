@@ -126,6 +126,10 @@ VCE_DOT_CLOCK_5MHZ  = %00000000
 ;;   g - Green
 ;;   b - Blue
 ;;
+  .macro RGB 
+  (((\2 & $07) << 6) | ((\1 & $07) << 3) | (\3 & $07))
+  .endmacro
+
 ;; Group: Predefined colors
 ;;
 ;; ushort: VCE_BLACK
@@ -172,13 +176,3 @@ VCE_CYAN = $1C7
 ;; VCE value for grey.
 ;;
 VCE_GREY = $124
-
-
-  .ifdef MAGICKIT
-    .include "pceas/vce.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/vce.inc"
-    .endif
-  .endif
-  

@@ -76,6 +76,14 @@ INT_ALL = INT_IRQ2 | INT_IRQ1 | INT_TIMER | INT_NMI
 ;; Parameter:
 ;;   i - IRQ bit field (see IRQ identifiers).
 ;;
+  .macro irq_on
+    .if (\1 <= INT_ALL)
+    lda    #(\1 ^ INT_ALL)
+    .else
+      .fail "invalid IRQ mask"
+    .endif
+    sta    irq_disable
+  .endmacro
 
 ;;
 ;; macro: irq_off
@@ -87,6 +95,14 @@ INT_ALL = INT_IRQ2 | INT_IRQ1 | INT_TIMER | INT_NMI
 ;; Parameter:
 ;;   i - IRQ bit field (see IRQ identifiers).
 ;;
+  .macro irq_off
+    .if (\1 <= INT_ALL)
+    lda    #\1
+    .else
+      .fail "invalid IRQ mask"
+    .endif
+    sta    irq_disable
+  .endmacro
 
 ;;
 ;; Group: IRQ vectors.
@@ -140,6 +156,13 @@ SOFT_RESET = 6
 ;; Parameter:
 ;;   vec - Vector to enable
 ;;
+  .macro irq_enable_vec
+    .if (\1 = 5)
+     smb    #6, <irq_m
+    .else
+     smb    #\1, <irq_m
+    .endif
+  .endmacro
 
 ;;
 ;; macro: irq_disable_vec
@@ -151,6 +174,13 @@ SOFT_RESET = 6
 ;; Parameter:
 ;;   vec - Vector to enable
 ;;
+  .macro irq_disable_vec
+    .if (\1 = 5)
+     rmb    #6, <irq_m
+    .else
+     rmb    #\1, <irq_m
+    .endif
+  .endmacro
 
 ;;
 ;; macro: irq_set_vec
@@ -167,6 +197,18 @@ SOFT_RESET = 6
 ;;   vec - interrupt to hook.
 ;;   addr - user function to be called when interrupt will be triggered.
 ;;
+  .macro irq_set_vec
+    sei                     ; disable interrupts
+
+    lda    \1
+    asl    A                ; compute offset in user function table
+    tax
+    lda    LOW_BYTE \2      ; store routine address
+    sta    user_hook, X
+    inx
+    lda    HIGH_BYTE \2
+    sta    user_hook, X
+  .endmacro
 
 ;;
 ;; ubyte: irq_cnt
@@ -189,14 +231,8 @@ irq_cnt = $20f2
 
 irq_m = $20f5
 
-
-  .ifdef MAGICKIT
-    .include "pceas/irq.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/irq.inc"
-    .endif
-  .endif
+    .bss
+user_hook  .ds 14
 
 irq2_hook  = user_hook + (IRQ2 * 2)
 irq1_hook  = user_hook + (IRQ1 * 2)
@@ -205,7 +241,6 @@ nmi_hook   = user_hook + (NMI * 2)
 vsync_hook = user_hook + (VSYNC * 2)
 hsync_hook = user_hook + (HSYNC * 2)
 reset_hook = user_hook + (SOFT_RESET * 2)
-
 
 ; Timer port
 timerport = $0c00
