@@ -12,11 +12,11 @@
     .org $fff6
     
     ; IRQ vectors (HuCard only) at $fff6-$ffff 
-    .word _irq_2  ;see irq_2.s 
-    .word _irq_1  ;see irq_1.s
-    .word _timer  ;see irq_timer.s
-    .word _nmi    ;see irq_nmi
-    .word _reset  ;see irq_reset
+    .dw _irq_2  ;see irq_2.s 
+    .dw _irq_1  ;see irq_1.s
+    .dw _timer  ;see irq_timer.s
+    .dw _nmi    ;see irq_nmi
+    .dw _reset  ;see irq_reset
 
     .code
     .bank 0

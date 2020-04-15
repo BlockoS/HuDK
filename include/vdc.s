@@ -6,11 +6,11 @@
 ;;
 
     .bss
-vdc_bat_width:  ds 2
-vdc_bat_height: ds 1
-vdc_bat_hmask:  ds 1
-vdc_bat_vmask:  ds 1
-vdc_scr_height: ds 1
+vdc_bat_width  .ds 2
+vdc_bat_height .ds 1
+vdc_bat_hmask  .ds 1
+vdc_bat_vmask  .ds 1
+vdc_scr_height .ds 1
 
 ;;
 ;; Title: VDC Functions.
@@ -75,9 +75,9 @@ vdc_set_bat_size:
     rts
 
 ; BAT width
-bat_width_array:  .byte $20,$40,$80,$80,$20,$40,$80,$80
+bat_width_array:  .db $20,$40,$80,$80,$20,$40,$80,$80
 ; BAT height
-bat_height_array: .byte $20,$20,$20,$20,$40,$40,$40,$40
+bat_height_array: .db $20,$20,$20,$20,$40,$40,$40,$40
 
 ;;
 ;; function: vdc_calc_addr
@@ -339,23 +339,23 @@ vdc_init:
 
 ; Default VDC initialization table.
 @vdc_init_table:
-    .byte $05, $00, $00             ; CR  control register
-    .byte $06, $00, $00             ; RCR scanline interrupt counter
-    .byte $07, $00, $00             ; BXR background horizontal scroll offset
-    .byte $08, $00, $00             ; BYR      "     vertical     "      " 
-    .byte $09, VDC_DEFAULT_BG_SIZE  ; MWR backgroup map virtual size
-    .byte $00                       ;
-    .byte $0A                       ; HSR +
+    .db $05, $00, $00             ; CR  control register
+    .db $06, $00, $00             ; RCR scanline interrupt counter
+    .db $07, $00, $00             ; BXR background horizontal scroll offset
+    .db $08, $00, $00             ; BYR      "     vertical     "      " 
+    .db $09, VDC_DEFAULT_BG_SIZE  ; MWR backgroup map virtual size
+    .db $00                       ;
+    .db $0A                       ; HSR +
      VDC_HSR_db VDC_DEFAULT_XRES    ;     |
-    .byte $0B                       ; HDR |
+    .db $0B                       ; HDR |
      VDC_HDR_db VDC_DEFAULT_XRES    ;     | display size and synchro
-    .byte $0C, $02, $0F             ; VPR |
-    .byte $0D, $EF, $00             ; VDW |
-    .byte $0E, $04, $00             ; VCR +
-    .byte $0F, $10, $00             ; DCR DMA control register
-    .byte $13                       ; SAT adddress
-    .byte .lobyte(VDC_DEFAULT_SAT_ADDR)
-    .byte .hibyte(VDC_DEFAULT_SAT_ADDR)
+    .db $0C, $02, $0F             ; VPR |
+    .db $0D, $EF, $00             ; VDW |
+    .db $0E, $04, $00             ; VCR +
+    .db $0F, $10, $00             ; DCR DMA control register
+    .db $13                       ; SAT adddress
+    .db low(VDC_DEFAULT_SAT_ADDR)
+    .db high(VDC_DEFAULT_SAT_ADDR)
 
 ; reset all hooks
 reset_hooks:

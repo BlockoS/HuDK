@@ -183,4 +183,4 @@ font_8x8:
      .db $81,$42,$24,$18,$18,$24,$42,$81    ;  
 
 font_8x8_palette:
-    .word VCE_GREEN, VCE_WHITE, VCE_BLACK, $0000, $0000, $0000, $0000, $0000
+    .dw VCE_GREEN, VCE_WHITE, VCE_BLACK, $0000, $0000, $0000, $0000, $0000
