@@ -27,4 +27,4 @@ loop:
     bra    loop             ; and we'll loop indefinitely
 
 txt:                        ; the string we'll print on screen
-    .byte "Hello world!", 0
+    .db "Hello world!", 0

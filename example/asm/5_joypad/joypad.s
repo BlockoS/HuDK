@@ -16,13 +16,13 @@ JOYPAD_BOX_HEIGHT = 4
 JOYPAD_BOX_X = 2
 JOYPAD_BOX_Y = 1
 
-    .zeropage
-_x: ds 1
-_y: ds 1
+    .zp
+_x .ds 1
+_y .ds 1
 
     .bss
 ; type of each joypad (2 or 6 button)
-joypad_type: ds 5
+joypad_type .ds 5
 
     .code
 _main:
@@ -231,39 +231,39 @@ print_buttons_status:
     rts
 
 extra_buttons_bat_y:
-    .byte 2, 6, 10, 14 
+    .db 2, 6, 10, 14 
 
 button_x:
-    .byte  1 ; JOYPAD_I
-    .byte  8 ; JOYPAD_II
-    .byte 15 ; JOYPAD_SEL
-    .byte 22 ; JOYPAD_RUN
-    .byte  1 ; JOYPAD_UP
-    .byte 22 ; JOYPAD_RIGHT
-    .byte  8 ; JOYPAD_DOWN
-    .byte 15 ; JOYPAD_LEFT
+    .db  1 ; JOYPAD_I
+    .db  8 ; JOYPAD_II
+    .db 15 ; JOYPAD_SEL
+    .db 22 ; JOYPAD_RUN
+    .db  1 ; JOYPAD_UP
+    .db 22 ; JOYPAD_RIGHT
+    .db  8 ; JOYPAD_DOWN
+    .db 15 ; JOYPAD_LEFT
 
 button_y:
-    .byte 1 ; JOYPAD_I
-    .byte 1 ; JOYPAD_II
-    .byte 1 ; JOYPAD_SEL
-    .byte 1 ; JOYPAD_RUN
-    .byte 0 ; JOYPAD_UP
-    .byte 0 ; JOYPAD_RIGHT
-    .byte 0 ; JOYPAD_DOWN
-    .byte 0 ; JOYPAD_LEFT
+    .db 1 ; JOYPAD_I
+    .db 1 ; JOYPAD_II
+    .db 1 ; JOYPAD_SEL
+    .db 1 ; JOYPAD_RUN
+    .db 0 ; JOYPAD_UP
+    .db 0 ; JOYPAD_RIGHT
+    .db 0 ; JOYPAD_DOWN
+    .db 0 ; JOYPAD_LEFT
 
 palette:
-    .word VCE_BLACK, VCE_GREY, VCE_BLACK, $0000, $0000, $0000, $0000, $0000
-    .word $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
+    .dw VCE_BLACK, VCE_GREY, VCE_BLACK, $0000, $0000, $0000, $0000, $0000
+    .dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 
 palette_on:
-    .word VCE_BLACK, VCE_WHITE, VCE_GREEN, $0000, $0000, $0000, $0000, $0000
-    .word $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
+    .dw VCE_BLACK, VCE_WHITE, VCE_GREEN, $0000, $0000, $0000, $0000, $0000
+    .dw $0000, $0000, $0000, $0000, $0000, $0000, $0000, $0000
 
 ; text
 text:
-    .byte "| UP   | DOWN | LEFT | RIGHT|\n"
-    .byte "| I    | II   | SEL  | RUN  |", 0
+    .db "| UP   | DOWN | LEFT | RIGHT|\n"
+    .db "| I    | II   | SEL  | RUN  |", 0
 text_6:
-    .byte "| III  | IV   | V    | VI   |", 0
+    .db "| III  | IV   | V    | VI   |", 0

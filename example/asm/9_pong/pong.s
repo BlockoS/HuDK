@@ -38,7 +38,7 @@ BALL_SPRITE_PATTERN = $1840
 SPEED_INC_DELAY = 5
 SPEED_MAX = 10
 
-    .zeropage
+    .zp
 ball_prev_pos_x .ds 1
 ball_prev_pos_y .ds 1
 
@@ -558,17 +558,11 @@ game_update:
   .include "sin.inc"
 
 ; bank 1 contains the sprites, the tiles, the palettes and the map.
-  .ifdef MAGICKIT
-    .data
-    .bank 1
-    .org $6000
-  .else
-    .ifdef CA65
-    .segment "BANK01"
-    .endif
-  .endif
+  .data
+  .bank 1
+  .org $6000
 
-    .include "data/pong_map.inc"
+  .include "data/pong_map.inc"
 
 map_00:
     .incbin "data/pong_map.map"

@@ -33,8 +33,8 @@ _main:
     jsr    vdc_load_data
 
     ; set font VRAM address
-    ldx    #.lobyte(VDC_DEFAULT_TILE_ADDR)
-    lda    #.hibyte(VDC_DEFAULT_TILE_ADDR)
+    ldx    #low(VDC_DEFAULT_TILE_ADDR)
+    lda    #high(VDC_DEFAULT_TILE_ADDR)
     jsr    font_set_addr
 
     ; set font palette
@@ -60,19 +60,14 @@ loop:
     bra    loop             ; and we'll loop indefinitely
 
 txt:                        ; the string we'll print on screen
-    .byte "Hello world!", 0
+    .db "Hello world!", 0
 
 palette_bin:
     .incbin "data/palette.bin"
 
-  .ifdef MAGICKIT
     .data
     .bank 1
     .org $6000
-  .else
-    .ifdef CA65
-    .segment "BANK01"
-    .endif
-  .endif
+
 font_bin:
     .incbin "data/font.bin"

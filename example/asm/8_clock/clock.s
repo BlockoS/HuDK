@@ -6,10 +6,10 @@
 ;;
     .include "start.s"
 
-    .zeropage
-index: ds 1
-txt_x: ds 1
-txt_y: ds 1
+    .zp
+index .ds 1
+txt_x .ds 1
+txt_y .ds 1
 
     .code
 _main:
@@ -69,18 +69,18 @@ loop:
     bra    loop             ; and we'll loop indefinitely
 
 labels:
-    .word hours_label
-    .word minutes_label
-    .word seconds_label
-    .word ticks_label
+    .dw hours_label
+    .dw minutes_label
+    .dw seconds_label
+    .dw ticks_label
 
 elapsed_label:
-  .byte "elapsed:", 0
+  .db "elapsed:", 0
 hours_label:
-  .byte "hours", 0
+  .db "hours", 0
 minutes_label:
-  .byte "minutes", 0
+  .db "minutes", 0
 seconds_label:
-  .byte "seconds", 0
+  .db "seconds", 0
 ticks_label:
-  .byte "ticks", 0
+  .db "ticks", 0

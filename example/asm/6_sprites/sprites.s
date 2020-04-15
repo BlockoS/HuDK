@@ -9,8 +9,8 @@
 
 SPRITES_DATA_VRAM_ADDR = $1800
 
-    .zeropage
-_t: ds 1
+    .zp
+_t .ds 1
 
     .code
 _main: 
@@ -123,64 +123,58 @@ _main:
 
 ; sine and cosine tables [0,16[
 sin_table:
-    .byte $00,$01,$02,$02,$03,$04,$05,$05,$06,$07,$08,$09,$09,$0a,$0b,$0c
-    .byte $0c,$0d,$0e,$0e,$0f,$10,$10,$11,$12,$12,$13,$14,$14,$15,$15,$16
-    .byte $17,$17,$18,$18,$19,$19,$1a,$1a,$1b,$1b,$1b,$1c,$1c,$1d,$1d,$1d
-    .byte $1e,$1e,$1e,$1e,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f
+    .db $00,$01,$02,$02,$03,$04,$05,$05,$06,$07,$08,$09,$09,$0a,$0b,$0c
+    .db $0c,$0d,$0e,$0e,$0f,$10,$10,$11,$12,$12,$13,$14,$14,$15,$15,$16
+    .db $17,$17,$18,$18,$19,$19,$1a,$1a,$1b,$1b,$1b,$1c,$1c,$1d,$1d,$1d
+    .db $1e,$1e,$1e,$1e,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f
 cos_table:
-    .byte $1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1e,$1e,$1e
-    .byte $1e,$1d,$1d,$1d,$1c,$1c,$1b,$1b,$1b,$1a,$1a,$19,$19,$18,$18,$17
-    .byte $17,$16,$15,$15,$14,$14,$13,$12,$12,$11,$10,$10,$0f,$0e,$0e,$0d
-    .byte $0c,$0c,$0b,$0a,$09,$09,$08,$07,$06,$05,$05,$04,$03,$02,$02,$01
-    .byte $00,$ff,$fe,$fe,$fd,$fc,$fb,$fb,$fa,$f9,$f8,$f7,$f7,$f6,$f5,$f4
-    .byte $f4,$f3,$f2,$f2,$f1,$f0,$f0,$ef,$ee,$ee,$ed,$ec,$ec,$eb,$eb,$ea
-    .byte $e9,$e9,$e8,$e8,$e7,$e7,$e6,$e6,$e5,$e5,$e5,$e4,$e4,$e3,$e3,$e3
-    .byte $e2,$e2,$e2,$e2,$e1,$e1,$e1,$e1,$e1,$e0,$e0,$e0,$e0,$e0,$e0,$e0
-    .byte $e0,$e0,$e0,$e0,$e0,$e0,$e0,$e0,$e1,$e1,$e1,$e1,$e1,$e2,$e2,$e2
-    .byte $e2,$e3,$e3,$e3,$e4,$e4,$e5,$e5,$e5,$e6,$e6,$e7,$e7,$e8,$e8,$e9
-    .byte $e9,$ea,$eb,$eb,$ec,$ec,$ed,$ee,$ee,$ef,$f0,$f0,$f1,$f2,$f2,$f3
-    .byte $f4,$f4,$f5,$f6,$f7,$f7,$f8,$f9,$fa,$fb,$fb,$fc,$fd,$fe,$fe,$ff
-    .byte $00,$01,$02,$02,$03,$04,$05,$05,$06,$07,$08,$09,$09,$0a,$0b,$0c
-    .byte $0c,$0d,$0e,$0e,$0f,$10,$10,$11,$12,$12,$13,$14,$14,$15,$15,$16
-    .byte $17,$17,$18,$18,$19,$19,$1a,$1a,$1b,$1b,$1b,$1c,$1c,$1d,$1d,$1d
-    .byte $1e,$1e,$1e,$1e,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f
+    .db $1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1e,$1e,$1e
+    .db $1e,$1d,$1d,$1d,$1c,$1c,$1b,$1b,$1b,$1a,$1a,$19,$19,$18,$18,$17
+    .db $17,$16,$15,$15,$14,$14,$13,$12,$12,$11,$10,$10,$0f,$0e,$0e,$0d
+    .db $0c,$0c,$0b,$0a,$09,$09,$08,$07,$06,$05,$05,$04,$03,$02,$02,$01
+    .db $00,$ff,$fe,$fe,$fd,$fc,$fb,$fb,$fa,$f9,$f8,$f7,$f7,$f6,$f5,$f4
+    .db $f4,$f3,$f2,$f2,$f1,$f0,$f0,$ef,$ee,$ee,$ed,$ec,$ec,$eb,$eb,$ea
+    .db $e9,$e9,$e8,$e8,$e7,$e7,$e6,$e6,$e5,$e5,$e5,$e4,$e4,$e3,$e3,$e3
+    .db $e2,$e2,$e2,$e2,$e1,$e1,$e1,$e1,$e1,$e0,$e0,$e0,$e0,$e0,$e0,$e0
+    .db $e0,$e0,$e0,$e0,$e0,$e0,$e0,$e0,$e1,$e1,$e1,$e1,$e1,$e2,$e2,$e2
+    .db $e2,$e3,$e3,$e3,$e4,$e4,$e5,$e5,$e5,$e6,$e6,$e7,$e7,$e8,$e8,$e9
+    .db $e9,$ea,$eb,$eb,$ec,$ec,$ed,$ee,$ee,$ef,$f0,$f0,$f1,$f2,$f2,$f3
+    .db $f4,$f4,$f5,$f6,$f7,$f7,$f8,$f9,$fa,$fb,$fb,$fc,$fd,$fe,$fe,$ff
+    .db $00,$01,$02,$02,$03,$04,$05,$05,$06,$07,$08,$09,$09,$0a,$0b,$0c
+    .db $0c,$0d,$0e,$0e,$0f,$10,$10,$11,$12,$12,$13,$14,$14,$15,$15,$16
+    .db $17,$17,$18,$18,$19,$19,$1a,$1a,$1b,$1b,$1b,$1c,$1c,$1d,$1d,$1d
+    .db $1e,$1e,$1e,$1e,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f,$1f
 
 sprite_size:
-    .byte VDC_SPRITE_WIDTH_32 | VDC_SPRITE_HEIGHT_32
-    .byte VDC_SPRITE_WIDTH_32 | VDC_SPRITE_HEIGHT_32
-    .byte VDC_SPRITE_WIDTH_32 | VDC_SPRITE_HEIGHT_32
-    .byte VDC_SPRITE_WIDTH_32 | VDC_SPRITE_HEIGHT_32
-    .byte VDC_SPRITE_WIDTH_16 | VDC_SPRITE_HEIGHT_16
-    .byte VDC_SPRITE_WIDTH_16 | VDC_SPRITE_HEIGHT_16
-    .byte VDC_SPRITE_WIDTH_16 | VDC_SPRITE_HEIGHT_16
-    .byte VDC_SPRITE_WIDTH_16 | VDC_SPRITE_HEIGHT_16
+    .db VDC_SPRITE_WIDTH_32 | VDC_SPRITE_HEIGHT_32
+    .db VDC_SPRITE_WIDTH_32 | VDC_SPRITE_HEIGHT_32
+    .db VDC_SPRITE_WIDTH_32 | VDC_SPRITE_HEIGHT_32
+    .db VDC_SPRITE_WIDTH_32 | VDC_SPRITE_HEIGHT_32
+    .db VDC_SPRITE_WIDTH_16 | VDC_SPRITE_HEIGHT_16
+    .db VDC_SPRITE_WIDTH_16 | VDC_SPRITE_HEIGHT_16
+    .db VDC_SPRITE_WIDTH_16 | VDC_SPRITE_HEIGHT_16
+    .db VDC_SPRITE_WIDTH_16 | VDC_SPRITE_HEIGHT_16
 
 sprite_addr:
-    .word SPRITES_DATA_VRAM_ADDR
-    .word SPRITES_DATA_VRAM_ADDR+$100
-    .word SPRITES_DATA_VRAM_ADDR+$200
-    .word SPRITES_DATA_VRAM_ADDR+$300
-    .word SPRITES_DATA_VRAM_ADDR+$400
-    .word SPRITES_DATA_VRAM_ADDR+$440
-    .word SPRITES_DATA_VRAM_ADDR+$480
-    .word SPRITES_DATA_VRAM_ADDR+$4c0
+    .dw SPRITES_DATA_VRAM_ADDR
+    .dw SPRITES_DATA_VRAM_ADDR+$100
+    .dw SPRITES_DATA_VRAM_ADDR+$200
+    .dw SPRITES_DATA_VRAM_ADDR+$300
+    .dw SPRITES_DATA_VRAM_ADDR+$400
+    .dw SPRITES_DATA_VRAM_ADDR+$440
+    .dw SPRITES_DATA_VRAM_ADDR+$480
+    .dw SPRITES_DATA_VRAM_ADDR+$4c0
 
 sprite_dy:
-    .byte $40,$40,$40,$40
-    .byte $48,$48,$48,$48
+    .db $40,$40,$40,$40
+    .db $48,$48,$48,$48
 
 sprite_phase:
-    .byte 0,20,40,60,80,100,120,140
+    .db 0,20,40,60,80,100,120,140
 
-  .ifdef MAGICKIT
     .data
     .bank 1
     .org $6000
-  .else
-    .ifdef CA65
-    .segment "BANK01"
-    .endif
-  .endif
 
 sprites_data:
     .incbin "data/ball0.bin"

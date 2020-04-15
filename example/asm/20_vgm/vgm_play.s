@@ -25,8 +25,8 @@ _main:
 	stb    #song_bank, <_bl
 	stw    #song_loop, <_si
 	stb    #song_loop_bank, <_bh
-	lda    #.hibyte(song_base_address)
-	ldx    #.lobyte(song_base_address)
+	lda    #high(song_base_address)
+	ldx    #low(song_base_address)
 	jsr    vgm_setup
 
 	cli    
@@ -43,24 +43,14 @@ song_base_address=$6000
 song_loop_bank=$01
 song_loop=$6fa8
 
-  .ifdef MAGICKIT
-    .data
-    .bank $01
-    .org $6000
-  .else
-    .ifdef CA65
-    .segment "BANK01"
-    .endif
-  .endif
-    .incbin "data/song0000.bin"
+  .data
+  .bank $01
+  .org $6000
+  
+  .incbin "data/song0000.bin"
 
-  .ifdef MAGICKIT
-    .data
-    .bank $02
-    .org $6000
-  .else
-    .ifdef CA65
-    .segment "BANK02"
-    .endif
-  .endif
-    .incbin "data/song0001.bin"
+  .data
+  .bank $02
+  .org $6000
+
+  .incbin "data/song0001.bin"
