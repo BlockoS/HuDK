@@ -49,3 +49,35 @@
       inc    A
       sta    \1
   .endmacro
+
+;;
+;; Macro: add
+;;
+;; Add a byte to accumulator.
+;;
+;; Assembly call:
+;;   > add p0
+;;
+;; Parameter:
+;;   p0 - Operand.
+;;
+  .macro add
+    clc
+    adc    \1
+  .endmacro
+
+;;
+;; Macro: sub
+;;
+;; Substract byte from accumulator.
+;;
+;; Assembly call:
+;;   > sub p0
+;;
+;; Parameter:
+;;   p0 - Operand.
+;;
+  .macro sub
+    sec
+    sbc    \1
+  .endmacro

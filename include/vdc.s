@@ -22,6 +22,9 @@ vdc_scr_height .ds 1
 ;; Parameters:
 ;;   _di - VRAM location.
 ;;
+  .ifdef HUC
+_vdc_set_read.1:
+  .endif
 vdc_set_read:
     vdc_reg  #VDC_MARR
     vdc_data <_di
@@ -35,6 +38,9 @@ vdc_set_read:
 ;; Parameters:
 ;;   _di - VRAM location.
 ;;
+  .ifdef HUC
+_vdc_set_write.1:
+  .endif
 vdc_set_write:
     vdc_reg  #VDC_MAWR
     vdc_data <_di
@@ -48,6 +54,10 @@ vdc_set_write:
 ;; Parameters:
 ;;   A - BAT size (see <Background Map Virtual Size>) 
 ;;
+  .ifdef HUC
+_vdc_set_bat_size.1:
+    txa
+  .endif
 vdc_set_bat_size:
     and    #%01110000
     pha
@@ -90,6 +100,11 @@ bat_height_array: .db $20,$20,$20,$20,$40,$40,$40,$40
 ;; Return:
 ;;   _di - VRAM location
 ;;
+  .ifdef HUC
+_vdc_calc_addr.2:
+    ldx    <_al
+    lda    <_ah
+  .endif
 vdc_calc_addr:
     ; BAT address formula :
     ;   addr = (bat_y * bat_width) + bat_x
@@ -129,6 +144,11 @@ vdc_calc_addr:
 ;;   _si - Tile data address.
 ;;   _cx - Tile count.
 ;;   _di - VRAM destination.
+  .ifdef HUC
+_vdc_load_tiles.3:
+
+_vdc_load_tiles.4:
+  .endif
 vdc_load_tiles:
     ; word count = tile count * 16
     lda    <_ch
@@ -156,6 +176,11 @@ vdc_load_tiles:
 ;;   _si - data address.
 ;;   _cx - number of words to copy.
 ;;
+  .ifdef HUC
+_vdc_load_data.3:
+
+_vdc_load_data.4:
+  .endif
 vdc_load_data:
     jsr    map_data
     jsr    vdc_set_write
@@ -196,6 +221,11 @@ vdc_load_data:
 ;;   _si - Tile offset
 ;;   _bl - Palette index
 ;;
+  .ifdef HUC
+_vdc_fill_bat.6:
+    ldx    <_cl
+    lda    <_ch
+  .endif
 vdc_fill_bat:
     jsr   vdc_calc_addr
 
@@ -246,6 +276,9 @@ vdc_fill_bat_ex:
 ;;   _cl - word count.
 ;;   _di - VRAM location.
 ;;
+  .ifdef HUC
+_vdc_clear.2:
+  .endif
 vdc_clear:
     lda    <_cl
     ora    <_ch
@@ -276,6 +309,9 @@ vdc_clear:
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vdc_init:
+  .endif
 vdc_init:
     cly
 @l0:
@@ -368,7 +404,6 @@ reset_hooks:
 no_hook:
 	rts
 
-
 ;;
 ;; function: vdc_yres_224
 ;; Set vertical (y) resolution to 224 pixels.
@@ -376,6 +411,9 @@ no_hook:
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vdc_yres_224:
+  .endif
 vdc_yres_224:
     st0    #VDC_VSR
     ; vertical synchro width
@@ -399,6 +437,9 @@ vdc_yres_224:
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vdc_yres_240:
+  .endif
 vdc_yres_240:
     st0    #VDC_VSR
     ; vertical synchro width
@@ -422,6 +463,9 @@ vdc_yres_240:
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vdc_xres_256:
+  .endif
 vdc_xres_256:
     st0    #VDC_HSR
     ; horizontal sync width
@@ -447,6 +491,9 @@ vdc_xres_256:
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vdc_xres_320:
+  .endif
 vdc_xres_320:
     st0    #VDC_HSR
     ; horizontal sync width
@@ -472,6 +519,9 @@ vdc_xres_320:
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vdc_xres_512:
+  .endif
 vdc_xres_512:
     st0    #VDC_HSR
     ; horizontal sync width
@@ -506,6 +556,9 @@ _hde:    ds 1
 ;;   _ax - New horizontal display resolution. 
 ;;   _cl - 'blur bit' for control register.
 ;;
+  .ifdef HUC
+_vdc_set_xres.2:
+  .endif
 vdc_set_xres:
     lda    #$20
     tsb    <irq_m               ; disable vsync processing

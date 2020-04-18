@@ -38,6 +38,10 @@
 ;; Parameters:
 ;;   A - ASCII character
 ;;
+  .ifdef HUC
+_print_char:
+    txa
+  .endif
 print_char:
     clc
     adc    <font_base
@@ -57,6 +61,10 @@ print_char:
 ;; Parameters:
 ;;   A - Digit value between 0 and 9.
 ;;
+  .ifdef HUC
+_print_digit:
+    txa
+  .endif
 print_digit:
     cmp    #10
     bcc    @l0
@@ -83,6 +91,10 @@ print_digit:
 ;; Parameters:
 ;;   A - Digit value between 0 and 15.
 ;;
+  .ifdef HUC
+_print_hex:
+    txa
+  .endif
 print_hex:
     cmp    #$10
     bcc    @l0
@@ -115,6 +127,13 @@ print_hex:
 ;;   _ax - BCD encoded number (max 4 bytes).
 ;;   X - BCD array top element index
 ;;
+  .ifdef HUC
+_print_bcd.2:
+    ldx    #3
+    bra    print_bcd
+_print_bcd:
+    ldx    #1
+  .endif
 print_bcd:
 print_bcd_hi:
     lda    <_ax, X
@@ -139,6 +158,10 @@ print_bcd_lo:
 ;; Parameters:
 ;;   A - Unsigned byte.
 ;;
+  .ifdef HUC
+_print_dec_u8:
+    txa
+  .endif
 print_dec_u8:
     jsr    binbcd8
     ldx    #$01
@@ -152,6 +175,10 @@ print_dec_u8:
 ;;   A - Word MSB.
 ;;   X - Word LSB.
 ;;
+  .ifdef HUC
+_print_dec_u16:
+    sax
+  .endif
 print_dec_u16:
     jsr    binbcd16
     ldx    #$02
@@ -164,6 +191,10 @@ print_dec_u16:
 ;; Parameters:
 ;;   A - Unsigned byte.
 ;;
+  .ifdef HUC
+_print_hex_u8:
+    txa
+  .endif
 print_hex_u8:
     pha
     lsr    A
@@ -183,6 +214,10 @@ print_hex_u8:
 ;;   A - Word MSB.
 ;;   X - Word LSB.
 ;;
+  .ifdef HUC
+_print_hex_u16:
+    sax
+  .endif
 print_hex_u16:
     jsr    print_hex_u8     ; print MSB
     sax                     ; print LSB
@@ -204,6 +239,11 @@ print_hex_u16:
 ;; Returns:
 ;;   _si - pointer to the last displayed character or '\0'.
 ;;
+  .ifdef HUC
+_print_string.5:
+    ldx    <_cl
+    lda    <_ch
+  .endif
 print_string:
     jsr    vdc_calc_addr 
 
@@ -253,6 +293,9 @@ print_string:
 ;; Parameters:
 ;;   _si - string address.
 ;;
+  .ifdef HUC
+_print_string_raw:
+  .endif
 print_string_raw:
     cly
 @loop:
@@ -276,6 +319,9 @@ print_string_raw:
 ;;   _si - string address.
 ;;     X - number of characters to print.
 ;;
+  .ifdef HUC
+_print_string_n.2:
+  .endif
 print_string_n:
     cly
 @loop:
@@ -298,6 +344,11 @@ print_string_n:
 ;;   _ah - BAT area height.
 ;;   _bl - ASCII code.
 ;;
+  .ifdef HUC
+_print_fill.5:
+    lda    <_ch
+    ldx    <_cl
+  .endif
 print_fill:
     jsr    vdc_calc_addr
 

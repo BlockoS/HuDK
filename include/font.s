@@ -31,6 +31,9 @@ font_base .ds 2
 ;;   _si - font address
 ;;   _cx - number of characters to load
 ;;
+  .ifdef HUC
+_font_load.3:
+  .endif
 font_load:
     ; font_base = _di >> 4
     lda    <_di+1
@@ -98,6 +101,9 @@ font_load:
 ;;   X - VRAM address LSB.
 ;;   A - VRAM address MSB.
 ;;
+  .ifdef HUC
+_font_set_addr.1:
+  .endif
 font_set_addr:
     ; compute VRAM base address.
     stx    <font_base
@@ -123,6 +129,10 @@ font_set_addr:
 ;; Parameters:
 ;;   A - Palette index.
 ;;
+  .ifdef HUC
+_font_set_pal.1:
+    sax
+  .endif
 font_set_pal:
     sax
     lda    <font_base+1
