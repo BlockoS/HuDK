@@ -35,7 +35,7 @@ void main() {
     // The string will be placed at BAT coordinate [10,8] using the custom font
     print_string(8,10,32,20,"Hello world!");
 
-    // clear irq config flag
+    // enable IRQ 1.
     irq_enable(INT_IRQ1);
 
     for(;;) {
