@@ -9,4 +9,3 @@ include_directories(${HUDK_INCLUDE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(joypad joypad.s)
 set_target_properties(joypad PROPERTIES OUTPUT_NAME joypad.pce)
-target_link_options(joypad PRIVATE -C ${CMAKE_CURRENT_SOURCE_DIR}/joypad.cfg)

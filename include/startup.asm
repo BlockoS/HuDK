@@ -23,6 +23,7 @@
     .org $e000
 
     .include "macro.inc"
+    .include "mpr.inc"
     .include "byte.inc"
     .include "word.inc"
     .include "system.inc"
@@ -32,7 +33,11 @@
     .include "psg.inc"
     .include "irq.inc"
     .include "clock.inc"
-    
+
+  .ifdef HUC
+    .include "huc.inc"
+  .endif
+
     .include "irq_reset.s"
     .include "irq_nmi.s"
     .include "irq_timer.s"
@@ -53,3 +58,7 @@
     .include "bcd.s"
     .include "random.s"
     .include "scroll.s"
+
+  .ifdef HUC
+    .include "huc.s"
+  .endif

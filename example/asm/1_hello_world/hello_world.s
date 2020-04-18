@@ -4,7 +4,7 @@
 ;; Licensed under the MIT License
 ;; (c) 2016-2020 MooZ
 ;;
-    .include "start.s"
+    .include "startup.asm"
 
     .code
 _main:
@@ -19,7 +19,6 @@ _main:
 
     ; clear irq config flag
     stz    <irq_m
-    ; set vsync vec
     irq_on INT_IRQ1
 
 loop:

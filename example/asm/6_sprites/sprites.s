@@ -4,8 +4,8 @@
 ;; Licensed under the MIT License
 ;; (c) 2016-2020 MooZ
 ;;
-    .include "start.s"
-    .include "vdc_sprite.inc"
+    .include "startup.asm"
+    .include "vdc_sprite.inc" ; [todo] remove
 
 SPRITES_DATA_VRAM_ADDR = $1800
 

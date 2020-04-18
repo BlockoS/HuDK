@@ -13,7 +13,7 @@ FONT_DIGIT_INDEX=$30
 FONT_UPPER_CASE_INDEX=$41
 FONT_LOWER_CASE_INDEX=$61
 
-    .include "start.s"
+    .include "startup.asm"
 
     .code
 _main:

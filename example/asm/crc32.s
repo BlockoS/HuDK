@@ -5,7 +5,7 @@
 ;; (c) 2016-2020 MooZ
 ;;
 
-    .include "start.s"
+    .include "startup.asm"
     .include "crc.s"
 
     .code
