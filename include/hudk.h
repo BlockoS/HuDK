@@ -169,6 +169,7 @@ void __fastcall map_set_bat_bounds(char width<_al>, char height<_ah>);
 void __fastcall map_set(char far* map<_map_bank:_map_address>, int vram_addr<_di>, char far* pal<_map_pal_bank:_map_pal_address>, int width<_map_width>, int height<_map_height>);
 void __fastcall map_set_wrap(char wrap<_map_wrap>);
 void __fastcall map_load(char bat_x<_al>, char bat_y<_ah>, char map_x<_cl>, char map_y<_ch>, char w<_dl>, char h<_dh>);
+void __fastcall map_load_16(char bat_x<_al>, char bat_y<_ah>, char map_x<_cl>, char map_y<_ch>, char w<_dl>, char h<_dh>);
 
 #define SCROLL_MAX_COUNT 4
 

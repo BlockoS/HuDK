@@ -421,6 +421,9 @@ _map_load_next_tile_y:
 ;;   _dl - Number of column to copy.
 ;;   _dh - Number of row to copy.
 ;;
+  .ifdef HUC
+_map_load_16.6:
+  .endif
 map_load_16:
     ; save mprs 2, 3 and 4
     tma2
