@@ -24,22 +24,22 @@
 ;;
 
     .zp
-map_infos:
-map_width        .ds 2
-map_height       .ds 2
-map_wrap         .ds 1
+_map_infos:
+_map_width        .ds 2
+_map_height       .ds 2
+_map_wrap         .ds 1
 
-map_bank         .ds 1
-map_address      .ds 2
+_map_bank         .ds 1
+_map_address      .ds 2
 
-map_pal_bank     .ds 1
-map_pal_address  .ds 2
+_map_pal_bank     .ds 1
+_map_pal_address  .ds 2
 
-map_tile_base    .ds 2
+_map_tile_base    .ds 2
 
-map_bat_top      .ds 1
-map_bat_bottom   .ds 1
-map_bat_top_base .ds 2
+_map_bat_top      .ds 1
+_map_bat_bottom   .ds 1
+_map_bat_top_base .ds 2
 
     .code
 ;;
@@ -59,17 +59,38 @@ map_bat_top_base .ds 2
 ;;
   .macro map_set
     lda    #bank(\1)
-    sta    <map_bank
-    stw    #\1, <map_address
-    stw    #((\2)>>4), <map_tile_base
+    sta    <_map_bank
+    stw    #\1, <_map_address
+    stw    #((\2)>>4), <_map_tile_base
     lda    #bank(\3)
-    sta    <map_pal_bank
-    stw    #\3, <map_pal_address
-    stw    \4, <map_width
-    stw    \5, <map_height
+    sta    <_map_pal_bank
+    stw    #\3, <_map_pal_address
+    stw    \4, <_map_width
+    stw    \5, <_map_height
     lda    \6
-    sta    <map_wrap
+    sta    <_map_wrap
   .endmacro
+
+  .ifdef HUC
+_map_set.5:
+    lda    <_di
+    lsr    <_di+1
+    ror    A
+    lsr    <_di+1
+    ror    A
+    lsr    <_di+1
+    ror    A
+    lsr    <_di+1
+    ror    A
+    sta    <_map_tile_base
+    lda    <_di+1
+    sta    <_map_tile_base+1
+    rts
+
+_map_set_wrap.1:
+    stx    <_map_wrap
+    rts
+  .endif
 
 ;;
 ;; Macro: map_copy
@@ -145,11 +166,16 @@ map_bat_top_base .ds 2
 ;;   X - Vertical upper bound (top).
 ;;   A - Vertical lower bound (bottom).
 ;;
+  .ifdef HUC
+_map_set_bat_bounds.2:
+    ldx    <_al
+    lda    <_ah
+  .endif
 map_set_bat_bounds:
-    stx    <map_bat_top
-    sta    <map_bat_bottom
+    stx    <_map_bat_top
+    sta    <_map_bat_bottom
     jsr    vdc_calc_addr
-    stw    <_di, <map_bat_top_base
+    stw    <_di, <_map_bat_top_base
     rts
 
 ;;
@@ -164,6 +190,9 @@ map_set_bat_bounds:
 ;;   _dl - Number of column to copy.
 ;;   _dh - Number of row to copy.
 ;;
+  .ifdef HUC
+_map_load.6:
+  .endif
 map_load:
     ; save mprs 2, 3 and 4
     tma2
@@ -211,13 +240,13 @@ map_load:
         ; increment bat x position
         lda    <_ah
         inc    A
-        and    vdc_bat_hmask
+        and    _vdc_bat_hmask
         sta    <_ah
         ; reset it to the beginning of the BAT line
         ; if it goes past the BAT width
         bne    @next_tile_x
             vdc_reg  #VDC_MAWR
-            lda    vdc_bat_hmask
+            lda    _vdc_bat_hmask
             eor    #$ff
             sta    <_di
             sta    video_data_l
@@ -228,12 +257,12 @@ map_load:
 @next_tile_x: 
         ; increment tilemap x position
         iny
-        cpy    <map_width
+        cpy    <_map_width
         bne    @copy
             ; restart at the beginning of the tilemap line if wrap mode is
             ; activated, otherwise fill the area with the tile at index #0.
-            bbs0   <map_wrap, @tile_repeat
-            ldy    <map_width
+            bbs0   <_map_wrap, @tile_repeat
+            ldy    <_map_width
             dey
             cla
             bra    @l0
@@ -245,11 +274,11 @@ map_load:
 @l0:
         tax
         clc
-        adc    <map_tile_base
+        adc    <_map_tile_base
         sta    video_data_l
         sxy
         lda    [_bp], Y
-        adc    <map_tile_base+1
+        adc    <_map_tile_base+1
         sta    video_data_h
 
         ; restore tilemap index
@@ -278,20 +307,20 @@ _map_load_next_line_16:
     lda    <_bl
     clc
     adc    #$02
-    cmp    <map_bat_bottom
+    cmp    <_map_bat_bottom
     bcc    @bat_inc_y
         ; reset BAT Y position 
-        lda    <map_bat_top
+        lda    <_map_bat_top
         sta    <_bl
         ; reset map pointer
         lda    <_di
-        and    vdc_bat_hmask
+        and    _vdc_bat_hmask
         clc
-        adc    <map_bat_top_base
+        adc    <_map_bat_top_base
         sta    <_di
         sta    <_r0
         cla
-        adc    <map_bat_top_base+1 
+        adc    <_map_bat_top_base+1 
         sta    <_di+1
         sta    <_r0+1
         bra    _map_load_next_tile_y
@@ -299,7 +328,7 @@ _map_load_next_line_16:
 @bat_inc_y:
     ; move BAT pointer to the next line
     sta    <_bl
-    lda    vdc_bat_width
+    lda    _vdc_bat_width
     asl    A
     bcc    @l0
         inc    <_di+1
@@ -320,19 +349,19 @@ _map_load_next_line:
 @next_bat_y:
     inc    <_bl
     lda    <_bl
-    cmp    <map_bat_bottom
+    cmp    <_map_bat_bottom
     bcc    @bat_inc_y
         ; reset BAT Y position 
-        lda    <map_bat_top
+        lda    <_map_bat_top
         sta    <_bl
         ; reset map pointer
         lda    <_di
-        and    vdc_bat_hmask
+        and    _vdc_bat_hmask
         clc
-        adc    <map_bat_top_base
+        adc    <_map_bat_top_base
         sta    <_di
         cla
-        adc    <map_bat_top_base+1 
+        adc    <_map_bat_top_base+1 
         sta    <_di+1
         bra    _map_load_next_tile_y
 
@@ -340,7 +369,7 @@ _map_load_next_line:
     ; move BAT pointer to the next line
     lda    <_di
     clc
-    adc    vdc_bat_width
+    adc    _vdc_bat_width
     sta    <_di
     bcc    _map_load_next_tile_y
         inc    <_di+1
@@ -348,10 +377,10 @@ _map_load_next_tile_y:
     inc    <_al
     beq    @check_tile_y_wrap
     lda    <_al
-    cmp    <map_height
+    cmp    <_map_height
     beq    @check_tile_y_wrap
         ; go to next tilemap line
-        addw   <map_width, <_si
+        addw   <_map_width, <_si
         ; check if we need to remap the tilemap
         cmp    #$80
         bcc    @end
@@ -365,17 +394,17 @@ _map_load_next_tile_y:
             rts
 @check_tile_y_wrap:
     ; wrap tilemap bank
-    lda    <map_bank
+    lda    <_map_bank
     tam3
     inc    A
     tam4
     ; reset tilemap pointer
-    lda    <map_address
+    lda    <_map_address
     sta    <_si
-    lda    <map_address+1
+    lda    <_map_address+1
     and    #$1f
     ora    #$60
-    sta    <map_address+1
+    sta    <_map_address+1
     ; reset MAP Y position
     stz    <_al 
     rts
@@ -440,12 +469,12 @@ map_load_16:
         lda    <_ah
         clc
         adc    #$02
-        and    vdc_bat_hmask
+        and    _vdc_bat_hmask
         sta    <_ah
         ; reset it to the beginning of the BAT line
         ; if it goes past the BAT width
         bne    @inc_bat_x
-            lda    vdc_bat_hmask
+            lda    _vdc_bat_hmask
             eor    #$ff
             and    <_r0
             sta    <_r0
@@ -460,16 +489,16 @@ map_load_16:
 @next_tile_x:
         ; increment tilemap x position
         iny
-        cpy    <map_width
+        cpy    <_map_width
         bne    @copy
             ; restart at the beginning of the tilemap line if wrap mode is
             ; activated, otherwise fill the area with the tile at index #0.
-            bbs0   <map_wrap, @tile_repeat
-            ldy    <map_width
+            bbs0   <_map_wrap, @tile_repeat
+            ldy    <_map_width
             dey
-            lda    <map_tile_base
+            lda    <_map_tile_base
             sta    <_r1
-            lda    <map_tile_base+1
+            lda    <_map_tile_base+1
             ora    [_bp]
             sta    <_r1+1
             bra    @l0
@@ -485,10 +514,10 @@ map_load_16:
         rol    <_r1+1
         asl    A
         rol    <_r1+1
-        adc    <map_tile_base
+        adc    <_map_tile_base
         sta    <_r1
         lda    <_r1+1
-        adc    <map_tile_base+1
+        adc    <_map_tile_base+1
         ora    [_bp], Y
         sta    <_r1+1
         ; restore tilemap index
@@ -506,7 +535,7 @@ map_load_16:
         vdc_reg  #VDC_MAWR
         lda    <_r0
         clc
-        adc    vdc_bat_width
+        adc    _vdc_bat_width
         sta    video_data_l
         bcc    @l1
             inc    <_r0+1
@@ -556,12 +585,12 @@ _map_init:
     sta    <_bh
 
     ; compute pointer to the tilemap line
-    lda    <map_address
+    lda    <_map_address
     sta    <_si
-    lda    <map_address+1
+    lda    <_map_address+1
     and    #$1f
     sta    <_si+1
-    lda    <map_width+1
+    lda    <_map_width+1
     beq    @map_width_std
 @map_width_256:
         ; special case for map width of 256
@@ -577,7 +606,7 @@ _map_init:
         ; map_ptr = map + (my * map_width)
         lda    <_ch
         sta    <_al
-        lda    <map_width
+        lda    <_map_width
         sta    <_bl
         jsr    mulu8 
         addw   <_cx, <_si
@@ -590,13 +619,13 @@ _map_init:
     rol    A
     and    #$0f
     clc
-    adc    <map_bank
+    adc    <_map_bank
     tam3
     inc    A
     tam4
 
     ; compute tile palette bank
-    lda    <map_pal_bank
+    lda    <_map_pal_bank
     tam2
 
     ; adjust tilemap pointer
@@ -605,19 +634,19 @@ _map_init:
     ora    #$60
     sta    <_si+1
     ; adjust tile palette pointer
-    lda    <map_pal_address
+    lda    <_map_pal_address
     sta    <_bp
-    lda    <map_pal_address+1 
+    lda    <_map_pal_address+1 
     and    #$1f
     ora    #$40
     sta    <_bp+1
 
     ; retrieve bat position
     pla
-    and    vdc_bat_vmask
+    and    _vdc_bat_vmask
     sta    <_bl
     pla
-    and    vdc_bat_vmask
+    and    _vdc_bat_vmask
     sta    <_ch
 
     rts

@@ -22,3 +22,5 @@ set_target_properties(crc32 PROPERTIES OUTPUT_NAME crc32.pce)
 
 add_executable(text asm/text.s)
 set_target_properties(text PROPERTIES OUTPUT_NAME text.pce)
+
+# add_subdirectory(C/1_hello_world)

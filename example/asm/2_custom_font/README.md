@@ -58,8 +58,8 @@ Next, we will have to copy the palette to the VCE using the `vce_load_palette` r
 We then have to tell the print routines where the font is located in VRAM and which palette to use.
 ```asm
     ; set font VRAM address
-    ldx    #.lobyte(VDC_DEFAULT_TILE_ADDR)
-    lda    #.hibyte(VDC_DEFAULT_TILE_ADDR)
+    ldx    #low(VDC_DEFAULT_TILE_ADDR)
+    lda    #high(VDC_DEFAULT_TILE_ADDR)
     jsr    font_set_addr
 
     ; set font palette

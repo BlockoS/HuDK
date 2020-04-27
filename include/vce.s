@@ -54,7 +54,7 @@ vce_init:
 ;;   _si - address of the sub-palette data
 ;;
   .ifdef HUC
-_vce_load_palette.3;
+_vce_load_palette.3:
     jsr    map_data
     lda    <_al
     ldy    <_ah

@@ -250,7 +250,7 @@ print_string:
     ldx    <_ah
 @print_loop:
     jsr    vdc_set_write
-    addw   vdc_bat_width, <_di    
+    addw   _vdc_bat_width, <_di    
 
     cly
 @print_line:

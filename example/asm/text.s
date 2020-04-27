@@ -30,8 +30,8 @@ _main:
     jsr    font_set_pal
 
     ; clear display with space character
-    stb    vdc_bat_width, <_al
-    stb    vdc_bat_height, <_ah
+    stb    _vdc_bat_width, <_al
+    stb    _vdc_bat_height, <_ah
     stb    #' ', <_bl
     ldx    #$00
     lda    #$00

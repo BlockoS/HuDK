@@ -6,11 +6,11 @@
 ;;
 
     .bss
-vdc_bat_width  .ds 2
-vdc_bat_height .ds 1
-vdc_bat_hmask  .ds 1
-vdc_bat_vmask  .ds 1
-vdc_scr_height .ds 1
+_vdc_bat_width  .ds 2
+_vdc_bat_height .ds 1
+_vdc_bat_hmask  .ds 1
+_vdc_bat_vmask  .ds 1
+_vdc_scr_height .ds 1
 
 ;;
 ;; Title: VDC Functions.
@@ -73,15 +73,15 @@ vdc_set_bat_size:
     tax
     ; -- width
     lda    bat_width_array, X
-    sta    vdc_bat_width
-    stz    vdc_bat_width+1
+    sta    _vdc_bat_width
+    stz    _vdc_bat_width+1
     dec    A
-    sta    vdc_bat_hmask
+    sta    _vdc_bat_hmask
     ; -- height
     lda    bat_height_array, X
-    sta    vdc_bat_height
+    sta    _vdc_bat_height
     dec    A
-    sta    vdc_bat_vmask
+    sta    _vdc_bat_vmask
     rts
 
 ; BAT width
@@ -111,9 +111,9 @@ vdc_calc_addr:
     ; the multiplication can be safely replaced by bit shifts as bat_width
     ; is either 32, 64 or 128.
     phx
-    and   vdc_bat_vmask
+    and   _vdc_bat_vmask
     stz   <_di
-    ldx   vdc_bat_width
+    ldx   _vdc_bat_width
     cpx   #64
     beq   @w_64
     cpx   #128
@@ -130,7 +130,7 @@ vdc_calc_addr:
     sta   <_di+1
     ; bat_x can be added with a simple bit OR.
     pla
-    and   vdc_bat_hmask
+    and   _vdc_bat_hmask
     ora   <_di
     sta   <_di
     rts
@@ -185,9 +185,10 @@ vdc_load_data:
     jsr    map_data
     jsr    vdc_set_write
     
+    cly
+
     ldx    <_cl
     beq    @l2
-    cly
 @l0:
         lda    [_si], Y
         sta    video_data_l
@@ -252,7 +253,7 @@ vdc_fill_bat_ex:
     ldy    <_ah
 @l0:
     jsr    vdc_set_write
-    addw   vdc_bat_width, <_di
+    addw   _vdc_bat_width, <_di
 
     lda    <_si
     sta    video_data_l
@@ -328,7 +329,7 @@ vdc_init:
     bne    @l0
 
     lda    #224
-    sta    vdc_scr_height
+    sta    _vdc_scr_height
 
     jsr    reset_hooks
    
@@ -343,12 +344,12 @@ vdc_init:
     st2    #$00
 
     st0    #VDC_DATA
-    ldy    #.hibyte(VDC_DEFAULT_TILE_ADDR)
+    ldy    #high(VDC_DEFAULT_TILE_ADDR)
 @l1:
     clx
 @l2:
-        st1    #.lobyte(VDC_DEFAULT_TILE_ADDR>>4)
-        st2    #.hibyte(VDC_DEFAULT_TILE_ADDR>>4)
+        st1    #low(VDC_DEFAULT_TILE_ADDR>>4)
+        st2    #high(VDC_DEFAULT_TILE_ADDR>>4)
         inx
         bne    @l2
     dey
@@ -356,8 +357,8 @@ vdc_init:
 
     ; clear tile
     st0    #VDC_MAWR
-    st1    #.lobyte(VDC_DEFAULT_TILE_ADDR)
-    st2    #.hibyte(VDC_DEFAULT_TILE_ADDR)
+    st1    #low(VDC_DEFAULT_TILE_ADDR)
+    st2    #high(VDC_DEFAULT_TILE_ADDR)
 
     st0    #VDC_DATA
     st1    #$00
@@ -427,7 +428,7 @@ vdc_yres_224:
     st2    #$00
 
     lda    #224
-    sta    vdc_scr_height
+    sta    _vdc_scr_height
     rts
 
 ;;
@@ -453,7 +454,7 @@ vdc_yres_240:
     st2    #$00
 
     lda    #240
-    sta    vdc_scr_height
+    sta    _vdc_scr_height
     rts
 
 ;;

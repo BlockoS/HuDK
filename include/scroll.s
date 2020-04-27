@@ -15,7 +15,6 @@ scroll_y_lo:   ds SCROLL_MAX_COUNT
 scroll_y_hi:   ds SCROLL_MAX_COUNT
 scroll_flag:   ds SCROLL_MAX_COUNT
 
-
 display_list_last:   ds 1
 display_list_top:    ds SCROLL_MAX_COUNT+1
 display_list_bottom: ds SCROLL_MAX_COUNT+1
@@ -32,6 +31,86 @@ bg_y1: ds 2
 
     .code
 
+;;
+;; Macro: scroll_set
+;;
+;; Initialize a scroll area.
+;;
+;; Assembly call:
+;;   > scroll_set id, top, bottom, x, y, flag
+;;
+;; Parameters:
+;;   id - scroll area id (between 0 and 3).
+;;   top - coordinate of the first raster line.
+;;   bottom - coordinate of the last raster line.
+;;   x - X scroll coordinate.
+;;   y - Y scroll coordinate.
+;;   flag - VDC flags.
+;;
+  .macro scroll_set
+    lda    \2
+    sta    scroll_top+\1
+    lda    \3
+    sta    scroll_bottom+\1
+    lda    LOW_BYTE \4
+    sta    scroll_x_lo+\1
+    lda    HIGH_BYTE \4
+    sta    scroll_x_hi+\1
+    lda    LOW_BYTE \5
+    sta    scroll_y_lo+\1
+    lda    HIGH_BYTE \5
+    sta    scroll_y_hi+\1
+    lda    \6
+    sta    scroll_flag+\1
+  .endmacro
+
+  .ifdef HUC
+_scroll_set.6:
+    ldy    <_dl
+    txa
+    sta    scroll_flag, Y
+    lda    <_al
+    sta    scroll_top, Y
+    lda    <_ah
+    sta    scroll_bottom, Y
+    lda    <_bl
+    sta    scroll_x_lo, Y
+    lda    <_bh
+    sta    scroll_x_hi, Y
+    lda    <_cl
+    sta    scroll_y_lo, Y
+    lda    <_ch
+    sta    scroll_y_hi, Y
+    rts
+
+_scroll_set_rcr.3
+    ldy    <_dl
+    lda    <_al
+    sta    scroll_top, Y
+    lda    <_ah
+    sta    scroll_bottom, Y
+    rts
+
+_scroll_set_coord.3:
+    ldy    <_dl
+    lda    <_al
+    sta    scroll_x_lo, Y
+    lda    <_ah
+    sta    scroll_x_hi, Y
+    lda    <_cl
+    sta    scroll_y_lo, Y
+    lda    <_ch
+    sta    scroll_y_hi, Y
+    rts
+
+_scroll_set_flag.2:
+    ldy    <_dl
+    lda    <_al
+    sta    scroll_flag, Y
+    rts
+
+  .endif
+  
 ;;
 ;; function:
 ;; Computes the hsync scroll display list.
@@ -53,7 +132,7 @@ scroll_build_display_list:
     beq    @skip
 
     lda    scroll_top, Y                    ; check if the scroll area is visible
-    cmp    vdc_scr_height
+    cmp    _vdc_scr_height
     bcs    @skip
 
     dec    A
@@ -84,7 +163,7 @@ scroll_build_display_list:
     cpy    #SCROLL_MAX_COUNT
     bcc    @loop
 
-    lda    vdc_scr_height                   ; setup display list
+    lda    _vdc_scr_height                  ; setup display list
     sta    display_list_top, X
     sta    display_list_bottom, X
     inx
@@ -175,7 +254,7 @@ __rcr_set:                                  ; set scanline counter
     lda    display_list_index, Y
     tay
     lda    display_list_top, Y              ; 
-    cmp    vdc_scr_height
+    cmp    _vdc_scr_height
     bcs    __rcr6
     cmp    display_list_bottom,X            ; 
     bcc    __rcr5
@@ -206,7 +285,7 @@ __rcr5:
     rts
 __rcr6:
     lda    display_list_bottom, X
-    cmp    vdc_scr_height
+    cmp    _vdc_scr_height
     bcc    __rcr4
     st0    #VDC_CR                              ; the bottom of the scroll area is not out of the screen height
     lda    <vdc_crl

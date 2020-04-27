@@ -22,7 +22,7 @@ _main:
 
     ; set map bounds
     ldx    #00
-    lda    vdc_bat_height 
+    lda    _vdc_bat_height 
     jsr    map_set_bat_bounds
 
     ; load tileset palette

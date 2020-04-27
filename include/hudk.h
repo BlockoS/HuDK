@@ -58,12 +58,18 @@
 #define VDC_DEFAULT_SAT_ADDR $7F00
 #endif
 
+extern int vdc_bat_width;
+extern char vdc_bat_height;
+extern char vdc_bat_hmask;
+extern char vdc_bat_vmask;
+extern char vdc_scr_height;
+
 void __fastcall vdc_set_read(int vaddr<_di>);
 void __fastcall vdc_set_write(int vaddr<_di>);
 void __fastcall vdc_set_bat_size(char sz<acc>);
 int __fastcall vdc_calc_addr(char x<_al>, char y<_ah>);
 void __fastcall vdc_load_tiles(int vaddr<_di>, char tile_bank<_bl>, char *tile_addr<_si>, int tile_count<_cx>);
-void __fastcall vdc_load_data(int vaddr<_di>, int far *data<_bl:_si>, int word_count<_cx>);
+void __fastcall vdc_load_data(int vaddr<_di>, char far *data<_bl:_si>, int word_count<_cx>);
 void __fastcall vdc_load_data(int vaddr<_di>, char data_bank<_bl>, int *data_addr<_si>, int word_count<_cx>);
 void __fastcall vdc_fill_bat(char bat_x<_cl>, char bat_y<_ch>, char bat_w<_al>, char bat_h<_ah>, char palette_index<_bl>, int tile_offset<_si>);
 void __fastcall vdc_clear(int vaddr<_di>, int word_count<_cx>);
@@ -142,3 +148,32 @@ void __fastcall print_string(char x<_cl>, char y<_ch>, char width<_al>, char hei
 void __fastcall print_string_raw(char *txt<_si>);
 void __fastcall print_string_n(char *txt<_si>, int count<acc>);
 void __fastcall print_fill(char x<_cl>, char y<_ch>, char width<_al>, char height<_ah>, char c<_bl>);
+
+extern int map_width;
+extern int map_height;
+extern char map_wrap;
+
+extern char map_bank;
+extern char *map_address;
+
+extern char map_pal_bank;
+extern char *map_pal_address;
+
+extern int map_tile_base;
+
+extern char map_bat_top;
+extern char map_bat_bottom;
+extern int map_bat_top_base;
+
+void __fastcall map_set_bat_bounds(char width<_al>, char height<_ah>);
+void __fastcall map_set(char far* map<_map_bank:_map_address>, int vram_addr<_di>, char far* pal<_map_pal_bank:_map_pal_address>, int width<_map_width>, int height<_map_height>);
+void __fastcall map_set_wrap(char wrap<_map_wrap>);
+void __fastcall map_load(char bat_x<_al>, char bat_y<_ah>, char map_x<_cl>, char map_y<_ch>, char w<_dl>, char h<_dh>);
+
+#define SCROLL_MAX_COUNT 4
+
+void __fastcall scroll_set(char id<_dl>, char top<_al>, char bottom<_ah>, int x<_bx>, int y<_cx>, char flag<acc>);
+void __fastcall scroll_set_rcr(char id<_dl>, char top<_al>, char bottom<_ah>);
+void __fastcall scroll_set_coord(char id<_dl>, int x<_ax>, int y<_cx>);
+void __fastcall scroll_set_flag(char id<_dl>, char flag<_al>);
+

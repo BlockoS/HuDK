@@ -4,7 +4,7 @@
  * Licensed under the MIT License
  * (c) 2016-2020 MooZ
  */
-#define HUDK_USE_CUSTOM_FONT 1
+HUDK_USE_CUSTOM_FONT 1
 
 #define FONT_8x8_COUNT 0x1ff
 #define FONT_ASCII_FIRST 0x00

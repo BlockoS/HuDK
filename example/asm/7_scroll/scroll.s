@@ -22,7 +22,7 @@ _main:
 
     ; set map bounds
     ldx    #00
-    lda    vdc_bat_height 
+    lda    _vdc_bat_height 
     jsr    map_set_bat_bounds
 
     ; load tileset palette
@@ -86,9 +86,9 @@ _main:
     sta    scroll_bottom+2
     stz    scroll_x_lo+2
     stz    scroll_x_hi+2
-    lda    #.lobyte(256)
+    lda    #low(256)
     sta    scroll_y_lo+2
-    lda    #.hibyte(256)
+    lda    #high(256)
     sta    scroll_y_hi+2
     lda    #(VDC_CR_BG_ENABLE | $01)
     sta    scroll_flag+2
