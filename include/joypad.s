@@ -27,16 +27,19 @@
 ;; Consumed:
 ;;   A, X
 ;;
+  .ifdef HUC
+_joypad_read:
+  .endif
 joypad_read:
     joypad_reset_multitap
 
     clx
 @loop:
-    joypad_poll joypad, joyold
+    joypad_poll _joypad, _joyold
     
-    eor    joyold, X
-    and    joypad, X
-    sta    joytrg, X
+    eor    _joyold, X
+    and    _joypad, X
+    sta    _joytrg, X
 
     inx
     cpx    #$05
@@ -58,12 +61,15 @@ joypad_read:
 ;;   joypad   - directions and buttons for all 5 controllers.
 ;;   joypad_6 - states of buttons III, IV, V and VI or 0 for 2-button joypads.
 ;;
+  .ifdef HUC
+_joypad_6_read:
+  .endif
 joypad_6_read:
     
     joypad_reset_multitap               ; first scan
     clx
 @first_scan:
-        joypad_poll joypad, joyold
+        joypad_poll _joypad, _joyold
         inx
         cpx    #$05
         bne    @first_scan
@@ -71,7 +77,7 @@ joypad_6_read:
     joypad_reset_multitap               ; second scan
     clx
 @second_scan:
-        joypad_poll joypad_6, joyold_6
+        joypad_poll _joypad_6, _joyold_6
         inx
         cpx    #$05
         bne    @second_scan
@@ -83,38 +89,37 @@ joypad_6_read:
     ; the extra buttons or 0 for a 2-buttons joypad.
     clx
 @l0:
-        ldy    joypad_6, X
+        ldy    _joypad_6, X
         tya
         and    #$50
         cmp    #$50
         beq    @next
         
-        ldy    joypad, X
+        ldy    _joypad, X
         tya
         and    #$50
         cmp    #$50
         bne    @reset
-            lda    joypad_6, X
-            sta    joypad, X
+            lda    _joypad_6, X
+            sta    _joypad, X
             bra    @next
 @reset:
         cly
 @next:
         tya
         and     #$5f
-        sta    joypad_6, X
+        sta    _joypad_6, X
         ; Compute "triggers".
-        eor    joyold_6, X
-        and    joypad_6, X
-        sta    joytrg_6, X
+        eor    _joyold_6, X
+        and    _joypad_6, X
+        sta    _joytrg_6, X
 
-        lda    joypad, X
-        eor    joyold, X
-        and    joypad, X
-        sta    joytrg, X
+        lda    _joypad, X
+        eor    _joyold, X
+        and    _joypad, X
+        sta    _joytrg, X
 
         inx
         cpx    #$05
         bne    @l0
     rts
-

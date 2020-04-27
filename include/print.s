@@ -39,7 +39,7 @@
 ;;   A - ASCII character
 ;;
   .ifdef HUC
-_print_char:
+_print_char.1:
     txa
   .endif
 print_char:
@@ -62,7 +62,7 @@ print_char:
 ;;   A - Digit value between 0 and 9.
 ;;
   .ifdef HUC
-_print_digit:
+_print_digit.1:
     txa
   .endif
 print_digit:
@@ -92,7 +92,7 @@ print_digit:
 ;;   A - Digit value between 0 and 15.
 ;;
   .ifdef HUC
-_print_hex:
+_print_hex.1:
     txa
   .endif
 print_hex:

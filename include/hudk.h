@@ -81,6 +81,8 @@ void __fastcall vdc_xres_320();
 void __fastcall vdc_xres_512();
 void __fastcall vdc_set_xres(int xres<_ax>, char blur_bit<_cl>);
 void __fastcall vdc_wait_vsync();
+void __fastcall vdc_write(int data<acc>);
+int __fastcall vdc_read(void);
 
 #define VCE_COLOR_MODE_MASK %10000000
 #define VCE_BLUR_MASK %00000100
@@ -178,3 +180,25 @@ void __fastcall scroll_set_rcr(char id<_dl>, char top<_al>, char bottom<_ah>);
 void __fastcall scroll_set_coord(char id<_dl>, int x<_ax>, int y<_cx>);
 void __fastcall scroll_set_flag(char id<_dl>, char flag<_al>);
 
+#define JOYPAD_I 0x01
+#define JOYPAD_II 0x02
+#define JOYPAD_III 0x01
+#define JOYPAD_IV 0x02
+#define JOYPAD_V 0x04
+#define JOYPAD_VI 0x08
+#define JOYPAD_SEL 0x04
+#define JOYPAD_RUN 0x08
+#define JOYPAD_UP 0x10
+#define JOYPAD_RIGHT 0x20
+#define JOYPAD_DOWN 0x40
+#define JOYPAD_LEFT 0x80
+
+extern char joypad[5];
+extern char joytrg[5];
+extern char joyold[5];
+extern char joypad_6[5];
+extern char joytrg_6[5];
+extern char joyold_6[5];
+
+void __fastcall joypad_read();
+void __fastcall joypad_6_read();

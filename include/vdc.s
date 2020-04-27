@@ -104,6 +104,9 @@ bat_height_array: .db $20,$20,$20,$20,$40,$40,$40,$40
 _vdc_calc_addr.2:
     ldx    <_al
     lda    <_ah
+    jsr    vdc_calc_addr
+  __ldw    <_di
+    rts
   .endif
 vdc_calc_addr:
     ; BAT address formula :
@@ -639,3 +642,16 @@ vdc_set_xres:
 @hsw: .byte 2, 3, 5
 @hds: .byte 18,25,42
 @hde: .byte 38,51,82
+
+  .ifdef HUC
+_vdc_write.1:
+    stx    video_data_l
+    sta    video_data_h
+    rts
+
+_vdc_read:
+    ldx    video_data_l
+    lda    video_data_h
+    rts
+
+  .endif

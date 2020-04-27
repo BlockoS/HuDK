@@ -50,8 +50,10 @@ _init:
     vdc_enable_display
 
   .ifdef HUC
-    lda   #CONST_BANK;+_bank_base    ; map string constants bank
-    tam   #2                        ; (ie. $4000-$5FFF)
+    stw    #$3fff, __sp
+
+    lda    #CONST_BANK;+_bank_base    ; map string constants bank
+    tam    #2                        ; (ie. $4000-$5FFF)
     ;lda   #_call_bank               ; map call bank
     ;tam   #4                        ; (ie. $8000-$9FFF)
   .endif

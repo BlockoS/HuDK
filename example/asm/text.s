@@ -75,7 +75,7 @@ loop:
 @wait:
         vdc_wait_vsync
         jsr    joypad_read
-        lda    joytrg
+        lda    _joytrg
         bit    #JOYPAD_I
         beq    @wait
 

@@ -274,7 +274,7 @@ spr_update:
 ; The pad only moves vertically. We just have to check if eigher UP or DOWN were pressed.
 ; X gives the player id. 
 player_update:
-    lda    joypad, X
+    lda    _joypad, X
     bit    #JOYPAD_UP
     beq    @down
         lda    <pad_pos_y, X            ; The pad moves up.
@@ -287,7 +287,7 @@ player_update:
         sta    <pad_pos_y, X
         rts
 @down:
-    lda    joypad, X
+    lda    _joypad, X
     bit    #JOYPAD_DOWN
     beq    @end
         lda    <pad_pos_y, X            ; The pad moves down.

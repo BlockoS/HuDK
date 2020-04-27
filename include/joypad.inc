@@ -171,9 +171,29 @@ IO_JOYPAD_VI  = %00001000
 JOYPAD_I = IO_JOYPAD_I
 ;;
 ;; bits: JOYPAD_II
-;; Bit in the joypad for button II.  
+;; Bit in the joypad for button II.
 ;;
 JOYPAD_II = IO_JOYPAD_II
+;;
+;; bits: JOYPAD_III
+;; Bit in the joypad for button III.
+;;
+JOYPAD_III = IO_JOYPAD_III
+;;
+;; bits: JOYPAD_IV
+;; Bit in the joypad for button IV.
+;;
+JOYPAD_IV = IO_JOYPAD_IV
+;;
+;; bits: JOYPAD_VI
+;; Bit in the joypad for button VI.
+;;
+JOYPAD_V = IO_JOYPAD_V
+;;
+;; bits: JOYPAD_VI
+;; Bit in the joypad for button VI.
+;;
+JOYPAD_VI = IO_JOYPAD_VI
 ;;
 ;; bits: JOYPAD_SEL
 ;; Bit in the joypad for the Select button. 
@@ -204,6 +224,44 @@ JOYPAD_DOWN = (IO_JOYPAD_DOWN << 4)
 ;; Bit in the joypad for the left direction. 
 ;;
 JOYPAD_LEFT = (IO_JOYPAD_LEFT << 4)
+
+    .bss
+;;
+;; ubyte: joypad
+;; This array holds the values for 5 2-buttons joypads.
+;;
+_joypad .ds 5
+
+;;
+;; ubyte: joytrg 
+;; Delta joypad values for 5 2-buttons joypads.
+;;
+_joytrg .ds 5
+
+;;
+;; ubyte: joyold 
+;; Previous 5 joypads values.
+;;
+_joyold .ds 5
+
+;;
+;; ubyte: joypad_6
+;; This array contains the values for buttons III, IV, V and VI of 5 6-buttons
+;; joypads.
+;;
+_joypad_6 .ds 5
+
+;;
+;; ubyte: joytrg 
+;; Delta joypad values of 5 6-buttons joypads.
+;;
+_joytrg_6 .ds 5
+
+;;
+;; ubyte: joyold 
+;; Previous 5 6-buttons joypad values.
+;;
+_joyold_6 .ds 5
 
 ;;
 ;; macro: joypad_delay
@@ -258,42 +316,3 @@ JOYPAD_LEFT = (IO_JOYPAD_LEFT << 4)
     eor    #$ff
     sta    \1, X
   .endmacro
-
-    .bss
-;;
-;; ubyte: joypad
-;; This array holds the values for 5 2-buttons joypads.
-;;
-joypad .ds 5
-
-;;
-;; ubyte: joytrg 
-;; Delta joypad values for 5 2-buttons joypads.
-;;
-joytrg .ds 5
-
-;;
-;; ubyte: joyold 
-;; Previous 5 joypads values.
-;;
-joyold .ds 5
-
-;;
-;; ubyte: joypad_6
-;; This array contains the values for buttons III, IV, V and VI of 5 6-buttons
-;; joypads.
-;;
-joypad_6 .ds 5
-
-;;
-;; ubyte: joytrg 
-;; Delta joypad values of 5 6-buttons joypads.
-;;
-joytrg_6 .ds 5
-
-;;
-;; ubyte: joyold 
-;; Previous 5 6-buttons joypad values.
-;;
-joyold_6 .ds 5
-
