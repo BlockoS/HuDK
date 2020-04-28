@@ -27,6 +27,13 @@ clock_ss .ds 1
 ;;
 clock_tt .ds 1
 
+  .ifdef HUC
+_clock_hh = clock_hh
+_clock_mm = clock_mm
+_clock_ss = clock_ss
+_clock_tt = clock_tt
+  .endif
+
     .code
 ;;
 ;; Macro: clock_reset

@@ -159,7 +159,7 @@ print_bcd_lo:
 ;;   A - Unsigned byte.
 ;;
   .ifdef HUC
-_print_dec_u8:
+_print_dec_u8.1:
     txa
   .endif
 print_dec_u8:
@@ -176,7 +176,7 @@ print_dec_u8:
 ;;   X - Word LSB.
 ;;
   .ifdef HUC
-_print_dec_u16:
+_print_dec_u16.1:
     sax
   .endif
 print_dec_u16:
@@ -192,7 +192,7 @@ print_dec_u16:
 ;;   A - Unsigned byte.
 ;;
   .ifdef HUC
-_print_hex_u8:
+_print_hex_u8.1:
     txa
   .endif
 print_hex_u8:
@@ -215,7 +215,7 @@ print_hex_u8:
 ;;   X - Word LSB.
 ;;
   .ifdef HUC
-_print_hex_u16:
+_print_hex_u16.1:
     sax
   .endif
 print_hex_u16:
@@ -294,7 +294,7 @@ print_string:
 ;;   _si - string address.
 ;;
   .ifdef HUC
-_print_string_raw:
+_print_string_raw.1:
   .endif
 print_string_raw:
     cly

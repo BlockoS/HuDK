@@ -238,3 +238,8 @@ void __fastcall spr_pal(char idx<_al>, char pallete<acc>);
 void __fastcall spr_pri(char idx<_al>, char priority<acc>);
 void __fastcall spr_ctrl(char idx<_ah>, char mask<_al>, char value<acc>);
 void __fastcall spr_update_satb();
+
+extern char clock_hh;
+extern char clock_mm;
+extern char clock_ss;
+extern char clock_tt;
