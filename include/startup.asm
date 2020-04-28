@@ -33,7 +33,8 @@
     .include "psg.inc"
     .include "irq.inc"
     .include "clock.inc"
-
+    .include "vdc_sprite.inc"
+    
   .ifdef HUC
     .include "huc.inc"
   .endif

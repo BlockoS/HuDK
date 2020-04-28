@@ -81,8 +81,34 @@ void __fastcall vdc_xres_320();
 void __fastcall vdc_xres_512();
 void __fastcall vdc_set_xres(int xres<_ax>, char blur_bit<_cl>);
 void __fastcall vdc_wait_vsync();
+void __fastcall vdc_reg(char reg<acc>);
 void __fastcall vdc_write(int data<acc>);
 int __fastcall vdc_read(void);
+
+#define VDC_SPRITE_CG_MODE_MASK 0x0001
+#define VDC_SPRITE_PATTERN_MASK 0x03fe
+#define VDC_SPRITE_VERTICAL_FLIP_MASK 0x80
+#define VDC_SPRITE_HORIZONTAL_FLIP_MASK 0x08
+#define VDC_SPRITE_HEIGHT_MASK 0x30
+#define VDC_SPRITE_WIDTH_MASK 0x01
+#define VDC_SPRITE_PRIORITY_MASK 0x0080
+#define VDC_SPRITE_PALETTE_MASK 0x000f
+
+#define VDC_SPRITE_CG_MODE_B01 0x00
+#define VDC_SPRITE_CG_MODE_B23 0x01
+#define VDC_SPRITE_HEIGHT_16 0x00
+#define VDC_SPRITE_HEIGHT_32 0x10
+#define VDC_SPRITE_HEIGHT_64 0x20
+#define VDC_SPRITE_WIDTH_16 0x00
+#define VDC_SPRITE_WIDTH_32 0x01
+#define VDC_SPRITE_PRIORITY_LOW 0x00
+#define VDC_SPRITE_PRIORITY_HIGH 0x80
+#define VDC_SPRITE_HORIZONTAL_FLIP 0x08
+#define VDC_SPRITE_VERTICAL_FLIP 0x80
+
+void __fastcall vdc_sat_set(int x<_ax>, int y<_cx>, int vram_addr<_si>, char pal<_dl>, int flag<acc>);
+void __fastcall vdc_sat_addr(int addr<_si>);
+int __fastcall vdc_sat_entry(char idx<acc>);
 
 #define VCE_COLOR_MODE_MASK %10000000
 #define VCE_BLUR_MASK %00000100
@@ -202,3 +228,13 @@ extern char joyold_6[5];
 
 void __fastcall joypad_read();
 void __fastcall joypad_6_read();
+
+void __fastcall spr_show(char idx<acc>);
+void __fastcall spr_hide(char idx<acc>);
+void __fastcall spr_x(char idx<_al>, int x<acc>);
+void __fastcall spr_y(char idx<_al>, int y<acc>);
+void __fastcall spr_pattern(char idx<_al>, int vram_addr<acc>);
+void __fastcall spr_pal(char idx<_al>, char pallete<acc>);
+void __fastcall spr_pri(char idx<_al>, char priority<acc>);
+void __fastcall spr_ctrl(char idx<_ah>, char mask<_al>, char value<acc>);
+void __fastcall spr_update_satb();

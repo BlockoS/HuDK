@@ -662,4 +662,9 @@ _vdc_read:
     lda    video_data_h
     rts
 
+_vdc_reg.1:
+    stx    video_reg
+    stx    <vdc_ri
+    rts
+
   .endif

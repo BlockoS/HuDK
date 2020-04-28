@@ -19,6 +19,10 @@ sprite_y: ds 128
 ;; Parameters:
 ;;  Y - sprite index
 ;;
+  .ifdef HUC
+_spr_show.1:
+    sxy
+  .endif
 spr_show:
     ; move sprite to the visible area.
     lda    sprite_x+64, Y
@@ -33,6 +37,10 @@ spr_show:
 ;; Parameters:
 ;;  Y - sprite index
 ;;
+  .ifdef HUC
+_spr_hide.1:
+    sxy
+  .endif
 spr_hide:
     ; move sprite out of the visible area.
     lda    sprite_x+64, Y
@@ -48,6 +56,11 @@ spr_hide:
 ;;  Y - sprite index
 ;;  A - X coordinate
 ;;
+  .ifdef HUC
+_spr_x.2:
+    ldy    <_al
+    sax
+  .endif
 spr_x:
     clc
     adc    #32
@@ -65,6 +78,11 @@ spr_x:
 ;;  Y - sprite index
 ;;  A - Y coordinate
 ;;
+  .ifdef HUC
+_spr_y.2:
+    ldy    <_al
+    sax
+  .endif
 spr_y:
     clc
     adc    #64
@@ -82,6 +100,11 @@ spr_y:
 ;;  Y - sprite index
 ;;  X - MSB of the sprite pattern address in VRAM
 ;;  A - LSB of the sprite pattern address in VRAM
+  .ifdef HUC
+_spr_pattern.2:
+    ldy    <_al
+    sax
+  .endif
 spr_pattern:
     stx    <_ah
     asl    A
@@ -105,6 +128,11 @@ spr_pattern:
 ;;  Y - sprite index
 ;;  A - palette index
 ;;
+  .ifdef HUC
+_spr_pal.2:
+    ldy    <_al
+    txa
+  .endif
 spr_pal:
     and    #$0f
     sta    sprite_attribute, Y
@@ -120,6 +148,11 @@ spr_pal:
 ;;  Y - sprite index
 ;;  A - sprite priority
 ;;
+  .ifdef HUC
+_spr_pri.2:
+    ldy    <_al
+    txa
+  .endif
 spr_pri:
     tax
     lda    sprite_attribute, Y
@@ -139,6 +172,11 @@ spr_pri:
 ;;    Y - sprite index
 ;;  _al - Mask of the bits to change (eg VDC_SPRITE_VERTICAL_FLIP_MASK, VDC_SPRITE_HORIZONTAL_FLIP_MASK, VDC_SPRITE_WIDTH_MASK, VDC_SPRITE_HEIGHT_MASK, VDC_SPRITE_PRIORITY_MASK, VDC_SPRITE_PALETTE_MASK)
 ;;    A - New bits values. 
+  .ifdef HUC
+_spr_ctrl.3:
+    ldy    <_ah
+    txa
+  .endif
 spr_ctrl:
     and    <_al
 	sta    <_ah
@@ -153,6 +191,9 @@ spr_ctrl:
 ;; function: spr_update_satb
 ;; Copy the local sprite attribute table to VRAM.
 ;;
+  .ifdef HUC
+_spr_update_satb:
+  .endif
 spr_update_satb:
     vdc_reg #VDC_MAWR
     vdc_data <sprite_vram_base
@@ -182,3 +223,4 @@ spr_update_satb:
         iny
         cpy    #64
         bne    @loop
+    rts

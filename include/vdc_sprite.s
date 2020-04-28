@@ -25,8 +25,7 @@ sprite_vram_base .ds 2
 ;;   y - Y position
 ;;   addr - Pattern address
 ;;   pal - Palette index
-;;   size - Sprite size
-;;   flag - Sprite flag
+;;   flag - Sprite flag + size
 ;;
   .macro vdc_sat_set
     vdc_data \1
@@ -39,6 +38,20 @@ sprite_vram_base .ds 2
     sta    video_data_h
   .endmacro
 
+  .ifdef HUC
+_vdc_sat_set.5:
+    pha
+    vdc_data <_ax
+    vdc_data <_cx
+    vdc_data <_si
+    sax
+    ora    <_dl
+    sta    video_data_l
+    pla
+    sta    video_data_h
+    rts
+  .endif
+
 ;;
 ;; function: vdc_sat_addr
 ;; Set the VRAM address of the sprite attribute table.
@@ -46,6 +59,9 @@ sprite_vram_base .ds 2
 ;; Parameters:
 ;;   _si - sprite table VRAM address.
 ;;
+  .ifdef HUC
+_vdc_sat_addr.1:
+  .endif
 vdc_sat_addr:
     vdc_reg #VDC_SAT_SRC 
 
@@ -69,6 +85,13 @@ vdc_sat_addr:
 ;; Returns:
 ;;   _si - sprite VRAM address
 ;;
+  .ifdef HUC
+_vdc_sat_entry.1:
+    bsr    vdc_sat_entry
+    ldx    <_si
+    lda    <_si+1
+    rts
+  .endif
 vdc_sat_entry:
     ; current sprite address = sprite_vram_base + (#entry * 8)
     stz    <_si+1

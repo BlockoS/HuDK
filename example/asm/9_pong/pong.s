@@ -5,7 +5,6 @@
 ;; (c) 2016-2020 MooZ
 ;;
     .include "startup.asm"
-    .include "vdc_sprite.inc"       ; [todo] remove
 
 BALL_DIAMETER = 8
 BALL_SPRITE_SIZE = 16
