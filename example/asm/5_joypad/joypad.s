@@ -94,7 +94,7 @@ joy_print_status:
 @loop:
     ; Check if joypad type changed
     ldx    #JOYPAD_2
-    lda    _joypad_6, Y
+    lda    joypad_6, Y
     and    #$50
     cmp    #$50
     bne    @no_6
@@ -109,7 +109,7 @@ joy_print_status:
 @no_change:
 
     stb    #JOYPAD_BOX_X, <_x
-    lda    _joypad, Y
+    lda    joypad, Y
     ldx    #8
     jsr    print_buttons_status
 
@@ -118,7 +118,7 @@ joy_print_status:
     cmp    #JOYPAD_6
     bne    @no_display_6
         stb    #JOYPAD_BOX_X, <_x
-        lda    _joypad_6, Y
+        lda    joypad_6, Y
         ldx    #4
         inc    <_y
         jsr    print_buttons_status

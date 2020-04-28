@@ -66,7 +66,7 @@ _main:
 
     ; Set map bounds.
     ldx    #00
-    lda    _vdc_bat_height 
+    lda    vdc_bat_height 
     jsr    map_set_bat_bounds
 
     ; Load tileset palette.
@@ -274,7 +274,7 @@ spr_update:
 ; The pad only moves vertically. We just have to check if eigher UP or DOWN were pressed.
 ; X gives the player id. 
 player_update:
-    lda    _joypad, X
+    lda    joypad, X
     bit    #JOYPAD_UP
     beq    @down
         lda    <pad_pos_y, X            ; The pad moves up.
@@ -287,7 +287,7 @@ player_update:
         sta    <pad_pos_y, X
         rts
 @down:
-    lda    _joypad, X
+    lda    joypad, X
     bit    #JOYPAD_DOWN
     beq    @end
         lda    <pad_pos_y, X            ; The pad moves down.

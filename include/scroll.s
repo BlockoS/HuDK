@@ -132,7 +132,7 @@ scroll_build_display_list:
     beq    @skip
 
     lda    scroll_top, Y                    ; check if the scroll area is visible
-    cmp    _vdc_scr_height
+    cmp    vdc_scr_height
     bcs    @skip
 
     dec    A
@@ -163,7 +163,7 @@ scroll_build_display_list:
     cpy    #SCROLL_MAX_COUNT
     bcc    @loop
 
-    lda    _vdc_scr_height                  ; setup display list
+    lda    vdc_scr_height                  ; setup display list
     sta    display_list_top, X
     sta    display_list_bottom, X
     inx
@@ -254,7 +254,7 @@ __rcr_set:                                  ; set scanline counter
     lda    display_list_index, Y
     tay
     lda    display_list_top, Y              ; 
-    cmp    _vdc_scr_height
+    cmp    vdc_scr_height
     bcs    __rcr6
     cmp    display_list_bottom,X            ; 
     bcc    __rcr5
@@ -285,7 +285,7 @@ __rcr5:
     rts
 __rcr6:
     lda    display_list_bottom, X
-    cmp    _vdc_scr_height
+    cmp    vdc_scr_height
     bcc    __rcr4
     st0    #VDC_CR                              ; the bottom of the scroll area is not out of the screen height
     lda    <vdc_crl

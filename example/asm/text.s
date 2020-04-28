@@ -30,8 +30,8 @@ _main:
     jsr    font_set_pal
 
     ; clear display with space character
-    stb    _vdc_bat_width, <_al
-    stb    _vdc_bat_height, <_ah
+    stb    vdc_bat_width, <_al
+    stb    vdc_bat_height, <_ah
     stb    #' ', <_bl
     ldx    #$00
     lda    #$00
@@ -75,7 +75,7 @@ loop:
 @wait:
         vdc_wait_vsync
         jsr    joypad_read
-        lda    _joytrg
+        lda    joytrg
         bit    #JOYPAD_I
         beq    @wait
 

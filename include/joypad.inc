@@ -230,38 +230,47 @@ JOYPAD_LEFT = (IO_JOYPAD_LEFT << 4)
 ;; ubyte: joypad
 ;; This array holds the values for 5 2-buttons joypads.
 ;;
-_joypad .ds 5
+joypad .ds 5
 
 ;;
 ;; ubyte: joytrg 
 ;; Delta joypad values for 5 2-buttons joypads.
 ;;
-_joytrg .ds 5
+joytrg .ds 5
 
 ;;
 ;; ubyte: joyold 
 ;; Previous 5 joypads values.
 ;;
-_joyold .ds 5
+joyold .ds 5
 
 ;;
 ;; ubyte: joypad_6
 ;; This array contains the values for buttons III, IV, V and VI of 5 6-buttons
 ;; joypads.
 ;;
-_joypad_6 .ds 5
+joypad_6 .ds 5
 
 ;;
 ;; ubyte: joytrg 
 ;; Delta joypad values of 5 6-buttons joypads.
 ;;
-_joytrg_6 .ds 5
+joytrg_6 .ds 5
 
 ;;
 ;; ubyte: joyold 
 ;; Previous 5 6-buttons joypad values.
 ;;
-_joyold_6 .ds 5
+joyold_6 .ds 5
+
+  .ifdef HUC
+_joypad = joypad
+_joytrg = joytrg
+_joyold = joyold
+_joypad_6 = joypad_6
+_joytrg_6 = joytrg_6
+_joyold_6 = joyold_6
+  .endif
 
 ;;
 ;; macro: joypad_delay
