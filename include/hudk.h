@@ -243,3 +243,6 @@ extern char clock_hh;
 extern char clock_mm;
 extern char clock_ss;
 extern char clock_tt;
+
+void __fastcall rand8_seed(int seed<acc>);
+char __fastcall rand8();

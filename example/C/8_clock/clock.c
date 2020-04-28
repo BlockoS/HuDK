@@ -7,7 +7,6 @@
 
 #include "hudk.h"
 
-
 const char *labels[4] = {
     "hours",
     "minutes",
