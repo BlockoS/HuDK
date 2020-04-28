@@ -100,7 +100,7 @@ void main() {
         // check if we need to load a map column
         // note the only go from left to right
         // and we'll never need to load more that a single column
-        if((scroll_x & 7) == 0) {
+        if((scroll_x & 15) == 0) {
             ++map_col;
             if(map_col >= map_16x16_width) {
                 map_col = 0;
