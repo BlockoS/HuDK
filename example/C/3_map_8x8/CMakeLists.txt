@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(3_map_8x8 ASM)
+project(C_3_map_8x8 C)
 
 set(HUDK_TOOLS_PATH "" CACHE PATH "Path to HuDK tools")
 set(HUDK_INCLUDE_PATH "" CACHE PATH "Path to HuDK include files")
@@ -16,9 +16,9 @@ add_custom_command(OUTPUT ${DATA_DIR}/map_8x8.inc
                    WORKING_DIRECTORY ${DATA_DIR}/
                    COMMENT "convert 8x8 map")
 
-add_custom_target(map_8x8_data DEPENDS "${DATA_DIR}/map_8x8.inc")
+add_custom_target(map_8x8_data_c DEPENDS "${DATA_DIR}/map_8x8.inc")
 
-add_executable(map_8x8 map_8x8.s)
-add_dependencies(map_8x8 map_8x8_data)
-target_include_directories(map_8x8 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-set_target_properties(map_8x8 PROPERTIES OUTPUT_NAME map_8x8.pce)
+add_executable(map_8x8_c map_8x8.c)
+add_dependencies(map_8x8_c map_8x8_data_c)
+target_include_directories(map_8x8_c PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+set_target_properties(map_8x8_c PROPERTIES OUTPUT_NAME map_8x8.pce)

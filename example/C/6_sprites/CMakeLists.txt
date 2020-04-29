@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(6_sprites ASM)
+project(C_6_sprites C)
 
 set(HUDK_TOOLS_PATH "" CACHE PATH "Path to HuDK tools")
 set(HUDK_INCLUDE_PATH "" CACHE PATH "Path to HuDK include files")
@@ -22,8 +22,8 @@ add_custom_command(OUTPUT ${sprites_list}
                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../../data/6_sprites
                    COMMENT "convert sprites")
 
-add_custom_target(sprites_data ALL DEPENDS ${sprites_list})
+add_custom_target(sprites_data_c ALL DEPENDS ${sprites_list})
 
-add_executable(sprites sprites.s)
-add_dependencies(sprites sprites_data)
-set_target_properties(sprites PROPERTIES OUTPUT_NAME sprites.pce)
+add_executable(sprites_c sprites.c)
+add_dependencies(sprites_c sprites_data_c)
+set_target_properties(sprites_c PROPERTIES OUTPUT_NAME sprites.pce)

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(7_scroll ASM)
+project(C_7_scroll C)
 
 set(HUDK_TOOLS_PATH "" CACHE PATH "Path to HuDK tools")
 set(HUDK_INCLUDE_PATH "" CACHE PATH "Path to HuDK include files")
@@ -16,9 +16,9 @@ add_custom_command(OUTPUT ${DATA_DIR}/map_8x8.inc
                    WORKING_DIRECTORY ${DATA_DIR}
                    COMMENT "convert 8x8 map")
 
-add_custom_target(scroll_data DEPENDS "${DATA_DIR}/map_8x8.inc")
+add_custom_target(scroll_data_c DEPENDS "${DATA_DIR}/map_8x8.inc")
 
-add_executable(scroll scroll.s)
-add_dependencies(scroll scroll_data)
-target_include_directories(scroll PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-set_target_properties(scroll PROPERTIES OUTPUT_NAME scroll.pce)
+add_executable(scroll_c scroll_test.c)
+add_dependencies(scroll_c scroll_data_c)
+target_include_directories(scroll_c PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+set_target_properties(scroll_c PROPERTIES OUTPUT_NAME scroll.pce)
