@@ -246,3 +246,11 @@ extern char clock_tt;
 
 void __fastcall rand8_seed(int seed<acc>);
 char __fastcall rand8();
+
+// [todo] psg
+
+// [todo] vgm
+
+// [todo] crc
+
+// [todo] backup ram

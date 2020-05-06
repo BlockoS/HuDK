@@ -62,4 +62,5 @@
 
   .ifdef HUC
     .include "huc.s"
+    .include "memcpy.s"
   .endif
