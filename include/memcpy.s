@@ -79,6 +79,46 @@ _memset.3:
     adc    #$00
     rts
 
-; [todo] memcmp
+; int __fastcall memcmp(char* dst<_di>, char* src<_si>, int len<acc>);
+_memcmp.3:
+    stx    <_bl
+    tax
+    beq    @done_pages
+    cly
+@test_pages:
+            lda    [_di], Y
+            cmp    [_si], Y
+            bmi    @minus
+            bne    @plus
+            iny
+            bne    @test_pages
+        inc    <_si+1
+        inc    <_di+1
+        dex
+        bne    @test_pages
+@done_pages:
+    cly
+    ldx    <_bl
+@test_bytes:
+        lda    [_di], Y
+        cmp    [_si], Y
+        bmi    @minus
+        bne    @plus
+        iny
+        dex
+        bne    @test_bytes
+    
+@equal:
+    clx
+    cla
+    rts
+@minux:
+    ldx    #$ff
+    cla
+    rts
+@plus:
+    ldx    #$01
+    cla
+    rts
 
   .endif
