@@ -112,7 +112,7 @@ _memcmp.3:
     clx
     cla
     rts
-@minux:
+@minus:
     ldx    #$ff
     cla
     rts
