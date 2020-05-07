@@ -247,7 +247,25 @@ extern char clock_tt;
 void __fastcall rand8_seed(int seed<acc>);
 char __fastcall rand8();
 
-// [todo] psg
+#define PSG_CHAN_COUNT 6
+#define PSG_CTRL_CHAN_ON 0x80
+#define PSG_CTRL_WRITE_RESET 0x40
+#define PSG_CTRL_DDA_ON 0xc0
+#define PSG_CTRL_VOL_MASK 0x1f
+#define PSG_CTRL_FULL_VOLUME 0x1f
+
+const volatile unsigned char* psgport = 0x0800;
+const volatile unsigned char* psg_chn = 0x0800;
+const volatile unsigned char* psg_mainvol = 0x0801;
+const volatile unsigned int* psg_freq = 0x0802;
+const volatile unsigned char* psg_ctrl = 0x0804;
+const volatile unsigned char* psg_pan = 0x0805;
+const volatile unsigned char* psg_wavebuf = 0x0806;
+const volatile unsigned char* psg_noise = 0x0807;
+const volatile unsigned char* psg_lfofreq = 0x0808;
+const volatile unsigned char* psg_lfoctrl = 0x0809;
+
+void __fastcall psg_init();
 
 // [todo] vgm
 

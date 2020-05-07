@@ -19,6 +19,9 @@
 ;; Parameters:
 ;; *none* 
 ;;
+  .ifdef HUC
+_psg_init:
+  .endif
 psg_init:
    stz    psg_mainvol        ; set main volume to zero
    stz    psg_lfoctrl        ; disable LFO
