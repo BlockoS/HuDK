@@ -1,3 +1,6 @@
+#ifndef _HUDK_H_
+#define _HUDK_H_
+
 #define VDC_STATUS_SPR_COLLISION 0x01
 #define VDC_STATUS_SPR_OVERFLOW 0x02
 #define VDC_STATUS_HBLANK 0x04
@@ -57,6 +60,10 @@
 #ifndef VDC_DEFAULT_SAT_ADDR
 #define VDC_DEFAULT_SAT_ADDR $7F00
 #endif
+
+const volatile unsigned char* videoport = 0x0000;
+const volatile unsigned char* video_reg = 0x0000;
+const volatile unsigned int* video_data = 0x0002;
 
 extern int vdc_bat_width;
 extern char vdc_bat_height;
@@ -135,6 +142,11 @@ int __fastcall vdc_sat_entry(char idx<acc>);
 #define VCE_MAGENTA 0x03F
 #define VCE_CYAN 0x1C7
 #define VCE_GREY 0x124
+
+const volatile unsigned char* colorport = 0x0400;
+const volatile unsigned char* color_ctrl = 0x0400;
+const volatile unsigned int* color_reg = 0x0402;
+const volatile unsigned int* color_data = 0x0404;
 
 void __fastcall vce_init();
 void __fastcall vce_load_palette(char pal_index<_al>, char pal_count<_ah>, int far *palettes<_bl:_si>);
@@ -219,6 +231,8 @@ void __fastcall scroll_set_flag(char id<_dl>, char flag<_al>);
 #define JOYPAD_DOWN 0x40
 #define JOYPAD_LEFT 0x80
 
+const volatile unsigned char* joyport = 0x1000;
+
 extern char joypad[5];
 extern char joytrg[5];
 extern char joyold[5];
@@ -267,8 +281,12 @@ const volatile unsigned char* psg_lfoctrl = 0x0809;
 
 void __fastcall psg_init();
 
+// timer/int reg
+
 // [todo] vgm
 
 // [todo] crc
 
 // [todo] backup ram
+
+#endif // _HUDK_H_
