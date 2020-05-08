@@ -56,7 +56,10 @@ Group: General  {
    File: 32-bit word macros  (no auto-title, include/dword.inc)
    File: Random number generator  (no auto-title, include/random.s)
    File: CRC computation  (no auto-title, include/crc.s)
-   File: FAT32 driver  (no auto-title, include/fat32.s)
+   File: Clock  (include/clock.inc)
+   File: Memory mapping utility routines.  (include/mpr.inc)
+   File: Collision detection routines  (no auto-title, include/collision.s)
+   File: HuC compatibility macros and routines  (no auto-title, include/huc.inc)
    }  # Group: General
 
 Group: Audio  {
@@ -78,7 +81,6 @@ Group: Video  {
       File: Description  (no auto-title, docs/vdc.txt)
       File: I/O Ports and Registers  (no auto-title, include/vdc.inc)
       File: Routines  (no auto-title, include/vdc.s)
-      File: Sprite descprition and utilities  (no auto-title, include/sprite.inc)
       }  # Group: HuC6270 - Video Display Controller (VDC)
 
    Group: HuC6260 - Video Color Encoder (VCE)  {
@@ -95,17 +97,29 @@ Group: Video  {
       File: Text output routines  (no auto-title, include/print.s)
       }  # Group: Font
 
+   File: Scroll area routines.  (no auto-title, include/scroll.s)
    File: Tilemap routines  (no auto-title, include/map.s)
-   File: Sprite routines  (no auto-title, include/sprite.s)
+
+   Group: Sprites  {
+
+      File: Sprite routines  (no auto-title, include/sprite.s)
+      File: Sprite Attribute Table descprition and utilities  (no auto-title, include/vdc_sprite.inc)
+      File: Sprite Attribute Table routines.  (no auto-title, include/vdc_sprite.s)
+      }  # Group: Sprites
+
    }  # Group: Video
 
 Group: Controls  {
 
    File: Joypad port  (no auto-title, include/joypad.inc)
    File: Joypad functions  (no auto-title, include/joypad.s)
-   File: Analog joypad functions  (no auto-title, include/analog.s)
    File: Pachinko controller  (no auto-title, docs/pachinko.txt)
    }  # Group: Controls
+
+Group: Extras  {
+
+   File: FAT32 driver  (no auto-title, include/fat32.s)
+   }  # Group: Extras
 
 Group: Index  {
 

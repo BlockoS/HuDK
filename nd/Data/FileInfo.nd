@@ -1,103 +1,405 @@
 1.51
-Assembly
-/home/mooz/Dev/HuDK/master/include/pceas/map.s	1513462601	0	/home/mooz/Dev/HuDK/master/include/pceas/map.s
-/home/mooz/Dev/HuDK/master/build/CMakeCache.txt	1534010509	0	/home/mooz/Dev/HuDK/master/build/CMakeCache.txt
-/home/mooz/Dev/HuDK/master/include/irq_1.s	1514397741	0	/home/mooz/Dev/HuDK/master/include/irq_1.s
-/home/mooz/Dev/HuDK/master/include/pceas/start.s	1534022650	0	/home/mooz/Dev/HuDK/master/include/pceas/start.s
-/home/mooz/Dev/HuDK/master/CMakeLists.txt	1534022650	0	/home/mooz/Dev/HuDK/master/CMakeLists.txt
-/home/mooz/Dev/HuDK/master/example/pceas/bm_tools.s	1534022661	0	/home/mooz/Dev/HuDK/master/example/pceas/bm_tools.s
-/home/mooz/Dev/HuDK/master/include/analog.s	1458666823	1	Analog joypag functions.
-/home/mooz/Dev/HuDK/master/include/vce.inc	1534787516	1	VCE I/O Ports.
-/home/mooz/Dev/HuDK/master/include/ca65/mpr.s	1518346039	0	/home/mooz/Dev/HuDK/master/include/ca65/mpr.s
-/home/mooz/Dev/HuDK/master/docs/cc65.txt	1514397741	0	/home/mooz/Dev/HuDK/master/docs/cc65.txt
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/link.txt	1534010572	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/link.txt
-/home/mooz/Dev/HuDK/master/include/psg.inc	1513465651	1	PSG registers.
-/home/mooz/Dev/HuDK/master/tools/CMakeLists.txt	1534022650	0	/home/mooz/Dev/HuDK/master/tools/CMakeLists.txt
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/build.make	1534010572	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/build.make
-/home/mooz/Dev/HuDK/master/include/pceas/vce.inc	1514405539	0	/home/mooz/Dev/HuDK/master/include/pceas/vce.inc
-/home/mooz/Dev/HuDK/master/example/data/datastorm.inc	1457816058	0	/home/mooz/Dev/HuDK/master/example/data/datastorm.inc
-/home/mooz/Dev/HuDK/master/include/memcpy.inc	1513465651	1	Memory copy.
-/home/mooz/Dev/HuDK/master/example/cc65/main.c	1514397741	0	/home/mooz/Dev/HuDK/master/example/cc65/main.c
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/depend.make	1534010509	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/depend.make
-/home/mooz/Dev/HuDK/master/include/mpr.s	1518345491	1	Memory mapping utility routines.
-/home/mooz/Dev/HuDK/master/include/byte.inc	1491308985	1	/home/mooz/Dev/HuDK/master/include/byte.inc
-/home/mooz/Dev/HuDK/master/include/pceas/irq_reset.s	1518346408	0	/home/mooz/Dev/HuDK/master/include/pceas/irq_reset.s
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/flags.make	1534019079	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/flags.make
-/home/mooz/Dev/HuDK/master/include/joypad.inc	1534022650	1	Joypad port.
-/home/mooz/Dev/HuDK/master/include/pceas/vdc.inc	1518293958	0	/home/mooz/Dev/HuDK/master/include/pceas/vdc.inc
-/home/mooz/Dev/HuDK/master/example/data/fat32/read_sector.s	1543182768	0	read_sector
-/home/mooz/Dev/HuDK/master/include/ca65/vce.s	1518347910	0	/home/mooz/Dev/HuDK/master/include/ca65/vce.s
-/home/mooz/Dev/HuDK/master/build/CMakeFiles/feature_tests.cxx	1534010508	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/feature_tests.cxx
-/home/mooz/Dev/HuDK/master/include/irq_nmi.s	1514397741	0	/home/mooz/Dev/HuDK/master/include/irq_nmi.s
-/home/mooz/Dev/HuDK/master/include/ca65/irq_reset.s	1518345289	0	/home/mooz/Dev/HuDK/master/include/ca65/irq_reset.s
-/home/mooz/Dev/HuDK/master/include/math.s	1536528058	1	Math routines.
-/home/mooz/Dev/HuDK/master/include/ca65/start.s	1518346073	0	/home/mooz/Dev/HuDK/master/include/ca65/start.s
-/home/mooz/Dev/HuDK/master/include/sprite.inc	1523305604	1	Sprite descprition and utilities
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/depend.make	1534021927	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/depend.make
-/home/mooz/Dev/HuDK/master/include/irq_reset.s	1518346817	0	/home/mooz/Dev/HuDK/master/include/irq_reset.s
-/home/mooz/Dev/HuDK/master/include/system.inc	1513465651	1	System variables
-/home/mooz/Dev/HuDK/master/include/pceas/irq.inc	1514408098	0	/home/mooz/Dev/HuDK/master/include/pceas/irq.inc
-/home/mooz/Dev/HuDK/master/include/ca65/memcpy.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/memcpy.inc
-/home/mooz/Dev/HuDK/master/include/pceas/font.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/pceas/font.inc
-/home/mooz/Dev/HuDK/master/example/pceas/fat32/read.s	1543171248	0	/home/mooz/Dev/HuDK/master/example/pceas/fat32/read.s
-/home/mooz/Dev/HuDK/master/example/pceas/crc32.s	1535720876	0	/home/mooz/Dev/HuDK/master/example/pceas/crc32.s
-/home/mooz/Dev/HuDK/master/include/print.s	1518345535	1	Text output routines.
-/home/mooz/Dev/HuDK/master/example/pceas/joypad/joytest.s	1537221321	0	/home/mooz/Dev/HuDK/master/example/pceas/joypad/joytest.s
-/home/mooz/Dev/HuDK/master/example/data/fat32/fat32.img.inc	1536614766	0	/home/mooz/Dev/HuDK/master/example/data/fat32/fat32.img.inc
-/home/mooz/Dev/HuDK/master/example/pceas/dummy.s	1534022661	0	/home/mooz/Dev/HuDK/master/example/pceas/dummy.s
-/home/mooz/Dev/HuDK/master/include/ca65/map.s	1458236461	0	/home/mooz/Dev/HuDK/master/include/ca65/map.s
-/home/mooz/Dev/HuDK/master/example/pceas/vgm/vgm_play.s	1534022650	0	/home/mooz/Dev/HuDK/master/example/pceas/vgm/vgm_play.s
-/home/mooz/Dev/HuDK/master/include/vgm.s	1517678297	1	VGM replay.
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/progress.make	1534019085	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgm_strip.dir/progress.make
-/home/mooz/Dev/HuDK/master/include/ca65/psg.s	1518345728	0	/home/mooz/Dev/HuDK/master/include/ca65/psg.s
-/home/mooz/Dev/HuDK/master/include/word.inc	1535472310	1	/home/mooz/Dev/HuDK/master/include/word.inc
-/home/mooz/Dev/HuDK/master/build/CMakeFiles/TargetDirectories.txt	1534019085	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/TargetDirectories.txt
-/home/mooz/Dev/HuDK/master/include/vdc.inc	1524401323	1	VDC I/O Ports and Registers.
-/home/mooz/Dev/HuDK/master/HuDK.h	1514397741	0	/home/mooz/Dev/HuDK/master/HuDK.h
-/home/mooz/Dev/HuDK/master/docs/vce.txt	1456436291	1	HuC6260 - Video Color Encoder (VCE).
-/home/mooz/Dev/HuDK/master/include/joypad.s	1535051277	1	Joypad Functions.
-/home/mooz/Dev/HuDK/master/docs/vdc.txt	1534022650	1	HuC6270 - Video Display Controller (VDC).
-/home/mooz/Dev/HuDK/master/example/ca65/dummy.s	1514397741	0	/home/mooz/Dev/HuDK/master/example/ca65/dummy.s
-/home/mooz/Dev/HuDK/master/include/font.s	1518344496	1	Font routines.
-/home/mooz/Dev/HuDK/master/include/sprite.s	1513462164	1	Sprite routines.
-/home/mooz/Dev/HuDK/master/include/pceas/memcpy.inc	1518293958	0	/home/mooz/Dev/HuDK/master/include/pceas/memcpy.inc
-/home/mooz/Dev/HuDK/master/include/font.inc	1513465651	1	8x8 monochrome 1bpp font.
-/home/mooz/Dev/HuDK/master/example/pceas/text/main.s	1502635027	0	/home/mooz/Dev/HuDK/master/example/pceas/text/main.s
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/progress.make	1534010509	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/progress.make
-/home/mooz/Dev/HuDK/master/build/CMakeFiles/feature_tests.c	1534010507	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/feature_tests.c
-/home/mooz/Dev/HuDK/master/include/psg.s	1518345738	1	PSG Functions.
-/home/mooz/Dev/HuDK/master/include/vce.s	1518347967	1	VCE Functions.
-/home/mooz/Dev/HuDK/master/include/irq.inc	1514403775	1	Interrupts management.
-/home/mooz/Dev/HuDK/master/docs/pachinko.txt	1534793401	1	Pachinko controller.
-/home/mooz/Dev/HuDK/master/build/CMakeFiles/3.5.1/CompilerIdC/CMakeCCompilerId.c	1534010506	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/3.5.1/CompilerIdC/CMakeCCompilerId.c
-/home/mooz/Dev/HuDK/master/include/ca65/font.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/font.inc
-/home/mooz/Dev/HuDK/master/include/bcd.s	1513466697	1	BCD conversion routines.
-/home/mooz/Dev/HuDK/master/example/data/fat32/img_slice.c	1536177210	0	/home/mooz/Dev/HuDK/master/example/data/fat32/img_slice.c
-/home/mooz/Dev/HuDK/master/include/ca65/irq.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/irq.inc
-/home/mooz/Dev/HuDK/master/include/irq_2.s	1514397741	0	/home/mooz/Dev/HuDK/master/include/irq_2.s
-/home/mooz/Dev/HuDK/master/include/ca65/vdc.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/vdc.inc
-/home/mooz/Dev/HuDK/master/include/ca65/vce.inc	1457811344	0	/home/mooz/Dev/HuDK/master/include/ca65/vce.inc
-/home/mooz/Dev/HuDK/master/include/fat32.s	1543183539	1	/home/mooz/Dev/HuDK/master/include/fat32.s
-/home/mooz/Dev/HuDK/master/include/pceas/word.inc	1535474320	0	/home/mooz/Dev/HuDK/master/include/pceas/word.inc
-/home/mooz/Dev/HuDK/master/include/pceas/macro.inc	1455744804	0	/home/mooz/Dev/HuDK/master/include/pceas/macro.inc
-/home/mooz/Dev/HuDK/master/include/pceas/dword.inc	1535475811	0	/home/mooz/Dev/HuDK/master/include/pceas/dword.inc
-/home/mooz/Dev/HuDK/master/include/bram.s	1538943977	1	Backup RAM.
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/flags.make	1534010509	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/flags.make
-/home/mooz/Dev/HuDK/master/tools/vgm_strip.c	1534022650	0	/home/mooz/Dev/HuDK/master/tools/vgm_strip.c
-/home/mooz/Dev/HuDK/master/include/random.s	1535057985	1	Random number generators.
-/home/mooz/Dev/HuDK/master/include/ca65/word.inc	1457335443	0	/home/mooz/Dev/HuDK/master/include/ca65/word.inc
-/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/build.make	1534010509	0	/home/mooz/Dev/HuDK/master/build/tools/CMakeFiles/vgmstrip.dir/build.make
-/home/mooz/Dev/HuDK/master/include/dword.inc	1535472321	1	/home/mooz/Dev/HuDK/master/include/dword.inc
-/home/mooz/Dev/HuDK/master/include/vdc.s	1518346329	1	VDC Functions.
-/home/mooz/Dev/HuDK/master/include/vsplit.s	1464277949	0	/home/mooz/Dev/HuDK/master/include/vsplit.s
-/home/mooz/Dev/HuDK/master/include/map.s	1513464934	1	Tilemap functions.
-/home/mooz/Dev/HuDK/master/build/CMakeFiles/3.5.1/CompilerIdCXX/CMakeCXXCompilerId.cpp	1534010506	0	/home/mooz/Dev/HuDK/master/build/CMakeFiles/3.5.1/CompilerIdCXX/CMakeCXXCompilerId.cpp
-/home/mooz/Dev/HuDK/master/include/irq_timer.s	1514397741	0	/home/mooz/Dev/HuDK/master/include/irq_timer.s
-/home/mooz/Dev/HuDK/master/include/ca65/byte.inc	1514397741	0	/home/mooz/Dev/HuDK/master/include/ca65/byte.inc
-/home/mooz/Dev/HuDK/master/include/start.s	1518346098	0	/home/mooz/Dev/HuDK/master/include/start.s
-/home/mooz/Dev/HuDK/master/include/pceas/joypad.inc	1518293853	0	/home/mooz/Dev/HuDK/master/include/pceas/joypad.inc
-/home/mooz/Dev/HuDK/master/include/pceas/byte.inc	1491308712	0	/home/mooz/Dev/HuDK/master/include/pceas/byte.inc
-/home/mooz/Dev/HuDK/master/include/ca65/joypad.inc	1514398909	0	/home/mooz/Dev/HuDK/master/include/ca65/joypad.inc
-/home/mooz/Dev/HuDK/master/include/ca65/vdc.s	1518346285	0	/home/mooz/Dev/HuDK/master/include/ca65/vdc.s
-/home/mooz/Dev/HuDK/master/include/pceas/sprite.inc	1464722688	0	/home/mooz/Dev/HuDK/master/include/pceas/sprite.inc
-/home/mooz/Dev/HuDK/master/include/crc.s	1535718291	1	CRC routines.
+Makefile
+/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll_data.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll_data.dir/progress.make
+/home/mooz/Dev/HuDK/docs/vce.txt	1560546095	1	HuC6260 - Video Color Encoder (VCE).
+/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll_data.dir/depend.make	1588192978	0	/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll_data.dir/depend.make
+/home/mooz/Dev/HuDK/example/asm/fat32_read.s	1581110680	0	/home/mooz/Dev/HuDK/example/asm/fat32_read.s
+/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16.dir/link.txt
+/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_c.dir/build.make
+/home/mooz/Dev/HuDK/example/CMakeLists.txt	1588192575	0	/home/mooz/Dev/HuDK/example/CMakeLists.txt
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalktest.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalktest.dir/progress.make
+/home/mooz/Dev/HuDK/.build/CMakeFiles/3.13.4/CompilerIdCXX/CMakeCXXCompilerId.cpp	1581721857	0	/home/mooz/Dev/HuDK/.build/CMakeFiles/3.13.4/CompilerIdCXX/CMakeCXXCompilerId.cpp
+/home/mooz/Dev/HuDK/include/memcpy.s	1588887839	0	/home/mooz/Dev/HuDK/include/memcpy.s
+/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll.dir/progress.make
+/home/mooz/Dev/HuDK/tools/utils/log.c	1581110660	0	/home/mooz/Dev/HuDK/tools/utils/log.c
+/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/custom_font_c.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/custom_font_c.dir/flags.make
+/home/mooz/Dev/HuDK/example/.build/asm/8_clock/CMakeFiles/clock.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/8_clock/CMakeFiles/clock.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/tiled2bat/CMakeFiles/tiled2bat.dir/flags.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/tiled2bat/CMakeFiles/tiled2bat.dir/flags.make
+/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/C/1_hello_world/CMakeFiles/hello_world_c.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/1_hello_world/CMakeFiles/hello_world_c.dir/link.txt
+/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_play.dir/depend.make	1588192979	0	/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_play.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/custom_font_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/custom_font_c.dir/progress.make
+/home/mooz/Dev/HuDK/include/irq_1.s	1586616196	0	/home/mooz/Dev/HuDK/include/irq_1.s
+/home/mooz/Dev/HuDK/include/joypad.s	1588065443	1	Joypad Functions.
+/home/mooz/Dev/HuDK/example/.build/C/8_clock/CMakeFiles/clock_c.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/8_clock/CMakeFiles/clock_c.dir/flags.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalSubmit.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalSubmit.dir/build.make
+/home/mooz/Dev/HuDK/include/psg.s	1588887675	1	PSG Functions.
+/home/mooz/Dev/HuDK/.build/CMakeFiles/3.13.4/CompilerIdC/CMakeCCompilerId.c	1581721857	0	/home/mooz/Dev/HuDK/.build/CMakeFiles/3.13.4/CompilerIdC/CMakeCCompilerId.c
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/windows_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/windows_test.c
+/home/mooz/Dev/HuDK/example/asm/9_pong/pong.s	1588083492	0	/home/mooz/Dev/HuDK/example/asm/9_pong/pong.s
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyConfigure.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyConfigure.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_data_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_data_c.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/utils/CMakeFiles/hudk_utils.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/utils/CMakeFiles/hudk_utils.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/vgm_strip.dir/depend.make	1581721869	0	/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/vgm_strip.dir/depend.make
+/home/mooz/Dev/HuDK/include/print.s	1588100889	1	Text output routines.
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/extension_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/extension_test.c
+/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/data/song.inc	1588947210	0	/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/data/song.inc
+/home/mooz/Dev/HuDK/include/vdc.inc	1587300664	1	VDC I/O Ports and Registers.
+/home/mooz/Dev/HuDK/example/.build/asm/8_clock/CMakeFiles/clock.dir/depend.make	1588192978	0	/home/mooz/Dev/HuDK/example/.build/asm/8_clock/CMakeFiles/clock.dir/depend.make
+/home/mooz/Dev/HuDK/include/vgm.s	1587152594	1	VGM replay.
+/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8_data.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8_data.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_map_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_map_c.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalMemCheck.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalMemCheck.dir/progress.make
+/home/mooz/Dev/HuDK/include/bram.s	1581110680	1	Backup RAM.
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/dirname_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/dirname_test.c
+/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_c.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_c.dir/flags.make
+/home/mooz/Dev/HuDK/include/bcd.s	1581110679	1	BCD conversion routines.
+/home/mooz/Dev/HuDK/example/asm/1_hello_world/hello_world.s	1587221926	0	/home/mooz/Dev/HuDK/example/asm/1_hello_world/hello_world.s
+/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_play.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_play.dir/flags.make
+/home/mooz/Dev/HuDK/include/joypad.inc	1588065372	1	Joypad port.
+/home/mooz/Dev/HuDK/example/.build/C/5_joypad/CMakeFiles/joypad_c.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/5_joypad/CMakeFiles/joypad_c.dir/flags.make
+/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_c.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_c.dir/link.txt
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/main.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/main.c
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalTest.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalTest.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyMemCheck.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyMemCheck.dir/build.make
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/is_relative_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/is_relative_test.c
+/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll_data.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll_data.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/vgm_strip.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/vgm_strip.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_c.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_c.dir/flags.make
+/home/mooz/Dev/HuDK/include/huc.s	1587238962	0	/home/mooz/Dev/HuDK/include/huc.s
+/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/data/map_8x8.inc	1588947208	0	/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/data/map_8x8.inc
+/home/mooz/Dev/HuDK/tools/tiled2bat/tileset.c	1581110660	0	/home/mooz/Dev/HuDK/tools/tiled2bat/tileset.c
+/home/mooz/Dev/HuDK/example/asm/6_sprites/CMakeLists.txt	1588185942	0	/home/mooz/Dev/HuDK/example/asm/6_sprites/CMakeLists.txt
+/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/vgm_strip.dir/link.txt	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/vgm_strip.dir/link.txt
+/home/mooz/Dev/HuDK/tools/externals/argparse/test_argparse.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/argparse/test_argparse.c
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyUpdate.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyUpdate.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites_data.dir/depend.make	1588192978	0	/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites_data.dir/depend.make
+/home/mooz/Dev/HuDK/include/irq_timer.s	1581110680	0	/home/mooz/Dev/HuDK/include/irq_timer.s
+/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites_data.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites_data.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_data_c.dir/depend.make	1588192979	0	/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_data_c.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_c.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousMemCheck.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousMemCheck.dir/build.make
+/home/mooz/Dev/HuDK/example/C/1_hello_world/hello_world.c	1588892256	0	/home/mooz/Dev/HuDK/example/C/1_hello_world/hello_world.c
+/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/vgm_strip.dir/flags.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/vgm_strip.dir/flags.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyStart.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyStart.dir/build.make
+/home/mooz/Dev/HuDK/tools/utils/image.c	1581110660	0	/home/mooz/Dev/HuDK/tools/utils/image.c
+/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_c.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_c.dir/flags.make
+/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8_data.dir/depend.make	1588192977	0	/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8_data.dir/depend.make
+/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/encode_gfx.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/encode_gfx.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_c.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_c.dir/depend.make	1588947222	0	/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_c.dir/depend.make
+/home/mooz/Dev/HuDK/include/font.inc	1587300589	1	8x8 monochrome 1bpp font.
+/home/mooz/Dev/HuDK/include/vdc_sprite.s	1588954854	1	Sprite Attribute Table routines.
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalk.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalk.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousCoverage.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousCoverage.dir/build.make
+/home/mooz/Dev/HuDK/example/asm/5_joypad/joypad.s	1588065548	0	/home/mooz/Dev/HuDK/example/asm/5_joypad/joypad.s
+/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_data_c.dir/depend.make	1588192979	0	/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_data_c.dir/depend.make
+/home/mooz/Dev/HuDK/example/asm/9_pong/sin.inc	1586991380	0	/home/mooz/Dev/HuDK/example/asm/9_pong/sin.inc
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalSubmit.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalSubmit.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_map_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_map_c.dir/build.make
+/home/mooz/Dev/HuDK/include/psg.inc	1588892149	1	PSG registers.
+/home/mooz/Dev/HuDK/example/C/1_hello_world/CMakeLists.txt	1587310156	0	/home/mooz/Dev/HuDK/example/C/1_hello_world/CMakeLists.txt
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousStart.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousStart.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/encode_gfx.dir/link.txt	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/encode_gfx.dir/link.txt
+/home/mooz/Dev/HuDK/example/.build/C/5_joypad/CMakeFiles/joypad_c.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/5_joypad/CMakeFiles/joypad_c.dir/link.txt
+/home/mooz/Dev/HuDK/tools/externals/argparse/argparse.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/argparse/argparse.c
+/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_c.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_c.dir/depend.make	1588947220	0	/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_c.dir/depend.make
+/home/mooz/Dev/HuDK/example/asm/8_clock/clock.s	1587222044	0	/home/mooz/Dev/HuDK/example/asm/8_clock/clock.s
+/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong.dir/depend.make	1588192978	0	/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong.dir/depend.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalk.dir/flags.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalk.dir/flags.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalCoverage.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalCoverage.dir/progress.make
+/home/mooz/Dev/HuDK/example/C/5_joypad/joypad_test.c	1588016676	0	/home/mooz/Dev/HuDK/example/C/5_joypad/joypad_test.c
+/home/mooz/Dev/HuDK/example/asm/20_vgm/vgm_play.s	1587222081	0	/home/mooz/Dev/HuDK/example/asm/20_vgm/vgm_play.s
+/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16_data.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16_data.dir/progress.make
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/segment_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/segment_test.c
+/home/mooz/Dev/HuDK/.build/tools/externals/CMakeFiles/argparse.dir/flags.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/CMakeFiles/argparse.dir/flags.make
+/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/font.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/font.dir/build.make
+/home/mooz/Dev/HuDK/tools/utils/output.h	1581110779	0	/home/mooz/Dev/HuDK/tools/utils/output.h
+/home/mooz/Dev/HuDK/include/vdc.s	1588081622	1	VDC Functions.
+/home/mooz/Dev/HuDK/tools/tiled2bat/tileset.h	1581110779	0	/home/mooz/Dev/HuDK/tools/tiled2bat/tileset.h
+/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong_sprites.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong_sprites.dir/build.make
+/home/mooz/Dev/HuDK/include/dword.inc	1587300664	1	/home/mooz/Dev/HuDK/include/dword.inc
+/home/mooz/Dev/HuDK/tools/tiled2bat/tilemap.h	1581110779	0	/home/mooz/Dev/HuDK/tools/tiled2bat/tilemap.h
+/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_data_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_data_c.dir/progress.make
+/home/mooz/Dev/HuDK/tools/externals/cwalk/src/cwalk.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/src/cwalk.c
+/home/mooz/Dev/HuDK/tools/externals/argparse/argparse.h	1581110779	0	/home/mooz/Dev/HuDK/tools/externals/argparse/argparse.h
+/home/mooz/Dev/HuDK/.build/CMakeFiles/feature_tests.c	1581721859	0	/home/mooz/Dev/HuDK/.build/CMakeFiles/feature_tests.c
+/home/mooz/Dev/HuDK/example/.build/C/7_scroll/data/map_8x8.inc	1588947222	0	/home/mooz/Dev/HuDK/example/.build/C/7_scroll/data/map_8x8.inc
+/home/mooz/Dev/HuDK/example/.build/C/8_clock/CMakeFiles/clock_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/8_clock/CMakeFiles/clock_c.dir/progress.make
+/home/mooz/Dev/HuDK/example/asm/4_map_16x16/map_16x16.s	1588066081	0	/home/mooz/Dev/HuDK/example/asm/4_map_16x16/map_16x16.s
+/home/mooz/Dev/HuDK/example/.build/asm/1_hello_world/CMakeFiles/hello_world.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/1_hello_world/CMakeFiles/hello_world.dir/flags.make
+/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong_sprites.dir/depend.make	1588192978	0	/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong_sprites.dir/depend.make
+/home/mooz/Dev/HuDK/include/memcpy.inc	1587300664	1	Memory copy.
+/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/encode_gfx.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/encode_gfx.dir/build.make
+/home/mooz/Dev/HuDK/example/asm/dummy.s	1581110680	0	/home/mooz/Dev/HuDK/example/asm/dummy.s
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyTest.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyTest.dir/build.make
+/home/mooz/Dev/HuDK/include/macro.inc	1587300589	0	/home/mooz/Dev/HuDK/include/macro.inc
+/home/mooz/Dev/HuDK/tools/utils/log.h	1581110779	0	/home/mooz/Dev/HuDK/tools/utils/log.h
+/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16.dir/depend.make	1588192977	0	/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalktest.dir/link.txt	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalktest.dir/link.txt
+/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_c.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_data.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_data.dir/progress.make
+/home/mooz/Dev/HuDK/include/system.inc	1587300589	1	System variables
+/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_c.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_c.dir/link.txt
+/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_play.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_play.dir/build.make
+/home/mooz/Dev/HuDK/example/C/9_pong/pong.c	1588114733	0	/home/mooz/Dev/HuDK/example/C/9_pong/pong.c
+/home/mooz/Dev/HuDK/example/asm/9_pong/table.c	1586554185	0	/home/mooz/Dev/HuDK/example/asm/9_pong/table.c
+/home/mooz/Dev/HuDK/example/.build/CMakeFiles/TargetDirectories.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/CMakeFiles/TargetDirectories.txt
+/home/mooz/Dev/HuDK/example/asm/5_joypad/CMakeLists.txt	1587222220	0	/home/mooz/Dev/HuDK/example/asm/5_joypad/CMakeLists.txt
+/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong.dir/flags.make
+/home/mooz/Dev/HuDK/include/fat32.s	1581110680	1	FAT 32 driver.
+/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/asm/1_hello_world/CMakeFiles/hello_world.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/1_hello_world/CMakeFiles/hello_world.dir/link.txt
+/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll.dir/link.txt
+/home/mooz/Dev/HuDK/example/C/6_sprites/CMakeLists.txt	1588192371	0	/home/mooz/Dev/HuDK/example/C/6_sprites/CMakeLists.txt
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlySubmit.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlySubmit.dir/progress.make
+/home/mooz/Dev/HuDK/tools/utils/image.h	1581110779	0	/home/mooz/Dev/HuDK/tools/utils/image.h
+/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/vgm_strip.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/vgm_strip.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_play.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_play.dir/link.txt
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalConfigure.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalConfigure.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/encode_gfx.dir/flags.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/encode_gfx.dir/flags.make
+/home/mooz/Dev/HuDK/include/huc.inc	1587925655	1	/home/mooz/Dev/HuDK/include/huc.inc
+/home/mooz/Dev/HuDK/include/vdc_sprite.inc	1588955420	1	Sprite Attribute Table descprition and utilities
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousMemCheck.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousMemCheck.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyTest.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyTest.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalTest.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalTest.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/utils/CMakeFiles/hudk_utils.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/utils/CMakeFiles/hudk_utils.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyUpdate.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyUpdate.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousStart.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousStart.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_c.dir/progress.make
+/home/mooz/Dev/HuDK/example/asm/crc32.s	1587222310	0	/home/mooz/Dev/HuDK/example/asm/crc32.s
+/home/mooz/Dev/HuDK/.build/CMakeFiles/TargetDirectories.txt	1581721861	0	/home/mooz/Dev/HuDK/.build/CMakeFiles/TargetDirectories.txt
+/home/mooz/Dev/HuDK/example/asm/3_map_8x8/CMakeLists.txt	1588185878	0	/home/mooz/Dev/HuDK/example/asm/3_map_8x8/CMakeLists.txt
+/home/mooz/Dev/HuDK/tools/tiled2bat/todo.txt	1573339400	0	/home/mooz/Dev/HuDK/tools/tiled2bat/todo.txt
+/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalUpdate.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalUpdate.dir/build.make
+/home/mooz/Dev/HuDK/include/math.s	1581110680	1	Math routines.
+/home/mooz/Dev/HuDK/example/.build/asm/5_joypad/CMakeFiles/joypad.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/5_joypad/CMakeFiles/joypad.dir/link.txt
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/Continuous.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/Continuous.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/C/8_clock/CMakeFiles/clock_c.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/8_clock/CMakeFiles/clock_c.dir/link.txt
+/home/mooz/Dev/HuDK/example/asm/4_map_16x16/CMakeLists.txt	1588186109	0	/home/mooz/Dev/HuDK/example/asm/4_map_16x16/CMakeLists.txt
+/home/mooz/Dev/HuDK/include/vce.inc	1587300664	1	VCE I/O Ports.
+/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8.dir/link.txt
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousUpdate.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousUpdate.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/CMakeFiles/argparse.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/CMakeFiles/argparse.dir/build.make
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/join_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/join_test.c
+/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16.dir/progress.make
+/home/mooz/Dev/HuDK/docs/vdc.txt	1560546095	1	HuC6270 - Video Display Controller (VDC).
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyConfigure.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyConfigure.dir/progress.make
+/home/mooz/Dev/HuDK/tools/utils/base64.c	1581110660	0	/home/mooz/Dev/HuDK/tools/utils/base64.c
+/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16_data.dir/depend.make	1588192977	0	/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16_data.dir/depend.make
+/home/mooz/Dev/HuDK/example/asm/3_map_8x8/map_8x8.s	1588066066	0	/home/mooz/Dev/HuDK/example/asm/3_map_8x8/map_8x8.s
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousSubmit.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousSubmit.dir/build.make
+/home/mooz/Dev/HuDK/example/C/9_pong/CMakeLists.txt	1588192704	0	/home/mooz/Dev/HuDK/example/C/9_pong/CMakeLists.txt
+/home/mooz/Dev/HuDK/tools/utils/pce.h	1581110779	0	/home/mooz/Dev/HuDK/tools/utils/pce.h
+/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_sprites_c.dir/depend.make	1588192980	0	/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_sprites_c.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong_map.dir/depend.make	1588192978	0	/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong_map.dir/depend.make
+/home/mooz/Dev/HuDK/tools/externals/CMakeLists.txt	1572125534	0	/home/mooz/Dev/HuDK/tools/externals/CMakeLists.txt
+/home/mooz/Dev/HuDK/example/asm/2_custom_font/CMakeLists.txt	1588185167	0	/home/mooz/Dev/HuDK/example/asm/2_custom_font/CMakeLists.txt
+/home/mooz/Dev/HuDK/tools/utils/pce.c	1581110660	0	/home/mooz/Dev/HuDK/tools/utils/pce.c
+/home/mooz/Dev/HuDK/include/startup.asm	1588798117	0	/home/mooz/Dev/HuDK/include/startup.asm
+/home/mooz/Dev/HuDK/include/mpr.s	1587154360	1	Memory mapping utility routines.
+/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/data/map_16x16.inc	1588947221	0	/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/data/map_16x16.inc
+/home/mooz/Dev/HuDK/example/asm/build.txt	1578080130	0	/home/mooz/Dev/HuDK/example/asm/build.txt
+/home/mooz/Dev/HuDK/example/.build/asm/5_joypad/CMakeFiles/joypad.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/5_joypad/CMakeFiles/joypad.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/custom_font.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/custom_font.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/Nightly.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/Nightly.dir/progress.make
+/home/mooz/Dev/HuDK/include/irq_nmi.s	1581110680	0	/home/mooz/Dev/HuDK/include/irq_nmi.s
+/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/custom_font.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/custom_font.dir/progress.make
+/home/mooz/Dev/HuDK/include/vce.s	1587941041	1	VCE Functions.
+/home/mooz/Dev/HuDK/example/.build/asm/8_clock/CMakeFiles/clock.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/8_clock/CMakeFiles/clock.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/CMakeFiles/argparse.dir/depend.make	1581721868	0	/home/mooz/Dev/HuDK/.build/tools/externals/CMakeFiles/argparse.dir/depend.make
+/home/mooz/Dev/HuDK/example/C/7_scroll/CMakeLists.txt	1588192464	0	/home/mooz/Dev/HuDK/example/C/7_scroll/CMakeLists.txt
+/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_data.dir/depend.make	1588192979	0	/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_data.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16_data.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16_data.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/custom_font.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/custom_font.dir/flags.make
+/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/data/map_16x16.inc	1588947208	0	/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/data/map_16x16.inc
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/Experimental.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/Experimental.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8_data.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8_data.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_data_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_data_c.dir/build.make
+/home/mooz/Dev/HuDK/include/font.s	1587240850	1	Font routines.
+/home/mooz/Dev/HuDK/include/sprite.s	1588081224	1	/home/mooz/Dev/HuDK/include/sprite.s
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousConfigure.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousConfigure.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/tiled2bat/CMakeFiles/tiled2bat.dir/link.txt	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/tiled2bat/CMakeFiles/tiled2bat.dir/link.txt
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/tests.h	1581721861	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/tests.h
+/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_data_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_data_c.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/encode_gfx.dir/depend.make	1581886578	0	/home/mooz/Dev/HuDK/.build/tools/CMakeFiles/encode_gfx.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/custom_font.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/custom_font.dir/link.txt
+/home/mooz/Dev/HuDK/example/asm/text.s	1588066047	0	/home/mooz/Dev/HuDK/example/asm/text.s
+/home/mooz/Dev/HuDK/example/.build/C/5_joypad/CMakeFiles/joypad_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/5_joypad/CMakeFiles/joypad_c.dir/progress.make
+/home/mooz/Dev/HuDK/include/irq_2.s	1581110680	0	/home/mooz/Dev/HuDK/include/irq_2.s
+/home/mooz/Dev/HuDK/.build/tools/utils/CMakeFiles/hudk_utils.dir/depend.make	1581721866	0	/home/mooz/Dev/HuDK/.build/tools/utils/CMakeFiles/hudk_utils.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/CMakeFiles/CMakeRuleHashes.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/CMakeFiles/CMakeRuleHashes.txt
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalktest.dir/flags.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalktest.dir/flags.make
+/home/mooz/Dev/HuDK/example/asm/7_scroll/scroll.s	1588066100	0	/home/mooz/Dev/HuDK/example/asm/7_scroll/scroll.s
+/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites.dir/build.make
+/home/mooz/Dev/HuDK/include/byte.inc	1587300664	1	/home/mooz/Dev/HuDK/include/byte.inc
+/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_c.dir/depend.make	1588947221	0	/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_c.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/asm/1_hello_world/CMakeFiles/hello_world.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/1_hello_world/CMakeFiles/hello_world.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/C/5_joypad/CMakeFiles/joypad_c.dir/depend.make	1588947221	0	/home/mooz/Dev/HuDK/example/.build/C/5_joypad/CMakeFiles/joypad_c.dir/depend.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousConfigure.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousConfigure.dir/progress.make
+/home/mooz/Dev/HuDK/tools/vgm_strip.c	1583009931	0	/home/mooz/Dev/HuDK/tools/vgm_strip.c
+/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/font_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/font_c.dir/build.make
+/home/mooz/Dev/HuDK/example/C/6_sprites/sprites.c	1588083560	0	/home/mooz/Dev/HuDK/example/C/6_sprites/sprites.c
+/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong_map.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong_map.dir/build.make
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/absolute_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/absolute_test.c
+/home/mooz/Dev/HuDK/include/scroll.s	1588954376	1	Scroll area routines.
+/home/mooz/Dev/HuDK/example/C/3_map_8x8/map_8x8.c	1588002895	0	/home/mooz/Dev/HuDK/example/C/3_map_8x8/map_8x8.c
+/home/mooz/Dev/HuDK/example/.build/C/1_hello_world/CMakeFiles/hello_world_c.dir/depend.make	1588947210	0	/home/mooz/Dev/HuDK/example/.build/C/1_hello_world/CMakeFiles/hello_world_c.dir/depend.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/Continuous.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/Continuous.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalBuild.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalBuild.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites.dir/depend.make	1588192978	0	/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites_data.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites_data.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_c.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_c.dir/flags.make
+/home/mooz/Dev/HuDK/example/.build/asm/8_clock/CMakeFiles/clock.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/8_clock/CMakeFiles/clock.dir/link.txt
+/home/mooz/Dev/HuDK/include/word.inc	1587300664	1	/home/mooz/Dev/HuDK/include/word.inc
+/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/font.dir/depend.make	1588192977	0	/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/font.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_play.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_play.dir/progress.make
+/home/mooz/Dev/HuDK/example/data/fat32/img_slice.c	1581110660	0	/home/mooz/Dev/HuDK/example/data/fat32/img_slice.c
+/home/mooz/Dev/HuDK/tools/tiled2bat/xml.h	1581110779	0	/home/mooz/Dev/HuDK/tools/tiled2bat/xml.h
+/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_data_c.dir/depend.make	1588192980	0	/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_data_c.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_sprites_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_sprites_c.dir/progress.make
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/basename_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/basename_test.c
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/Experimental.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/Experimental.dir/progress.make
+/home/mooz/Dev/HuDK/example/data/fat32/read_sector.s	1581110680	0	/home/mooz/Dev/HuDK/example/data/fat32/read_sector.s
+/home/mooz/Dev/HuDK/example/asm/2_custom_font/custom_font.s	1587222336	0	/home/mooz/Dev/HuDK/example/asm/2_custom_font/custom_font.s
+/home/mooz/Dev/HuDK/example/asm/8_clock/CMakeLists.txt	1587222183	0	/home/mooz/Dev/HuDK/example/asm/8_clock/CMakeLists.txt
+/home/mooz/Dev/HuDK/example/.build/asm/8_clock/CMakeFiles/clock.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/8_clock/CMakeFiles/clock.dir/flags.make
+/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_c.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_c.dir/link.txt
+/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/data/map_8x8.inc	1588947220	0	/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/data/map_8x8.inc
+/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_data_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_data_c.dir/progress.make
+/home/mooz/Dev/HuDK/tools/utils/buffer.c	1581110660	0	/home/mooz/Dev/HuDK/tools/utils/buffer.c
+/home/mooz/Dev/HuDK/tools/tiled2bat/json.h	1581110779	0	/home/mooz/Dev/HuDK/tools/tiled2bat/json.h
+/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_sprites_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_sprites_c.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll.dir/flags.make
+/home/mooz/Dev/HuDK/example/.build/C/1_hello_world/CMakeFiles/hello_world_c.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/1_hello_world/CMakeFiles/hello_world_c.dir/flags.make
+/home/mooz/Dev/HuDK/example/.build/CMakeCache.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/CMakeCache.txt
+/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_c.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong_sprites.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong_sprites.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyCoverage.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyCoverage.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousBuild.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousBuild.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousTest.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousTest.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalCoverage.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalCoverage.dir/build.make
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/guess_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/guess_test.c
+/home/mooz/Dev/HuDK/.build/tools/utils/CMakeFiles/hudk_utils.dir/link.txt	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/utils/CMakeFiles/hudk_utils.dir/link.txt
+/home/mooz/Dev/HuDK/example/asm/1_hello_world/CMakeLists.txt	1587222283	0	/home/mooz/Dev/HuDK/example/asm/1_hello_world/CMakeLists.txt
+/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_c.dir/depend.make	1588947222	0	/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_c.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/font_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/font_c.dir/progress.make
+/home/mooz/Dev/HuDK/example/asm/6_sprites/sprites.s	1588083424	0	/home/mooz/Dev/HuDK/example/asm/6_sprites/sprites.s
+/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_c.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/C/9_pong/data/pong_map.inc	1588947222	0	/home/mooz/Dev/HuDK/example/.build/C/9_pong/data/pong_map.inc
+/home/mooz/Dev/HuDK/.build/tools/tiled2bat/CMakeFiles/tiled2bat.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/tiled2bat/CMakeFiles/tiled2bat.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyMemoryCheck.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyMemoryCheck.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousBuild.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousBuild.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalStart.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalStart.dir/progress.make
+/home/mooz/Dev/HuDK/CMakeLists.txt	1578000365	0	/home/mooz/Dev/HuDK/CMakeLists.txt
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalk.dir/depend.make	1581721865	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalk.dir/depend.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalktest.dir/depend.make	1581721869	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalktest.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_data_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/4_map_16x16/CMakeFiles/map_16x16_data_c.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/asm/9_pong/data/pong_map.inc	1588947210	0	/home/mooz/Dev/HuDK/example/.build/asm/9_pong/data/pong_map.inc
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyBuild.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyBuild.dir/build.make
+/home/mooz/Dev/HuDK/example/asm/bm_tools.s	1581110680	0	/home/mooz/Dev/HuDK/example/asm/bm_tools.s
+/home/mooz/Dev/HuDK/example/.build/C/8_clock/CMakeFiles/clock_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/8_clock/CMakeFiles/clock_c.dir/build.make
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/normalize_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/normalize_test.c
+/home/mooz/Dev/HuDK/.build/install_manifest.txt	1581886579	0	/home/mooz/Dev/HuDK/.build/install_manifest.txt
+/home/mooz/Dev/HuDK/tools/utils/utils.c	1581110660	0	/home/mooz/Dev/HuDK/tools/utils/utils.c
+/home/mooz/Dev/HuDK/tools/externals/cwalk/include/cwalk.h	1581110779	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/include/cwalk.h
+/home/mooz/Dev/HuDK/tools/tiled2bat/json.c	1581110660	0	/home/mooz/Dev/HuDK/tools/tiled2bat/json.c
+/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_c.dir/progress.make
+/home/mooz/Dev/HuDK/example/asm/7_scroll/CMakeLists.txt	1588185988	0	/home/mooz/Dev/HuDK/example/asm/7_scroll/CMakeLists.txt
+/home/mooz/Dev/HuDK/example/.build/C/8_clock/CMakeFiles/clock_c.dir/depend.make	1588947222	0	/home/mooz/Dev/HuDK/example/.build/C/8_clock/CMakeFiles/clock_c.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong.dir/link.txt
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/root_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/root_test.c
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalBuild.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalBuild.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalUpdate.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalUpdate.dir/progress.make
+/home/mooz/Dev/HuDK/tools/utils/utils.h	1581110779	0	/home/mooz/Dev/HuDK/tools/utils/utils.h
+/home/mooz/Dev/HuDK/example/C/2_custom_font/custom_font.c	1588188827	0	/home/mooz/Dev/HuDK/example/C/2_custom_font/custom_font.c
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/relative_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/relative_test.c
+/home/mooz/Dev/HuDK/include/random.s	1588104941	1	Random number generators.
+/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/data/map_8x8.inc	1588947209	0	/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/data/map_8x8.inc
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousUpdate.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousUpdate.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8.dir/depend.make	1588192977	0	/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/C/5_joypad/CMakeFiles/joypad_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/5_joypad/CMakeFiles/joypad_c.dir/build.make
+/home/mooz/Dev/HuDK/example/asm/9_pong/CMakeLists.txt	1588186025	0	/home/mooz/Dev/HuDK/example/asm/9_pong/CMakeLists.txt
+/home/mooz/Dev/HuDK/tools/tiled2bat/tilemap.c	1581110660	0	/home/mooz/Dev/HuDK/tools/tiled2bat/tilemap.c
+/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_c.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_c.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_c.dir/flags.make
+/home/mooz/Dev/HuDK/example/.build/C/1_hello_world/CMakeFiles/hello_world_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/1_hello_world/CMakeFiles/hello_world_c.dir/build.make
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/is_absolute_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/is_absolute_test.c
+/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/3_map_8x8/CMakeFiles/map_8x8.dir/flags.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlySubmit.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlySubmit.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites.dir/flags.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalk.dir/link.txt	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalk.dir/link.txt
+/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_data_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_data_c.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/custom_font.dir/depend.make	1588192977	0	/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/custom_font.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/custom_font_c.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/custom_font_c.dir/link.txt
+/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_map_c.dir/depend.make	1588192980	0	/home/mooz/Dev/HuDK/example/.build/C/9_pong/CMakeFiles/pong_map_c.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/asm/1_hello_world/CMakeFiles/hello_world.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/1_hello_world/CMakeFiles/hello_world.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_data.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/20_vgm/CMakeFiles/vgm_data.dir/build.make
+/home/mooz/Dev/HuDK/include/mpr.inc	1587300664	1	Memory mapping utility routines.
+/home/mooz/Dev/HuDK/example/C/8_clock/CMakeLists.txt	1588192644	0	/home/mooz/Dev/HuDK/example/C/8_clock/CMakeLists.txt
+/home/mooz/Dev/HuDK/.build/CMakeFiles/feature_tests.cxx	1581721860	0	/home/mooz/Dev/HuDK/.build/CMakeFiles/feature_tests.cxx
+/home/mooz/Dev/HuDK/example/C/4_map_16x16/CMakeLists.txt	1588192587	0	/home/mooz/Dev/HuDK/example/C/4_map_16x16/CMakeLists.txt
+/home/mooz/Dev/HuDK/.build/tools/tiled2bat/CMakeFiles/tiled2bat.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/tiled2bat/CMakeFiles/tiled2bat.dir/progress.make
+/home/mooz/Dev/HuDK/docs/pachinko.txt	1588956369	1	Pachinko controller.
+/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/font_c.dir/depend.make	1588192979	0	/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/font_c.dir/depend.make
+/home/mooz/Dev/HuDK/example/C/4_map_16x16/map_16x16.c	1588095535	0	/home/mooz/Dev/HuDK/example/C/4_map_16x16/map_16x16.c
+/home/mooz/Dev/HuDK/example/.build/asm/5_joypad/CMakeFiles/joypad.dir/depend.make	1588192978	0	/home/mooz/Dev/HuDK/example/.build/asm/5_joypad/CMakeFiles/joypad.dir/depend.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/Nightly.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/Nightly.dir/build.make
+/home/mooz/Dev/HuDK/tools/externals/cwalk/test/intersection_test.c	1581110660	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/test/intersection_test.c
+/home/mooz/Dev/HuDK/include/collision.s	1581110680	1	collision_eval
+/home/mooz/Dev/HuDK/include/irq.inc	1587300664	1	Interrupts management.
+/home/mooz/Dev/HuDK/tools/utils/base64.h	1581110779	0	/home/mooz/Dev/HuDK/tools/utils/base64.h
+/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_c.dir/depend.make	1588947221	0	/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_c.dir/depend.make
+/home/mooz/Dev/HuDK/tools/tiled2bat/tiled2bat.c	1581110660	0	/home/mooz/Dev/HuDK/tools/tiled2bat/tiled2bat.c
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyBuild.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyBuild.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousTest.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousTest.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/custom_font_c.dir/depend.make	1588947220	0	/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/custom_font_c.dir/depend.make
+/home/mooz/Dev/HuDK/.build/tools/externals/CMakeFiles/argparse.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/CMakeFiles/argparse.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/font.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/2_custom_font/CMakeFiles/font.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/C/1_hello_world/CMakeFiles/hello_world_c.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/1_hello_world/CMakeFiles/hello_world_c.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/DartConfiguration.tcl	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/DartConfiguration.tcl
+/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong_map.dir/progress.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/9_pong/CMakeFiles/pong_map.dir/progress.make
+/home/mooz/Dev/HuDK/tools/utils/CMakeLists.txt	1579119689	0	/home/mooz/Dev/HuDK/tools/utils/CMakeLists.txt
+/home/mooz/Dev/HuDK/include/map.s	1588066456	1	Tilemap functions.
+/home/mooz/Dev/HuDK/example/data/fat32/fat32.img.inc	1581110687	0	/home/mooz/Dev/HuDK/example/data/fat32/fat32.img.inc
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalStart.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalStart.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/custom_font_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/2_custom_font/CMakeFiles/custom_font_c.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyMemoryCheck.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyMemoryCheck.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll.dir/build.make
+/home/mooz/Dev/HuDK/tools/CMakeLists.txt	1581455723	0	/home/mooz/Dev/HuDK/tools/CMakeLists.txt
+/home/mooz/Dev/HuDK/example/C/5_joypad/CMakeLists.txt	1588191131	0	/home/mooz/Dev/HuDK/example/C/5_joypad/CMakeLists.txt
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousSubmit.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousSubmit.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_data_c.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_data_c.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyCoverage.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyCoverage.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalktest.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalktest.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll.dir/depend.make	1588192978	0	/home/mooz/Dev/HuDK/example/.build/asm/7_scroll/CMakeFiles/scroll.dir/depend.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousCoverage.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ContinuousCoverage.dir/progress.make
+/home/mooz/Dev/HuDK/example/C/8_clock/clock.c	1588102141	0	/home/mooz/Dev/HuDK/example/C/8_clock/clock.c
+/home/mooz/Dev/HuDK/tools/tiled2bat/xml.c	1581110660	0	/home/mooz/Dev/HuDK/tools/tiled2bat/xml.c
+/home/mooz/Dev/HuDK/include/hudk.h	1588947201	0	/home/mooz/Dev/HuDK/include/hudk.h
+/home/mooz/Dev/HuDK/tools/utils/buffer.h	1581110779	0	/home/mooz/Dev/HuDK/tools/utils/buffer.h
+/home/mooz/Dev/HuDK/example/asm/collision.s	1581110680	0	/home/mooz/Dev/HuDK/example/asm/collision.s
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalk.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/cwalk.dir/progress.make
+/home/mooz/Dev/HuDK/example/.build/asm/5_joypad/CMakeFiles/joypad.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/5_joypad/CMakeFiles/joypad.dir/flags.make
+/home/mooz/Dev/HuDK/example/C/7_scroll/scroll_test.c	1588098750	0	/home/mooz/Dev/HuDK/example/C/7_scroll/scroll_test.c
+/home/mooz/Dev/HuDK/.build/tools/tiled2bat/CMakeFiles/tiled2bat.dir/depend.make	1581721873	0	/home/mooz/Dev/HuDK/.build/tools/tiled2bat/CMakeFiles/tiled2bat.dir/depend.make
+/home/mooz/Dev/HuDK/tools/externals/cwalk/CMakeLists.txt	1560191516	0	/home/mooz/Dev/HuDK/tools/externals/cwalk/CMakeLists.txt
+/home/mooz/Dev/HuDK/include/crc.s	1586989056	1	CRC routines.
+/home/mooz/Dev/HuDK/tools/encode_gfx.c	1581886569	0	/home/mooz/Dev/HuDK/tools/encode_gfx.c
+/home/mooz/Dev/HuDK/include/clock.inc	1588955556	1	Clock
+/home/mooz/Dev/HuDK/.build/CMakeCache.txt	1581721861	0	/home/mooz/Dev/HuDK/.build/CMakeCache.txt
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalConfigure.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalConfigure.dir/build.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyMemCheck.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyMemCheck.dir/progress.make
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalMemCheck.dir/build.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/ExperimentalMemCheck.dir/build.make
+/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_data_c.dir/depend.make	1588192980	0	/home/mooz/Dev/HuDK/example/.build/C/7_scroll/CMakeFiles/scroll_data_c.dir/depend.make
+/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/6_sprites/CMakeFiles/sprites.dir/link.txt
+/home/mooz/Dev/HuDK/example/.build/asm/5_joypad/CMakeFiles/joypad.dir/build.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/5_joypad/CMakeFiles/joypad.dir/build.make
+/home/mooz/Dev/HuDK/include/irq_reset.s	1588014906	0	/home/mooz/Dev/HuDK/include/irq_reset.s
+/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_c.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/3_map_8x8/CMakeFiles/map_8x8_c.dir/link.txt
+/home/mooz/Dev/HuDK/.build/CMakeFiles/CMakeRuleHashes.txt	1581721861	0	/home/mooz/Dev/HuDK/.build/CMakeFiles/CMakeRuleHashes.txt
+/home/mooz/Dev/HuDK/tools/utils/output.c	1581110660	0	/home/mooz/Dev/HuDK/tools/utils/output.c
+/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_c.dir/link.txt	1588192976	0	/home/mooz/Dev/HuDK/example/.build/C/6_sprites/CMakeFiles/sprites_c.dir/link.txt
+/home/mooz/Dev/HuDK/example/C/3_map_8x8/CMakeLists.txt	1588189344	0	/home/mooz/Dev/HuDK/example/C/3_map_8x8/CMakeLists.txt
+/home/mooz/Dev/HuDK/.build/tools/externals/CMakeFiles/argparse.dir/link.txt	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/CMakeFiles/argparse.dir/link.txt
+/home/mooz/Dev/HuDK/example/.build/asm/1_hello_world/CMakeFiles/hello_world.dir/depend.make	1588192977	0	/home/mooz/Dev/HuDK/example/.build/asm/1_hello_world/CMakeFiles/hello_world.dir/depend.make
+/home/mooz/Dev/HuDK/example/C/2_custom_font/CMakeLists.txt	1588188760	0	/home/mooz/Dev/HuDK/example/C/2_custom_font/CMakeLists.txt
+/home/mooz/Dev/HuDK/tools/tiled2bat/CMakeLists.txt	1575840922	0	/home/mooz/Dev/HuDK/tools/tiled2bat/CMakeLists.txt
+/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16.dir/flags.make	1588192976	0	/home/mooz/Dev/HuDK/example/.build/asm/4_map_16x16/CMakeFiles/map_16x16.dir/flags.make
+/home/mooz/Dev/HuDK/.build/tools/utils/CMakeFiles/hudk_utils.dir/flags.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/utils/CMakeFiles/hudk_utils.dir/flags.make
+/home/mooz/Dev/HuDK/example/asm/20_vgm/CMakeLists.txt	1588186233	0	/home/mooz/Dev/HuDK/example/asm/20_vgm/CMakeLists.txt
+/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyStart.dir/progress.make	1581721861	0	/home/mooz/Dev/HuDK/.build/tools/externals/cwalk/CMakeFiles/NightlyStart.dir/progress.make
