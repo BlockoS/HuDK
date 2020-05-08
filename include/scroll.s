@@ -6,6 +6,10 @@
 ;;
 SCROLL_MAX_COUNT = 4
 
+;;
+;; Title: Scroll area routines.
+;;
+
     .bss
 scroll_top:    ds SCROLL_MAX_COUNT
 scroll_bottom: ds SCROLL_MAX_COUNT

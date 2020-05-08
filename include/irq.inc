@@ -198,6 +198,7 @@ SOFT_RESET = 6
 ;;   addr - user function to be called when interrupt will be triggered.
 ;;
   .macro irq_set_vec
+    php
     sei                     ; disable interrupts
 
     lda    \1
@@ -208,6 +209,7 @@ SOFT_RESET = 6
     inx
     lda    HIGH_BYTE \2
     sta    user_hook, X
+    plp
   .endmacro
 
 ;;

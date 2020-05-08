@@ -26,3 +26,5 @@ add_subdirectory(C/6_sprites)
 add_subdirectory(C/7_scroll)
 add_subdirectory(C/8_clock)
 add_subdirectory(C/9_pong)
+add_subdirectory(C/20_vgm)
+

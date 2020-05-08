@@ -6,7 +6,7 @@
 ;;
 
 ;;
-;; Title: Sprite routines.
+;; Title: Sprite Attribute Table routines.
 ;;
 
     .zp

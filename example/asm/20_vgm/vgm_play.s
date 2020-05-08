@@ -23,10 +23,9 @@ _main:
 	irq_set_vec #VSYNC, #vsync_proc
 
 	stb    #song_bank, <_bl
-	stw    #song_loop, <_si
-	stb    #song_loop_bank, <_bh
-	lda    #high(song_base_address)
-	ldx    #low(song_base_address)
+    stw    #song_base_address, <_si
+	stw    #song_loop, <_cx
+	ldx    #song_loop_bank
 	jsr    vgm_setup
 
 	cli    

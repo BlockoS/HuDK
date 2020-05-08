@@ -193,18 +193,23 @@ vgm_wait .ds 1
 ;; Setup VGM player
 ;;
 ;; Parameters:
-;;     A - Song address MSB
-;;     X - Song address LSB
+;;   _si - Song address
 ;;   _bl - Song bank
-;;   _si - Loop offset
-;;   _bh - Loop bank
+;;   _cx - Loop offset
+;;     X - Loop bank
+  .ifdef HUC
+_vgm_setup.3:
+  .endif
 vgm_setup:
+	stx    <vgm_loop_bank
+
+    lda    <_si+1
 	and    #$1f
     ora    #(vgm_mpr<<5)
 	sta    <vgm_base+1
 	sta    <vgm_ptr+1
 
-	txa
+	lda    <_si
 	sta    <vgm_base
 	sta    <vgm_ptr
 	
@@ -216,11 +221,9 @@ vgm_setup:
 	adc    #$20
 	sta    <vgm_end
 	
-	lda    <_bh
-	sta    <vgm_loop_bank
-	lda    <_si
+	lda    <_cx
     sta    <vgm_loop_ptr
-	lda    <_si+1
+	lda    <_cx+1
     and    #$1f
     ora    #(vgm_mpr<<5)
     sta    <vgm_loop_ptr+1
@@ -255,6 +258,9 @@ vgm_next_byte:
 ;; Function: vgm_update
 ;; Read VGM frame data.
 ;;
+  .ifdef HUC
+_vgm_update:
+  .endif
 vgm_update:
     lda    <vgm_wait
     beq    @play

@@ -160,6 +160,18 @@ void __fastcall vce_load_palette(char pal_index<_al>, char pal_count<_ah>, int f
 void __fastcall irq_enable(char c<acc>);
 void __fastcall irq_disable(char c<acc>);
 
+#define IRQ2 0
+#define IRQ1 1
+#define TIMER 2
+#define NMI 3
+#define VSYNC 4
+#define HSYNC 5
+#define SOFT_RESET 6
+
+void __fastcall irq_enable_vec(char vec<acc>);
+void __fastcall irq_disable_vec(char vec<acc>);
+void __fastcall irq_set_vec(char vec<_cl>, char *addr<acc>);
+
 #ifndef HUDK_USE_CUSTOM_FONT
 
 #define FONT_8x8_COUNT 0x80
@@ -282,8 +294,6 @@ const volatile unsigned char* psg_lfoctrl = 0x0809;
 void __fastcall psg_init();
 
 // timer/int reg
-
-// [todo] vgm
 
 // [todo] crc
 

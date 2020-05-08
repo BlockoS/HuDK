@@ -1,4 +1,4 @@
-
+﻿
 Title: Pachinko controller.
 
 Group: Description
@@ -8,7 +8,7 @@ The dial controls the speed at which the balls are sent.
 
 This controler is used in the following games :
 
-  - Pachio-Kun Jūban Shōbu - パチ夫くん十番勝負
+  - Pachio-Kun Jūban Shōbu - >パチ夫くん十番勝負
   - Pachio-Kun Maboroshi No Densetsu - パチ夫くん幻の伝説
   - Pachio-Kun Warau Uchū - パチ夫くん笑う宇宙
   - Pachio-Kun 3 Pachisuro & Pachinko - パチ夫くん3パチスロ＆パチ

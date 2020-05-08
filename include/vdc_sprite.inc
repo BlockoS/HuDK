@@ -6,14 +6,8 @@
 ;;
 
 ;;
-;; Title: Sprite descprition and utilities
+;; Title: Sprite Attribute Table descprition and utilities
 ;;
-;; [todo] description of the SAT sprite entry
-;; Sprite Y coordinate 0 1023 
-;; Sprite X coordinate 0 1023
-;; Pattern index + CG mode bit 
-;; Parameters (Horizontal or vertical flip, width, height, priority, palette index)
-;; 
 
 ;;
 ;; Group: Sprite entry bitmasks
