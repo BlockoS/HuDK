@@ -7,13 +7,66 @@ Toolchain files for HuC/PCEas and cc65/ca65 are provided in the [cmake](./cmake/
 ### HuC/PCEas toolchain
 ⚠️ You must use this [HuC fork](https://github.com/BlockoS/huc) in order to build the examples.
 
-Open your prefered terminal and create a `build` directory. Go to that directory and type the following command to generate Makefile. 
+Here's a quick tutorial on how to rebuild HuC/pceas from source.
+
+You can either fork the git repository:
+```bash
+git clone git@github.com:BlockoS/huc.git
+```
+Or download a zip file of the master branch:
+```bash
+wget https://github.com/BlockoS/huc/archive/master.zip
+unzip master.zip
+```
+
+Now you can build the compilers by runnnig `Make` with
+```bash
+make
+```
+
+Advanced or reckless users can use `CMake`.
+```bash
+mkdir build
+cd build
+cmake ../src -DCMAKE_INSTALL_PREFIX=..
+cmake --build .
+cmake --build . --target install
+```
+
+All the generated executables will be located in the `bin` directory.
+
+#### HuDK tools
+
+You will also need to build the **HuDK** tools. 
+
+```build
+cd ../..
+mkdir build
+cmake .. -DCMAKE_INSTALL_PREFIX=./install
+cmake --build .
+cmake --build . --target install
+```
+
+If you are using the Makefile generators, you can just type the following to build and install the tools.
+```bash
+make && make install
+```
+
+You can change the value of `CMAKE_INSTALL_PREFIX` to install the tools in another directory.
+In this example, they will be installed in `<HuDK_PATH>/build/install`.
+
+### Examples
+
+Open your prefered terminal. Go to the `<HUDK_PATH>/example` directory, and create a `build` directory. 
+Go to that directory and run `CMake` configuration pass.
 ```bash
 cmake .. \
     -DCMAKE_TOOLCHAIN_FILE=../cmake/huc-toolchain.cmake \ 
-    -DHUDK_TOOLS_PATH=../../.build/install/bin/ \ -DHUDK_INCLUDE_PATH=../../include/ \
-    -DHUC_PATH=<path to huc/pceas binaries directory>
+    -DHUDK_TOOLS_PATH=../../build/install/bin/ \ -DHUDK_INCLUDE_PATH=../../include/ \
+    -DHUC_PATH=<path to huc/pceas bin directory>
 ```
+
+Don't forget to change `DHUDK_TOOLS_PATH` if you installed the **HuDK** tools in another directory.
 
 If you plan to build C example, don't forget to set the `PCE_INCLUDE` environment variable.
 ```bash
