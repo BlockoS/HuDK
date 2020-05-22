@@ -1,6 +1,8 @@
 version: 0.7.{build}
 
-#os: Visual Studio 2017
+image:
+  - Visual Studio 2017
+  - Visual Studio 2013
 configuration: Release
 
 environment:
@@ -8,21 +10,21 @@ environment:
     - compiler: msvc-15-seh
       build_system: cmake
       CMAKE_GENERATOR: Visual Studio 15 2017 Win64
-#      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       MSVC_PLATFORM: amd64
       BITS: 64
 
     - compiler: msvc-15-seh
       build_system: cmake
       CMAKE_GENERATOR: Visual Studio 15 2017
-#      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       MSVC_PLATFORM: x86
       BITS: 32
 
     - compiler: gcc
       build_system: cmake
       CMAKE_GENERATOR: MinGW Makefiles
-#      APPVEYOR_BUILD_WORKER_IMAGE: MinGW32
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       MSVC_PLATFORM: x86
       BITS: 32
 
