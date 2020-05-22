@@ -24,6 +24,7 @@ environment:
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       MSVC_PLATFORM: x86
       BITS: 32
+      EXTRA_CMAKE_OPTIONS: -DCMAKE_SH="CMAKE_SH-NOTFOUND"
 
 install:
   - cd ..
@@ -35,7 +36,7 @@ install:
   - cd jansson
   - md build
   - cd build
-  - cmake -DJANSSON_BUILD_DOCS=OFF -DJANSSON_WITHOUT_TESTS=ON -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ ..
+  - cmake -DJANSSON_BUILD_DOCS=OFF -DJANSSON_WITHOUT_TESTS=ON -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ %EXTRA_CMAKE_OPTIONS% ..
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
   - cd ../..
@@ -48,7 +49,7 @@ install:
   - cd zlib
   - md build
   - cd build
-  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ ..
+  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ %EXTRA_CMAKE_OPTIONS% ..
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
   - cd ../..
@@ -61,7 +62,7 @@ install:
   - cd libpng
   - md build
   - cd build
-  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/zlib.lib -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include ..
+  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ -DZLIB_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/zlib.lib -DZLIB_INCLUDE_DIR=%APPVEYOR_BUILD_FOLDER%/deps/include %EXTRA_CMAKE_OPTIONS% ..
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
   - cd ../..
@@ -74,7 +75,7 @@ install:
   - cd mxml
   - md build
   - cd build
-  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ ..
+  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX=%APPVEYOR_BUILD_FOLDER%/deps/ %EXTRA_CMAKE_OPTIONS% ..
   - cmake --build . --config Release
   - cmake --build . --config Release --target install
   - cd ../..
@@ -100,6 +101,7 @@ before_build:
     -DJANSSON_LIBRARY=%APPVEYOR_BUILD_FOLDER%/deps/lib/jansson.lib
     -DMXML_LIBRARIES=%APPVEYOR_BUILD_FOLDER%/deps/lib/mxml.lib
     -DMXML_INCLUDE_DIRS=%APPVEYOR_BUILD_FOLDER%/deps/include
+    %EXTRA_CMAKE_OPTIONS%
     ..
 
 build_script:
