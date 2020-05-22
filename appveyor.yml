@@ -1,8 +1,5 @@
 version: 0.7.{build}
 
-image:
-  - Visual Studio 2017
-  - Visual Studio 2013
 configuration: Release
 
 environment:
