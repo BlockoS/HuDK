@@ -20,7 +20,7 @@ environment:
 
     - compiler: gcc
       build_system: cmake
-      CMAKE_GENERATOR: MinGW Makefiles
+      CMAKE_GENERATOR: MSYS Makefiles
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
       MSVC_PLATFORM: x86
       BITS: 32
