@@ -2,15 +2,26 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
+
+    .bss
+vdc_bat_width  .ds 2
+vdc_bat_height .ds 1
+vdc_bat_hmask  .ds 1
+vdc_bat_vmask  .ds 1
+vdc_scr_height .ds 1
+
+  .ifdef HUC
+_vdc_bat_width = vdc_bat_width
+_vdc_bat_height = vdc_bat_height
+_vdc_bat_hmask = vdc_bat_hmask
+_vdc_bat_vmask = vdc_bat_vmask
+_vdc_scr_height = vdc_scr_height
+  .endif
 
 ;;
 ;; Title: VDC Functions.
-  .ifdef CA65
-    .include "ca65/vdc.s"
-  .endif
-
   .code
 ;;
 ;; function: vdc_set_read
@@ -19,6 +30,9 @@
 ;; Parameters:
 ;;   _di - VRAM location.
 ;;
+  .ifdef HUC
+_vdc_set_read.1:
+  .endif
 vdc_set_read:
     vdc_reg  #VDC_MARR
     vdc_data <_di
@@ -32,6 +46,9 @@ vdc_set_read:
 ;; Parameters:
 ;;   _di - VRAM location.
 ;;
+  .ifdef HUC
+_vdc_set_write.1:
+  .endif
 vdc_set_write:
     vdc_reg  #VDC_MAWR
     vdc_data <_di
@@ -45,12 +62,17 @@ vdc_set_write:
 ;; Parameters:
 ;;   A - BAT size (see <Background Map Virtual Size>) 
 ;;
+  .ifdef HUC
+_vdc_set_bat_size.1:
+    txa
+  .endif
 vdc_set_bat_size:
     and    #%01110000
     pha
     vdc_reg #VDC_MWR
     pla
-    vdc_data_l
+    sta    video_data_l
+    st2    #$00
     ; compute BAT dimensions
     lsr    A
     lsr    A
@@ -71,9 +93,9 @@ vdc_set_bat_size:
     rts
 
 ; BAT width
-bat_width_array:  .byte $20,$40,$80,$80,$20,$40,$80,$80
+bat_width_array:  .db $20,$40,$80,$80,$20,$40,$80,$80
 ; BAT height
-bat_height_array: .byte $20,$20,$20,$20,$40,$40,$40,$40
+bat_height_array: .db $20,$20,$20,$20,$40,$40,$40,$40
 
 ;;
 ;; function: vdc_calc_addr
@@ -86,6 +108,14 @@ bat_height_array: .byte $20,$20,$20,$20,$40,$40,$40,$40
 ;; Return:
 ;;   _di - VRAM location
 ;;
+  .ifdef HUC
+_vdc_calc_addr.2:
+    ldx    <_al
+    lda    <_ah
+    jsr    vdc_calc_addr
+  __ldw    <_di
+    rts
+  .endif
 vdc_calc_addr:
     ; BAT address formula :
     ;   addr = (bat_y * bat_width) + bat_x
@@ -125,6 +155,11 @@ vdc_calc_addr:
 ;;   _si - Tile data address.
 ;;   _cx - Tile count.
 ;;   _di - VRAM destination.
+  .ifdef HUC
+_vdc_load_tiles.3:
+
+_vdc_load_tiles.4:
+  .endif
 vdc_load_tiles:
     ; word count = tile count * 16
     lda    <_ch
@@ -152,19 +187,25 @@ vdc_load_tiles:
 ;;   _si - data address.
 ;;   _cx - number of words to copy.
 ;;
+  .ifdef HUC
+_vdc_load_data.3:
+
+_vdc_load_data.4:
+  .endif
 vdc_load_data:
     jsr    map_data
     jsr    vdc_set_write
     
+    cly
+
     ldx    <_cl
     beq    @l2
-    cly
 @l0:
         lda    [_si], Y
-        vdc_data_l
+        sta    video_data_l
         iny
         lda    [_si], Y
-        vdc_data_h
+        sta    video_data_h
         iny
         bne    @l1
             inc    <_si+1
@@ -192,6 +233,11 @@ vdc_load_data:
 ;;   _si - Tile offset
 ;;   _bl - Palette index
 ;;
+  .ifdef HUC
+_vdc_fill_bat.6:
+    ldx    <_cl
+    lda    <_ch
+  .endif
 vdc_fill_bat:
     jsr   vdc_calc_addr
 
@@ -221,12 +267,12 @@ vdc_fill_bat_ex:
     addw   vdc_bat_width, <_di
 
     lda    <_si
-    vdc_data_l
+    sta    video_data_l
 
     ldx    <_al    
 @l1:
         lda    <_si+1
-        vdc_data_h
+        sta    video_data_h
 
         dex
         bne    @l1
@@ -242,6 +288,9 @@ vdc_fill_bat_ex:
 ;;   _cl - word count.
 ;;   _di - VRAM location.
 ;;
+  .ifdef HUC
+_vdc_clear.2:
+  .endif
 vdc_clear:
     lda    <_cl
     ora    <_ch
@@ -272,22 +321,28 @@ vdc_clear:
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vdc_init:
+  .endif
 vdc_init:
     cly
 @l0:
     lda    @vdc_init_table, Y
-    vdc_setreg
+    sta    video_reg
     iny
     lda    @vdc_init_table, Y
-    vdc_data_l
+    sta    video_data_l
     iny
     lda    @vdc_init_table, Y
-    vdc_data_h
+    sta    video_data_h
     iny
     cpy    #36
     bne    @l0
 
-	jsr reset_hooks
+    lda    #224
+    sta    vdc_scr_height
+
+    jsr    reset_hooks
    
     ; set BAT size
     lda    #VDC_DEFAULT_BG_SIZE
@@ -299,26 +354,13 @@ vdc_init:
     st1    #$00
     st2    #$00
 
-  .if (VDC_DEFAULT_BG_SIZE = VDC_BG_32x32)
-@tile_addr = (32*32*2)
-  .else
-    .if ((VDC_DEFAULT_BG_SIZE = VDC_BG_64x32) | (VDC_DEFAULT_BG_SIZE = VDC_BG_32x64))
-@tile_addr = (64*32*2)
-    .else
-      .if ((VDC_DEFAULT_BG_SIZE = VDC_BG_64x64) | (VDC_DEFAULT_BG_SIZE = VDC_BG_128x32))
-@tile_addr = (64*64*2)
-      .else
-@tile_addr = (128*128*2)
-      .endif
-    .endif
-  .endif
     st0    #VDC_DATA
-    ldy    #.hibyte(@tile_addr)
+    ldy    #high(VDC_DEFAULT_TILE_ADDR)
 @l1:
     clx
 @l2:
-        st1    #.lobyte(@tile_addr>>4)
-        st2    #.hibyte(@tile_addr>>4)
+        st1    #low(VDC_DEFAULT_TILE_ADDR>>4)
+        st2    #high(VDC_DEFAULT_TILE_ADDR>>4)
         inx
         bne    @l2
     dey
@@ -326,8 +368,8 @@ vdc_init:
 
     ; clear tile
     st0    #VDC_MAWR
-    st1    #.lobyte(@tile_addr)
-    st2    #.hibyte(@tile_addr)
+    st1    #low(VDC_DEFAULT_TILE_ADDR)
+    st2    #high(VDC_DEFAULT_TILE_ADDR)
 
     st0    #VDC_DATA
     st1    #$00
@@ -345,23 +387,23 @@ vdc_init:
 
 ; Default VDC initialization table.
 @vdc_init_table:
-    .byte $05, $00, $00             ; CR  control register
-    .byte $06, $00, $00             ; RCR scanline interrupt counter
-    .byte $07, $00, $00             ; BXR background horizontal scroll offset
-    .byte $08, $00, $00             ; BYR      "     vertical     "      " 
-    .byte $09, VDC_DEFAULT_BG_SIZE  ; MWR backgroup map virtual size
-    .byte $00                       ;
-    .byte $0A                       ; HSR +
+    .db $05, $00, $00             ; CR  control register
+    .db $06, $00, $00             ; RCR scanline interrupt counter
+    .db $07, $00, $00             ; BXR background horizontal scroll offset
+    .db $08, $00, $00             ; BYR      "     vertical     "      " 
+    .db $09, VDC_DEFAULT_BG_SIZE  ; MWR backgroup map virtual size
+    .db $00                       ;
+    .db $0A                       ; HSR +
      VDC_HSR_db VDC_DEFAULT_XRES    ;     |
-    .byte $0B                       ; HDR |
+    .db $0B                       ; HDR |
      VDC_HDR_db VDC_DEFAULT_XRES    ;     | display size and synchro
-    .byte $0C, $02, $17             ; VPR |
-    .byte $0D, $DF, $00             ; VDW |
-    .byte $0E, $0C, $00             ; VCR +
-    .byte $0F, $10, $00             ; DCR DMA control register
-    .byte $13                       ; SAT adddress
-    .byte .lobyte(VDC_DEFAULT_SAT_ADDR)
-    .byte .hibyte(VDC_DEFAULT_SAT_ADDR)
+    .db $0C, $02, $0F             ; VPR |
+    .db $0D, $EF, $00             ; VDW |
+    .db $0E, $04, $00             ; VCR +
+    .db $0F, $10, $00             ; DCR DMA control register
+    .db $13                       ; SAT adddress
+    .db low(VDC_DEFAULT_SAT_ADDR)
+    .db high(VDC_DEFAULT_SAT_ADDR)
 
 ; reset all hooks
 reset_hooks:
@@ -374,7 +416,6 @@ reset_hooks:
 no_hook:
 	rts
 
-
 ;;
 ;; function: vdc_yres_224
 ;; Set vertical (y) resolution to 224 pixels.
@@ -382,6 +423,9 @@ no_hook:
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vdc_yres_224:
+  .endif
 vdc_yres_224:
     st0    #VDC_VSR
     ; vertical synchro width
@@ -393,6 +437,9 @@ vdc_yres_224:
     ; vertical display width
     st1    #$df
     st2    #$00
+
+    lda    #224
+    sta    vdc_scr_height
     rts
 
 ;;
@@ -402,6 +449,9 @@ vdc_yres_224:
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vdc_yres_240:
+  .endif
 vdc_yres_240:
     st0    #VDC_VSR
     ; vertical synchro width
@@ -413,6 +463,9 @@ vdc_yres_240:
     ; vertical display width
     st1    #$ef
     st2    #$00
+
+    lda    #240
+    sta    vdc_scr_height
     rts
 
 ;;
@@ -422,6 +475,9 @@ vdc_yres_240:
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vdc_xres_256:
+  .endif
 vdc_xres_256:
     st0    #VDC_HSR
     ; horizontal sync width
@@ -447,6 +503,9 @@ vdc_xres_256:
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vdc_xres_320:
+  .endif
 vdc_xres_320:
     st0    #VDC_HSR
     ; horizontal sync width
@@ -472,6 +531,9 @@ vdc_xres_320:
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vdc_xres_512:
+  .endif
 vdc_xres_512:
     st0    #VDC_HSR
     ; horizontal sync width
@@ -489,3 +551,120 @@ vdc_xres_512:
     lda    #(VCE_BLUR_ON | VCE_DOT_CLOCK_10MHZ)
     sta    color_ctrl
     rts
+
+    .bss
+_hsw:    ds 1
+_hds:    ds 1
+_hdw:    ds 1
+_hde:    ds 1
+
+    .code
+;;
+;; function: vdc_set_xres
+;; Set horizontal display resolution.
+;; The new resolution will be ajusted/clamped to 256, 268, 356 or 512. 
+;;
+;; Parameters:
+;;   _ax - New horizontal display resolution. 
+;;   _cl - 'blur bit' for control register.
+;;
+  .ifdef HUC
+_vdc_set_xres.2:
+  .endif
+vdc_set_xres:
+    lda    #$20
+    tsb    <irq_m               ; disable vsync processing
+
+    cly
+
+    ldx    <_al
+    beq    @calc                ; < 256
+
+    lda    <_ah
+    cmp    #$02
+    bcs    @l1                  ; >= 512
+
+    cpx    #$0C
+    bcc    @calc                ; < 268
+
+    iny
+
+    cpx    #$64
+    bcc    @calc                ; < 356
+@l1:
+    ldy    #$2                  ; 356 <= x < 512
+@calc:
+    ; A:X / 8
+    lsr    A
+    sax
+    ror    A
+    sax
+    lsr    A
+    sax
+    ror    A
+    lsr    A
+    sta    <_bl
+
+    lda    @vce_clock, Y
+    ora    <_cl
+    sta    color_ctrl           ; dot-clock (x-resolution)
+
+    lda    @hsw, Y
+    sta    _hsw
+    lda    <_bl
+    sta    _hds                 ; hds = (x/8)
+    dec    A
+    sta    _hdw                 ; hdw = (x/8)-1
+    lsr    _hds                 ; hds = (x/16)
+
+    lda    @hds, Y
+    clc
+    sbc    _hds
+    sta    _hds                 ; hds = 18 - (x/16)
+
+    lda    @hde, Y
+    sec
+    sbc    _hds
+    sec
+    sbc    <_bl                 ; hde = (38 - ( (18-(x/16)) + (x/8) ))
+    sta    _hde
+
+    vdc_reg #VDC_HSR
+    lda    _hsw
+    sta    video_data_l
+    lda    _hds
+    sta    video_data_h
+
+    vdc_reg #VDC_HDR
+    lda    _hdw
+    sta    video_data_l
+    lda    _hde
+    sta    video_data_h
+
+@end:
+    lda    #$20
+    trb    <irq_m               ; re-enable VSYNC processing
+    rts
+
+@vce_clock: .byte 0, 1, 2
+@hsw: .byte 2, 3, 5
+@hds: .byte 18,25,42
+@hde: .byte 38,51,82
+
+  .ifdef HUC
+_vdc_write.1:
+    stx    video_data_l
+    sta    video_data_h
+    rts
+
+_vdc_read:
+    ldx    video_data_l
+    lda    video_data_h
+    rts
+
+_vdc_reg.1:
+    stx    video_reg
+    stx    <vdc_ri
+    rts
+
+  .endif

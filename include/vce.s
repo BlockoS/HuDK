@@ -2,7 +2,7 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ;;
@@ -20,6 +20,9 @@
 ;; Parameters:
 ;; *none*
 ;;
+  .ifdef HUC
+_vce_init:
+  .endif
 vce_init:
     ; set VCE dot clock based on the default resolution.
     ; enable edge blur in the same time.
@@ -50,6 +53,12 @@ vce_init:
 ;;   Y - number of sub-palette to copy
 ;;   _si - address of the sub-palette data
 ;;
+  .ifdef HUC
+_vce_load_palette.3:
+    jsr    map_data
+    lda    <_al
+    ldy    <_ah
+  .endif
 vce_load_palette:
     ; convert sub-palette index to color index
     asl    A
@@ -67,7 +76,7 @@ vce_load_palette:
     memcpy_args <_si, #color_data, #32
 @l0:
     jsr    memcpy
-    addw   #32, memcpy_src
+    addw   #32, <memcpy_src
     dey
     bne    @l0
 

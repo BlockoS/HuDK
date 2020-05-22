@@ -288,7 +288,7 @@ int main(int argc, const char **argv) {
 	struct argparse argparse;
 	
 	argparse_init(&argparse, options, usages, 0);
-	argparse_describe(&argparse, "\nTiled2bat : Convert Tiled json to PC Engine", "  ");
+	argparse_describe(&argparse, "\nvgm_strip : Strip/convert VGM", "  ");
 	argc = argparse_parse(&argparse, argc, argv);
 	if (argc != 3) {
 		argparse_usage(&argparse);

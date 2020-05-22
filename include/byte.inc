@@ -2,7 +2,7 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ;;
@@ -24,6 +24,10 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page*, *Absolute* or *Immediate*.
 ;;   p1 - *Zero Page* or *Absolute*.
+  .macro stb
+      lda    \1
+      sta    \2
+  .endmacro
 
 ;;
 ;; Macro: neg
@@ -39,11 +43,41 @@
 ;; Restrictions:
 ;;   p0 - *Zero Page* or *Absolute*.
 ;;
+  .macro neg
+      lda    \1
+      eor    #$ff
+      inc    A
+      sta    \1
+  .endmacro
 
-  .ifdef MAGICKIT
-    .include "pceas/byte.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/byte.inc"
-    .endif
-  .endif
+;;
+;; Macro: add
+;;
+;; Add a byte to accumulator.
+;;
+;; Assembly call:
+;;   > add p0
+;;
+;; Parameter:
+;;   p0 - Operand.
+;;
+  .macro add
+    clc
+    adc    \1
+  .endmacro
+
+;;
+;; Macro: sub
+;;
+;; Substract byte from accumulator.
+;;
+;; Assembly call:
+;;   > sub p0
+;;
+;; Parameter:
+;;   p0 - Operand.
+;;
+  .macro sub
+    sec
+    sbc    \1
+  .endmacro

@@ -2,18 +2,11 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
-  .ifdef MAGICKIT
     .zp
 font_base .ds 2
-  .else
-    .ifdef CA65
-    .zeropage
-font_base: .res 2
-    .endif
-  .endif
 
 ;;
 ;; Title: Font routines.
@@ -38,6 +31,9 @@ font_base: .res 2
 ;;   _si - font address
 ;;   _cx - number of characters to load
 ;;
+  .ifdef HUC
+_font_load.3:
+  .endif
 font_load:
     ; font_base = _di >> 4
     lda    <_di+1
@@ -61,9 +57,9 @@ font_load:
     cly
 @l0:
         lda    [_si], Y
-        vdc_data_l              ; bitplane #0
+        sta    video_data_l     ; bitplane #0
         eor    #$ff
-        vdc_data_h              ; bitplane #1
+        sta    video_data_h     ; bitplane #1
         iny
         cpy    #$08
         bne    @l2
@@ -105,6 +101,9 @@ font_load:
 ;;   X - VRAM address LSB.
 ;;   A - VRAM address MSB.
 ;;
+  .ifdef HUC
+_font_set_addr.1:
+  .endif
 font_set_addr:
     ; compute VRAM base address.
     stx    <font_base
@@ -130,6 +129,10 @@ font_set_addr:
 ;; Parameters:
 ;;   A - Palette index.
 ;;
+  .ifdef HUC
+_font_set_pal.1:
+    sax
+  .endif
 font_set_pal:
     sax
     lda    <font_base+1
@@ -144,3 +147,35 @@ font_set_pal:
     sta    <font_base+1
     rts
 
+  .ifndef HUDK_USE_CUSTOM_FONT
+;;
+;; function: font_8x8_load
+;; Load default 1bpp 8x8 font.
+;; 
+;; Parameters:
+;;  _di - VRAM address for the bitmap font. 
+;;    A - Palette index.
+;;
+font_8x8_load:
+    pha
+    ; set font palette index
+    jsr    font_set_pal
+    
+    ; load bitmap font to VRAM
+    stb    #bank(font_8x8), <_bl
+    stw    #font_8x8, <_si
+    stw    #(FONT_8x8_COUNT*8), <_cx
+    jsr    font_load
+
+    ; load font palette
+    stb    #bank(font_8x8_palette), <_bl
+    stw    #font_8x8_palette, <_si
+    jsr    map_data
+    pla
+    ldy    #$01
+    jsr    vce_load_palette
+
+    rts
+
+    .include "font.inc"
+  .endif

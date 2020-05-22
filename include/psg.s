@@ -2,16 +2,12 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ;;
 ;; Title: PSG Functions.
 ;;
-  .ifdef CA65
-    .include "ca65/psg.s"   
-  .endif
-
   .code
 ;;
 ;; function: psg_init
@@ -23,6 +19,9 @@
 ;; Parameters:
 ;; *none* 
 ;;
+  .ifdef HUC
+_psg_init:
+  .endif
 psg_init:
    stz    psg_mainvol        ; set main volume to zero
    stz    psg_lfoctrl        ; disable LFO

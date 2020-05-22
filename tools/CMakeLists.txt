@@ -8,6 +8,9 @@ if(MSVC)
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS -D _CRT_NONSTDC_NO_DEPRECATE)
 endif()
 
+find_package(Jansson REQUIRED)
+
+add_subdirectory(utils)
 add_subdirectory(externals)
 
 add_executable(vgm_strip vgm_strip.c)
@@ -18,6 +21,14 @@ if(NOT MSVC)
 	target_compile_options(vgm_strip PRIVATE -Wall -Werror)
 endif()
 
+add_executable(encode_gfx encode_gfx.c)
+target_include_directories(encode_gfx PRIVATE ${JANSSON_INCLUDE_DIRS} ${HUDK_TOOLS_EXTERNALS_DIR})
+target_link_libraries(encode_gfx ${JANSSON_LIBRARIES} argparse cwalk hudk_utils)
+if(NOT MSVC)
+    target_compile_definitions(encode_gfx PRIVATE LOG_TERM_COLOR)
+	target_compile_options(encode_gfx PRIVATE -Wall -Werror)
+endif()
+
 add_subdirectory(tiled2bat)
 
-install(TARGETS vgm_strip RUNTIME DESTINATION bin)
+install(TARGETS vgm_strip encode_gfx RUNTIME DESTINATION bin)

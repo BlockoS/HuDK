@@ -2,7 +2,7 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ;;
@@ -25,28 +25,35 @@
 
     .zp
 map_infos:
-map_width       .ds 2
-map_height      .ds 2
-map_wrap        .ds 1
+map_width        .ds 2
+map_height       .ds 2
+map_wrap         .ds 1
 
-map_bank        .ds 1
-map_address     .ds 2
+map_bank         .ds 1
+map_address      .ds 2
 
-map_pal_bank    .ds 1
-map_pal_address .ds 2
+map_pal_bank     .ds 1
+map_pal_address  .ds 2
 
-map_tile_base   .ds 2
+map_tile_base    .ds 2
 
 map_bat_top      .ds 1
 map_bat_bottom   .ds 1
 map_bat_top_base .ds 2
 
-  .ifdef MAGICKIT
-    .include "pceas/map.s"
-  .else
-    .ifdef CA65
-    .include "ca65/map.s"
-    .endif
+  .ifdef HUC
+_map_infos = map_infos
+_map_width = map_width
+_map_height = map_height
+_map_wrap = map_wrap
+_map_bank = map_bank
+_map_address = map_pal_bank
+_map_pal_bank = map_pal_bank
+_map_pal_address = map_pal_address
+_map_tile_base = map_tile_base
+_map_bat_top = map_bat_top
+_map_bat_bottom = map_bat_bottom
+_map_bat_top_base = map_bat_top_base
   .endif
 
     .code
@@ -65,6 +72,40 @@ map_bat_top_base .ds 2
 ;;   h - Map height
 ;;   m - Map coordinate wrapping mode
 ;;
+  .macro map_set
+    lda    #bank(\1)
+    sta    <map_bank
+    stw    #\1, <map_address
+    stw    #((\2)>>4), <map_tile_base
+    lda    #bank(\3)
+    sta    <map_pal_bank
+    stw    #\3, <map_pal_address
+    stw    \4, <map_width
+    stw    \5, <map_height
+    lda    \6
+    sta    <map_wrap
+  .endmacro
+
+  .ifdef HUC
+_map_set.5:
+    lda    <_di
+    lsr    <_di+1
+    ror    A
+    lsr    <_di+1
+    ror    A
+    lsr    <_di+1
+    ror    A
+    lsr    <_di+1
+    ror    A
+    sta    <map_tile_base
+    lda    <_di+1
+    sta    <map_tile_base+1
+    rts
+
+_map_set_wrap.1:
+    stx    <map_wrap
+    rts
+  .endif
 
 ;;
 ;; Macro: map_copy
@@ -81,6 +122,21 @@ map_bat_top_base .ds 2
 ;;   w  - Number of column to copy.
 ;;   h  - Number of line to copy.
 ;;
+  .macro map_copy
+    lda    \1
+    sta    <_al
+    lda    \2
+    sta    <_ah
+    lda    \3
+    sta    <_cl
+    lda    \4
+    sta    <_ch
+    lda    \5
+    sta    <_dl
+    lda    \6
+    sta    <_dh
+    jsr    map_load
+  .endmacro
 
 ;;
 ;; Macro: map_copy_16
@@ -97,6 +153,21 @@ map_bat_top_base .ds 2
 ;;   w  - Number of column to copy.
 ;;   h  - Number of line to copy.
 ;;
+  .macro map_copy_16
+    lda    \1
+    sta    <_al
+    lda    \2
+    sta    <_ah
+    lda    \3
+    sta    <_cl
+    lda    \4
+    sta    <_ch
+    lda    \5
+    sta    <_dl
+    lda    \6
+    sta    <_dh
+    jsr    map_load_16
+  .endmacro
 
 ;;
 ;; Function: map_set_bat_bounds
@@ -110,6 +181,11 @@ map_bat_top_base .ds 2
 ;;   X - Vertical upper bound (top).
 ;;   A - Vertical lower bound (bottom).
 ;;
+  .ifdef HUC
+_map_set_bat_bounds.2:
+    ldx    <_al
+    lda    <_ah
+  .endif
 map_set_bat_bounds:
     stx    <map_bat_top
     sta    <map_bat_bottom
@@ -129,6 +205,9 @@ map_set_bat_bounds:
 ;;   _dl - Number of column to copy.
 ;;   _dh - Number of row to copy.
 ;;
+  .ifdef HUC
+_map_load.6:
+  .endif
 map_load:
     ; save mprs 2, 3 and 4
     tma2
@@ -357,6 +436,9 @@ _map_load_next_tile_y:
 ;;   _dl - Number of column to copy.
 ;;   _dh - Number of row to copy.
 ;;
+  .ifdef HUC
+_map_load_16.6:
+  .endif
 map_load_16:
     ; save mprs 2, 3 and 4
     tma2

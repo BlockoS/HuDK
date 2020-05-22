@@ -2,7 +2,7 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ;;
@@ -20,6 +20,9 @@ seed    .ds 2
 ;; Parameters:
 ;;    X - Seed LSB
 ;;    A - Seed MSB.
+  .ifdef HUC
+_rand8_seed.1:
+  .endif
 rand8_seed:
     cpx    #$00
     bne    @store
@@ -46,6 +49,13 @@ rand8_seed:
 ;; Return:
 ;;   A - Pseud-random number.
 ;;
+  .ifdef HUC
+_rand8:
+    bsr    rand8
+    tax
+    cla
+    rts
+  .endif
 rand8:
     lda    <seed
     beq    @rand8_xor

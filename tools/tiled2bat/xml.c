@@ -2,7 +2,7 @@
  * This file is part of HuDK.
  * ASM and C open source software development kit for the NEC PC Engine.
  * Licensed under the MIT License
- * (c) 2016-2019 MooZ
+ * (c) 2016-2020 MooZ
  */
 #include "xml.h"
 
@@ -14,9 +14,9 @@
 #include <mxml.h>
 #include <cwalk.h>
 
-#include "base64.h"
-#include "log.h"
-#include "utils.h"
+#include "../utils/base64.h"
+#include "../utils/log.h"
+#include "../utils/utils.h"
 
 static int xml_read_attr_int(mxml_node_t *node, const char *attr, int *i) {
     const char *name = mxmlGetElement(node);

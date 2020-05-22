@@ -2,17 +2,17 @@
  * This file is part of HuDK.
  * ASM and C open source software development kit for the NEC PC Engine.
  * Licensed under the MIT License
- * (c) 2016-2019 MooZ
+ * (c) 2016-2020 MooZ
  */
 #include "tileset.h"
-
-#include "log.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 #include <cwalk.h>
+
+#include "../utils/log.h"
 
 int tileset_create(tileset_t *tileset, const char *name, int tile_count, int tile_width, int tile_height) {
     memset(tileset, 0, sizeof(tileset_t));

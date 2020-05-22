@@ -2,25 +2,17 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ;;
-;; Title: Sprite routines.
+;; Title: Sprite Attribute Table routines.
 ;;
+
     .zp
 sprite_vram_base .ds 2
 
     .code
-  .ifdef MAGICKIT
-    .include "pceas/vdc_sprite.s"
-  .else
-    .ifdef CA65
-    .include "ca65/vdc_sprite.s"
-    .endif
-  .endif
-
-
 ;;
 ;; Macro: vdc_sat_set
 ;; Set current SAT entry in VRAM.
@@ -33,9 +25,32 @@ sprite_vram_base .ds 2
 ;;   y - Y position
 ;;   addr - Pattern address
 ;;   pal - Palette index
-;;   size - Sprite size
-;;   flag - Sprite flag
+;;   flag - Sprite flag + size
 ;;
+  .macro vdc_sat_set
+    vdc_data \1
+    vdc_data \2
+    vdc_data \3
+    lda    \4
+    ora    LOW_BYTE \5
+    sta    video_data_l
+    lda    HIGH_BYTE \5
+    sta    video_data_h
+  .endmacro
+
+  .ifdef HUC
+_vdc_sat_set.5:
+    pha
+    vdc_data <_ax
+    vdc_data <_cx
+    vdc_data <_si
+    sax
+    ora    <_dl
+    sta    video_data_l
+    pla
+    sta    video_data_h
+    rts
+  .endif
 
 ;;
 ;; function: vdc_sat_addr
@@ -44,7 +59,10 @@ sprite_vram_base .ds 2
 ;; Parameters:
 ;;   _si - sprite table VRAM address.
 ;;
-vdc_sat_addr
+  .ifdef HUC
+_vdc_sat_addr.1:
+  .endif
+vdc_sat_addr:
     vdc_reg #VDC_SAT_SRC 
 
     lda    <_si
@@ -67,6 +85,13 @@ vdc_sat_addr
 ;; Returns:
 ;;   _si - sprite VRAM address
 ;;
+  .ifdef HUC
+_vdc_sat_entry.1:
+    bsr    vdc_sat_entry
+    ldx    <_si
+    lda    <_si+1
+    rts
+  .endif
 vdc_sat_entry:
     ; current sprite address = sprite_vram_base + (#entry * 8)
     stz    <_si+1

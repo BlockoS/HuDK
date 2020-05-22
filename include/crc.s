@@ -2,7 +2,7 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ;;
@@ -51,6 +51,8 @@ _crc .ds 4
 ;;
 ;; Return:
 ;;   _crc - Updated CRC-16 value
+;;      A - CRC-16 value MSB
+;;      X - CRC-16 value LSB
 ;;
 crc16:
     ; According to https://en.wikipedia.org/wiki/Computation_of_cyclic_redundancy_checks
@@ -89,14 +91,14 @@ crc16:
     lsr    A
     lsr    A
     ; save it for latter
-    tax
+    tay
     ; compute %000h_hhh0 = high(t << 5) & %0000_0001
     asl    A
     ; A = %000h_hhh0 ^ %bbbb_aaaa
     eor    <_crc
     sta    <_crc
     ; restore %0000_hhhh
-    txa
+    tya
     ; compute t = %hhhh_gggg ^ %0000_hhhh
     eor    <_crc+1
     sta    <_crc+1
@@ -106,15 +108,15 @@ crc16:
     asl    A
     asl    A
     asl    A
-    tax
+    tay
     asl    A
     asl    A
     ; A now contains the low byte of (t << 5)
     eor    <_crc+1
-    tay
+    tax
     ; Y now contains %hhhh_iiii ^ %iii0_0000
     ; so we are done for the low byte of the crc
-    txa
+    tya
     ; A now contains %hiii_i000
     ; and the carry flags contains the 3th bit of t
     ; if we rotate A 1 bit to the left, we will get %iiii_000i
@@ -123,7 +125,7 @@ crc16:
     eor    <_crc
     ; swap byte and we are done!
     sta    <_crc+1
-    sty    <_crc
+    stx    <_crc
     ; and this is Greg Cook's CRC-16 code
     ; For a more "formal" explanation see http://www.6502.org/source/integers/crc-more.html
     rts

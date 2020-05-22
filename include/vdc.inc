@@ -2,7 +2,7 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ;;
@@ -27,9 +27,7 @@ videoport = $0000
 ;;    $03, $04 or $14 to $1F and trying to access them has no effect (see <VDC registers>).
 ;;  - Reading video_reg $0000 returns a set of status flags (see <VDC status flags>). 
 ;; 
-video_reg   = videoport
-video_reg_l = video_reg
-video_reg_h = video_reg+1
+video_reg = videoport
 
 ;;
 ;; ushort: video_data
@@ -37,7 +35,7 @@ video_reg_h = video_reg+1
 ;;
 ;; Data to be read or written to the a VDC register.
 ;;
-video_data   = videoport+2
+video_data = videoport+2
 video_data_l = video_data
 video_data_h = video_data+1
 
@@ -452,6 +450,11 @@ VDC_DMA_SAT_AUTO   = %00010000
 ;; Group: VDC resgister copy in zero-page.
 ;;
 
+;; ubyte: vdc_disp
+;; VDC display flag.
+;;
+vdc_disp = $20f2
+
 ;;
 ;; ubyte: vdc_crl
 ;; Copy of the VDC control register LSB.
@@ -489,6 +492,23 @@ vdc_ri = $20f7
 ;; Parameters:
 ;;   xres - Horizontal screen resolution.
 ;;
+  .macro VDC_HSR_db
+    .if (\1 < 268)
+      ; low resolution (standard)
+      .db $02                   ; Horizontal Display Start (HDS)
+      .db (18 - (\1 / 16))      ; Horizontal Sync Width (HWS)
+    .else
+      .if (\1 < 356)
+        ; high resolution
+        .db $03
+        .db (25 - (\1 / 16))
+      .else
+        ; very high resolution
+        .db $05
+        .db (42 - (\1 / 16))
+      .endif
+    .endif
+  .endmacro
 
 ;; 
 ;; macro: VDC_HDR_db
@@ -502,6 +522,21 @@ vdc_ri = $20f7
 ;; Parameters:
 ;;   xres - Horizontal screen resolution.
 ;;
+  .macro VDC_HDR_db
+      .db ((\1 / 8) - 1)                        ; Horizontal Display Width (HDW)
+    .if (\1 < 268)
+      ; low resolution (standard)
+      .db (38 - ((18 - (\1 / 16)) + (\1 / 8)))  ; Horizontal Display End (HDE)
+    .else
+      .if (\1 < 356)
+        ; high resolution
+        .db (51 - ((25 - (\1 / 16)) + (\1 / 8)))
+      .else
+        ; very high resolution
+        .db (82 - ((42 - (\1 / 16)) + (\1 / 8)))
+      .endif
+    .endif
+  .endmacro
 
 ;;
 ;; macro: vdc_reg
@@ -513,6 +548,16 @@ vdc_ri = $20f7
 ;; Parameters:
 ;;   reg - VDC register.
 ;;
+  .macro vdc_reg
+    lda    \1
+    ; [todo] zeropage copy of the vdc register
+    .if (\?1 = ARG_IMMEDIATE)
+      st0    \1
+    .else
+      sta    video_reg
+    .endif
+    sta    <vdc_ri
+  .endmacro
 
 ;;
 ;; macro: vdc_setreg
@@ -521,6 +566,10 @@ vdc_ri = $20f7
 ;; Assembly call:
 ;;   > vdc_setreg
 ;;
+  .macro vdc_setreg
+    sta    video_reg
+    sta    <vdc_ri
+  .endmacro
 
 ;
 ;; macro: vdc_data
@@ -530,24 +579,73 @@ vdc_ri = $20f7
 ;;   > vdc_data    <_si
 ;;   > vdc_data    $2210, $3200
 ;;
+  .macro vdc_data
+  .if (\# = 1)
+    lda    LOW_BYTE \1
+    sta    video_data_l
+    lda    HIGH_BYTE \1
+    sta    video_data_h
+  .else
+    lda    \1
+    sta    video_data_l
+    lda    \2
+    sta    video_data_h
+  .endif
+  .endmacro
 
 ;;
-;; macro: vdc_data_l
-;; Set VDC data LSB.
+;; Macro: vdc_enable_display
+;; Enable background tiles and sprites display.
 ;;
 ;; Assembly call:
-;;   > lda    something
-;;   > vdc_data_l
+;;   > vdc_enable_display
 ;;
+  .macro vdc_enable_display
+    lda    #1
+    sta    <vdc_disp
+  .endmacro
 
 ;;
-;; macro: vdc_data_h
-;; Set VDC data MSB.
+;; Macro: vdc_disable_display
+;; Disable background tiles and sprites display.
 ;;
 ;; Assembly call:
-;;   > lda    some_data
-;;   > vdc_data_h
+;;   > vdc_disable_display
 ;;
+  .macro vdc_disable_display
+    stz    <vdc_disp
+  .endmacro
+
+;;
+;; Macro: vdc_set_cr
+;; Set VDC control registers 
+;;
+;; Assembly call:
+;;   > vdc_set_cr flags
+;;
+;; Parameters:
+;;   flags - control register flags.
+;;
+  .macro vdc_set_cr
+    vdc_reg #VDC_CR
+    lda    LOW_BYTE \1
+    sta    <vdc_crl
+    sta    video_data_l
+    lda    HIGH_BYTE \1
+    sta    <vdc_crl+1
+    sta    video_data_h 
+  .endmacro
+
+;;
+;; Macro: vdc_wait_vsync
+;; Wait for VSYNC.
+;;
+  .macro vdc_wait_vsync
+    stz    <irq_cnt
+@wait_vsync\@:
+    lda    <irq_cnt
+    beq    @wait_vsync\@
+  .endm
 
 ;;
 ;; Group: Default VDC values.
@@ -556,6 +654,22 @@ vdc_ri = $20f7
 ;; ushort: VDC_DEFAULT_BG_SIZE
 ;; Default virtual background map size.
 VDC_DEFAULT_BG_SIZE = VDC_BG_64x64
+  .endif
+
+;; ushort: VDC_DEFAULT_TILE_ADDR
+;; Default tile address.
+  .if (VDC_DEFAULT_BG_SIZE = VDC_BG_32x32)
+VDC_DEFAULT_TILE_ADDR = (32*32)
+  .else
+    .if ((VDC_DEFAULT_BG_SIZE = VDC_BG_64x32) | (VDC_DEFAULT_BG_SIZE = VDC_BG_32x64))
+VDC_DEFAULT_TILE_ADDR = (64*32)
+    .else
+      .if ((VDC_DEFAULT_BG_SIZE = VDC_BG_64x64) | (VDC_DEFAULT_BG_SIZE = VDC_BG_128x32))
+VDC_DEFAULT_TILE_ADDR = (64*64)
+      .else
+VDC_DEFAULT_TILE_ADDR = (128*64)
+      .endif
+    .endif
   .endif
 
   .ifndef VDC_DEFAULT_XRES
@@ -572,12 +686,4 @@ VDC_DEFAULT_XRES = 256
 ;; Default SAT VRAM offset.
 ;;
 VDC_DEFAULT_SAT_ADDR = $7F00
-  .endif
-
-  .ifdef MAGICKIT
-    .include "pceas/vdc.inc"
-  .else
-    .ifdef CA65
-    .include "ca65/vdc.inc"
-    .endif
   .endif

@@ -1,0 +1,5 @@
+* ca65:
+cmake .. -DCC65_PATH=cc65/bin/ -DCMAKE_TOOLCHAIN_FILE=../cmake/cc65-toolchain.cmake -DHUDK_TOOLS_PATH=hudk/bin/
+
+* pceas:
+cmake .. -DHUC_PATH=huc/bin/ -DCMAKE_TOOLCHAIN_FILE=../cmake/huc-toolchain.cmake -DHUDK_TOOLS_PATH=hudk/bin/

@@ -2,7 +2,7 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ;;
@@ -38,13 +38,17 @@
 ;; Parameters:
 ;;   A - ASCII character
 ;;
+  .ifdef HUC
+_print_char.1:
+    txa
+  .endif
 print_char:
     clc
-    adc     <font_base
-    vdc_data_l
+    adc    <font_base
+    sta    video_data_l
     cla
-    adc     <font_base+1
-    vdc_data_h
+    adc    <font_base+1
+    sta    video_data_h
     rts
 
 ;;
@@ -57,6 +61,10 @@ print_char:
 ;; Parameters:
 ;;   A - Digit value between 0 and 9.
 ;;
+  .ifdef HUC
+_print_digit.1:
+    txa
+  .endif
 print_digit:
     cmp    #10
     bcc    @l0
@@ -66,11 +74,11 @@ print_digit:
     clc
     adc    #FONT_DIGIT_INDEX
     clc
-    adc     <font_base
-    vdc_data_l
+    adc    <font_base
+    sta    video_data_l
     cla
-    adc     <font_base+1
-    vdc_data_h
+    adc    <font_base+1
+    sta    video_data_h
     rts
 
 ;;
@@ -83,6 +91,10 @@ print_digit:
 ;; Parameters:
 ;;   A - Digit value between 0 and 15.
 ;;
+  .ifdef HUC
+_print_hex.1:
+    txa
+  .endif
 print_hex:
     cmp    #$10
     bcc    @l0
@@ -100,11 +112,11 @@ print_hex:
     adc    #FONT_DIGIT_INDEX
 @print:
     clc
-    adc     <font_base
-    vdc_data_l
+    adc    <font_base
+    sta    video_data_l
     cla
-    adc     <font_base+1
-    vdc_data_h
+    adc    <font_base+1
+    sta    video_data_h
     rts
 
 ;;
@@ -115,21 +127,28 @@ print_hex:
 ;;   _ax - BCD encoded number (max 4 bytes).
 ;;   X - BCD array top element index
 ;;
+  .ifdef HUC
+_print_bcd.2:
+    ldx    #3
+    bra    print_bcd
+_print_bcd:
+    ldx    #1
+  .endif
 print_bcd:
-print_bcd.hi:
+print_bcd_hi:
     lda    <_ax, X
     lsr    A
     lsr    A
     lsr    A
     lsr    A
     jsr    print_digit
-print_bcd.lo:
+print_bcd_lo:
     lda    <_ax, X
     and    #$0f
     jsr    print_digit
     
     dex
-    bpl     print_bcd
+    bpl    print_bcd
     rts
 
 ;;
@@ -139,10 +158,14 @@ print_bcd.lo:
 ;; Parameters:
 ;;   A - Unsigned byte.
 ;;
+  .ifdef HUC
+_print_dec_u8.1:
+    txa
+  .endif
 print_dec_u8:
     jsr    binbcd8
     ldx    #$01
-    jmp    print_bcd.lo
+    jmp    print_bcd_lo
 
 ;;
 ;; function: print_dec_u16
@@ -152,10 +175,14 @@ print_dec_u8:
 ;;   A - Word MSB.
 ;;   X - Word LSB.
 ;;
+  .ifdef HUC
+_print_dec_u16.1:
+    sax
+  .endif
 print_dec_u16:
     jsr    binbcd16
     ldx    #$02
-    jmp    print_bcd.lo
+    jmp    print_bcd_lo
 
 ;;
 ;; function: print_hex_u8
@@ -164,6 +191,10 @@ print_dec_u16:
 ;; Parameters:
 ;;   A - Unsigned byte.
 ;;
+  .ifdef HUC
+_print_hex_u8.1:
+    txa
+  .endif
 print_hex_u8:
     pha
     lsr    A
@@ -183,6 +214,10 @@ print_hex_u8:
 ;;   A - Word MSB.
 ;;   X - Word LSB.
 ;;
+  .ifdef HUC
+_print_hex_u16.1:
+    sax
+  .endif
 print_hex_u16:
     jsr    print_hex_u8     ; print MSB
     sax                     ; print LSB
@@ -204,6 +239,11 @@ print_hex_u16:
 ;; Returns:
 ;;   _si - pointer to the last displayed character or '\0'.
 ;;
+  .ifdef HUC
+_print_string.5:
+    ldx    <_cl
+    lda    <_ch
+  .endif
 print_string:
     jsr    vdc_calc_addr 
 
@@ -253,6 +293,9 @@ print_string:
 ;; Parameters:
 ;;   _si - string address.
 ;;
+  .ifdef HUC
+_print_string_raw.1:
+  .endif
 print_string_raw:
     cly
 @loop:
@@ -276,6 +319,9 @@ print_string_raw:
 ;;   _si - string address.
 ;;     X - number of characters to print.
 ;;
+  .ifdef HUC
+_print_string_n.2:
+  .endif
 print_string_n:
     cly
 @loop:
@@ -298,6 +344,11 @@ print_string_n:
 ;;   _ah - BAT area height.
 ;;   _bl - ASCII code.
 ;;
+  .ifdef HUC
+_print_fill.5:
+    lda    <_ch
+    ldx    <_cl
+  .endif
 print_fill:
     jsr    vdc_calc_addr
 

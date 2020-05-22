@@ -2,7 +2,7 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ;;
@@ -144,12 +144,12 @@ vgm_bank .ds 1
 ;; uword: vgm_ptr
 ;; Current VGM data pointer.
 ;;
-vgm_ptr  .ds 2
+vgm_ptr .ds 2
 ;;
 ;; ubyte: vgm_end
 ;; VGM data upper bound. 
 ;;
-vgm_end  .ds 1
+vgm_end .ds 1
 ;;
 ;; ubyte: vgm_loop_bank
 ;; Bank of the VGM loop address.
@@ -159,7 +159,7 @@ vgm_loop_bank .ds 1
 ;; ubyte: vgm_loop_ptr
 ;; VGM loop address.
 ;;
-vgm_loop_ptr  .ds 2
+vgm_loop_ptr .ds 2
 ;;
 ;; ubyte: vgm_wait
 ;; Frame delay.
@@ -187,6 +187,50 @@ vgm_wait .ds 1
     tam6
   .endmacro
 
+
+;;
+;; Function: vgm_setup
+;; Setup VGM player
+;;
+;; Parameters:
+;;   _si - Song address
+;;   _bl - Song bank
+;;   _cx - Loop offset
+;;     X - Loop bank
+  .ifdef HUC
+_vgm_setup.3:
+  .endif
+vgm_setup:
+	stx    <vgm_loop_bank
+
+    lda    <_si+1
+	and    #$1f
+    ora    #(vgm_mpr<<5)
+	sta    <vgm_base+1
+	sta    <vgm_ptr+1
+
+	lda    <_si
+	sta    <vgm_base
+	sta    <vgm_ptr
+	
+	lda    <_bl
+	sta    <vgm_bank
+	
+	lda    <vgm_base+1
+	clc
+	adc    #$20
+	sta    <vgm_end
+	
+	lda    <_cx
+    sta    <vgm_loop_ptr
+	lda    <_cx+1
+    and    #$1f
+    ora    #(vgm_mpr<<5)
+    sta    <vgm_loop_ptr+1
+	
+	stz    <vgm_wait
+	rts
+
 ;;
 ;; Function: vgm_next_byte
 ;; Increment VGM data pointer.
@@ -198,33 +242,36 @@ vgm_wait .ds 1
 ;;
 vgm_next_byte:
     inc    <vgm_ptr
-    bne    .l0
+    bne    @l0
         inc    <vgm_ptr+1
         lda    <vgm_ptr+1
         cmp    <vgm_end
-        bcc    .l0
+        bcc    @l0
             stw    <vgm_base, <vgm_ptr
             inc    <vgm_bank
             lda    <vgm_bank
             tam6
-.l0:
+@l0:
     rts
 
 ;;
 ;; Function: vgm_update
 ;; Read VGM frame data.
 ;;
+  .ifdef HUC
+_vgm_update:
+  .endif
 vgm_update:
     lda    <vgm_wait
-    beq    .play
+    beq    @play
         dec    <vgm_wait
         rts
-.play
+@play:
     vgm_map
-.loop
+@loop:
     lda    [vgm_ptr]
     cmp    #$e0
-    bcs    .check_end
+    bcs    @check_end
         tax
         jsr    vgm_next_byte
 
@@ -233,22 +280,22 @@ vgm_update:
 
         jsr    vgm_next_byte
 
-        bra    .loop    
-.check_end:
+        bra    @loop
+@check_end:
     cmp    #$ff
-    bne    .wait
+    bne    @wait
         vgm_unmap
         lda    <vgm_loop_bank
         sta    <vgm_bank
         stw    <vgm_loop_ptr, <vgm_ptr
         rts
-.wait:
+@wait:
     cmp    #$f0
-    beq    .frame_end
+    beq    @frame_end
     sec
     sbc    #$df
     sta    <vgm_wait
-.frame_end:
+@frame_end:
     jsr    vgm_next_byte
     vgm_unmap
     rts

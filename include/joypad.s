@@ -2,45 +2,13 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ;;
 ;; Title: Joypad Functions.
 ;;
   .include "joypad.inc"
-
-  .macro joypad_reset_multitap
-    lda    #$01         ; reset multitap to joypad #1
-    sta    joyport
-    lda    #$03
-    sta    joyport
-    joypad_delay
-  .endmacro
-
-  .macro joypad_poll
-    lda    #$01         ; read directions (SEL=1)
-    sta    joyport
-    joypad_delay
-   
-    lda    \1, X
-    sta    \2, X
-    lda    joyport
-    asl    A
-    asl    A
-    asl    A
-    asl    A
-    sta    \1, X
-
-    stz    joyport      ; read buttons (SEL=0)
-    joypad_delay
-
-    lda    joyport
-    and    #$0f
-    ora    \1, X
-    eor    #$ff
-    sta    \1, X
-  .endmacro
 
   .code
 ;;
@@ -59,6 +27,9 @@
 ;; Consumed:
 ;;   A, X
 ;;
+  .ifdef HUC
+_joypad_read:
+  .endif
 joypad_read:
     joypad_reset_multitap
 
@@ -90,6 +61,9 @@ joypad_read:
 ;;   joypad   - directions and buttons for all 5 controllers.
 ;;   joypad_6 - states of buttons III, IV, V and VI or 0 for 2-button joypads.
 ;;
+  .ifdef HUC
+_joypad_6_read:
+  .endif
 joypad_6_read:
     
     joypad_reset_multitap               ; first scan
@@ -149,4 +123,3 @@ joypad_6_read:
         cpx    #$05
         bne    @l0
     rts
-

@@ -2,17 +2,14 @@
 ;; This file is part of HuDK.
 ;; ASM and C open source software development kit for the NEC PC Engine.
 ;; Licensed under the MIT License
-;; (c) 2016-2019 MooZ
+;; (c) 2016-2020 MooZ
 ;;
 
 ;;
 ;; Title: Memory mapping utility routines.
 ;;
-  .ifdef CA65
-    .include "ca65/mpr.s"
-  .endif 
-
   .code
+
 ;;
 ;; function: map_data
 ;;   Map data to mpr 3 and 4.

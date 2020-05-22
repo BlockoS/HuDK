@@ -2,7 +2,7 @@
  * This file is part of HuDK.
  * ASM and C open source software development kit for the NEC PC Engine.
  * Licensed under the MIT License
- * (c) 2016-2019 MooZ
+ * (c) 2016-2020 MooZ
  */
 #include "tilemap.h"
 
@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "log.h"
+#include "../utils/log.h"
 
 void tilemap_destroy(tilemap_t *map) {
     if(map->layer) {

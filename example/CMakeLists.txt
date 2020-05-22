@@ -1,30 +1,30 @@
 cmake_minimum_required(VERSION 3.5)
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/data/map)
+project(asm-examples ASM)
 
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/data/map/map8x8.inc
-                   COMMAND $<TARGET_FILE:tiled2bat> -p 0 -b 0x2200 ${CMAKE_CURRENT_SOURCE_DIR}/data/map/map8x8.tmx
-                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/data/map
-                   DEPENDS tiled2bat
-                   COMMENT "convert 8x8 map")
+set(HUDK_TOOLS_PATH "" CACHE PATH "Path to HuDK tools")
 
-# atm you can't specify an output file to pceas, so the rom is generated next to the source file.
-add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pceas/map8x8.pce
-                   COMMAND ${PCEAS} -I ${CMAKE_CURRENT_LIST_DIR}/../include -I . -I ./example ${CMAKE_CURRENT_SOURCE_DIR}/pceas/map8x8.s
-                   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/data/map/map8x8.inc
-                   COMMENT "build 8x8 map example")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/.. ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_custom_target(map8x8_pceas ALL DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/pceas/map8x8.pce)
+add_subdirectory(asm/1_hello_world)
+add_subdirectory(asm/2_custom_font)
+add_subdirectory(asm/3_map_8x8)
+add_subdirectory(asm/4_map_16x16)
+add_subdirectory(asm/5_joypad)
+add_subdirectory(asm/6_sprites)
+add_subdirectory(asm/7_scroll)
+add_subdirectory(asm/8_clock)
+add_subdirectory(asm/9_pong)
+add_subdirectory(asm/20_vgm)
 
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/data/map/map16x16.inc
-                   COMMAND $<TARGET_FILE:tiled2bat> -p 0 -b 0x2200 ${CMAKE_CURRENT_SOURCE_DIR}/data/map/map16x16.json
-                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/data/map
-                   DEPENDS tiled2bat
-                   COMMENT "convert 16x16 map")
+add_subdirectory(C/1_hello_world)
+add_subdirectory(C/2_custom_font)
+add_subdirectory(C/3_map_8x8)
+add_subdirectory(C/4_map_16x16)
+add_subdirectory(C/5_joypad)
+add_subdirectory(C/6_sprites)
+add_subdirectory(C/7_scroll)
+add_subdirectory(C/8_clock)
+add_subdirectory(C/9_pong)
+add_subdirectory(C/20_vgm)
 
-add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pceas/map16x16.pce
-                   COMMAND ${PCEAS} -I ${CMAKE_CURRENT_LIST_DIR}/../include -I . -I ./example ${CMAKE_CURRENT_SOURCE_DIR}/pceas/map16x16.s
-                   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/data/map/map16x16.inc
-                   COMMENT "build 16x16 map example")
-
-add_custom_target(map16x16_pceas ALL DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/pceas/map16x16.pce)
