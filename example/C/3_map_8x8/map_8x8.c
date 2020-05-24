@@ -6,17 +6,12 @@
  */
 #include "hudk.h"
 
+#include "data/map_8x8.h"
+
 #incbin(map_00, "data/map_00.map")
 #incbin(gfx_00, "data/map_8x8.bin")
 #incbin(tile_pal_00, "data/map_8x8.idx")
 #incbin(pal_00, "data/map_8x8.pal")
-
-#define map_8x8_width 128
-#define map_8x8_height 32
-#define map_8x8_tile_width 8
-#define map_8x8_tile_height 8
-#define map_8x8_tile_vram 0x2200
-#define map_8x8_tile_pal 0
 
 // sine table [-128,128[
 const char sin_table[256] = {

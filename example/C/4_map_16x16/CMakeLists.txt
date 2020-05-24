@@ -12,7 +12,7 @@ include_directories(${HUDK_INCLUDE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 file(MAKE_DIRECTORY ${DATA_DIR})
 
 add_custom_command(OUTPUT ${DATA_DIR}/map_16x16.inc 
-                   COMMAND ${HUDK_TOOLS_PATH}/tiled2bat -p 0 -b 0x2200 ${CMAKE_CURRENT_SOURCE_DIR}/../../data/4_map_16x16/map_16x16.json
+                   COMMAND ${HUDK_TOOLS_PATH}/tiled2bat --lang c -p 0 -b 0x2200 ${CMAKE_CURRENT_SOURCE_DIR}/../../data/4_map_16x16/map_16x16.json
                    WORKING_DIRECTORY ${DATA_DIR}
                    COMMENT "convert 16x16 map")
 

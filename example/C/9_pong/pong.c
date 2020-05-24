@@ -38,12 +38,7 @@
 #define SPEED_INC_DELAY 5
 #define SPEED_MAX 10
 
-#define pong_map_width 16
-#define pong_map_height 16
-#define pong_map_tile_width 16
-#define pong_map_tile_height 16
-#define pong_map_tile_vram 0x2200
-#define pong_map_tile_pal 0
+#include "data/pong_map.h"
 
 #incbin(map_00, "data/pong_map.map")
 #incbin(gfx_00, "data/pong_map.bin")

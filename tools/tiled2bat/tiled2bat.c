@@ -23,6 +23,12 @@
 #include "json.h"
 #include "xml.h"
 
+enum OutputLanguage {
+    OutputASM = 0,
+    OutputC,
+    OutputLanguageCount
+};
+
 static int tileset_encode_palettes(tileset_t *tileset, FILE *out) {
     int ret = 1;
     size_t len = (size_t)tileset->palette_count * 2 * 16;
@@ -81,7 +87,7 @@ static int tileset_encode_tiles(tileset_t *tileset, FILE *out) {
     return ret;
 }
 
-static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start) {
+static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start, int lang) {
     for(size_t i=0, n=0; i<map->tileset_count; i++) {
         n += map->tileset[i].palette_count;
         if(n > 16) {
@@ -166,22 +172,43 @@ static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start) {
     }
     fclose(out);
 
-    snprintf(filename, len, "%s.inc", map->name);
-    out = fopen(filename, "wb");
-    if(out == NULL) {
-        log_error("failed to open %s: %s", filename, strerror(errno));
-        free(filename);
-        return 0;
+    if(lang == OutputASM) {
+        snprintf(filename, len, "%s.inc", map->name);
+        out = fopen(filename, "wb");
+        if(out == NULL) {
+            log_error("failed to open %s: %s", filename, strerror(errno));
+            free(filename);
+            return 0;
+        }
+
+        fprintf(out, "%s_width = %d\n", map->name, map->width);
+        fprintf(out, "%s_height = %d\n", map->name, map->height);
+        fprintf(out, "%s_tile_width = %d\n", map->name, map->tile_width);
+        fprintf(out, "%s_tile_height = %d\n", map->name, map->tile_height);
+        fprintf(out, "%s_tile_vram = $%04x\n", map->name, vram_base);
+        fprintf(out, "%s_tile_pal = %d\n", map->name, palette_start);
+
+        fclose(out);
+    } 
+    else {
+        snprintf(filename, len, "%s.h", map->name);
+        out = fopen(filename, "wb");
+        if(out == NULL) {
+            log_error("failed to open %s: %s", filename, strerror(errno));
+            free(filename);
+            return 0;
+        }
+
+        fprintf(out, "#define %s_width %d\n", map->name, map->width);
+        fprintf(out, "#define %s_height %d\n", map->name, map->height);
+        fprintf(out, "#define %s_tile_width %d\n", map->name, map->tile_width);
+        fprintf(out, "#define %s_tile_height %d\n", map->name, map->tile_height);
+        fprintf(out, "#define %s_tile_vram 0x%04x\n", map->name, vram_base);
+        fprintf(out, "#define %s_tile_pal %d\n", map->name, palette_start);
+
+        fclose(out);
     }
 
-    fprintf(out, "%s_width = %d\n", map->name, map->width);
-    fprintf(out, "%s_height = %d\n", map->name, map->height);
-    fprintf(out, "%s_tile_width = %d\n", map->name, map->tile_width);
-    fprintf(out, "%s_tile_height = %d\n", map->name, map->tile_height);
-    fprintf(out, "%s_tile_vram = $%04x\n", map->name, vram_base);
-    fprintf(out, "%s_tile_pal = %d\n", map->name, palette_start);
-
-    fclose(out);
     free(filename);
 
     return 1;
@@ -197,23 +224,39 @@ int main(int argc, const char **argv) {
 
     int tile_vram_base = 0;
     int palette_start = 0;
+    int lang = OutputASM;
+    const char *lang_str = NULL;
     struct argparse_option options[] = {
         OPT_HELP(),
         OPT_INTEGER('b', "base", &tile_vram_base, "tiles VRAM address", NULL, 0, 0),
         OPT_INTEGER('p', "pal", &palette_start, "first palette index", NULL, 0, 0),
+        OPT_STRING('l', "lang", &lang_str, "output langage", NULL, 0, 0),
         OPT_END(),
     };
 
     struct argparse argparse;
     const char *extension;
     size_t len;
-
     argparse_init(&argparse, options, usages, 0);
     argparse_describe(&argparse, "\nTiled2bat : Convert Tiled json to PC Engine", "  ");
     argc = argparse_parse(&argparse, argc, argv);
     if(!argc) {
         argparse_usage(&argparse);
         return EXIT_FAILURE;
+    }
+
+    if(lang_str != NULL) {
+        if(strcmp(lang_str, "c") == 0) {
+            lang = OutputC;
+        }
+        else if(strcmp(lang_str, "asm") == 0) {
+            lang = OutputASM;
+        }
+        else {
+            fprintf(stderr, "[error] invalid language: %s\n", lang_str);
+            argparse_usage(&argparse);
+            return EXIT_FAILURE;
+        }
     }
 
     tilemap_t map = {0};
@@ -236,7 +279,7 @@ int main(int argc, const char **argv) {
         }
 
         if(ret) {
-            tilemap_encode(&map, tile_vram_base, palette_start);
+            tilemap_encode(&map, tile_vram_base, palette_start, lang);
         }
     }
 

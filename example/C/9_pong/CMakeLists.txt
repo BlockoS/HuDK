@@ -12,7 +12,7 @@ include_directories(${HUDK_INCLUDE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 file(MAKE_DIRECTORY ${DATA_DIR})
 
 add_custom_command(OUTPUT ${DATA_DIR}/pong_map.inc 
-                   COMMAND ${HUDK_TOOLS_PATH}/tiled2bat -p 0 -b 0x2200 ${CMAKE_CURRENT_SOURCE_DIR}/../../data/9_pong/pong_map.json
+                   COMMAND ${HUDK_TOOLS_PATH}/tiled2bat -l c -p 0 -b 0x2200 ${CMAKE_CURRENT_SOURCE_DIR}/../../data/9_pong/pong_map.json
                    WORKING_DIRECTORY ${DATA_DIR}
                    COMMENT "convert map")
 

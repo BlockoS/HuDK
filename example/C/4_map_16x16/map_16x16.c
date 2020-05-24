@@ -6,17 +6,12 @@
  */
 #include "hudk.h"
 
+#include "data/map_16x16.h"
+
 #incbin(map_00, "data/map_16.map")
 #incbin(gfx_00, "data/map_16x16.bin")
 #incbin(tile_pal_00, "data/map_16x16.idx")
 #incbin(pal_00, "data/map_16x16.pal")
-
-#define map_16x16_width 32
-#define map_16x16_height 32
-#define map_16x16_tile_width 16
-#define map_16x16_tile_height 16
-#define map_16x16_tile_vram 0x2200
-#define map_16x16_tile_pal 0
 
 // sine table [-128,128[
 const char sin_table[256] = {
