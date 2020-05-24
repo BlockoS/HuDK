@@ -15,6 +15,10 @@
 
 #include <argparse/argparse.h>
 
+#ifdef _MSC_VER
+#    define strcasecmp _stricmp
+#endif // _MSC_VER
+
 #ifndef PATH_MAX
 #define PATH_MAX 1024
 #endif // PATH_MAX
