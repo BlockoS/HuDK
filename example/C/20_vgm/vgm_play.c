@@ -7,16 +7,12 @@
 #include "hudk.h"
 #include "vgm.h" 
 
+#include "data/song.h"
 
-#define song_bank 0x01
-#define song_loop_bank 0x01
-#define song_loop 0x6fa8
-
-#incbin(song00, "data/song0000.bin")
-#incbin(song01, "data/song0001.bin")
+#incbin(song, "data/song.bin")
 
 void main() {
-	vgm_setup(song00, song_loop, song_loop_bank);
+	vgm_setup(song, song_loop, song_loop_bank);
 
     irq_disable(INT_IRQ1);
 	irq_enable_vec(VSYNC);

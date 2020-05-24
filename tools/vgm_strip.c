@@ -22,6 +22,11 @@
 #define VGM_HEADER_SIZE 0x100
 #define SAMPLES_PER_FRAME 0x2df
 
+enum OUTPUT_LANG {
+    OUTPUT_ASM = 0,
+    OUTPUT_C
+};
+
 /* Supported VGM commands */
 enum VGM_COMMAND
 {
@@ -192,7 +197,7 @@ int process(FILE *stream, vgm_header *header, uint8_t **out, size_t *len) {
 }
 
 /* Cut the vgm in slices of 8kB and writes assembly files containing data and bank infos. */
-int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint32_t org, const char *song_name, const char *output_directory) {
+int output_asm(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint32_t org, const char *song_name, const char *output_directory) {
     FILE *stream;
     char filename[PATH_MAX];
 
@@ -248,7 +253,49 @@ int output(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint3
                       , song_name, j);
     }
     fclose(stream);
+    return 0;
+} 
 
+int output_c(vgm_header *header, uint8_t *buffer, size_t len, uint32_t bank, uint32_t org, const char *song_name, const char *output_directory) {
+    FILE *stream;
+    char filename[PATH_MAX];
+
+    size_t write_count;
+
+    uint32_t loop_org;
+    uint32_t loop_bank;
+
+    snprintf(filename, PATH_MAX, "%s/%s.bin", output_directory, song_name);
+    stream = fopen(filename, "wb");
+    if(stream == NULL) {
+        fprintf(stderr, "failed to open %s : %s\n", filename, strerror(errno));
+        return -1;
+    }
+    
+    write_count = fwrite(buffer, 1, len, stream);
+    fclose(stream);
+    if(write_count != len) {
+        fprintf(stderr, "write error %s : %s\n", filename, strerror(errno));
+        return -1;
+    }
+
+    snprintf(filename, PATH_MAX, "%s/%s.h", output_directory, song_name);
+    stream = fopen(filename, "wb");
+    if(stream == NULL) {
+        fprintf(stderr, "failed to open %s : %s\n", filename, strerror(errno));
+        return -1;
+    }
+
+    loop_bank = bank + (header->loop_offset >> 13); 
+    loop_org  = org + (header->loop_offset & 0x1fff);
+
+    fprintf(stream, "#define %s_bank 0x%02x\n"
+                    "#define %s_loop_bank 0x%02x\n"
+                    "#define %s_loop 0x%04x\n",
+                    song_name, bank,
+                    song_name, loop_bank,
+                    song_name, loop_org);
+    fclose(stream);
     return 0;
 } 
 
@@ -257,7 +304,8 @@ void usage()
 {
     fprintf(stdout, "usage: vgmstrip -b bank -o org song_name input.vgm output_directory\n"
                     "-b or --bank : Start ROM bank (in hexadecimal)\n"
-                    "-o or --org  : Start bank offset (in hexadecimal)\n");
+                    "-o or --org  : Start bank offset (in hexadecimal)\n"
+                    "-l or --lang : Output language (c or asm)\n");
 }
 
 /* main entry point. */
@@ -269,6 +317,8 @@ int main(int argc, const char **argv) {
     vgm_header header;
     uint32_t bank;
     uint32_t org;
+    const char *lang = NULL;
+    int output_lang = OUTPUT_ASM;
 
     const char *filename;
     const char *song_name;
@@ -279,10 +329,11 @@ int main(int argc, const char **argv) {
 		NULL
 	};
 
-	struct argparse_option options[4] = {
+	struct argparse_option options[5] = {
 		OPT_HELP(),
 		OPT_INTEGER('b', "bank", &bank, "First ROM bank", NULL, 0, 0),
 		OPT_INTEGER('o', "org", &org, "Logical address", NULL, 0, 0),
+		OPT_STRING('l', "lang", &lang, "Output language", NULL, 0, 0),
 		OPT_END(),
 	};
 	struct argparse argparse;
@@ -294,6 +345,20 @@ int main(int argc, const char **argv) {
 		argparse_usage(&argparse);
 		return EXIT_FAILURE;
 	}
+
+    if(lang != NULL) {
+        if(strcasecmp(lang, "c") == 0) {
+            output_lang = OUTPUT_C;
+        }
+        else if(strcasecmp(lang, "asm") == 0) {
+            output_lang = OUTPUT_ASM;
+        }
+        else {
+            fprintf(stderr, "unknown output language: %s\n", lang);
+     		argparse_usage(&argparse);
+            return EXIT_FAILURE;
+        }
+    }
 
     song_name = argv[0]; 
     filename = argv[1];
@@ -312,7 +377,12 @@ int main(int argc, const char **argv) {
         size_t len = 0;
         err = process(stream, &header, &buffer, &len);
         if(err >= 0) {
-		    err = output(&header, buffer, len, bank, org, song_name, output_directory);
+            if(output_lang == OUTPUT_ASM) {
+    		    err = output_asm(&header, buffer, len, bank, org, song_name, output_directory);
+            }
+            else {
+    		    err = output_c(&header, buffer, len, bank, org, song_name, output_directory);
+            }
             if(err >= 0) {
                 ret = EXIT_SUCCESS;
             }
