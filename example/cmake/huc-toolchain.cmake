@@ -2,7 +2,11 @@ set( CMAKE_SYSTEM_NAME Generic )
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 
-get_filename_component(HUC_TOOLCHAIN_PATH "${HUC_PATH}" REALPATH)
+if(IS_ABSOLUTE ${HUC_PATH})
+    set(HUC_TOOLCHAIN_PATH ${HUC_PATH})
+else()
+    get_filename_component(HUC_TOOLCHAIN_PATH "${CMAKE_BINARY_DIR}/${HUC_PATH}" REALPATH)
+endif()
 
 set(CMAKE_C_COMPILER_WORKS 1)
 
