@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(asm-examples ASM)
+project(examples LANGUAGES C ASM)
 
 set(HUDK_TOOLS_PATH "" CACHE PATH "Path to HuDK tools")
 

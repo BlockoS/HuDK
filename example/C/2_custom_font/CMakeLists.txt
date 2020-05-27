@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(C_2_custom_font ASM)
+project(C_2_custom_font C)
 
 set(HUDK_TOOLS_PATH "" CACHE PATH "Path to HuDK tools")
 set(HUDK_INCLUDE_PATH "" CACHE PATH "Path to HuDK include files")
