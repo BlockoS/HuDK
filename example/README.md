@@ -57,6 +57,17 @@ In this example, they will be installed in `<HuDK_PATH>/build/install`.
 
 ### Examples
 
+#### Using Makefile
+Open your prefered terminal. Go to the `<HUDK_PATH>/example` directory, and simple run:
+```bash
+make HUDK_TOOLS_PATH=../build/install/bin/ HUDK_INCLUDE_PATH=../include/ HUC_PATH=<path to huc/pceas bin directory>
+```
+
+Don't forget to change `DHUDK_TOOLS_PATH` if you installed the **HuDK** tools in another directory.
+
+The roms will be located in the `build/asm` and `build/C` directories.
+
+#### Using CMake
 Open your prefered terminal. Go to the `<HUDK_PATH>/example` directory, and create a `build` directory. 
 Go to that directory and run `CMake` configuration pass.
 ```bash
@@ -65,8 +76,6 @@ cmake .. \
     -DHUDK_TOOLS_PATH=../../build/install/bin/ \ -DHUDK_INCLUDE_PATH=../../include/ \
     -DHUC_PATH=<path to huc/pceas bin directory>
 ```
-
-Don't forget to change `DHUDK_TOOLS_PATH` if you installed the **HuDK** tools in another directory.
 
 If you plan to build C example, don't forget to set the `PCE_INCLUDE` environment variable.
 ```bash
