@@ -7,5 +7,5 @@ set(HUDK_INCLUDE_PATH "" CACHE PATH "Path to HuDK include files")
 
 include_directories(${HUDK_INCLUDE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(joypad joypad.s)
-set_target_properties(joypad PROPERTIES OUTPUT_NAME joypad.pce)
+add_executable(joypad_test joypad_test.s)
+set_target_properties(joypad_test PROPERTIES OUTPUT_NAME joypad_test.pce)

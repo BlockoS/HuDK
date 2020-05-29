@@ -1,4 +1,4 @@
-all: hello_world.pce
+all: clock.pce
 
 CC=$(HUC_PATH)/huc
 CFLAGS?=-fno-recursive -msmall
@@ -6,11 +6,11 @@ CFLAGS?=-fno-recursive -msmall
 AS=$(HUC_PATH)/pceas
 ASFLAGS=-I $(HUDK_INCLUDE_PATH) -I .
 
-hello_world.s: hello_world.c
+clock.s: clock.c
 	@echo "=> building $@"
 	@$(CC) $(CFLAGS) -s $<
 
-hello_world.pce: hello_world.s
+clock.pce: clock.s
 	@$(AS) $(ASFLAGS) -o $(OUTDIR)/$@ -raw $<
 
 clean:

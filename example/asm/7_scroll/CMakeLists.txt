@@ -18,7 +18,7 @@ add_custom_command(OUTPUT ${DATA_DIR}/map_8x8.inc
 
 add_custom_target(scroll_data DEPENDS "${DATA_DIR}/map_8x8.inc")
 
-add_executable(scroll scroll.s)
-add_dependencies(scroll scroll_data)
-target_include_directories(scroll PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-set_target_properties(scroll PROPERTIES OUTPUT_NAME scroll.pce)
+add_executable(scroll_test scroll_test.s)
+add_dependencies(scroll_test scroll_data)
+target_include_directories(scroll_test PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+set_target_properties(scroll_test PROPERTIES OUTPUT_NAME scroll_test.pce)

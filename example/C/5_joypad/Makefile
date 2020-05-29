@@ -1,4 +1,4 @@
-all: hello_world.pce
+all: joypad_test.pce
 
 CC=$(HUC_PATH)/huc
 CFLAGS?=-fno-recursive -msmall
@@ -6,11 +6,11 @@ CFLAGS?=-fno-recursive -msmall
 AS=$(HUC_PATH)/pceas
 ASFLAGS=-I $(HUDK_INCLUDE_PATH) -I .
 
-hello_world.s: hello_world.c
+joypad_test.s: joypad_test.c
 	@echo "=> building $@"
 	@$(CC) $(CFLAGS) -s $<
 
-hello_world.pce: hello_world.s
+joypad_test.pce: joypad_test.s
 	@$(AS) $(ASFLAGS) -o $(OUTDIR)/$@ -raw $<
 
 clean:
