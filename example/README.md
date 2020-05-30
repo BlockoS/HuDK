@@ -79,20 +79,20 @@ The roms will be located in the `asm` directory.
 
 ## Examples
 
-1. Hello world [asm](asm/1_hello_world/README.md) | [C](C/1_hello_world/README.md)
+1. [Hello world](doc/1_hello_world/README.md)
 
-1. Custom font [asm](asm/2_custom_font/README.md) | [C](C/2_custom_font/README.md)
+1. [Custom font](doc/2_custom_font/README.md)
 
-1. Map of 8 by 8 pixels tiles [asm](asm/3_map_8x8/README.md) | [C](C/3_map_8x8/README.md)
+1. [Map of 8 by 8 pixels tiles](doc/3_map_8x8/README.md)
 
-1. Map of 16 by 16 pixels tiles [asm](asm/4_map_16x16/README.md) | [C](C/4_map_16x16/README.md)
+1. [Map of 16 by 16 pixels tiles](doc/4_map_16x16/README.md)
 
-1. Joypad [asm](asm/5_joypad/README.md) | [C](C/5_joypad/README.md)
+1. [Joypad](doc/5_joypad/README.md)
 
-1. Sprites [asm](asm/6_sprites/README.md) | [C](C/6_sprites/README.md)
+1. [Sprites](doc/6_sprites/README.md)
 
-1. Scroll / Vertical split windows [asm](asm/7_scroll/README.md) | [C](C/7_scroll/README.md)
+1. [Scroll / Vertical split windows](doc/7_scroll/README.md)
 
-1. Clock [asm](asm/8_clock/README.md) | [C](C/8_clock/README.md)
+1. [Clock](doc/8_clock/README.md)
 
-1. Pong [asm](asm/9_pong/README.md) | [C](C/9_pong/README.md)
+1. [Pong](doc/9_pong/README.md)
