@@ -80,8 +80,7 @@ Next, we will have to copy the palette to the VCE using the `vce_load_palette` r
     jsr    vdc_load_data
 ```
 
-</td></tr>
-<tr><td>
+</td><td>
 
 ```C
 // load font palette
@@ -111,8 +110,7 @@ We then have to tell the print routines where the font is located in VRAM and wh
     jsr    font_set_pal
 ```
 
-</td></tr>
-<tr><td>
+</td><td>
 
 ```C
 // set font VRAM address
