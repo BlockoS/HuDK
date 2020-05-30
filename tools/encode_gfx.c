@@ -394,7 +394,7 @@ int main(int argc, const char** argv) {
     struct argparse argparse;
 
     argparse_init(&argparse, options, usages, 0);
-    argparse_describe(&argparse, "\nencode_gfx : <configuration> <image> <out>", "  ");
+    argparse_describe(&argparse, "\nencode_gfx -o/--output-directory <out> <configuration.json> <image>", " ");
     argc = argparse_parse(&argparse, argc, argv);
     if(!argc) {
         argparse_usage(&argparse);

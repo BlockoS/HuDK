@@ -6,4 +6,4 @@ configuration file
 load map
 
 
-![screenshot](doc/screenshot.png)
+![screenshot](screenshot.png)

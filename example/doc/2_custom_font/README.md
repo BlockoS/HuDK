@@ -2,7 +2,7 @@
 
 This ROM displays "Hello world!" using the `print_string` routine and a custom font.
 
-![custom font](font.png)
+![custom font](../../data/2_custom_font/font.png)
 
 First we need to convert the font into the native tile format. We'll use the `encode_gfx` tool.
 
@@ -69,4 +69,4 @@ We then have to tell the print routines where the font is located in VRAM and wh
 
 Now, any call to the print routines will use the newly defined custom font.
 
-![screenshot](doc/screenshot.png)
+![screenshot](screenshot.png)

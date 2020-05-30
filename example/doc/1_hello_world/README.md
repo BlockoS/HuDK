@@ -2,4 +2,4 @@
 
 This ROM displays "Hello world!" using the `print_string` routine and HuDK system font.
 
-![font.pce screenshot](doc/screenshot.png)
+![font.pce screenshot](screenshot.png)
