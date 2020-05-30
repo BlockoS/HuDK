@@ -124,4 +124,5 @@ deploy:
   
 skip_commits:
   files:
+    - README.md
     - example/*
