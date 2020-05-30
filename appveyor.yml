@@ -102,7 +102,7 @@ build_script:
 
 after_build:
    - cd ../package
-   - copy "%APPVEYOR_BUILD_FOLDER%\deps\bin\*.dll" "bin\"
+   - copy "%APPVEYOR_BUILD_FOLDER%\\deps\\bin\\*.dll" "bin\\"
    - 7z a ../hudk.zip * -tzip
    
 artifacts:
@@ -122,3 +122,6 @@ deploy:
     branch: master
     appveyor_repo_tag: true  
   
+skip_commits:
+  files:
+    - example/*
