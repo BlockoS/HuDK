@@ -2,6 +2,84 @@
 
 ## Build instructions
 
+### Dependencies
+The HuDK tools depend on the following libraries:
+ * [jansson](https://github.com/akheron/jansson/archive/v2.12.zip)
+ * [zlib](https://github.com/madler/zlib/archive/v1.2.11.zip)
+ * [libpng](https://download.sourceforge.net/libpng/lpng1637.zip)
+ * [mxml](https://github.com/BlockoS/mxml/archive/master.zip)
+ * [argparse](https://github.com/cofyc/argparse.git)
+ * [cwalk](https://github.com/likle/cwalk) 
+
+First fetch git submodules.
+```bash
+cd ..
+git submodule update --init --recursive
+```
+
+On some OSes `jansson`, `zib`, `libpng` and `mxml` are available as packages. If that is not the case, here are the instructions on how to build them.
+
+#### Jansson
+We will assume that you have `wget` and `unzip`. If not, you will have to download and extract the archives by yourself.
+```bash
+cd tools
+mkdir deps
+cd deps
+wget https://github.com/akheron/jansson/archive/v2.12.zip
+unzip v2.12.zip -d jansson
+cd jansson
+mkdir build
+cd build
+cmake -DJANSSON_BUILD_DOCS=OFF -DJANSSON_WITHOUT_TESTS=ON -G ${CMAKE_GENERATOR} -DCMAKE_INSTALL_PREFIX=../../deps/ ..
+cmake --build . --config Release
+cmake --build . --config Release --target install
+cd ../..
+```
+
+`CMAKE_GENERATOR` being the generator to use. It can be "GNU Makefiles", "MSYS Makefiles", "Visual Studio 15 2017", etc...
+
+#### zlib
+```bash
+cd deps
+wget https://github.com/madler/zlib/archive/v1.2.11.zip
+unzip v1.2.11.zip -d zlib
+cd zlib
+mkdir build
+cd build
+cmake -G ${CMAKE_GENERATOR} -DCMAKE_INSTALL_PREFIX=../../deps/ ..
+cmake --build . --config Release
+cmake --build . --config Release --target install
+cd ../..
+```
+### libpng
+```bash
+wget https://download.sourceforge.net/libpng/lpng1637.zip
+unzip lpng1637.zip -d libpng
+cd libpng
+mkdir build
+cd build
+cmake -G ${CMAKE_GENERATOR} -DCMAKE_INSTALL_PREFIX=../../deps/ -DZLIB_LIBRARY=../../deps/lib/zlib.lib -DZLIB_INCLUDE_DIR=../../deps/include ..
+cmake --build . --config Release
+cmake --build . --config Release --target install
+cd ../..
+```
+`ZLIB_LIBRARY` must point to library generated for zlib. Here we assume that we built zlib for Windows using Visual studio.
+
+### mxml
+```bash
+wget https://github.com/BlockoS/mxml/archive/master.zip
+unzip master.zip -d mxml
+cd mxml
+mkdir build
+cd build
+cmake -G ${CMAKE_GENERATOR} -DCMAKE_INSTALL_PREFIX=../../deps/ ..
+cmake --build . --config Release
+cmake --build . --config Release --target install
+cd ../..
+```
+
+### Tools
+
 Create a `build` directory and launch CMake configuration.
 ```bash
 mkdir build
@@ -9,7 +87,22 @@ cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=./install
 ```
 
-You can build the tools.
+If you built the dependencies as shown above, you should launch CMake with:
+```bash
+  - cmake -G ${CMAKE_GENERATOR}
+    -DCMAKE_INSTALL_PREFIX=../package
+    -DBUILD_EXAMPLES=OFF
+    -DZLIB_LIBRARY=./deps/lib/zlib.lib
+    -DZLIB_INCLUDE_DIR=./deps/include
+    -DPNG_PNG_INCLUDE_DIR=./deps/include
+    -DPNG_LIBRARY=./deps/lib/libpng16.lib
+    -DJANSSON_INCLUDE_DIR=./deps/include
+    -DJANSSON_LIBRARY=./deps/lib/jansson.lib
+    -DMXML_LIBRARIES=./deps/lib/mxml.lib
+    -DMXML_INCLUDE_DIRS=./deps/include
+```
+
+You can now build the tools.
 ```bash
 cmake --build .
 cmake --build . --target install
