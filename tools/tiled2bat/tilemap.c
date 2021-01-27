@@ -150,7 +150,7 @@ int tilemap_compress(tilemap_t *map) {
         int j=0;
         for(j=first[i]; j<(first[i]+last[i]); j++) {
             int k = id[j];
-            dict[k] = k - first[i] + last[i];
+            dict[k] = k - first[i] + start;
         }
         start += last[i];
     }
@@ -164,7 +164,7 @@ int tilemap_compress(tilemap_t *map) {
         int dst_stride = tileset.tile_width * tileset.tile_count;
         int src_stride = map->tileset[i].tile_width * map->tileset[i].tile_count;
         for(j=0; j<tileset.tile_count; j++) {
-            int k = id[j+first[i]];
+            int k = id[j+first[i]] - map->tileset[i].first_gid;
             uint8_t *dst_ptr = tileset.tiles + j * tileset.tile_width;
             uint8_t *src_ptr = map->tileset[i].tiles + k * map->tileset[i].tile_width;
             int x, y;
@@ -193,7 +193,7 @@ int tilemap_compress(tilemap_t *map) {
 
             tileset.palette_index[j] = palette_dict[l];
         }
- 
+
         tileset.palette = (uint8_t*)malloc(tileset.palette_count*3*16);
         for(j=0; j<tileset.palette_count; j++) {
             int dst = j*3*16;

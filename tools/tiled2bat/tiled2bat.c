@@ -279,7 +279,7 @@ int main(int argc, const char **argv) {
         }
 
         // [todo]
-   //     tilemap_compress(&map);
+        tilemap_compress(&map);
 
         if(ret) {
             tilemap_encode(&map, tile_vram_base, palette_start, lang);
