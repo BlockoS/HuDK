@@ -95,7 +95,7 @@ static int json_read_tilesets(tilemap_t *map, char *path, json_t* node) {
             return 0;
         }
         
-        int ret = tileset_load(&map->tileset[index], name, filename, tile_count, tile_width, tile_height, margin, spacing, columns);
+        int ret = tileset_load(&map->tileset[index], name, filename, first_gid, tile_count, tile_width, tile_height, margin, spacing, columns);
         free(filename);
         if(!ret) {
             return 0;
@@ -168,7 +168,7 @@ int json_read_tilemap(tilemap_t *map, const char *filename) {
     size_t index, len;
     char *map_name;
 
-    root = json_load_file(filename, 0, &error); // [todo] move out of tilemap_read
+    root = json_load_file(filename, 0, &error);
     if(!root) {
         log_error("%s:%d:%d %s", filename, error.line, error.column, error.text);
         return 0;

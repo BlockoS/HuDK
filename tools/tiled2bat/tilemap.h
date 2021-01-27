@@ -12,7 +12,7 @@
 
 typedef struct {
     char *name;
-    uint32_t *data;
+    int *data;
 } tilemap_layer_t;
 
 typedef struct {
@@ -30,5 +30,6 @@ typedef struct {
 int tilemap_create(tilemap_t *map, const char *name, int width, int height, int tile_width, int tile_height, int tileset_count);
 int tilemap_add_layer(tilemap_t *map, const char *name);
 void tilemap_destroy(tilemap_t *map);
+int tilemap_compress(tilemap_t *map);
 
 #endif /* HUDK_TOOLS_TILEMAP_H */

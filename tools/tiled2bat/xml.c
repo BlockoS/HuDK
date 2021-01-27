@@ -86,7 +86,7 @@ static int xml_read_tilesets(tilemap_t *map, char *path, mxml_node_t* node) {
             return 0;
         }
         
-        int ret = tileset_load(&map->tileset[i], name, filepath, tile_count, tile_width, tile_height, margin, spacing, columns);
+        int ret = tileset_load(&map->tileset[i], name, filepath, first_gid, tile_count, tile_width, tile_height, margin, spacing, columns);
         free(filepath);
         if(!ret) {
             return 0;

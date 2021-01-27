@@ -14,14 +14,19 @@
 
 #include "../utils/log.h"
 
-int tileset_create(tileset_t *tileset, const char *name, int tile_count, int tile_width, int tile_height) {
+int tileset_create(tileset_t *tileset, const char *name, int first_gid, int tile_count, int tile_width, int tile_height) {
     memset(tileset, 0, sizeof(tileset_t));
+    
+    tileset->first_gid = first_gid;
+
     tileset->tile_count = tile_count;
     tileset->tile_width = tile_width;
     tileset->tile_height = tile_height;
+    
     tileset->palette_index = (uint8_t*)malloc(tile_count * sizeof(uint8_t));
     tileset->tiles = (uint8_t*)malloc(tile_count * tile_width * tile_height * sizeof(uint8_t));
     tileset->name = strdup(name);
+    
     if(!(tileset->palette_index && tileset->tiles && tileset->name)) {
         tileset_destroy(tileset);
         return 0;
@@ -97,11 +102,11 @@ void tileset_destroy(tileset_t *tileset) {
     if(tileset->palette) {
         free(tileset->palette);
     }
-    memset(&tileset, 0, sizeof(tileset_t));
+    memset(tileset, 0, sizeof(tileset_t));
 }
 
-int tileset_load(tileset_t *tileset, const char *name, const char *filename, int tile_count, int tile_width, int tile_height, int margin, int spacing, int columns) {
-    if(!tileset_create(tileset, name, tile_count, tile_width, tile_height)) {
+int tileset_load(tileset_t *tileset, const char *name, const char *filename, int first_gid, int tile_count, int tile_width, int tile_height, int margin, int spacing, int columns) {
+    if(!tileset_create(tileset, name, first_gid, tile_count, tile_width, tile_height)) {
         return 0;
     }
 
