@@ -2,7 +2,7 @@
  * This file is part of HuDK.
  * ASM and C open source software development kit for the NEC PC Engine.
  * Licensed under the MIT License
- * (c) 2016-2020 MooZ
+ * (c) 2016-2021 MooZ
  */
 #include "xml.h"
 
@@ -86,7 +86,7 @@ static int xml_read_tilesets(tilemap_t *map, char *path, mxml_node_t* node) {
             return 0;
         }
         
-        int ret = tileset_load(&map->tileset[i], name, filepath, tile_count, tile_width, tile_height, margin, spacing, columns);
+        int ret = tileset_load(&map->tileset[i], name, filepath, first_gid, tile_count, tile_width, tile_height, margin, spacing, columns);
         free(filepath);
         if(!ret) {
             return 0;

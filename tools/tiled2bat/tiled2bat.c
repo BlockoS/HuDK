@@ -2,7 +2,7 @@
  * This file is part of HuDK.
  * ASM and C open source software development kit for the NEC PC Engine.
  * Licensed under the MIT License
- * (c) 2016-2020 MooZ
+ * (c) 2016-2021 MooZ
  */
 #include <errno.h>
 #include <stdlib.h>
@@ -121,7 +121,7 @@ static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start, int 
 
         len = map->width * map->height;
         for(size_t j=0; j<len; j++) {
-            uint8_t id = (map->layer[i].data[j] & 0xff) - 1;
+            uint8_t id = (map->layer[i].data[j] & 0xff);
             fwrite(&id, 1, 1, out);
         }
         fclose(out);
@@ -230,7 +230,7 @@ int main(int argc, const char **argv) {
         OPT_HELP(),
         OPT_INTEGER('b', "base", &tile_vram_base, "tiles VRAM address", NULL, 0, 0),
         OPT_INTEGER('p', "pal", &palette_start, "first palette index", NULL, 0, 0),
-        OPT_STRING('l', "lang", &lang_str, "output langage", NULL, 0, 0),
+        OPT_STRING('l', "lang", &lang_str, "output langage (\"c\" or \"asm\")", NULL, 0, 0),
         OPT_END(),
     };
 
@@ -277,6 +277,9 @@ int main(int argc, const char **argv) {
             ret = 0;
             log_warn("unknown extension %s", extension);
         }
+
+        // [todo]
+        tilemap_compress(&map);
 
         if(ret) {
             tilemap_encode(&map, tile_vram_base, palette_start, lang);
