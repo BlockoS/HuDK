@@ -230,7 +230,7 @@ int main(int argc, const char **argv) {
         OPT_HELP(),
         OPT_INTEGER('b', "base", &tile_vram_base, "tiles VRAM address", NULL, 0, 0),
         OPT_INTEGER('p', "pal", &palette_start, "first palette index", NULL, 0, 0),
-        OPT_STRING('l', "lang", &lang_str, "output langage", NULL, 0, 0),
+        OPT_STRING('l', "lang", &lang_str, "output langage (\"c\" or \"asm\")", NULL, 0, 0),
         OPT_END(),
     };
 
