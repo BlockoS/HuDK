@@ -2,7 +2,7 @@
  * This file is part of HuDK.
  * ASM and C open source software development kit for the NEC PC Engine.
  * Licensed under the MIT License
- * (c) 2016-2020 MooZ
+ * (c) 2016-2021 MooZ
  */
 #include <errno.h>
 #include <stdlib.h>
@@ -121,7 +121,7 @@ static int tilemap_encode(tilemap_t *map, int vram_base, int palette_start, int 
 
         len = map->width * map->height;
         for(size_t j=0; j<len; j++) {
-            uint8_t id = (map->layer[i].data[j] & 0xff) - 1;
+            uint8_t id = (map->layer[i].data[j] & 0xff);
             fwrite(&id, 1, 1, out);
         }
         fclose(out);

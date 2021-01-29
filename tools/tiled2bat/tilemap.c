@@ -2,7 +2,7 @@
  * This file is part of HuDK.
  * ASM and C open source software development kit for the NEC PC Engine.
  * Licensed under the MIT License
- * (c) 2016-2020 MooZ
+ * (c) 2016-2021 MooZ
  */
 #include "tilemap.h"
 
@@ -147,10 +147,10 @@ int tilemap_compress(tilemap_t *map) {
 
     int start = 0;
     for(i=0; i<map->tileset_count; i++) {
-        int j=0;
+       int j=0;
         for(j=first[i]; j<(first[i]+last[i]); j++) {
             int k = id[j];
-            dict[k] = k - first[i] + start;
+            dict[k] += start - first[i];
         }
         start += last[i];
     }

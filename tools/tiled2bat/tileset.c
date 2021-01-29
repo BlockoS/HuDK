@@ -2,7 +2,7 @@
  * This file is part of HuDK.
  * ASM and C open source software development kit for the NEC PC Engine.
  * Licensed under the MIT License
- * (c) 2016-2020 MooZ
+ * (c) 2016-2021 MooZ
  */
 #include "tileset.h"
 
@@ -61,6 +61,7 @@ int tileset_add(tileset_t *tileset, int tile_index, image_t *img, int x, int y) 
             }
         }
     }
+    // set tile palette index and copy the associated palette.
     tileset->palette_index[tile_index] = (uint8_t)palette_index;
     
     if(palette_index >= tileset->palette_count) {
