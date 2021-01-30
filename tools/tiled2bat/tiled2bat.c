@@ -278,7 +278,6 @@ int main(int argc, const char **argv) {
             log_warn("unknown extension %s", extension);
         }
 
-        // [todo]
         tilemap_compress(&map);
 
         if(ret) {

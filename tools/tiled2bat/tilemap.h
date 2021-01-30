@@ -10,26 +10,32 @@
 #include <stdint.h>
 #include "tileset.h"
 
+/// Tilemap layer.
 typedef struct {
-    char *name;
-    int *data;
+    char *name;                 ///< Layer name.
+    int *data;                  ///< Layer tile indices.
 } tilemap_layer_t;
 
+/// Tilemap.
 typedef struct {
-    char *name;
-    tilemap_layer_t *layer;
-    int layer_count;
-    int width;
-    int height;
-    int tile_width;
-    int tile_height;
-    int tileset_count;
-    tileset_t *tileset;
+    char *name;                 ///< Tilemap name.
+    tilemap_layer_t *layer;     ///< Tilemap layers.
+    int layer_count;            ///< Number of tilemap layers.
+    int width;                  ///< Number of tile columns.
+    int height;                 ///< Number of tile rows.
+    int tile_width;             ///< Tile width.
+    int tile_height;            ///< Tile height.
+    int tileset_count;          ///< Number of tilesets.
+    tileset_t *tileset;         ///< Tilesets.
 } tilemap_t;
 
+/// Create tilemap.
 int tilemap_create(tilemap_t *map, const char *name, int width, int height, int tile_width, int tile_height, int tileset_count);
+/// Add layer to tilemap.
 int tilemap_add_layer(tilemap_t *map, const char *name);
+/// Destroy tilemap.
 void tilemap_destroy(tilemap_t *map);
+/// Remove unused tiles from tilemap.
 int tilemap_compress(tilemap_t *map);
 
 #endif /* HUDK_TOOLS_TILEMAP_H */

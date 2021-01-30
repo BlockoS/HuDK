@@ -21,7 +21,10 @@ typedef struct {
     int tile_width;         ///< Tile width (in pixels).
     int tile_height;        ///< Tile height (in pixels).
     
-    uint8_t *palette_index; ///< Palette index for each tile.
+    /// Palette index for each tile.
+    /// Note that the palette index is assigned for each tile and not for each 8x8 tiles.
+    /// This may change in the future.
+    uint8_t *palette_index;
     uint8_t *palette;       ///< 16 color palettes.
     int palette_count;      ///< Number of palettes.
 } tileset_t;
