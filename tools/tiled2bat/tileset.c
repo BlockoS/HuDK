@@ -117,6 +117,7 @@ int tileset_load(tileset_t *tileset, const char *name, const char *filename, int
     if(!ret) {
         log_error("failed to load image %s", filename);
     }
+
     for(int y=margin; ret && (y<img.height); y+=spacing+tile_height) {
         for(int x=margin, c=0; ret && (x<img.width) && (c<columns); x+=spacing+tile_width, i++, c++) {
             if(!tileset_add(tileset, i, &img, x, y)) {
@@ -124,6 +125,40 @@ int tileset_load(tileset_t *tileset, const char *name, const char *filename, int
                 ret = 0;
             }
         }
+    }
+    image_destroy(&img);
+    return ret;
+}
+
+int tileset_write(tileset_t *tileset, const char *filename) {
+    int ret;
+    image_t img;
+
+    ret = image_create(&img, tileset->tile_width*tileset->tile_count, tileset->tile_height, 1, tileset->palette_count*16);
+    if(!ret) {
+        fprintf(stderr, "failed to create image");
+        return ret;
+    }
+
+    for(int i=0; i<tileset->palette_count*16; i++) {
+        img.palette[3*i  ] = tileset->palette[3*i  ];
+        img.palette[3*i+1] = tileset->palette[3*i+1];
+        img.palette[3*i+2] = tileset->palette[3*i+2];
+    }
+
+    for(int i=0; i<tileset->tile_count; i++) {
+        int start = i * tileset->tile_width;
+        for(int y=0; y<tileset->tile_height; y++) {
+            int offset = start + y * (tileset->tile_width * tileset->tile_count);
+            for(int x=0; x<tileset->tile_width; x++, offset++) {
+                img.data[offset] = tileset->tiles[offset] + tileset->palette_index[i] * 16;
+            }
+        }
+    }
+
+    ret = image_write_png(&img, filename);
+    if(!ret) {
+        fprintf(stderr, "failed to write tileset %s", filename);
     }
     image_destroy(&img);
     return ret;

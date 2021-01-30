@@ -248,3 +248,89 @@ int json_read_tilemap(tilemap_t *map, const char *filename) {
 
     return ret; 
 }
+
+int json_write_tilemap(tilemap_t *map) {
+    int ret;
+    
+    json_t *root = json_object();
+
+    json_object_set(root, "type", json_string("map"));
+    json_object_set(root, "version", json_real(1.2));
+    json_object_set(root, "tiledversion", json_string("1.2.4"));
+    json_object_set(root, "infinite", json_false());
+    json_object_set(root, "orientation", json_string("orthogonal"));
+    json_object_set(root, "renderorder", json_string("right-down"));
+    json_object_set(root, "nextobjectid", json_integer(1));
+
+    json_object_set(root, "width", json_integer(map->width));
+    json_object_set(root, "height", json_integer(map->height));
+
+    json_object_set(root, "tilewidth", json_integer(map->tile_width));
+    json_object_set(root, "tileheight", json_integer(map->tile_height));
+ 
+    json_object_set(root, "nextlayerid", json_integer(map->layer_count+1));
+ 
+    // layers
+    json_t *layers = json_array();
+    for(int i=0; i<map->layer_count; i++) {
+        json_t *layer = json_object();
+
+        json_object_set(layer, "id", json_integer(i+1));
+        json_object_set(layer, "name", json_string(map->layer[i].name));
+        json_object_set(layer, "type", json_string("tilelayer"));
+        json_object_set(layer, "visible", json_true());
+        json_object_set(layer, "width", json_integer(map->width));
+        json_object_set(layer, "height", json_integer(map->height));
+        json_object_set(layer, "x", json_integer(0));
+        json_object_set(layer, "y", json_integer(0));
+        json_object_set(layer, "opacity", json_integer(1));
+
+        json_t *data = json_array();
+        for(int j=0; j<map->width*map->height; j++) {
+             json_array_append_new(data, json_integer(1 + map->layer[i].data[j]));
+        }
+        json_object_set(layer, "data", data);
+
+        json_array_append_new(layers, layer);
+    }
+    json_object_set(root, "layers", layers);
+
+    // tilesets
+    json_t *tilesets = json_array();
+    for(int i=0; i<map->tileset_count; i++) {
+        char image_filename[64];
+
+        json_t *tileset = json_object();
+
+        json_object_set(tileset, "name", json_string(map->tileset[i].name));
+        json_object_set(tileset, "firstgid", json_integer(1+map->tileset[i].first_gid));
+        json_object_set(tileset, "margin", json_integer(0));
+        json_object_set(tileset, "spacing", json_integer(0));
+        json_object_set(tileset, "transparentcolor", json_string("#ff00ff"));
+        json_object_set(tileset, "tilewidth", json_integer(map->tileset[i].tile_width));
+        json_object_set(tileset, "tileheight", json_integer(map->tileset[i].tile_height));
+        json_object_set(tileset, "tilecount", json_integer(map->tileset[i].tile_count));
+        json_object_set(tileset, "imagewidth", json_integer(map->tileset[i].tile_width * map->tileset[i].tile_count));
+        json_object_set(tileset, "imageheight", json_integer(map->tileset[i].tile_height));
+        json_object_set(tileset, "columns", json_integer(map->tileset[i].tile_count > 8 ? 8 : map->tileset[i].tile_count));
+       
+        snprintf(image_filename, 64, "tileset_%04d.png", i);
+        json_object_set(tileset, "image", json_string(image_filename));
+       
+        json_array_append_new(tilesets, tileset);
+
+        tileset_write(map->tileset + i, image_filename);
+    }
+    json_object_set(root, "tilesets", tilesets);
+
+    size_t len = strlen(map->name) + 6;
+    char *filename = (char*)malloc(len);
+    snprintf(filename, len, "%s.json", map->name);
+
+    ret = json_dump_file(root, filename, 0);
+    json_decref(root);
+    
+    free(filename);
+
+    return ret;
+}

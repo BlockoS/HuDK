@@ -40,4 +40,6 @@ void tileset_destroy(tileset_t *tileset);
 /// Initialise tileset.
 int tileset_load(tileset_t *tileset, const char *filename, const char *name, int first_gid, int tile_count, int tile_width, int tile_height, int margin, int spacing, int columns);
 
+int tileset_write(tileset_t *tileset, const char *filename);
+
 #endif /* HUDK_TOOLS_TILESET_H */

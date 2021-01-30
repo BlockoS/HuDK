@@ -156,11 +156,13 @@ int tilemap_compress(tilemap_t *map) {
     }
 
     // recreate tileset
+    start = 0;
     for(i=0; i<map->tileset_count; i++) {
         int j;
         tileset_t tileset;
         tileset_create(&tileset, map->tileset[i].name, start, last[i], map->tileset[i].tile_width, map->tileset[i].tile_height);
-
+        start += last[i];
+        
         int dst_stride = tileset.tile_width * tileset.tile_count;
         int src_stride = map->tileset[i].tile_width * map->tileset[i].tile_count;
         for(j=0; j<tileset.tile_count; j++) {

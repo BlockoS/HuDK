@@ -57,12 +57,12 @@ int image_load_png(image_t *dest, const char* filename) {
     
     memset(dest, 0, sizeof(image_t));
     
-    memset(&image, 0, sizeof(png_image));    
+    memset(&image, 0, sizeof(png_image));
     image.version = PNG_IMAGE_VERSION;
     
     ret = png_image_begin_read_from_file(&image, filename);
     if(!ret) {
-        log_error("read error: %s %s", filename, image.message);        
+        log_error("read error: %s %s", filename, image.message);
     }
 
     if(ret) {
@@ -95,6 +95,22 @@ int image_load_png(image_t *dest, const char* filename) {
     if(!ret) {
         image_destroy(dest);
     }
+    return ret;
+}
+
+int image_write_png(image_t* src, const char* filename) {
+    int ret;
+    png_image image;
+
+    memset(&image, 0, sizeof(png_image));    
+    image.version = PNG_IMAGE_VERSION;
+    image.width = src->width;
+    image.height = src->height;
+    image.format = PNG_FORMAT_FLAG_COLORMAP | PNG_FORMAT_RGB_COLORMAP;
+    image.colormap_entries = src->color_count;
+
+    ret = png_image_write_to_file(&image, filename, 0, src->data, 0, src->palette);
+
     return ret;
 }
 

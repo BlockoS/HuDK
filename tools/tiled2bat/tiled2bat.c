@@ -278,10 +278,12 @@ int main(int argc, const char **argv) {
             log_warn("unknown extension %s", extension);
         }
 
-        tilemap_compress(&map);
-
         if(ret) {
+            tilemap_compress(&map);
+            
             tilemap_encode(&map, tile_vram_base, palette_start, lang);
+        
+            json_write_tilemap(&map);
         }
     }
 

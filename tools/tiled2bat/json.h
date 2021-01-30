@@ -11,4 +11,6 @@
 
 int json_read_tilemap(tilemap_t *map, const char *filename);
 
+int json_write_tilemap(tilemap_t *map);
+
 #endif /* HUDK_TOOLS_TILEMAP_JSON_H */

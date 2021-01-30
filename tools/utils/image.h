@@ -27,4 +27,6 @@ int image_load_png(image_t* dest, const char* filename);
 
 int image_load_pcx(image_t* dest, const char* filename);
 
+int image_write_png(image_t* src, const char* filename);
+
 #endif /* HUDK_TOOLS_IMAGE_H */
