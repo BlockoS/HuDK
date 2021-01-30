@@ -224,6 +224,7 @@ int main(int argc, const char **argv) {
 
     int tile_vram_base = 0;
     int palette_start = 0;
+    int write_tilemap = 0;
     int lang = OutputASM;
     const char *lang_str = NULL;
     struct argparse_option options[] = {
@@ -231,6 +232,7 @@ int main(int argc, const char **argv) {
         OPT_INTEGER('b', "base", &tile_vram_base, "tiles VRAM address", NULL, 0, 0),
         OPT_INTEGER('p', "pal", &palette_start, "first palette index", NULL, 0, 0),
         OPT_STRING('l', "lang", &lang_str, "output langage (\"c\" or \"asm\")", NULL, 0, 0),
+        OPT_BOOLEAN('w', "write", &write_tilemap, "write optimized tilemap", NULL, 0, 0),
         OPT_END(),
     };
 
@@ -279,11 +281,22 @@ int main(int argc, const char **argv) {
         }
 
         if(ret) {
-            tilemap_compress(&map);
-            
-            tilemap_encode(&map, tile_vram_base, palette_start, lang);
-        
-            json_write_tilemap(&map);
+            ret = tilemap_compress(&map);
+            if(ret) {
+                ret = tilemap_encode(&map, tile_vram_base, palette_start, lang);
+                if(!ret) {
+                    log_error("failed to encode tilemap");
+                }
+            }
+            else {
+                log_error("failed to optimize tilemap");
+            }
+            if(ret && write_tilemap) {
+                ret = json_write_tilemap(&map);
+                if(!ret) {
+                    log_error("failed to write optimized tilemap");
+                }
+            }
         }
     }
 

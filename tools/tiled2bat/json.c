@@ -250,7 +250,7 @@ int json_read_tilemap(tilemap_t *map, const char *filename) {
 }
 
 int json_write_tilemap(tilemap_t *map) {
-    int ret;
+    int ret = 1;
     
     json_t *root = json_object();
 
@@ -327,7 +327,9 @@ int json_write_tilemap(tilemap_t *map) {
     char *filename = (char*)malloc(len);
     snprintf(filename, len, "%s.json", map->name);
 
-    ret = json_dump_file(root, filename, 0);
+    if(json_dump_file(root, filename, 0)) {
+        ret = 0;
+    }
     json_decref(root);
     
     free(filename);
