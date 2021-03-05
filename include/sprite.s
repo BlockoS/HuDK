@@ -62,11 +62,8 @@ _spr_x.2:
     sax
   .endif
 spr_x:
-    clc
-    adc    #32
     sta    sprite_x, Y
     sax
-    adc    #$00
     sta    sprite_x+64, Y
     rts
 
@@ -84,11 +81,8 @@ _spr_y.2:
     sax
   .endif
 spr_y:
-    clc
-    adc    #64
     sta    sprite_y, Y
     sax
-    adc    #$00
     sta    sprite_y+64, Y
     rts
 
@@ -201,13 +195,19 @@ spr_update_satb:
     cly
 @loop:
         lda    sprite_y, Y
+        clc
+        adc    #64
         sta    video_data_l
         lda    sprite_y+64, Y
+        adc    #$00
         sta    video_data_h
 
         lda    sprite_x, Y
+        clc
+        adc    #32
         sta    video_data_l
         lda    sprite_x+64, Y
+        adc    #00
         sta    video_data_h
 
         lda    sprite_pattern, Y

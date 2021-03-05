@@ -47,7 +47,7 @@ _irq_1:
 @check_others:
     ; [todo] sprite overflow, dma transfer end, sprite 0 collision
 @end:
-    lda    <vdc_reg         ; restore VDC register index
+    lda    <vdc_ri          ; restore VDC register index
     sta    video_reg
 
     ply                     ; restore registers

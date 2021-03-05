@@ -550,13 +550,13 @@ vdc_ri = $20f7
 ;;
   .macro vdc_reg
     lda    \1
+    sta    <vdc_ri
     ; [todo] zeropage copy of the vdc register
     .if (\?1 = ARG_IMMEDIATE)
       st0    \1
     .else
       sta    video_reg
     .endif
-    sta    <vdc_ri
   .endmacro
 
 ;;

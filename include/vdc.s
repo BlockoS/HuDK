@@ -5,6 +5,10 @@
 ;; (c) 2016-2020 MooZ
 ;;
 
+; [todo] vdc_disp_on
+; [todo] vdc_disp_off
+; [todo] clear bat
+
     .bss
 vdc_bat_width  .ds 2
 vdc_bat_height .ds 1
@@ -394,12 +398,12 @@ vdc_init:
     .db $09, VDC_DEFAULT_BG_SIZE  ; MWR backgroup map virtual size
     .db $00                       ;
     .db $0A                       ; HSR +
-     VDC_HSR_db VDC_DEFAULT_XRES    ;     |
+     VDC_HSR_db VDC_DEFAULT_XRES  ;     |
     .db $0B                       ; HDR |
-     VDC_HDR_db VDC_DEFAULT_XRES    ;     | display size and synchro
+     VDC_HDR_db VDC_DEFAULT_XRES  ;     | display size and synchro
     .db $0C, $02, $0F             ; VPR |
     .db $0D, $EF, $00             ; VDW |
-    .db $0E, $04, $00             ; VCR +
+    .db $0E, $0C, $00             ; VCR +
     .db $0F, $10, $00             ; DCR DMA control register
     .db $13                       ; SAT adddress
     .db low(VDC_DEFAULT_SAT_ADDR)

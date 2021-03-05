@@ -82,7 +82,7 @@ print_digit:
     rts
 
 ;;
-;; function: print_hex
+;; function: print_hex_raw
 ;; Output a hexadecimal digit at the current BAT location.
 ;;
 ;; Remark:
@@ -92,10 +92,10 @@ print_digit:
 ;;   A - Digit value between 0 and 15.
 ;;
   .ifdef HUC
-_print_hex.1:
+_print_hex_raw.1:
     txa
   .endif
-print_hex:
+print_hex_raw:
     cmp    #$10
     bcc    @l0
         ; The digit is out of bound.
@@ -201,10 +201,10 @@ print_hex_u8:
     lsr    A
     lsr    A
     lsr    A
-    jsr    print_hex
+    jsr    print_hex_raw
     pla
     and    #$0f
-    jmp    print_hex
+    jmp    print_hex_raw
 
 ;;
 ;; function: print_hex_u16
@@ -222,6 +222,66 @@ print_hex_u16:
     jsr    print_hex_u8     ; print MSB
     sax                     ; print LSB
     jmp    print_hex_u8
+
+;;
+;; function: print_hex
+;; Output a hexadecimal digit at the current BAT location.
+;;
+;; Remark:
+;; The VDC write register must point to a valid BAT location.
+;;
+;; Parameters:
+;;   _ax - Number to be displayed
+;;   _cl - Number of digits to display
+;;     X - BAT x position.
+;;     A - BAT y position.
+  .ifdef HUC
+print_hex.4:
+  .endif
+print_hex:
+    jsr    vdc_calc_addr 
+    jsr    vdc_set_write
+    ldx    <_cl
+@l0
+    cpx    #5
+    bcc    @l1
+        lda    #' '
+        jsr   print_char
+        dex
+        bra   @l0
+@l1:
+    txa
+    asl    A
+    tax
+    jmp    [.hex,X]
+.h4:
+    lda    <_ax+1
+    lsr    A
+    lsr    A
+    lsr    A
+    lsr    A
+    jsr    print_hex_raw
+.h3:
+    lda    <_ax+1
+    and    #$0f
+    jsr    print_hex_raw
+.h2:
+    lda    <_ax
+    lsr    A
+    lsr    A
+    lsr    A
+    lsr    A
+    jsr    print_hex_raw
+.h1:
+    lda    <_ax
+    and    #$0f
+    jsr    print_hex_raw
+.h0:
+    rts
+.hex:
+    .dw .h0, .h1, .h2, .h3, .h4
+
+; [todo] do the same for print_bcd, print_digit
 
 ;;
 ;; function: print_string

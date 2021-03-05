@@ -17,7 +17,7 @@ _reset:
     txs
     
     lda    #$ff                     ; maps the I/O to the first page
-    tam0					        ; 0000-1FFF
+    tam0                            ; 0000-1FFF
     
     lda    #$f8                     ; and the RAM bank to the second page
     tam1                            ; 2000-3FFF = Work RAM

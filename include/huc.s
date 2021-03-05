@@ -1156,7 +1156,7 @@ setvdc:	tay
 	cmp	#$09
 	beq	.l3
 
-.l1:	sta	<vdc_reg
+.l1:	sta	<vdc_ri
 	sta	video_reg
 	stx	video_data_l
 	sty	video_data_h
@@ -1185,7 +1185,7 @@ setvdc:	tay
 getvdc:	cpx	#4
 	bne	.l1
 	lda	#2
-	sta	<vdc_reg
+	sta	<vdc_ri
 	sta	video_reg
 	ldx	video_data_l
 	lda	video_data_h
