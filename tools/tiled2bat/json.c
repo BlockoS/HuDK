@@ -312,7 +312,7 @@ int json_write_tilemap(tilemap_t *map) {
         json_object_set(tileset, "tilecount", json_integer(map->tileset[i].tile_count));
         json_object_set(tileset, "imagewidth", json_integer(map->tileset[i].tile_width * map->tileset[i].tile_count));
         json_object_set(tileset, "imageheight", json_integer(map->tileset[i].tile_height));
-        json_object_set(tileset, "columns", json_integer(map->tileset[i].tile_count > 8 ? 8 : map->tileset[i].tile_count));
+        json_object_set(tileset, "columns", json_integer(map->tileset[i].tile_count));
        
         snprintf(image_filename, 64, "tileset_%04d.png", i);
         json_object_set(tileset, "image", json_string(image_filename));

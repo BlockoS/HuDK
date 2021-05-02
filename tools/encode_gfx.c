@@ -19,18 +19,29 @@
 #include "utils/buffer.h"
 #include "utils/output.h"
 
-// [todo] asm output
-
 #ifndef PATH_MAX
 #define PATH_MAX 256
 #endif
 
+// [todo] comments
+// [todo] sprites: cut and encode in multiple objects if the size is not 16x16, 16x32, 32x16, 32x32 or 32x64
+// [todo] asm output
+
+// Graphical object.
 typedef struct {
-    char *name;
-    int x, y;
-    int w, h;
+    char *name;                 // Graphical object filename.
+    int x, y;                   // Position in pixels.
+    int w, h;                   // Size in either 16 pixels units (for sprites) or 8 pixels units (for tiles).
 } object_t;
 
+// Palette
+typedef struct {
+    char *name;                 // Palette output filename.
+    int start;                  // Subpalette index.
+    int count;                  // ?imber of palettes to extract.
+} palette_t;
+
+// List of supported object types.
 enum ObjectType {
     Tiles = 0,
     Sprites,
@@ -39,6 +50,7 @@ enum ObjectType {
     ObjectTypeCount
 };
 
+// Object name (as defined in the configuration file).
 static const char* g_objectTypeName[ObjectTypeCount] = {
     "tile",
     "sprite",
@@ -46,12 +58,7 @@ static const char* g_objectTypeName[ObjectTypeCount] = {
     "spritepal"
 };
 
-typedef struct {
-    char *name;
-    int start;
-    int count;
-} palette_t;
-
+// Extracted objects and palettes (as defined in the configuration file).
 typedef struct {
     object_t *objects[ObjectTypeCount];
     int object_count[ObjectTypeCount];
@@ -89,6 +96,8 @@ static void asset_destroy(asset_t *out) {
     out->palette_count = 0;
 }
 
+//--------------------------------------------------------------------------------------
+// JSON parsing
 static int json_read_integer(json_t* node, const char* name, int* value) {
     json_t *object = json_object_get(node, name);
     if(!object) {
@@ -259,6 +268,8 @@ static int parse_configuration(const char *filename, asset_t *out) {
     return ret;
 }
 
+//--------------------------------------------------------------------------------------
+// Encoding
 static struct {
     int bloc_size;
     int stride;
