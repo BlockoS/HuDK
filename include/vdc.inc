@@ -567,8 +567,8 @@ vdc_ri = $20f7
 ;;   > vdc_setreg
 ;;
   .macro vdc_setreg
-    sta    video_reg
     sta    <vdc_ri
+    sta    video_reg
   .endmacro
 
 ;
