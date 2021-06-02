@@ -61,9 +61,21 @@
 ;; Parameter:
 ;;   p0 - Operand.
 ;;
+
+; [todo] update comments
   .macro add
+  .if (\# = 2)
+    lda    \2
+  .endif
     clc
     adc    \1
+  .if (\# = 2)
+    sta    \2
+  .else
+    .if (\# = 3)
+    sta    \3
+    .endif
+  .endif
   .endmacro
 
 ;;
@@ -77,6 +89,8 @@
 ;; Parameter:
 ;;   p0 - Operand.
 ;;
+
+    ; [todo] same as add
   .macro sub
     sec
     sbc    \1
