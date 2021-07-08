@@ -77,8 +77,8 @@ INT_ALL = INT_IRQ2 | INT_IRQ1 | INT_TIMER | INT_NMI
 ;;   i - IRQ bit field (see IRQ identifiers).
 ;;
   .macro irq_on
-    .if (\1 <= INT_ALL)
-    lda    #(\1 ^ INT_ALL)
+    .if ((\1) <= INT_ALL)
+    lda    #((\1) ^ INT_ALL)
     .else
       .fail "invalid IRQ mask"
     .endif
