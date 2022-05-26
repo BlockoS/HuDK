@@ -359,7 +359,7 @@ static int extract_palette(const image_t *source, palette_t *palette, buffer_t *
     if(end > source->color_count) {
         log_warn("image palette only contains %d colors", source->color_count);
     }
-    pce_color_convert(&source->palette[start], destination->data, last-start);
+    pce_color_convert(&source->palette[start*3], destination->data, last-start);
     return 1;
 }
 

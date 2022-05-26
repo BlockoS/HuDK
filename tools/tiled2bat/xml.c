@@ -18,6 +18,22 @@
 #include "../utils/log.h"
 #include "../utils/utils.h"
 
+static mxml_node_t* xml_load(const char *filename) {
+    mxml_node_t *tree;
+    FILE *in = fopen(filename, "rb");
+    if(in == NULL) {
+        log_error("failed to open %s: %s", filename, strerror(errno));
+        return NULL;
+    }
+    tree = mxmlLoadFile(NULL, in, MXML_OPAQUE_CALLBACK);
+    fclose(in);
+    if(tree == NULL) {
+        log_error("failed to decode %s", filename);
+        return NULL;
+    }
+    return tree;
+}
+
 static int xml_read_attr_int(mxml_node_t *node, const char *attr, int *i) {
     const char *name = mxmlGetElement(node);
     const char *value;
@@ -34,62 +50,96 @@ static int xml_read_attr_int(mxml_node_t *node, const char *attr, int *i) {
     return 1;
 }
 
+static int xml_read_single_tileset(tilemap_t *map, int i, mxml_node_t *tileset_node, int first_gid, const char *path) {
+    mxml_node_t *image_node;
+    const char *source, *name;
+    int tile_count, tile_width, tile_height, columns, margin, spacing;
+
+    if(!xml_read_attr_int(tileset_node, "tilecount", &tile_count)) {
+        return 0;
+    }
+    if(!xml_read_attr_int(tileset_node, "tilewidth", &tile_width)) {
+        return 0;
+    }
+    if(!xml_read_attr_int(tileset_node, "tileheight", &tile_height)) {
+        return 0;
+    }
+    if(!xml_read_attr_int(tileset_node, "columns", &columns)) {
+        return 0;
+    }
+    name = mxmlElementGetAttr(tileset_node, "name");
+    if(name == NULL) {
+        log_error("failed to get tileset name");
+        return 0;
+    }
+    if(!xml_read_attr_int(tileset_node, "margin", &margin)) {
+        margin = 0;
+        log_warn("using default margin value %d instead", margin);
+    }
+    if(!xml_read_attr_int(tileset_node, "spacing", &spacing)) {
+        spacing = 0;
+        log_warn("using default spacing value %d instead", spacing);
+    }
+
+    image_node = mxmlFindElement(tileset_node, tileset_node, "image", NULL, NULL, MXML_DESCEND);
+    if(image_node == NULL) {
+        log_error("failed to get image node");
+        return 0;
+    }
+    source = mxmlElementGetAttr(image_node, "source");
+    if(source == NULL) {
+        log_error("failed to get image source");
+        return 0;
+    }
+    char *filepath = path_join(path, source);
+    if(filepath == NULL) {
+        return 0;
+    }
+    
+    int ret = tileset_load(&map->tileset[i], name, filepath, first_gid, tile_count, tile_width, tile_height, margin, spacing, columns);
+    free(filepath);
+    if(!ret) {
+        return 0;
+    }
+
+    return 1;
+}
+
 static int xml_read_tilesets(tilemap_t *map, char *path, mxml_node_t* node) {
     size_t i;
-    mxml_node_t *tileset_node, *image_node;
+    mxml_node_t *tileset_node;
     for(i = 0, tileset_node = mxmlFindElement(node, node, "tileset", NULL, NULL, MXML_DESCEND);
         tileset_node;
         i++, tileset_node = mxmlFindElement(tileset_node, node, "tileset", NULL, NULL, MXML_NO_DESCEND)) {
-        int first_gid, tile_count, tile_width, tile_height, columns, margin, spacing;
-        const char *source, *name;
+        int first_gid;
+        const char *source;
         if(!xml_read_attr_int(tileset_node, "firstgid", &first_gid)) {
             return 0;
         }
-        if(!xml_read_attr_int(tileset_node, "tilecount", &tile_count)) {
-            return 0;
-        }
-        if(!xml_read_attr_int(tileset_node, "tilewidth", &tile_width)) {
-            return 0;
-        }
-        if(!xml_read_attr_int(tileset_node, "tileheight", &tile_height)) {
-            return 0;
-        }
-        if(!xml_read_attr_int(tileset_node, "columns", &columns)) {
-            return 0;
-        }
-        name = mxmlElementGetAttr(tileset_node, "name");
-        if(name == NULL) {
-            log_error("failed to get tileset name");
-            return 0;
-        }
-        if(!xml_read_attr_int(tileset_node, "margin", &margin)) {
-            margin = 0;
-            log_warn("using default margin value %d instead", margin);
-        }
-        if(!xml_read_attr_int(tileset_node, "spacing", &spacing)) {
-            spacing = 0;
-            log_warn("using default spacing value %d instead", spacing);
-        }
 
-        image_node = mxmlFindElement(tileset_node, tileset_node, "image", NULL, NULL, MXML_DESCEND);
-        if(image_node == NULL) {
-            log_error("failed to get image node");
-            return 0;
-        }
-        source = mxmlElementGetAttr(image_node, "source");
+        source = mxmlElementGetAttr(tileset_node, "source");
         if(source == NULL) {
-            log_error("failed to get image source");
-            return 0;
-        }
-        char *filepath = path_join(path, source);
-        if(filepath == NULL) {
-            return 0;
-        }
-        
-        int ret = tileset_load(&map->tileset[i], name, filepath, first_gid, tile_count, tile_width, tile_height, margin, spacing, columns);
-        free(filepath);
-        if(!ret) {
-            return 0;
+            if(!xml_read_single_tileset(map, i, tileset_node, first_gid, path)) {
+                return 0;
+            }
+        } else {
+            char *filepath = path_join(path, source);
+            mxml_node_t *tree, *node;
+            if(filepath == NULL) {
+                return 0;
+            }
+            tree = xml_load(filepath);
+            free(filepath);
+            if(tree == NULL) {
+                return 0;
+            }
+            node = mxmlFindElement(tree, tree, "tileset", NULL, NULL, MXML_DESCEND);
+            if(node) {
+                if(!xml_read_single_tileset(map, i, node, first_gid, path)) {
+                    return 0;
+                }
+            }
+            mxmlDelete(tree);
         }
     }
     return 1;
@@ -206,22 +256,13 @@ static int xml_read_tilemap_data(mxml_node_t *node, char *path, const char *name
 
 int xml_read_tilemap(tilemap_t *map, const char *filename) {
     int ret = 0;
-    FILE *in;
     mxml_node_t *tree;
     char *path, *name;
     size_t len;
 
-    in = fopen(filename, "rb");
-    if(in == NULL) {
-        log_error("failed to open %s: %s", filename, strerror(errno));
-        return 0;
-    }
-    tree = mxmlLoadFile(NULL, in, MXML_OPAQUE_CALLBACK);
-    fclose(in);
-
+    tree = xml_load(filename);
     if(tree == NULL) {
-        log_error("failed to decode %s", filename);
-        return 0;
+        return ret;
     }
 
     len = strlen(filename);

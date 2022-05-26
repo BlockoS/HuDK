@@ -30,6 +30,7 @@ if(NOT MSVC)
     target_compile_definitions(tiled2bat PRIVATE LOG_TERM_COLOR)
 	target_compile_options(tiled2bat PRIVATE -Wall -Werror)
 endif()
+target_link_directories(tiled2bat PRIVATE ${MXML_LIBDIR})
 target_link_libraries(tiled2bat hudk_utils ${JANSSON_LIBRARIES} ${MXML_LIBRARIES} ${PNG_LIBRARIES} argparse)
 
 install(TARGETS tiled2bat RUNTIME DESTINATION bin)
