@@ -680,6 +680,14 @@ VDC_DEFAULT_TILE_ADDR = (128*64)
 VDC_DEFAULT_XRES = 256
   .endif
 
+  .ifndef VDC_DEFAULT_YRES
+;;
+;; ushort: VDC_DEFAULT_YRES
+;; Default vertical resolution.
+;;
+VDC_DEFAULT_YRES = 224
+  .endif
+
   .ifndef VDC_DEFAULT_SAT_ADDR
 ;;
 ;; ushort: VDC_DEFAULT_SAT_ADDR

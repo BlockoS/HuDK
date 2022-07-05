@@ -393,7 +393,7 @@ _map_load_next_tile_y:
     beq    @check_tile_y_wrap
     lda    <_al
     cmp    <map_height
-    beq    @check_tile_y_wrap
+    bcs    @check_tile_y_wrap
         ; go to next tilemap line
         addw   <map_width, <_si
         ; check if we need to remap the tilemap
@@ -419,7 +419,7 @@ _map_load_next_tile_y:
     lda    <map_address+1
     and    #$1f
     ora    #$60
-    sta    <map_address+1
+    sta    <_si+1
     ; reset MAP Y position
     stz    <_al 
     rts

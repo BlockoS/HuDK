@@ -343,7 +343,7 @@ vdc_init:
     cpy    #36
     bne    @l0
 
-    lda    #224
+    lda    #VDC_DEFAULT_YRES
     sta    vdc_scr_height
 
     jsr    reset_hooks
