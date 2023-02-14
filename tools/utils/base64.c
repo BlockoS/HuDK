@@ -16,7 +16,7 @@ int base64_decode(const char *in, uint8_t *out, size_t len) {
     size_t in_len = strlen(in);
     size_t decoded = 0;
     uint8_t *ptr;
-    uint32_t buffer;
+    uint32_t buffer = 0;
     size_t j;
     ptr = out;
     j = 0;

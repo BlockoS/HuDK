@@ -32,6 +32,7 @@ typedef struct {
     char *name;                 // Graphical object filename.
     int x, y;                   // Position in pixels.
     int w, h;                   // Size in either 16 pixels units (for sprites) or 8 pixels units (for tiles).
+    int append;                 // Append to file?
 } object_t;
 
 // Palette
@@ -39,6 +40,7 @@ typedef struct {
     char *name;                 // Palette output filename.
     int start;                  // Subpalette index.
     int count;                  // ?imber of palettes to extract.
+    int append;                 // Append to file?
 } palette_t;
 
 // List of supported object types.
@@ -122,6 +124,18 @@ static int json_read_string(json_t* node, const char* name, const char** value) 
     return 1;
 }
 
+static int json_read_boolean(json_t* node, const char* name, int* value) {
+    json_t *object = json_object_get(node, name);
+    if(!object) {
+        return 0;
+    }
+    if(!json_is_boolean(object)) {
+        return 0;
+    }
+    *value = json_boolean_value(object);
+    return 1;
+}
+
 int read_object(json_t *object, object_t *out) {
     const char *name;
     if(!json_read_string(object, "name", &name)) {
@@ -144,6 +158,10 @@ int read_object(json_t *object, object_t *out) {
     if(!json_read_integer(object, "h", &out->h)) {
         log_error("failed to get object height");
         return 0;
+    }
+    if(!json_read_boolean(object, "append", &out->append)) {
+        // append = false by default.
+        out->append = 0;
     }
     return 1;
 }
@@ -200,6 +218,10 @@ int read_palette(json_t *object, palette_t *out) {
     if(!json_read_integer(object, "count", &out->count)) {
         log_error("failed to get sub-palette count");
         return 0;
+    }
+    if(!json_read_boolean(object, "append", &out->append)) {
+        // append = false by default.
+        out->append = 0;
     }
     return 1;
 }
@@ -364,7 +386,7 @@ static int extract_palette(const image_t *source, palette_t *palette, buffer_t *
 }
 
 // [todo] output functions (binary + asm declaration)
-static int output(const char *prefix_path, const char *filename, const buffer_t *buffer) {
+static int output(const char *prefix_path, const char *filename, const buffer_t *buffer, int append) {
     char *path = (char*)calloc(PATH_MAX, 1);
     size_t path_len = PATH_MAX;
     size_t ret;
@@ -377,7 +399,7 @@ static int output(const char *prefix_path, const char *filename, const buffer_t 
     }
 
     ret = 0;
-    FILE *out = fopen(path, "wb");
+    FILE *out = fopen(path, append ? "ab" : "wb");
     if(out) {
         ret = output_raw(out, buffer->data, buffer->size);
         fclose(out);
@@ -431,14 +453,14 @@ int main(int argc, const char** argv) {
             for(int j=0; ok && (j<ObjectTypeCount); j++) {
                 for(int i=0; ok && (i<assets.object_count[j]); i++) {
                     if(extract(&img, &assets.objects[j][i], j, &buf)) {
-                        ok = output(output_directory, assets.objects[j][i].name, &buf);
+                        ok = output(output_directory, assets.objects[j][i].name, &buf, assets.objects[j][i].append);
                     }
                 }
             }
 
             for(int i=0; ok && (i<assets.palette_count); i++) {
                 if(extract_palette(&img, &assets.palettes[i], &buf)) {
-                    ok = output(output_directory, assets.palettes[i].name, &buf);
+                    ok = output(output_directory, assets.palettes[i].name, &buf, assets.palettes[i].append);
                 }
             }
             buffer_delete(&buf);
