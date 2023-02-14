@@ -92,7 +92,7 @@ int tilemap_compress(tilemap_t *map) {
     }
     memset(last, 0, map->tileset_count * sizeof(int));
 
-    max_id = -1;
+    max_id = 0;
     first = last + map->tileset_count;
     for(i=0, total=0; i<map->tileset_count; i++) {
         int n = map->tileset[i].first_gid + map->tileset[i].tile_count;
